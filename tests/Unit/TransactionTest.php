@@ -46,15 +46,4 @@ class TransactionTest extends TestCase
 
         $this->assertEquals('testName', $sut->brand->name);
     }
-
-    /** @test */
-    public function it_has_meta()
-    {
-        $meta = ['key' => 'value'];
-
-        $sut = Transaction::factory()->create(['meta' => $meta]);
-
-        $this->assertEquals($meta, $sut->meta);
-    }
-    
 }
