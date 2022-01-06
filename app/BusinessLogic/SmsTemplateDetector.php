@@ -34,14 +34,14 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
     {
         $partsPositionsInTemplate = [];
 
-        if($amountPosition = strpos($templateBody, "{amount}")) {
-            $partsPositionsInTemplate['amount'] = $amountPosition;
+        if(strpos($templateBody, "{amount}") !== false) {
+            $partsPositionsInTemplate['amount'] = strpos($templateBody, "{amount}");
         }
-        if($brandPosition = strpos($templateBody, "{brand}")) {
-            $partsPositionsInTemplate['brand'] = $brandPosition;
+        if(strpos($templateBody, "{brand}") !== false) {
+            $partsPositionsInTemplate['brand'] = strpos($templateBody, "{brand}");
         }
-        if($cardPosition = strpos($templateBody, "{card}")) {
-            $partsPositionsInTemplate['card'] = $cardPosition;
+        if(strpos($templateBody, "{card}") !== false) {
+            $partsPositionsInTemplate['card'] = strpos($templateBody, "{card}");
         }
     
         asort($partsPositionsInTemplate);

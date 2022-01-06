@@ -13,7 +13,7 @@ return [
             'type' => Sms::EXPENSES
         ],
         [
-            'body' => 'Salary of AED {amount} has',
+            'body' => '{brand} of AED {amount} has been credited ',
             'type' => Sms::INCOME
         ]
     ],
