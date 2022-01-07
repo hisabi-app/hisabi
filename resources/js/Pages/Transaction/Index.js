@@ -1,11 +1,17 @@
 import React from 'react';
 import Authenticated from '@/Layouts/Authenticated';
 import { Head } from '@inertiajs/inertia-react';
+import SidePanel from '@/Components/SidePanel';
+import TransactionEdit from '@/Pages/Transaction/Edit';
 
 export default function Dashboard({auth, transactions}) {
     return (
         <Authenticated auth={auth}>
             <Head title="Transactions" />
+
+            <SidePanel shouldOpen={true} title={"Edit Transaction"}>
+                <TransactionEdit />
+            </SidePanel>
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

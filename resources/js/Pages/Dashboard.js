@@ -1,20 +1,33 @@
-import React from 'react';
-import Authenticated from '@/Layouts/Authenticated';
+import axios from 'axios';
+import Wrapper from '@/Components/Wrapper';
+import { renderComponent } from '@/Components';
 import { Head } from '@inertiajs/inertia-react';
+import React, { useEffect, useState } from 'react';
+import Authenticated from '@/Layouts/Authenticated';
 
-export default function Dashboard(props) {
+export default function Dashboard({auth, errors, metrics, graphqlQueries}) {
+    const [metricsData, setMetricsData] = useState([])
+
+    useEffect(() => {
+        axios.post('/graphql', {query: `query { ${graphqlQueries} }`})
+            .then(({data}) => setMetricsData(data.data))
+            .catch(console.error);
+    }, []);
+
     return (
-        <Authenticated
-            auth={props.auth}
-            errors={props.errors}
-        >
+        <Authenticated auth={auth} errors={errors}>
             <Head title="Dashboard" />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">You're logged in!</div>
-                    </div>
+                <div className="max-w-7xl mx-auto flex flex-wrap -mx-3 lg:-mx-4 sm:px-6 lg:px-8">
+                    {metrics.map( metric => {
+                        metric.data = metricsData[metric.graphql_query]
+                        return <Wrapper 
+                            key={metric.graphql_query}
+                            width={metric.width} 
+                            children={renderComponent(metric.component, metric)}
+                            />
+                    })}
                 </div>
             </div>
         </Authenticated>

@@ -18,5 +18,18 @@ return [
         ]
     ],
     'currency' => 'AED',
-    'reports' => []
+    'reports' => [
+        [
+            'name' => 'Total Income',
+            'graphql_query' => 'totalIncome',
+            'component' => 'value-metric',
+            'width' => '1/2',
+        ],
+        [
+            'name' => 'Total Expenses',
+            'graphql_query' => 'totalExpenses',
+            'component' => 'value-metric',
+            'width' => '1/2',
+        ]
+    ]
 ];

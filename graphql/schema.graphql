@@ -11,6 +11,6 @@ type Transaction {
 }
 
 type Query {
-    totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["withdraw"])
-    totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["deposit"])
+    totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM)
+    totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM)
 }
