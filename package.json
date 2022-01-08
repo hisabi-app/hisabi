@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "@heroicons/react": "^1.0.5",
-        "graphql": "^16.2.0"
+        "graphql": "^16.2.0",
+        "numbro": "^2.3.6"
     }
 }

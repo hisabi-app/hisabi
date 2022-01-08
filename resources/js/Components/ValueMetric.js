@@ -19,7 +19,7 @@ function ValueMetric({ name, data }) {
                 </div>
 
                 <p className="flex items-center text-4xl mb-4">
-                    { data }
+                    { Engine.formatNumber(data) }
                 </p>
             </div>
         </Card>

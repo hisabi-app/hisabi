@@ -4,29 +4,45 @@ import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import TransactionEdit from '@/Pages/Transaction/Edit';
 import { PencilAltIcon } from '@heroicons/react/outline';
+import Loader from '@/Components/Loader';
 
 export default function Dashboard({auth}) {
     const [transactions, setTransactions] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMorePages, setHasMorePages] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [editTransaction, setEditTransaction] = useState(null);
     const [shouldShowTransactionEdit, setShouldShowTransactionEdit] = useState(false);
 
     useEffect(() => {
+        if(! hasMorePages) return;
+        setLoading(true);
+
         axios.post('/graphql', {query: `query { 
-            transactions {
-                id
-                amount
-                category {
-                    name
-                    type
+            transactions(page: ${currentPage}) {
+                data {
+                    id
+                    amount
+                    category {
+                        name
+                        type
+                    }
+                    brand {
+                        name
+                    }
                 }
-                brand {
-                    name
+                paginatorInfo {
+                    hasMorePages
                 }
             }
          }`})
-            .then(({data}) => setTransactions(data.data.transactions))
+            .then(({data}) => {
+                setTransactions([...transactions, ...data.data.transactions.data])
+                setHasMorePages(data.data.transactions.paginatorInfo.hasMorePages)
+                setLoading(false);
+            })
             .catch(console.error);
-    }, []);
+    }, [currentPage]);
 
     return (
         <Authenticated auth={auth}>
@@ -66,13 +82,7 @@ export default function Dashboard({auth}) {
                                                     scope="col"
                                                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                                 >
-                                                    Category
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                                >
-                                                    Brand
+                                                    Category - Brand
                                                 </th>
                                                 <th
                                                     scope="col"
@@ -87,11 +97,10 @@ export default function Dashboard({auth}) {
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
                                             {transactions.map((transaction) => (
-                                                <tr key={transaction.id}>
+                                                <tr key={transaction.id} className='loaded'>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.amount}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.brand.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{Engine.formatNumber(transaction.amount)}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.name} - {transaction.brand.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.type}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button onClick={() => {
@@ -108,6 +117,12 @@ export default function Dashboard({auth}) {
                                     </table>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="py-4 flex justify-center">
+                            {! hasMorePages && ! loading && <p className='text-gray-600'>All resources loaded 🎉</p>}
+                            {hasMorePages && ! loading && <button className='text-blue-500 font-bold' onClick={() => setCurrentPage(currentPage+1)}>Load more</button>}
+                            {hasMorePages && loading && <Loader />}
                         </div>
                     </div>
                 </div>

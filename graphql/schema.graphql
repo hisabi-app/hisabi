@@ -24,7 +24,8 @@ type Transaction {
 }
 
 type Query {
-    transactions: [Transaction!]! @all
+    brands: [Brand!]! @all
+    transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
     totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM)
     totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM)
 }

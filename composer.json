@@ -11,6 +11,7 @@
         "inertiajs/inertia-laravel": "^0.4.5",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.8",
+        "laravel/telescope": "^4.6",
         "laravel/tinker": "^2.5",
         "mll-lab/laravel-graphql-playground": "^2.5",
         "nuwave/lighthouse": "^5.33",
