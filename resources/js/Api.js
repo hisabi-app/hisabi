@@ -8,6 +8,21 @@ export default class Api {
         }`});
     }
 
+    getCategories(page) {
+        return axios.post('/graphql', {query: `query {
+            categories(page: ${page}) {
+                data {
+                    id
+                    name
+                    type
+                }
+                paginatorInfo {
+                    hasMorePages
+                }
+            }
+         }`});
+    }
+
     getBrands(page) {
         return axios.post('/graphql', {query: `query {
             brands(page: ${page}) {

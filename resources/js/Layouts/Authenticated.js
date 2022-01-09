@@ -37,6 +37,12 @@ export default function Authenticated({ auth, children }) {
                                     Brands
                                 </NavLink>
                             </div>
+
+                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink href={route('categories')} active={route().current('categories')}>
+                                    Categories
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ml-6">
@@ -105,6 +111,18 @@ export default function Authenticated({ auth, children }) {
                     <div className="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                             Dashboard
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink href={route('transactions')} active={route().current('transactions')}>
+                            Transactions
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink href={route('brands')} active={route().current('brands')}>
+                            Brands
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink href={route('categories')} active={route().current('categories')}>
+                            Categories
                         </ResponsiveNavLink>
                     </div>
 
