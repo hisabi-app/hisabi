@@ -31,5 +31,15 @@ return [
             'component' => 'value-metric',
             'width' => '1/2',
         ],
+        // Total Income graph for the last 12 months
+        // Total Expenses graph for the last 12 months
+        // Graph for expenses per category for the last 12 months
+        // Brand graph for the last 12 months
+        // Expenses per category this month
+        // Expenses per category last month
+        // Expenses per category this year
+        // Expenses per category last year
+        // Brand per category partition for this month
+        // Brand per category partition for last month
     ]
 ];

@@ -1,9 +1,26 @@
 export default class Api {
-    getBrands() {
+    getAllBrands() {
+        return axios.post('/graphql', {query: `query { 
+            allBrands { 
+                id 
+                name 
+            } 
+        }`});
+    }
+
+    getBrands(page) {
         return axios.post('/graphql', {query: `query {
-            brands {
-                id
-                name
+            brands(page: ${page}) {
+                data {
+                    id
+                    name
+                    category {
+                        name
+                    }
+                }
+                paginatorInfo {
+                    hasMorePages
+                }
             }
          }`});
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,7 +17,8 @@ class TransactionFactory extends Factory
     {
         return [
             'amount' => $this->faker->numberBetween(),
-            'category_id' => Category::factory()
+            'category_id' => Category::factory(),
+            'brand_id' => Brand::factory(),
         ];
     }
 }

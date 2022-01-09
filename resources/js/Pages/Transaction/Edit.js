@@ -9,9 +9,9 @@ export default function Edit({transaction, onClose, onUpdate}) {
     const [brand, setBrand] = useState(0)
 
     useEffect(() => {
-        Api.getBrands()
+        Api.getAllBrands()
             .then(({data}) => {
-                setBrands(data.data.brands)
+                setBrands(data.data.allBrands)
             })
             .catch(console.error);
     }, []);

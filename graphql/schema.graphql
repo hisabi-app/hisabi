@@ -27,9 +27,17 @@ type Mutation {
   updateTransaction(id: ID! amount: Float! brand: Int!): Transaction
 }
 
+type TransactionStatistics {
+    category_id: Int!
+    total: Float!
+    category: Category
+}
+
 type Query {
-    brands: [Brand!]! @all
+    allBrands: [Brand!]! @all
+    brands: [Brand!]! @paginate(defaultCount: 25)
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
     totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["expenses"])
     totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])
+    expensesPerCategory: [TransactionStatistics!]!
 }

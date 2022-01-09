@@ -17,7 +17,7 @@ class CreateTransactionsTable extends Migration
             $table->id();
             $table->double('amount');
             $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('brand_id')->nullable();
+            $table->unsignedBigInteger('brand_id');
             $table->timestamps();
         });
     }

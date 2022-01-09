@@ -29,16 +29,7 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    public function it_may_not_belongs_to_brand()
-    {
-        $sut = Transaction::factory()
-                    ->create();
-
-        $this->assertNull($sut->brand);
-    }
-
-    /** @test */
-    public function it_can_belongs_to_brand()
+    public function it_belongs_to_brand()
     {
         $sut = Transaction::factory()
                     ->forBrand(['name' => 'testName'])
