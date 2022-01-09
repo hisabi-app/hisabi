@@ -24,4 +24,18 @@ class Transaction extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function scopeExpenses($query) 
+    {
+        return $query->whereHas('category', function ($query) {
+            return $query->where('type', Category::EXPENSES);
+        });
+    }
+
+    public function scopeIncome($query) 
+    {
+        return $query->whereHas('category', function ($query) {
+            return $query->where('type', Category::INCOME);
+        });
+    }
 }

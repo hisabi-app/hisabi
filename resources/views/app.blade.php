@@ -19,5 +19,8 @@
     </head>
     <body class="font-sans antialiased">
         @inertia
+        <script>
+            window.AppCurrency = "{{ config('finance.currency') }}";
+        </script>
     </body>
 </html>

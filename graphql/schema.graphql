@@ -23,9 +23,13 @@ type Transaction {
     brand: Brand! @belongsTo
 }
 
+type Mutation {
+  updateTransaction(id: ID! amount: Float! brand: Int!): Transaction
+}
+
 type Query {
     brands: [Brand!]! @all
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
-    totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM)
-    totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM)
+    totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["expenses"])
+    totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])
 }

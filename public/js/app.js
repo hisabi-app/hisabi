@@ -4579,10 +4579,27 @@ var Api = /*#__PURE__*/function () {
   }
 
   _createClass(Api, [{
+    key: "getBrands",
+    value: function getBrands() {
+      return axios.post('/graphql', {
+        query: "query {\n            brands {\n                id\n                name\n            }\n         }"
+      });
+    }
+  }, {
     key: "getTransactions",
     value: function getTransactions(page) {
       return axios.post('/graphql', {
-        query: "query {\n            transactions(page: ".concat(page, ") {\n                data {\n                    id\n                    amount\n                    category {\n                        name\n                        type\n                    }\n                    brand {\n                        name\n                    }\n                }\n                paginatorInfo {\n                    hasMorePages\n                }\n            }\n         }")
+        query: "query {\n            transactions(page: ".concat(page, ") {\n                data {\n                    id\n                    amount\n                    category {\n                        name\n                        type\n                    }\n                    brand {\n                        id\n                        name\n                    }\n                }\n                paginatorInfo {\n                    hasMorePages\n                }\n            }\n         }")
+      });
+    }
+  }, {
+    key: "updateTransaction",
+    value: function updateTransaction(_ref) {
+      var id = _ref.id,
+          amount = _ref.amount,
+          brand = _ref.brand;
+      return axios.post('/graphql', {
+        query: "mutation {\n            updateTransaction(id: ".concat(id, " amount: ").concat(amount, " brand: ").concat(brand, ") {\n                id\n                amount\n                category {\n                    name\n                    type\n                }\n                brand {\n                    id\n                    name\n                }\n            }\n         }")
       });
     }
   }]);
@@ -5373,7 +5390,7 @@ function ValueMetric(_ref) {
   var name = _ref.name,
       data = _ref.data;
 
-  if (!data) {
+  if (data == undefined || data == null) {
     return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_Card__WEBPACK_IMPORTED_MODULE_0__["default"], {
       className: "relative",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_LoadingView__WEBPACK_IMPORTED_MODULE_1__["default"], {})
@@ -5389,9 +5406,9 @@ function ValueMetric(_ref) {
           className: "mr-3 text-base text-gray-700 font-bold",
           children: name
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("p", {
         className: "flex items-center text-4xl mb-4",
-        children: Engine.formatNumber(data)
+        children: [AppCurrency, " ", Engine.formatNumber(data)]
       })]
     })
   });
@@ -5492,6 +5509,11 @@ var Engine = /*#__PURE__*/function () {
     value: function formatNumber(number) {
       var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '(0[.]00a)';
       var num = numbro__WEBPACK_IMPORTED_MODULE_0___default()(number);
+
+      if (!format) {
+        return num.format();
+      }
+
       return num.format(format);
     }
   }]);
@@ -5933,7 +5955,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_Input__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/Input */ "./resources/js/Components/Input.js");
 /* harmony import */ var _Components_Label__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/Label */ "./resources/js/Components/Label.js");
 /* harmony import */ var _Components_SidePanel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Components/SidePanel */ "./resources/js/Components/SidePanel.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
 
 
 
@@ -5941,28 +5977,92 @@ __webpack_require__.r(__webpack_exports__);
 
 function Edit(_ref) {
   var transaction = _ref.transaction,
-      onClose = _ref.onClose;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Components_SidePanel__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      onClose = _ref.onClose,
+      onUpdate = _ref.onUpdate;
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)([]),
+      _useState2 = _slicedToArray(_useState, 2),
+      brands = _useState2[0],
+      setBrands = _useState2[1];
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(0),
+      _useState4 = _slicedToArray(_useState3, 2),
+      amount = _useState4[0],
+      setAmount = _useState4[1];
+
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(0),
+      _useState6 = _slicedToArray(_useState5, 2),
+      brand = _useState6[0],
+      setBrand = _useState6[1];
+
+  (0,react__WEBPACK_IMPORTED_MODULE_3__.useEffect)(function () {
+    Api.getBrands().then(function (_ref2) {
+      var data = _ref2.data;
+      setBrands(data.data.brands);
+    })["catch"](console.error);
+  }, []);
+  (0,react__WEBPACK_IMPORTED_MODULE_3__.useEffect)(function () {
+    if (!transaction) return;
+    setAmount(transaction.amount);
+    setBrand(transaction.brand.id);
+  }, [transaction]);
+
+  var update = function update() {
+    Api.updateTransaction({
+      id: transaction.id,
+      amount: amount,
+      brand: brand
+    }).then(function (_ref3) {
+      var data = _ref3.data;
+      onUpdate(data.data.updateTransaction);
+    })["catch"](console.error);
+  };
+
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_SidePanel__WEBPACK_IMPORTED_MODULE_2__["default"], {
     toggleOpen: !transaction ? false : true,
     onClose: onClose,
     title: "Edit Transaction",
-    children: transaction && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Components_Label__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    children: transaction && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Label__WEBPACK_IMPORTED_MODULE_1__["default"], {
           forInput: "amount",
           value: "Amount"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Components_Input__WEBPACK_IMPORTED_MODULE_0__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Input__WEBPACK_IMPORTED_MODULE_0__["default"], {
           type: "text",
           name: "amount",
-          value: transaction.amount,
-          className: "mt-1 block w-full"
+          value: amount,
+          className: "mt-1 block w-full",
+          handleChange: function handleChange(e) {
+            return setAmount(e.target.value);
+          }
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        className: "col-span-6 sm:col-span-3 mt-4",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("label", {
+          htmlFor: "brand",
+          className: "block text-sm font-medium text-gray-700",
+          children: "Brand"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("select", {
+          id: "brand",
+          name: "brand",
+          value: brand,
+          onChange: function onChange(e) {
+            return setBrand(e.target.value);
+          },
+          className: "mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+          children: brands.map(function (brand) {
+            return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("option", {
+              value: brand.id,
+              children: brand.name
+            }, brand.id);
+          })
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
         className: "flex items-center justify-end mt-4",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
-          onClick: onClose,
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+          onClick: update,
           className: "inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150",
-          children: "Save"
+          children: "Update"
         })
       })]
     })
@@ -5983,10 +6083,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Dashboard)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-react */ "./node_modules/@inertiajs/inertia-react/dist/index.js");
-/* harmony import */ var _Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Layouts/Authenticated */ "./resources/js/Layouts/Authenticated.js");
-/* harmony import */ var _Pages_Transaction_Edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Pages/Transaction/Edit */ "./resources/js/Pages/Transaction/Edit.js");
-/* harmony import */ var _heroicons_react_outline__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @heroicons/react/outline */ "./node_modules/@heroicons/react/outline/esm/index.js");
+/* harmony import */ var _heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @heroicons/react/outline */ "./node_modules/@heroicons/react/outline/esm/index.js");
+/* harmony import */ var _inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @inertiajs/inertia-react */ "./node_modules/@inertiajs/inertia-react/dist/index.js");
+/* harmony import */ var _Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Layouts/Authenticated */ "./resources/js/Layouts/Authenticated.js");
+/* harmony import */ var _Pages_Transaction_Edit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Pages/Transaction/Edit */ "./resources/js/Pages/Transaction/Edit.js");
 /* harmony import */ var _Components_LoadMore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/LoadMore */ "./resources/js/Components/LoadMore.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -6055,14 +6155,30 @@ function Dashboard(_ref) {
       setLoading(false);
     })["catch"](console.error);
   }, [currentPage]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_2__["default"], {
+
+  var updateTransaction = function updateTransaction(updatedTransaction) {
+    setTransactions(transactions.map(function (transaction) {
+      if (transaction.id === updatedTransaction.id) {
+        return updatedTransaction;
+      }
+
+      return transaction;
+    }));
+    document.getElementById('transaction-' + updatedTransaction.id).classList.add('updated');
+  };
+
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__["default"], {
     auth: auth,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_1__.Head, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_2__.Head, {
       title: "Transactions"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Pages_Transaction_Edit__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Pages_Transaction_Edit__WEBPACK_IMPORTED_MODULE_4__["default"], {
       transaction: editTransaction,
       onClose: function onClose() {
         return setEditTransaction(null);
+      },
+      onUpdate: function onUpdate(transaction) {
+        updateTransaction(transaction);
+        setEditTransaction(null);
       }
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
       className: "py-12",
@@ -6092,7 +6208,11 @@ function Dashboard(_ref) {
                       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
-                        children: "Category - Brand"
+                        children: "Category"
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("th", {
+                        scope: "col",
+                        className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        children: "Brand"
                       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
@@ -6111,15 +6231,19 @@ function Dashboard(_ref) {
                     children: transactions.map(function (transaction) {
                       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("tr", {
                         className: "loaded",
+                        id: 'transaction-' + transaction.id,
                         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: transaction.id
-                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
-                          className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
-                          children: Engine.formatNumber(transaction.amount)
                         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
-                          children: [transaction.category.name, " - ", transaction.brand.name]
+                          children: [AppCurrency, " ", Engine.formatNumber(transaction.amount, null)]
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
+                          className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
+                          children: transaction.category.name
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
+                          className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
+                          children: transaction.brand.name
                         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: transaction.category.type
@@ -6133,7 +6257,7 @@ function Dashboard(_ref) {
                             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
                               className: "sr-only",
                               children: "Edit"
-                            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_heroicons_react_outline__WEBPACK_IMPORTED_MODULE_4__.PencilAltIcon, {
+                            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__.PencilAltIcon, {
                               className: "h-5 w-5 text-gray-500",
                               "aria-hidden": "true"
                             })]

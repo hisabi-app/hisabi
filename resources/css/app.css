@@ -7,8 +7,18 @@
     animation: loaded 1s ease-in-out 1;
 }
 
+.updated {
+    animation: updated 1s ease-in-out 1;
+}
+
 @keyframes loaded {
     50% {
         background-color: #f6fbff;
+    }
+}
+
+@keyframes updated {
+    50% {
+        background-color: #f6fffa;
     }
 }

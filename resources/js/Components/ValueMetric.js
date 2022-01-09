@@ -2,7 +2,7 @@ import Card from "./Card";
 import LoadingView from "./LoadingView";
 
 function ValueMetric({ name, data }) {
-    if(! data) {
+    if(data == undefined || data == null) {
         return (
             <Card className="relative">
                 <LoadingView  />
@@ -19,7 +19,7 @@ function ValueMetric({ name, data }) {
                 </div>
 
                 <p className="flex items-center text-4xl mb-4">
-                    { Engine.formatNumber(data) }
+                    { AppCurrency } { Engine.formatNumber(data) }
                 </p>
             </div>
         </Card>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from '@/Pages/Transaction/Edit';
-import { PencilAltIcon } from '@heroicons/react/outline';
 import LoadMore from '@/Components/LoadMore';
 
 export default function Dashboard({auth}) {
@@ -25,11 +25,31 @@ export default function Dashboard({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
+    const updateTransaction = (updatedTransaction) => {
+        setTransactions(transactions.map(transaction => {
+            if(transaction.id === updatedTransaction.id) {
+                return updatedTransaction
+            }
+            
+            return transaction
+        }));
+
+        document.getElementById('transaction-' + updatedTransaction.id)
+            .classList
+            .add('updated');
+    }
+
     return (
         <Authenticated auth={auth}>
             <Head title="Transactions" />
 
-            <Edit transaction={editTransaction} onClose={() => setEditTransaction(null)} />
+            <Edit transaction={editTransaction} 
+                onClose={() => setEditTransaction(null)} 
+                onUpdate={transaction => {
+                    updateTransaction(transaction)
+                    setEditTransaction(null)
+                }}
+                />
         
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -47,7 +67,10 @@ export default function Dashboard({auth}) {
                                                     Amount
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Category - Brand
+                                                    Category
+                                                </th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Brand
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Type
@@ -59,10 +82,11 @@ export default function Dashboard({auth}) {
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
                                             {transactions.map((transaction) => (
-                                                <tr key={transaction.id} className='loaded'>
+                                                <tr key={transaction.id} className='loaded' id={'transaction-' + transaction.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{Engine.formatNumber(transaction.amount)}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.name} - {transaction.brand.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {Engine.formatNumber(transaction.amount, null)}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.brand.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.type}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button onClick={() => setEditTransaction(transaction)} type="button">
