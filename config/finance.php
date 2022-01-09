@@ -30,6 +30,6 @@ return [
             'graphql_query' => 'totalExpenses',
             'component' => 'value-metric',
             'width' => '1/2',
-        ]
+        ],
     ]
 ];
