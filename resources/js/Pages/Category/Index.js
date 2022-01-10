@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
 
-export default function Dashboard({auth}) {
+export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);

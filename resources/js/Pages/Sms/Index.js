@@ -1,55 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
+import { CogIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
-import Edit from '@/Pages/Transaction/Edit';
 import LoadMore from '@/Components/LoadMore';
 
-export default function Index({auth}) {
-    const [transactions, setTransactions] = useState([]);
+export default function Sms({auth}) {
+    const [sms, setSms] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [editTransaction, setEditTransaction] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getTransactions(currentPage)
+        Api.getSms(currentPage)
             .then(({data}) => {
-                setTransactions([...transactions, ...data.data.transactions.data])
-                setHasMorePages(data.data.transactions.paginatorInfo.hasMorePages)
+                setSms([...sms, ...data.data.sms.data])
+                setHasMorePages(data.data.sms.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
     }, [currentPage]);
 
-    const updateTransaction = (updatedTransaction) => {
-        setTransactions(transactions.map(transaction => {
-            if(transaction.id === updatedTransaction.id) {
-                return updatedTransaction
-            }
-            
-            return transaction
-        }));
-
-        document.getElementById('transaction-' + updatedTransaction.id)
-            .classList
-            .add('updated');
-    }
-
+    
     return (
         <Authenticated auth={auth}>
-            <Head title="Transactions" />
-
-            <Edit transaction={editTransaction} 
-                onClose={() => setEditTransaction(null)} 
-                onUpdate={transaction => {
-                    updateTransaction(transaction)
-                    setEditTransaction(null)
-                }}
-                />
+            <Head title="SMS Parser" />
         
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -64,16 +41,13 @@ export default function Index({auth}) {
                                                     Id
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Amount
+                                                    Body
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Category
+                                                    Meta
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Brand
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Type
+                                                    Processed
                                                 </th>
                                                 <th scope="col" className="relative py-3">
                                                     <span className="sr-only">Edit</span>
@@ -81,17 +55,17 @@ export default function Index({auth}) {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {transactions.map((transaction) => (
-                                                <tr key={transaction.id} className='loaded' id={'transaction-' + transaction.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {Engine.formatNumber(transaction.amount, null)}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.brand.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.type}</td>
+                                            {sms.map((item) => (
+                                                <tr key={item.id} className='loaded' id={'item-' + item.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.body.substr(0, 30)}...</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.meta}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transaction_id ? '✅' : '❌'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button onClick={() => setEditTransaction(transaction)} type="button">
+                                                        <button type="button">
                                                             <span className="sr-only">Edit</span>
-                                                            <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+
+                                                            <CogIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>
                                                 </tr>

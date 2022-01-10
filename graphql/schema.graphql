@@ -4,6 +4,8 @@ scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+scalar Json @scalar(class: "MLL\\GraphQLScalars\\JSON")
+
 type Category {
     id: ID!
     name: String!
@@ -29,6 +31,13 @@ type TransactionStatistics {
     category: Category
 }
 
+type Sms {
+    id: ID!
+    body: String!
+    transaction_id: Int
+    meta: Json
+}
+
 type Query {
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
@@ -37,6 +46,8 @@ type Query {
 
     allCategories: [Category!]! @all
     categories: [Category!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
+
+    sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: id direction: DESC)
 
     totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["expenses"])
     totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])

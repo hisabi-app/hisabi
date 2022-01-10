@@ -43,6 +43,12 @@ export default function Authenticated({ auth, children }) {
                                     Categories
                                 </NavLink>
                             </div>
+
+                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink href={route('sms')} active={route().current('sms')}>
+                                    SMS
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ml-6">
@@ -123,6 +129,10 @@ export default function Authenticated({ auth, children }) {
 
                         <ResponsiveNavLink href={route('categories')} active={route().current('categories')}>
                             Categories
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink href={route('sms')} active={route().current('sms')}>
+                            SMS
                         </ResponsiveNavLink>
                     </div>
 

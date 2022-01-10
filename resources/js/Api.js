@@ -23,6 +23,22 @@ export default class Api {
          }`});
     }
 
+    getSms(page) {
+        return axios.post('/graphql', {query: `query {
+            sms(page: ${page}) {
+                data {
+                    id
+                    body
+                    transaction_id
+                    meta
+                }
+                paginatorInfo {
+                    hasMorePages
+                }
+            }
+         }`});
+    }
+
     getBrands(page) {
         return axios.post('/graphql', {query: `query {
             brands(page: ${page}) {
