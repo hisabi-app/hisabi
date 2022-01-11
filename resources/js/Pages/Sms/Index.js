@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
 import Create from './Create';
+import Edit from './Edit';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -11,6 +12,7 @@ export default function Sms({auth}) {
     const [hasMorePages, setHasMorePages] = useState(true);
     const [loading, setLoading] = useState(false);
     const [showCreate, setShowCreate] = useState(false);
+    const [editItem, setEditItem] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -48,6 +50,13 @@ export default function Sms({auth}) {
                 }}
                 onClose={() => setShowCreate(false)} />
         
+            <Edit sms={editItem} 
+                onClose={() => setEditItem(null)} 
+                onUpdate={item => {
+                    setEditItem(null)
+                }}
+                />
+
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="flex flex-col">
@@ -78,7 +87,7 @@ export default function Sms({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{Engine.cutString(item.body, 50)}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transaction_id ? '✅' : '❌'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        {! item.transaction_id && <button type="button">
+                                                        {! item.transaction_id && <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
