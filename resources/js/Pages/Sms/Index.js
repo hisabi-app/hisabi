@@ -35,7 +35,7 @@ export default function Sms({auth}) {
                 </h2>
 
                 <button onClick={() => setShowCreate(true)} className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
-                    Parse New
+                    Parse SMS
                 </button>
             </div>
         }>
@@ -64,7 +64,7 @@ export default function Sms({auth}) {
                                                     Body
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Processed
+                                                    Valid
                                                 </th>
                                                 <th scope="col" className="relative py-3">
                                                     <span className="sr-only">Edit</span>
