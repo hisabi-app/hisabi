@@ -75,13 +75,13 @@ export default class Api {
                 data {
                     id
                     amount
-                    category {
-                        name
-                        type
-                    }
                     brand {
                         id
                         name
+                        category {
+                            name
+                            type
+                        }
                     }
                 }
                 paginatorInfo {
@@ -96,13 +96,13 @@ export default class Api {
             updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand}) {
                 id
                 amount
-                category {
-                    name
-                    type
-                }
                 brand {
                     id
                     name
+                    category {
+                        name
+                        type
+                    }
                 }
             }
          }`});
@@ -129,5 +129,24 @@ export default class Api {
                 type
             }
          }`});
+    }
+
+    createSms({sms}) {
+        return axios.post('/graphql', {query: `mutation {
+            createSms(body: """${sms}""") {
+                id
+                body
+                transaction_id
+                meta
+            }
+         }`});
+    }
+
+    getSmsTemplates() {
+        return axios.post('/graphql', {query: `query { 
+            smsTemplates { 
+                body
+            } 
+        }`});
     }
 }

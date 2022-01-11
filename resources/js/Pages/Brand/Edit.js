@@ -20,7 +20,9 @@ export default function Edit({brand, onClose, onUpdate}) {
         if(! brand) return;
 
         setName(brand.name)
-        setCategory(brand.category.id)
+        if(brand.category) {
+            setCategory(brand.category.id)
+        }
     }, [brand])
 
     const update = () => {
@@ -34,6 +36,8 @@ export default function Edit({brand, onClose, onUpdate}) {
         })
         .catch(console.error);
     }
+
+    let isReady = name != '' && category != 0;
     
     return (
         <SidePanel toggleOpen={! brand ? false : true} 
@@ -65,14 +69,23 @@ export default function Edit({brand, onClose, onUpdate}) {
                         onChange={(e) => setCategory(e.target.value)}
                         className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
+                          <option value={0}>Select one</option>
                         {categories.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}
                       </select>
                     </div>
 
                     <div className="flex items-center justify-end mt-4">
+                        {isReady && 
                         <button onClick={update} className="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
                             Update
                         </button>
+                        }
+                        {!isReady && 
+                        <button className="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150 opacity-25" disabled>
+                            Update
+                        </button>
+                        }
+                        
                     </div>
                 </div>
             }

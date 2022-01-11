@@ -74,10 +74,10 @@ export default function Index({auth}) {
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
                                             {brands.map((item) => (
-                                                <tr key={item.id} className='loaded' id={'item-' + item.id}>
+                                                <tr key={item.id} className={`loaded ${item.category ? '' : 'bg-red-100'}`} id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category ? item.category.name : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>

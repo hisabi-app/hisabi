@@ -15,13 +15,12 @@ type Category {
 type Brand {
     id: ID!
     name: String!
-    category: Category! @belongsTo
+    category: Category @belongsTo
 }
 
 type Transaction {
     id: ID!
     amount: Float!
-    category: Category! @belongsTo
     brand: Brand! @belongsTo
 }
 
@@ -38,6 +37,11 @@ type Sms {
     meta: Json
 }
 
+type SmsTemplate {
+    body: String!
+    type: String!
+}
+
 type Query {
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
@@ -48,6 +52,7 @@ type Query {
     categories: [Category!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: id direction: DESC)
+    smsTemplates: [SmsTemplate!]!
 
     totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["expenses"])
     totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])
@@ -58,4 +63,5 @@ type Mutation {
   updateTransaction(id: ID! amount: Float! brand_id: Int!): Transaction
   updateBrand(id: ID! name: String! category_id: Int!): Brand @update
   updateCategory(id: ID! name: String! type: String!): Category @update
+  createSms(body: String!): [Sms]
 }

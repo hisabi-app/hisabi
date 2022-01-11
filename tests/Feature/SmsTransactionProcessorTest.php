@@ -98,4 +98,15 @@ class SmsTransactionProcessorTest extends TestCase
 
         $this->assertEquals(2, Sms::count());
     }
+
+    /** @test */
+    public function it_returns_processed_sms_models()
+    {
+        $sms = "some sms body here\nanother sms here";
+
+        $sut = app(SmsTransactionProcessor::class);
+        $result = $sut->process($sms);
+
+        $this->assertEquals(2, $result->count());
+    }
 }

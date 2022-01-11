@@ -28,14 +28,14 @@ class Transaction extends Model
 
     public function scopeExpenses($query) 
     {
-        return $query->whereHas('category', function ($query) {
+        return $query->whereHas('brand.category', function ($query) {
             return $query->where('type', Category::EXPENSES);
         });
     }
 
     public function scopeIncome($query) 
     {
-        return $query->whereHas('category', function ($query) {
+        return $query->whereHas('brand.category', function ($query) {
             return $query->where('type', Category::INCOME);
         });
     }

@@ -65,7 +65,10 @@ export default function Edit({transaction, onClose, onUpdate}) {
                         onChange={(e) => setBrand(e.target.value)}
                         className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
-                        {brands.map(brand => <option value={brand.id} key={brand.id}>{brand.name} ({brand.category.name})</option>)}
+                        {brands.map(brand => <option value={brand.id} key={brand.id}>
+                            {brand.name} 
+                            {brand.category ? "("+brand.category.name+")" : ''}
+                            </option>)}
                       </select>
                     </div>
 

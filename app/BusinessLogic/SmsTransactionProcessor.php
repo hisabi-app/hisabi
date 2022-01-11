@@ -21,17 +21,23 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
 
     public function process($smsString)
     {
+        $result = collect();
+
         foreach(explode("\n", $smsString) as $sms) {
             $template = $this->smsTemplateDetector->detect($sms);
-            $sms = $this->smsParser->parse($sms, $template);
+            $smsModel = $this->smsParser->parse($sms, $template);
 
             if($template) {
-                $transaction = $this->createTransactionFromSms($sms);
-                $sms['transaction_id'] = $transaction->id;
+                $transaction = $this->createTransactionFromSms($smsModel);
+                $smsModel['transaction_id'] = $transaction->id;
             }
 
-            $sms->save();
+            $smsModel->save();
+
+            $result->push($smsModel);
         }
+
+        return $result;
     }
 
     protected function createTransactionFromSms($sms)

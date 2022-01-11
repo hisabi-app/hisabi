@@ -24,4 +24,12 @@ export default class Engine {
             rowItem.classList.add('updated'); 
         }, 50);
     }
+
+    cutString(stringValue, upTo) {
+        if(stringValue.length > upTo) {
+            return stringValue.substr(0, upTo) + '...'
+        }
+
+        return stringValue
+    }
 }
