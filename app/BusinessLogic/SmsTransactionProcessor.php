@@ -55,7 +55,6 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
 
         return Transaction::create([
             'amount' => round($amount),
-            'category_id' => $brand->category_id,
             'brand_id' => $brand->id,
         ]);
     }

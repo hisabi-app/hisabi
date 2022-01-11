@@ -16,11 +16,6 @@ class Transaction extends Model
         'meta' => 'array',
     ];
     
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
     public function brand()
     {
         return $this->belongsTo(Brand::class);
@@ -38,15 +33,6 @@ class Transaction extends Model
         return $query->whereHas('brand.category', function ($query) {
             return $query->where('type', Category::INCOME);
         });
-    }
-
-    public function statistics($root, array $args)
-    {
-        return Transaction::query()
-            ->income()
-            ->with('category')
-            ->select(DB::raw("category_id, SUM(amount) as total"))
-            ->groupBy("category_id");
     }
 
     public function statistics2() {

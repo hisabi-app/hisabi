@@ -40,6 +40,7 @@ class SmsTransactionProcessorTest extends TestCase
         $this->assertEquals(Sms::EXPENSES, $smsFromDB->type);
         $this->assertNotNull($smsFromDB->transaction);
         $this->assertNotNull($smsFromDB->transaction->brand);
+        $this->assertNull($smsFromDB->transaction->brand->category);
         $this->assertEquals("ENOC", $smsFromDB->transaction->brand->name);
     }
 

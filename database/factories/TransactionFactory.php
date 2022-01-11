@@ -17,7 +17,6 @@ class TransactionFactory extends Factory
     {
         return [
             'amount' => $this->faker->numberBetween(),
-            'category_id' => Category::factory(),
             'brand_id' => Brand::factory(),
         ];
     }

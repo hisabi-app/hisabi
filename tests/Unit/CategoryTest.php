@@ -49,14 +49,4 @@ class CategoryTest extends TestCase
 
         $this->assertCount(3, $sut->brands);
     }
-
-    /** @test */
-    public function category_can_have_transactions()
-    {
-        $sut = Category::factory()
-                    ->has(Transaction::factory()->count(3))
-                    ->create();
-
-        $this->assertCount(3, $sut->transactions);
-    }
 }

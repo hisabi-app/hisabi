@@ -19,16 +19,6 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    public function it_belongs_to_category()
-    {
-        $sut = Transaction::factory()
-                    ->forCategory(['name' => 'categoryTest'])
-                    ->create();
-
-        $this->assertEquals('categoryTest', $sut->category->name);
-    }
-
-    /** @test */
     public function it_belongs_to_brand()
     {
         $sut = Transaction::factory()
