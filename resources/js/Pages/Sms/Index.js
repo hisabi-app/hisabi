@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CogIcon } from '@heroicons/react/outline';
+import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
@@ -80,8 +80,8 @@ export default function Sms({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         {! item.transaction_id && <button type="button">
                                                             <span className="sr-only">Edit</span>
-
-                                                            <CogIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                                                            
+                                                            <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>}
                                                     </td>
                                                 </tr>
