@@ -39,20 +39,11 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
     {
         $brandFromSms = $sms->meta['data']['brand'] ?? '';
 
-        if(! $brandFromSms) {
-            return;
-        }
+        if(! $brandFromSms) { return; }
 
-        $matchedBrand = null;
-        foreach($this->knownBrands as $knownBrand) {
-            if(str_contains(strtolower($brandFromSms), strtolower($knownBrand->name))) {
-                $matchedBrand = $knownBrand;
-            }
-        }
+        $matchedBrand = $this->detectBrand($brandFromSms);
 
-        if(! $matchedBrand) {
-            return;
-        }
+        if(! $matchedBrand) { return; }
         
         $amount = (float) filter_var($sms->meta['data']['amount'] ?? 0, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
@@ -61,5 +52,18 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
             'category_id' => $matchedBrand->category_id,
             'brand_id' => $matchedBrand->id,
         ]);
+    }
+
+    protected function detectBrand($brandFromSms) {
+        // TODO: find better solution for detecting brands maybe using SQL query?
+        $matchedBrand = null;
+        foreach($this->knownBrands as $knownBrand) {
+            if(str_contains(strtolower($brandFromSms), strtolower($knownBrand->name))) {
+                $matchedBrand = $knownBrand;
+                break;
+            }
+        }
+
+        return $matchedBrand;
     }
 }

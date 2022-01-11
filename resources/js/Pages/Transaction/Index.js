@@ -10,7 +10,7 @@ export default function Index({auth}) {
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [editTransaction, setEditTransaction] = useState(null);
+    const [editItem, setEditItem] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -34,7 +34,7 @@ export default function Index({auth}) {
             return transaction
         }));
 
-        document.getElementById('transaction-' + updatedTransaction.id)
+        document.getElementById('item-' + updatedTransaction.id)
             .classList
             .add('updated');
     }
@@ -43,11 +43,11 @@ export default function Index({auth}) {
         <Authenticated auth={auth}>
             <Head title="Transactions" />
 
-            <Edit transaction={editTransaction} 
-                onClose={() => setEditTransaction(null)} 
+            <Edit transaction={editItem} 
+                onClose={() => setEditItem(null)} 
                 onUpdate={transaction => {
                     updateTransaction(transaction)
-                    setEditTransaction(null)
+                    setEditItem(null)
                 }}
                 />
         
@@ -81,15 +81,15 @@ export default function Index({auth}) {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {transactions.map((transaction) => (
-                                                <tr key={transaction.id} className='loaded' id={'transaction-' + transaction.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {Engine.formatNumber(transaction.amount, null)}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.brand.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{transaction.category.type}</td>
+                                            {transactions.map((item) => (
+                                                <tr key={item.id} className='loaded' id={'item-' + item.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {Engine.formatNumber(item.amount, null)}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category.type}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button onClick={() => setEditTransaction(transaction)} type="button">
+                                                        <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>

@@ -3,7 +3,10 @@ export default class Api {
         return axios.post('/graphql', {query: `query { 
             allBrands { 
                 id 
-                name 
+                name
+                category {
+                    name
+                }
             } 
         }`});
     }
@@ -91,6 +94,17 @@ export default class Api {
                     id
                     name
                 }
+            }
+         }`});
+    }
+
+    updateCategory({id, name, type}) {
+        console.log(name)
+        return axios.post('/graphql', {query: `mutation {
+            updateCategory(id: ${id} name: "${name}" type: "${type}") {
+                id
+                name
+                type
             }
          }`});
     }

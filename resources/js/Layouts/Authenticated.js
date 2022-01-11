@@ -46,7 +46,7 @@ export default function Authenticated({ auth, children }) {
 
                             <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink href={route('sms')} active={route().current('sms')}>
-                                    SMS
+                                    SMS Parser
                                 </NavLink>
                             </div>
                         </div>
@@ -132,7 +132,7 @@ export default function Authenticated({ auth, children }) {
                         </ResponsiveNavLink>
 
                         <ResponsiveNavLink href={route('sms')} active={route().current('sms')}>
-                            SMS
+                            SMS Parser
                         </ResponsiveNavLink>
                     </div>
 

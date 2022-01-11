@@ -56,4 +56,5 @@ type Query {
 
 type Mutation {
   updateTransaction(id: ID! amount: Float! brand: Int!): Transaction
+  updateCategory(id: ID! name: String! type: String!): Category @update
 }

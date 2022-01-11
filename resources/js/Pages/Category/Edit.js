@@ -3,69 +3,61 @@ import Label from "@/Components/Label";
 import SidePanel from '@/Components/SidePanel';
 import { useEffect, useState } from "react";
 
-export default function Edit({transaction, onClose, onUpdate}) {
-    const [brands, setBrands] = useState([])
-    const [amount, setAmount] = useState(0)
-    const [brand, setBrand] = useState(0)
+export default function Edit({category, onClose, onUpdate}) {
+    const [name, setName] = useState('')
+    const [type, setType] = useState('')
 
     useEffect(() => {
-        Api.getAllBrands()
-            .then(({data}) => {
-                setBrands(data.data.allBrands)
-            })
-            .catch(console.error);
-    }, []);
+        if(! category) return;
 
-    useEffect(() => {
-        if(! transaction) return;
-
-        setAmount(transaction.amount)
-        setBrand(transaction.brand.id)
-    }, [transaction])
+        setName(category.name)
+        setType(category.type)
+    }, [category])
 
     const update = () => {
-        Api.updateTransaction({
-            id: transaction.id,
-            amount,
-            brand
+        Api.updateCategory({
+            id: category.id,
+            name,
+            type
         })
         .then(({data}) => {
-            onUpdate(data.data.updateTransaction)
+            onUpdate(data.data.updateCategory)
         })
         .catch(console.error);
     }
     
     return (
-        <SidePanel toggleOpen={! transaction ? false : true} 
+        <SidePanel toggleOpen={! category ? false : true} 
                     onClose={onClose} 
-                    title={"Edit Transaction"}>
+                    title={"Edit Category"}>
             {
-                transaction &&
+                category &&
                 <div>
                     <div>
-                        <Label forInput="amount" value="Amount" />
+                        <Label forInput="name" value="Name" />
 
                         <Input
                             type="text"
-                            name="amount"
-                            value={amount}
+                            name="name"
+                            value={name}
                             className="mt-1 block w-full"
-                            handleChange={(e) => setAmount(e.target.value)}
+                            handleChange={(e) => setName(e.target.value)}
                         />
                     </div>
 
                     <div className="col-span-6 sm:col-span-3 mt-4">
-                      <label htmlFor="brand" className="block text-sm font-medium text-gray-700">
-                        Brand
+                      <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+                        Type
                       </label>
                       <select
-                        id="brand"
-                        name="brand"
-                        value={brand}
-                        onChange={(e) => setBrand(e.target.value)}
+                        id="type"
+                        name="type"
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
                         className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
-                        {brands.map(brand => <option value={brand.id} key={brand.id}>{brand.name} ({brand.category.name})</option>)}
+                        <option value="INCOME">INCOME</option>
+                        <option value="EXPENSES">EXPENSES</option>
                       </select>
                     </div>
 

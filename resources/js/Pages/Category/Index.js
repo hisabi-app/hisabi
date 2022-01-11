@@ -3,12 +3,14 @@ import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
+import Edit from './Edit';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [editCategory, setEditCategory] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -23,10 +25,31 @@ export default function Index({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
+    const updateCategory = (updatedCategory) => {
+        setCategories(categories.map(category => {
+            if(category.id === updatedCategory.id) {
+                return updatedCategory
+            }
+            
+            return category
+        }));
+
+        document.getElementById('item-' + updatedCategory.id)
+            .classList
+            .add('updated');
+    }
     
     return (
         <Authenticated auth={auth}>
             <Head title="Categories" />
+
+            <Edit category={editCategory} 
+                onClose={() => setEditCategory(null)} 
+                onUpdate={category => {
+                    updateCategory(category)
+                    setEditCategory(null)
+                }}
+                />
         
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -58,7 +81,7 @@ export default function Index({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.type}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button type="button">
+                                                        <button onClick={() => setEditCategory(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
