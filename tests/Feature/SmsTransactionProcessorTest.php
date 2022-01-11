@@ -13,7 +13,7 @@ class SmsTransactionProcessorTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function it_stores_processed_sms_with_unkown_template()
+    public function not_valid_tempalte_should_create_sms_with_unknown_type_without_transaction()
     {
         $sms = "some sms body here";
 
@@ -28,7 +28,7 @@ class SmsTransactionProcessorTest extends TestCase
     }
 
     /** @test */
-    public function it_stores_processed_sms_with_known_template()
+    public function valid_template_with_unknown_brand_should_create_sms_with_transaction_with_new_brand_with_no_category()
     {
         $sms = "Purchase of AED 106.00 with Credit Card at ENOC,";
 
@@ -38,20 +38,13 @@ class SmsTransactionProcessorTest extends TestCase
         $smsFromDB = Sms::first();
         $this->assertEquals($sms, $smsFromDB->body);
         $this->assertEquals(Sms::EXPENSES, $smsFromDB->type);
-        $this->assertNull($smsFromDB->transaction);
-        $this->assertEquals([
-            'body' => 'Purchase of AED {amount} with {card} at {brand},',
-            'type' => Sms::EXPENSES,
-            'data' => [
-                'amount' => '106.00',
-                'card' => 'Credit Card',
-                'brand' => 'ENOC'
-            ]
-        ], $smsFromDB->meta);
+        $this->assertNotNull($smsFromDB->transaction);
+        $this->assertNotNull($smsFromDB->transaction->brand);
+        $this->assertEquals("ENOC", $smsFromDB->transaction->brand->name);
     }
 
     /** @test */
-    public function it_stores_processed_sms_with_known_purchase_template_and_link_with_transaction_if_brand_is_detected()
+    public function it_stores_processed_sms_with_known_purchase_template_and_link_with_transaction_if_brand_is_found()
     {
         $knownBrand = Brand::factory()->create(['name' => 'ENOC']);
 
@@ -66,7 +59,7 @@ class SmsTransactionProcessorTest extends TestCase
     }
 
     /** @test */
-    public function it_stores_processed_sms_with_known_payment_template_and_link_with_transaction_if_brand_is_detected()
+    public function it_stores_processed_sms_with_known_payment_template_and_link_with_transaction_if_brand_is_found()
     {
         $knownBrand = Brand::factory()->create(['name' => 'someBrand']);
 

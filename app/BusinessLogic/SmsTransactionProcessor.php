@@ -12,13 +12,11 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
 {
     protected SmsTemplateDetector $smsTemplateDetector;
     protected SmsParser $smsParser;
-    protected $knownBrands;
 
     public function __construct(SmsTemplateDetector $smsTemplateDetector, SmsParser $smsParser)
     {
         $this->smsTemplateDetector = $smsTemplateDetector;
         $this->smsParser = $smsParser;
-        $this->knownBrands = Brand::get();
     }
 
     public function process($smsString)
@@ -27,7 +25,8 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
             $template = $this->smsTemplateDetector->detect($sms);
             $sms = $this->smsParser->parse($sms, $template);
 
-            if($transaction = $this->createTransactionFromSms($sms)) {
+            if($template) {
+                $transaction = $this->createTransactionFromSms($sms);
                 $sms['transaction_id'] = $transaction->id;
             }
 
@@ -37,33 +36,32 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
 
     protected function createTransactionFromSms($sms)
     {
-        $brandFromSms = $sms->meta['data']['brand'] ?? '';
-
-        if(! $brandFromSms) { return; }
-
-        $matchedBrand = $this->detectBrand($brandFromSms);
-
-        if(! $matchedBrand) { return; }
+        $brandFromSms = $sms->meta['data']['brand'] ?? null;
+        $amountFromSms = $sms->meta['data']['amount'] ?? null;
         
-        $amount = (float) filter_var($sms->meta['data']['amount'] ?? 0, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        if(! $brandFromSms || ! $amountFromSms) {
+            return;
+        }
+
+        $brand = $this->findOrCreateNewBrand($brandFromSms);
+        
+        $amount = (float) filter_var($amountFromSms, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
         return Transaction::create([
             'amount' => round($amount),
-            'category_id' => $matchedBrand->category_id,
-            'brand_id' => $matchedBrand->id,
+            'category_id' => $brand->category_id,
+            'brand_id' => $brand->id,
         ]);
     }
 
-    protected function detectBrand($brandFromSms) {
+    protected function findOrCreateNewBrand($brandFromSms) {
         // TODO: find better solution for detecting brands maybe using SQL query?
-        $matchedBrand = null;
-        foreach($this->knownBrands as $knownBrand) {
+        foreach(Brand::get() as $knownBrand) {
             if(str_contains(strtolower($brandFromSms), strtolower($knownBrand->name))) {
-                $matchedBrand = $knownBrand;
-                break;
+                return $knownBrand;
             }
         }
 
-        return $matchedBrand;
+        return Brand::create(['name' => $brandFromSms]);
     }
 }
