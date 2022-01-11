@@ -3,12 +3,14 @@ import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
+import Edit from './Edit';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [editItem, setEditItem] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -23,10 +25,29 @@ export default function Index({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
-    
+    const updateBrand = (updatedBrand) => {
+        setBrands(brands.map(brand => {
+            if(brand.id === updatedBrand.id) {
+                return updatedBrand
+            }
+            
+            return brand
+        }));
+
+        Engine.animateRowItem('item-' + updatedBrand.id)
+    }
+
     return (
         <Authenticated auth={auth}>
             <Head title="Brands" />
+
+            <Edit brand={editItem} 
+                onClose={() => setEditItem(null)} 
+                onUpdate={item => {
+                    updateBrand(item)
+                    setEditItem(null)
+                }}
+            />
         
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -58,7 +79,7 @@ export default function Index({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button type="button">
+                                                        <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>

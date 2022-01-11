@@ -15,7 +15,7 @@ class UpdateTransaction
     {
         $id = $args['id'];
         $amount = $args['amount'];
-        $brand = $args['brand'];
+        $brand = $args['brand_id'];
 
         $transaction = Transaction::findOrFail($id);
 

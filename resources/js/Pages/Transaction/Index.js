@@ -34,9 +34,7 @@ export default function Index({auth}) {
             return transaction
         }));
 
-        document.getElementById('item-' + updatedTransaction.id)
-            .classList
-            .add('updated');
+        Engine.animateRowItem('item-' + updatedTransaction.id)
     }
 
     return (

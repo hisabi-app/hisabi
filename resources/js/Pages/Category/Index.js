@@ -34,9 +34,7 @@ export default function Index({auth}) {
             return category
         }));
 
-        document.getElementById('item-' + updatedCategory.id)
-            .classList
-            .add('updated');
+        Engine.animateRowItem('item-' + updatedCategory.id);
     }
     
     return (

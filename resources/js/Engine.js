@@ -12,4 +12,16 @@ export default class Engine {
     
         return num.format(format)
     }
+
+    animateRowItem(id) {
+        let rowItem = document.getElementById(id);
+
+        if(! rowItem) return;
+        
+        rowItem.classList.remove('updated');
+        
+        setTimeout(() => {
+            rowItem.classList.add('updated'); 
+        }, 50);
+    }
 }

@@ -11,6 +11,15 @@ export default class Api {
         }`});
     }
 
+    getAllCategories() {
+        return axios.post('/graphql', {query: `query { 
+            allCategories { 
+                id 
+                name
+            } 
+        }`});
+    }
+
     getCategories(page) {
         return axios.post('/graphql', {query: `query {
             categories(page: ${page}) {
@@ -49,6 +58,7 @@ export default class Api {
                     id
                     name
                     category {
+                        id
                         name
                     }
                 }
@@ -83,7 +93,7 @@ export default class Api {
 
     updateTransaction({id, amount, brand}) {
         return axios.post('/graphql', {query: `mutation {
-            updateTransaction(id: ${id} amount: ${amount} brand: ${brand}) {
+            updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand}) {
                 id
                 amount
                 category {
@@ -98,8 +108,20 @@ export default class Api {
          }`});
     }
 
+    updateBrand({id, name, category}) {
+        return axios.post('/graphql', {query: `mutation {
+            updateBrand(id: ${id} name: "${name}" category_id: ${category}) {
+                id
+                name
+                category {
+                    id
+                    name
+                }
+            }
+         }`});
+    }
+
     updateCategory({id, name, type}) {
-        console.log(name)
         return axios.post('/graphql', {query: `mutation {
             updateCategory(id: ${id} name: "${name}" type: "${type}") {
                 id
