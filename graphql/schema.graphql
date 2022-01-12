@@ -37,11 +37,6 @@ type Sms {
     meta: Json
 }
 
-type SmsTemplate {
-    body: String!
-    type: String!
-}
-
 type Query {
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
@@ -52,7 +47,6 @@ type Query {
     categories: [Category!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: transaction_id direction: ASC)
-    smsTemplates: [SmsTemplate!]!
 
     totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["expenses"])
     totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])

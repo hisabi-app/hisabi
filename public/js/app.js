@@ -4644,13 +4644,6 @@ var Api = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "getSmsTemplates",
-    value: function getSmsTemplates() {
-      return axios.post('/graphql', {
-        query: "query { \n            smsTemplates { \n                body\n            } \n        }"
-      });
-    }
-  }, {
     key: "getSms",
     value: function getSms(page) {
       return axios.post('/graphql', {
@@ -6777,31 +6770,17 @@ function Create(_ref) {
       sms = _useState2[0],
       setSms = _useState2[1];
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)([]),
-      _useState4 = _slicedToArray(_useState3, 2),
-      templates = _useState4[0],
-      setTemplates = _useState4[1];
-
-  (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(function () {
-    Api.getSmsTemplates().then(function (_ref2) {
-      var data = _ref2.data;
-      setTemplates(data.data.smsTemplates);
-    })["catch"](console.error);
-  }, []);
-
   var create = function create() {
     Api.createSms({
       sms: sms
-    }).then(function (_ref3) {
-      var data = _ref3.data;
+    }).then(function (_ref2) {
+      var data = _ref2.data;
       onCreate(data.data.createSms);
       setSms('');
     })["catch"](console.error);
   };
 
-  var templatesString = "Available templates\n" + templates.map(function (template) {
-    return template.body;
-  }).join('\n');
+  var templatesString = "Available templates\n" + AppSmsTemplates;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Components_SidePanel__WEBPACK_IMPORTED_MODULE_1__["default"], {
     toggleOpen: showCreate,
     onClose: onClose,

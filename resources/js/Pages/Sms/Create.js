@@ -1,18 +1,9 @@
 import Label from "@/Components/Label";
 import SidePanel from '@/Components/SidePanel';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Create({showCreate, onClose, onCreate}) {
     const [sms, setSms] = useState('')
-    const [templates, setTemplates] = useState([])
-
-    useEffect(() => {
-        Api.getSmsTemplates()
-            .then(({data}) => {
-                setTemplates(data.data.smsTemplates)
-            })
-            .catch(console.error)
-    }, [])
 
     const create = () => {
         Api.createSms({
@@ -25,7 +16,7 @@ export default function Create({showCreate, onClose, onCreate}) {
         .catch(console.error);
     }
     
-    let templatesString = "Available templates\n" + templates.map(template => template.body).join('\n');
+    let templatesString = "Available templates\n" + AppSmsTemplates;
 
     return (
         <SidePanel toggleOpen={showCreate} 

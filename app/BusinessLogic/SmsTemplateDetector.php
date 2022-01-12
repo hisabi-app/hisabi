@@ -10,18 +10,17 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
     public function detect($sms)
     {
         foreach(config('finance.sms_templates') as $template) {
-            $templateBody = $template['body'];
+            $templateCopy = $template;
 
-            $templateBody = str_replace("{amount}", "(.*?)", $templateBody);
-            $templateBody = str_replace("{brand}", "(.*?)", $templateBody);
-            $templateBody = str_replace("{card}", "(.*?)", $templateBody);
+            $templateCopy = str_replace("{amount}", "(.*?)", $templateCopy);
+            $templateCopy = str_replace("{brand}", "(.*?)", $templateCopy);
+            $templateCopy = str_replace("{card}", "(.*?)", $templateCopy);
             
-            if(preg_match("/{$templateBody}/", $sms, $matchedParts)) {
-                $partsWithValues = $this->getPartsWithValues($matchedParts, $template['body']);
+            if(preg_match("/{$templateCopy}/", $sms, $matchedParts)) {
+                $partsWithValues = $this->getPartsWithValues($matchedParts, $template);
                 
                 return SmsTemplate::make(
-                    $template['body'],
-                    $template['type'],
+                    $template,
                     $partsWithValues,
                 );
             }

@@ -11,37 +11,11 @@ class SmsTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function class_has_expenses_constant()
-    {
-        $this->assertEquals(Sms::EXPENSES, "EXPENSES");
-    }
-
-    /** @test */
-    public function class_has_income_constant()
-    {
-        $this->assertEquals(Sms::INCOME, "INCOME");
-    }
-
-    /** @test */
-    public function class_has_unknown_constant()
-    {
-        $this->assertEquals(Sms::UNKNOWN, "UNKNOWN");
-    }
-
-    /** @test */
     public function it_has_body()
     {
         $sut = Sms::factory()->make(['name' => 'someName']);
 
         $this->assertEquals("someName", $sut->name);
-    }
-
-    /** @test */
-    public function it_has_type()
-    {
-        $sut = Sms::factory()->make(['type' => Sms::EXPENSES]);
-
-        $this->assertEquals(Sms::EXPENSES, $sut->type);
     }
 
     /** @test */

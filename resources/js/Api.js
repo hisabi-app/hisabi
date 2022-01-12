@@ -115,14 +115,6 @@ export default class Api {
          }`});
     }
 
-    getSmsTemplates() {
-        return axios.post('/graphql', {query: `query { 
-            smsTemplates { 
-                body
-            } 
-        }`});
-    }
-
     getSms(page) {
         return axios.post('/graphql', {query: `query {
             sms(page: ${page}) {

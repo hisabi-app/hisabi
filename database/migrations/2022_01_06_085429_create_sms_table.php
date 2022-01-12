@@ -16,7 +16,6 @@ class CreateSmsTable extends Migration
         Schema::create('sms', function (Blueprint $table) {
             $table->id();
             $table->text('body');
-            $table->string('type');
             $table->unsignedBigInteger('transaction_id')->nullable();
             $table->json('meta')->nullable();
             $table->timestamps();

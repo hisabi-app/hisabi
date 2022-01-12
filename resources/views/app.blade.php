@@ -21,6 +21,7 @@
         @inertia
         <script>
             window.AppCurrency = "{{ config('finance.currency') }}";
+            window.AppSmsTemplates = "{{ implode('\n', config('finance.sms_templates')) }}";
         </script>
     </body>
 </html>

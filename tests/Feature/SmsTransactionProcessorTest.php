@@ -13,7 +13,7 @@ class SmsTransactionProcessorTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function not_valid_tempalte_should_create_sms_with_unknown_type_without_transaction()
+    public function not_valid_tempalte_should_create_sms_without_transaction()
     {
         $sms = "some sms body here";
 
@@ -22,7 +22,6 @@ class SmsTransactionProcessorTest extends TestCase
 
         $smsFromDB = Sms::first();
         $this->assertEquals($sms, $smsFromDB->body);
-        $this->assertEquals(Sms::UNKNOWN, $smsFromDB->type);
         $this->assertNull($smsFromDB->transaction);
         $this->assertEmpty($smsFromDB->meta);
     }
@@ -37,7 +36,6 @@ class SmsTransactionProcessorTest extends TestCase
 
         $smsFromDB = Sms::first();
         $this->assertEquals($sms, $smsFromDB->body);
-        $this->assertEquals(Sms::EXPENSES, $smsFromDB->type);
         $this->assertNotNull($smsFromDB->transaction);
         $this->assertNotNull($smsFromDB->transaction->brand);
         $this->assertNull($smsFromDB->transaction->brand->category);
@@ -112,9 +110,9 @@ class SmsTransactionProcessorTest extends TestCase
     }
 
     /** @test */
-    public function it_process_passed_sms_model_and_update_meta_and_type()
+    public function it_process_passed_sms_model_and_update_meta()
     {
-        $smsModel = Sms::create(['body' => 'Purchase of AED 106.00 with Credit Card at ENOC,', 'meta' => [], 'type' => 'UNKNOWN']);
+        $smsModel = Sms::create(['body' => 'Purchase of AED 106.00 with Credit Card at ENOC,', 'meta' => []]);
 
         $sut = app(SmsTransactionProcessor::class);
         $result = $sut->process($smsModel);

@@ -9,10 +9,6 @@ class Sms extends Model
 {
     use HasFactory;
     
-    const INCOME = "INCOME";
-    const EXPENSES = "EXPENSES";
-    const UNKNOWN = "UNKNOWN";
-
     protected $guarded = [];
 
     protected $casts = [
