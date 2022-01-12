@@ -15,4 +15,16 @@ class Brand extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public static function findOrCreateNew($name)
+    {
+        // TODO: find better solution for detecting brands maybe using SQL query?
+        foreach(static::get() as $knownBrand) {
+            if(str_contains(strtolower($name), strtolower($knownBrand->name))) {
+                return $knownBrand;
+            }
+        }
+
+        return static::create(['name' => $name]);
+    }
 }

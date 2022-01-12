@@ -110,4 +110,16 @@ class SmsTransactionProcessorTest extends TestCase
 
         $this->assertEquals(2, $result->count());
     }
+
+    /** @test */
+    public function it_process_passed_sms_model_and_update_meta_and_type()
+    {
+        $smsModel = Sms::create(['body' => 'Purchase of AED 106.00 with Credit Card at ENOC,', 'meta' => [], 'type' => 'UNKNOWN']);
+
+        $sut = app(SmsTransactionProcessor::class);
+        $result = $sut->process($smsModel);
+
+        $this->assertEquals(1, $result->count());
+        $this->assertNotNull($result[0]->meta);
+    }
 }

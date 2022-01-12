@@ -148,9 +148,9 @@ export default class Api {
          }`});
     }
 
-    updateSms({id}) {
-        return axios.post('/graphql', {query: `query { 
-            updateSms(id: ${id}) { 
+    updateSms({id, body}) {
+        return axios.post('/graphql', {query: `mutation { 
+            updateSms(id: ${id} body: """${body}""") { 
                 id
                 body
                 transaction_id

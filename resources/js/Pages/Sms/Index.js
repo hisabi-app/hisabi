@@ -27,7 +27,18 @@ export default function Sms({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
-    
+    const updateItem = (updatedItem) => {
+        setSms(sms.map(item => {
+            if(item.id === updatedItem.id) {
+                return updatedItem
+            }
+            
+            return item
+        }));
+
+        Engine.animateRowItem('item-' + updatedItem.id)
+    }
+
     return (
         <Authenticated auth={auth} 
         header={
@@ -53,6 +64,7 @@ export default function Sms({auth}) {
             <Edit sms={editItem} 
                 onClose={() => setEditItem(null)} 
                 onUpdate={item => {
+                    updateItem(item)
                     setEditItem(null)
                 }}
                 />

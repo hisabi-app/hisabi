@@ -4668,9 +4668,10 @@ var Api = /*#__PURE__*/function () {
   }, {
     key: "updateSms",
     value: function updateSms(_ref5) {
-      var id = _ref5.id;
+      var id = _ref5.id,
+          body = _ref5.body;
       return axios.post('/graphql', {
-        query: "query { \n            updateSms(id: ".concat(id, ") { \n                id\n                body\n                transaction_id\n            } \n        }")
+        query: "mutation { \n            updateSms(id: ".concat(id, " body: \"\"\"").concat(body, "\"\"\") { \n                id\n                body\n                transaction_id\n            } \n        }")
       });
     }
   }]);
@@ -6847,10 +6848,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Edit)
 /* harmony export */ });
-/* harmony import */ var _Components_Label__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/Label */ "./resources/js/Components/Label.js");
-/* harmony import */ var _Components_SidePanel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/SidePanel */ "./resources/js/Components/SidePanel.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _Components_Input__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/Input */ "./resources/js/Components/Input.js");
+/* harmony import */ var _Components_Label__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/Label */ "./resources/js/Components/Label.js");
+/* harmony import */ var _Components_SidePanel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Components/SidePanel */ "./resources/js/Components/SidePanel.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -6868,15 +6870,26 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
 function Edit(_ref) {
   var sms = _ref.sms,
       onClose = _ref.onClose,
       onUpdate = _ref.onUpdate;
 
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(false),
       _useState2 = _slicedToArray(_useState, 2),
       loading = _useState2[0],
       setLoading = _useState2[1];
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(''),
+      _useState4 = _slicedToArray(_useState3, 2),
+      body = _useState4[0],
+      setBody = _useState4[1];
+
+  (0,react__WEBPACK_IMPORTED_MODULE_3__.useEffect)(function () {
+    if (!sms) return;
+    setBody(sms.body);
+  }, [sms]);
 
   var update = function update() {
     if (loading) {
@@ -6885,7 +6898,8 @@ function Edit(_ref) {
 
     setLoading(true);
     Api.updateSms({
-      id: sms.id
+      id: sms.id,
+      body: body
     }).then(function (_ref2) {
       var data = _ref2.data;
       setLoading(false);
@@ -6893,55 +6907,60 @@ function Edit(_ref) {
     })["catch"](console.error);
   };
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_Components_SidePanel__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_Components_SidePanel__WEBPACK_IMPORTED_MODULE_2__["default"], {
     toggleOpen: !sms ? false : true,
     onClose: onClose,
     title: "Fix SMS Parsing",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
       className: "p-1 rounded border-l-2 border-blue-500 pl-2 bg-blue-50",
-      children: ["In order to make sure parsing this SMS is correct, please add the correspoding SMS template in the config file ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+      children: ["In order to make sure parsing this SMS is correct, please add the correspoding SMS template in the config file ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
         className: "bg-blue-100 rounded px-1",
         children: "config/finance.php"
-      }), " under ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+      }), " under ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
         className: "bg-blue-100 rounded px-1",
         children: "sms_templates"
-      }), ". ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("br", {}), " Once you finish, you can try to parse the SMS again. To learn more, please visit the ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("a", {
+      }), ". ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), " Once you finish, you can try to parse the SMS again. To learn more, please visit the ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("a", {
         className: "underline",
         href: "#",
         children: "documentation"
-      }), " or ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("a", {
+      }), " or ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("a", {
         className: "underline",
         href: "#",
         children: "watch this video \u25B6\uFE0F"
       })]
-    }), sms && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+    }), sms && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
       className: "mt-6",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Components_Label__WEBPACK_IMPORTED_MODULE_0__["default"], {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Label__WEBPACK_IMPORTED_MODULE_1__["default"], {
           forInput: "body",
           value: "Body"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
-          className: "mt-2 p-2 border rounded",
-          children: sms.body
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Input__WEBPACK_IMPORTED_MODULE_0__["default"], {
+          type: "text",
+          name: "body",
+          value: body,
+          className: "mt-1 block w-full",
+          handleChange: function handleChange(e) {
+            return setBody(e.target.value);
+          }
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
         className: "flex items-center justify-end mt-4",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("button", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("button", {
           onClick: update,
           className: "inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150",
-          children: [loading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("svg", {
+          children: [loading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("svg", {
             xmlns: "http://www.w3.org/2000/svg",
             className: "mr-2 animate-spin h-3 w-3",
             fill: "none",
             viewBox: "0 0 24 24",
             stroke: "currentColor",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("path", {
-              "stroke-linecap": "round",
-              "stroke-linejoin": "round",
-              "stroke-width": "2",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              strokeWidth: "2",
               d: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
             children: "Parse again"
           })]
         })
@@ -7043,6 +7062,18 @@ function Sms(_ref) {
       setLoading(false);
     })["catch"](console.error);
   }, [currentPage]);
+
+  var updateItem = function updateItem(updatedItem) {
+    setSms(sms.map(function (item) {
+      if (item.id === updatedItem.id) {
+        return updatedItem;
+      }
+
+      return item;
+    }));
+    Engine.animateRowItem('item-' + updatedItem.id);
+  };
+
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__["default"], {
     auth: auth,
     header: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
@@ -7075,6 +7106,7 @@ function Sms(_ref) {
         return setEditItem(null);
       },
       onUpdate: function onUpdate(item) {
+        updateItem(item);
         setEditItem(null);
       }
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {

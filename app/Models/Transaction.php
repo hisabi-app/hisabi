@@ -35,7 +35,8 @@ class Transaction extends Model
         });
     }
 
-    public function statistics2() {
+    public function statistics2() 
+    {
         return Transaction::query()
             ->income()
             ->with(['brand', 'brand.category'])
@@ -43,5 +44,24 @@ class Transaction extends Model
             // ->join('categories', 'categories.id', '=', 'brands.category_id')
             ->select(DB::raw("brands.category_id, SUM(transactions.amount) as total"))
             ->groupBy("brands.category_id");
+    }
+
+    public static function tryCreateFromSms($sms) 
+    {
+        $brandFromSms = $sms->meta['data']['brand'] ?? null;
+        $amountFromSms = $sms->meta['data']['amount'] ?? null;
+        
+        if(! $brandFromSms || ! $amountFromSms) {
+            return;
+        }
+
+        $brand = Brand::findOrCreateNew($brandFromSms);
+        
+        $amount = (float) filter_var($amountFromSms, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+        return static::create([
+            'amount' => round($amount),
+            'brand_id' => $brand->id,
+        ]);
     }
 }

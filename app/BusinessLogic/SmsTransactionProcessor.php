@@ -2,7 +2,7 @@
 
 namespace App\BusinessLogic;
 
-use App\Models\Brand;
+use App\Models\Sms;
 use App\Models\Transaction;
 use App\Contracts\SmsParser;
 use App\Contracts\SmsTemplateDetector;
@@ -19,54 +19,25 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
         $this->smsParser = $smsParser;
     }
 
-    public function process($smsString)
+    public function process($sms)
     {
-        $result = collect();
+        $processedSmsModels = collect();
 
-        foreach(explode("\n", $smsString) as $sms) {
-            $template = $this->smsTemplateDetector->detect($sms);
-            $smsModel = $this->smsParser->parse($sms, $template);
+        $smsString = $sms instanceof Sms ? $sms->body : $sms;
 
-            if($template) {
-                $transaction = $this->createTransactionFromSms($smsModel);
+        foreach(explode("\n", $smsString) as $smsBody) {
+            $template = $this->smsTemplateDetector->detect($smsBody);
+            $smsModel = $this->smsParser->parse($sms instanceof Sms ? $sms : $smsBody, $template);
+
+            if($template && $transaction = Transaction::tryCreateFromSms($smsModel)) {
                 $smsModel['transaction_id'] = $transaction->id;
             }
 
             $smsModel->save();
 
-            $result->push($smsModel);
+            $processedSmsModels->push($smsModel);
         }
 
-        return $result;
-    }
-
-    protected function createTransactionFromSms($sms)
-    {
-        $brandFromSms = $sms->meta['data']['brand'] ?? null;
-        $amountFromSms = $sms->meta['data']['amount'] ?? null;
-        
-        if(! $brandFromSms || ! $amountFromSms) {
-            return;
-        }
-
-        $brand = $this->findOrCreateNewBrand($brandFromSms);
-        
-        $amount = (float) filter_var($amountFromSms, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-
-        return Transaction::create([
-            'amount' => round($amount),
-            'brand_id' => $brand->id,
-        ]);
-    }
-
-    protected function findOrCreateNewBrand($brandFromSms) {
-        // TODO: find better solution for detecting brands maybe using SQL query?
-        foreach(Brand::get() as $knownBrand) {
-            if(str_contains(strtolower($brandFromSms), strtolower($knownBrand->name))) {
-                return $knownBrand;
-            }
-        }
-
-        return Brand::create(['name' => $brandFromSms]);
+        return $processedSmsModels;
     }
 }
