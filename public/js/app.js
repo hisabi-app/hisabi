@@ -6065,6 +6065,7 @@ function Edit(_ref) {
     }).then(function (_ref3) {
       var data = _ref3.data;
       onUpdate(data.data.updateBrand);
+      setCategory(0);
     })["catch"](console.error);
   };
 

@@ -33,6 +33,7 @@ export default function Edit({brand, onClose, onUpdate}) {
         })
         .then(({data}) => {
             onUpdate(data.data.updateBrand)
+            setCategory(0)
         })
         .catch(console.error);
     }
