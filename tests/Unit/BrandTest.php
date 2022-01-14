@@ -27,4 +27,14 @@ class BrandTest extends TestCase
 
         $this->assertEquals('categoryTest', $sut->category->name);
     }
+
+    /** @test */
+    public function it_has_transactions()
+    {
+        $sut = Brand::factory()->create();
+
+        $sut->transactions()->create(['amount' => 3]);
+
+        $this->assertCount(1, $sut->transactions);
+    }
 }

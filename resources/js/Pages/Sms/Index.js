@@ -41,6 +41,14 @@ export default function Sms({auth}) {
         Engine.animateRowItem(updatedItem.id)
     }
 
+    const onDelete = () => {
+        let tempDeleteItem = deleteItem;
+        setDeleteItem(null)
+        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+            setSms(sms.filter(item => item.id != tempDeleteItem.id));
+        })
+    }
+
     return (
         <Authenticated auth={auth} 
             header={
@@ -74,13 +82,7 @@ export default function Sms({auth}) {
             <Delete item={deleteItem} 
                 resource="Sms"
                 onClose={() => setDeleteItem(null)}
-                onDelete={() => {
-                    let tempDeleteItem = deleteItem;
-                    setDeleteItem(null)
-                    Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
-                        setSms(sms.filter(item => item.id != tempDeleteItem.id));
-                    })
-                }}  />
+                onDelete={onDelete}  />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

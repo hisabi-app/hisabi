@@ -58,6 +58,14 @@ export default function Index({auth}) {
         setEditItem(null)
     }
 
+    const onDelete = () => {
+        let tempDeleteItem = deleteItem;
+        setDeleteItem(null)
+        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+            setTransactions(transactions.filter(item => item.id != deleteItem.id));
+        })
+    };
+
     return (
         <Authenticated auth={auth}
             header={
@@ -87,13 +95,7 @@ export default function Index({auth}) {
             <Delete item={deleteItem} 
                 resource="Transaction"
                 onClose={() => setDeleteItem(null)}
-                onDelete={() => {
-                    let tempDeleteItem = deleteItem;
-                    setDeleteItem(null)
-                    Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
-                        setTransactions(transactions.filter(item => item.id != deleteItem.id));
-                    })
-                }}  />
+                onDelete={onDelete}  />
         
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

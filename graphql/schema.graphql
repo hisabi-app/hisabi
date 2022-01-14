@@ -64,6 +64,7 @@ type Mutation {
   
   createCategory(name: String! type: String!): Category @create
   updateCategory(id: ID! name: String! type: String!): Category @update
+  deleteCategory(id: ID!): Category @delete
   
   createSms(body: String!): [Sms]
   updateSms(id: ID! body: String!): Sms

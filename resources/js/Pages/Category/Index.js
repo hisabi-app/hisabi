@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
+import Delete from '@/Components/Delete';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -13,6 +14,7 @@ export default function Index({auth}) {
     const [loading, setLoading] = useState(false);
     const [editCategory, setEditCategory] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
+    const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -27,6 +29,13 @@ export default function Index({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
+    const onCreate = (createdItem) => {
+        setShowCreate(false)
+        setCategories([createdItem, ...categories])
+
+        Engine.animateRowItem(createdItem.id);
+    }
+
     const onUpdate = (updatedItem) => {
         setCategories(categories.map(category => {
             if(category.id === updatedItem.id) {
@@ -40,11 +49,12 @@ export default function Index({auth}) {
         setEditCategory(null)
     }
 
-    const onCreate = (createdItem) => {
-        setShowCreate(false)
-        setCategories([createdItem, ...categories])
-
-        Engine.animateRowItem(createdItem.id);
+    const onDelete = () => {
+        let tempDeleteItem = deleteItem;
+        setDeleteItem(null)
+        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+            setCategories(categories.filter(item => item.id != tempDeleteItem.id));
+        })
     }
     
     return (
@@ -71,6 +81,11 @@ export default function Index({auth}) {
                 onUpdate={onUpdate}
                 />
         
+            <Delete item={deleteItem} 
+                resource="Category"
+                onClose={() => setDeleteItem(null)}
+                onDelete={onDelete}  />
+
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="flex flex-col">
@@ -104,6 +119,12 @@ export default function Index({auth}) {
                                                         <button onClick={() => setEditCategory(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                                                        </button>
+
+                                                        <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
+                                                            <span className="sr-only">Delete</span>
+                                                            
+                                                            <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>
                                                 </tr>

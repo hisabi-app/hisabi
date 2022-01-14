@@ -14,9 +14,11 @@ class Category extends Model
 
     protected $guarded = [];
 
-    public function transactions()
+    protected static function booted()
     {
-        return $this->hasMany(Transaction::class);
+        static::deleted(function ($category) {
+            $category->brands->each->delete();
+        });
     }
 
     public function brands()

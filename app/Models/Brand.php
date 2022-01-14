@@ -11,9 +11,21 @@ class Brand extends Model
     
     protected $guarded = [];
 
+    protected static function booted()
+    {
+        static::deleted(function ($brand) {
+            $brand->transactions()->delete();
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
     public static function findOrCreateNew($name)
