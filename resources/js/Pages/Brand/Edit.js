@@ -3,18 +3,9 @@ import Label from "@/Components/Label";
 import SidePanel from '@/Components/SidePanel';
 import { useEffect, useState } from "react";
 
-export default function Edit({brand, onClose, onUpdate}) {
-    const [categories, setCategories] = useState([])
+export default function Edit({categories, brand, onClose, onUpdate}) {
     const [name, setName] = useState(0)
     const [category, setCategory] = useState(0)
-
-    useEffect(() => {
-        Api.getAllCategories()
-            .then(({data}) => {
-                setCategories(data.data.allCategories)
-            })
-            .catch(console.error);
-    }, []);
 
     useEffect(() => {
         if(! brand) return;

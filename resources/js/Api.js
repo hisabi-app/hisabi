@@ -70,6 +70,19 @@ export default class Api {
          }`});
     }
 
+    createBrand({name, categoryId}) {
+        return axios.post('/graphql', {query: `mutation {
+            createBrand(name: """${name}""" category_id: ${categoryId}) {
+                id
+                name
+                category {
+                    id
+                    name
+                }
+            }
+         }`});
+    }
+
     updateBrand({id, name, category}) {
         return axios.post('/graphql', {query: `mutation {
             updateBrand(id: ${id} name: "${name}" category_id: ${category}) {

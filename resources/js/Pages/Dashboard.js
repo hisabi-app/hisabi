@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/inertia-react';
 import React, { useEffect, useState } from 'react';
 import Authenticated from '@/Layouts/Authenticated';
 
-export default function Dashboard({auth, errors, metrics, graphqlQueries}) {
+export default function Dashboard({auth, metrics, graphqlQueries}) {
     const [metricsData, setMetricsData] = useState([])
 
     useEffect(() => {
@@ -15,7 +15,14 @@ export default function Dashboard({auth, errors, metrics, graphqlQueries}) {
     }, []);
 
     return (
-        <Authenticated auth={auth} errors={errors}>
+        <Authenticated auth={auth}
+            header={
+                <div className='flex justify-between items-center'>
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        Analytics &amp; Reports
+                    </h2>
+                </div>
+            }>
             <Head title="Dashboard" />
 
             <div className="py-12">

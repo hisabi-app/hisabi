@@ -4,13 +4,24 @@ import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
 import Edit from './Edit';
+import Create from './Create';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
+    const [allCategories, setAllCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
+    const [showCreate, setShowCreate] = useState(false);
+
+    useEffect(() => {
+        Api.getAllCategories()
+            .then(({data}) => {
+                setAllCategories(data.data.allCategories)
+            })
+            .catch(console.error);
+    }, []);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -25,26 +36,50 @@ export default function Index({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
-    const updateBrand = (updatedBrand) => {
+    const onUpdate = (updatedItem) => {
         setBrands(brands.map(brand => {
-            if(brand.id === updatedBrand.id) {
-                return updatedBrand
+            if(brand.id === updatedItem.id) {
+                return updatedItem
             }
             
             return brand
         }));
 
-        Engine.animateRowItem('item-' + updatedBrand.id)
+        Engine.animateRowItem('item-' + updatedItem.id)
+    }
+
+    const onCreate = (createdItem) => {
+        setShowCreate(false)
+        setBrands([createdItem, ...brands])
+
+        Engine.animateRowItem('item-' + createdItem.id);
     }
 
     return (
-        <Authenticated auth={auth}>
+        <Authenticated auth={auth}
+            header={
+                <div className='flex justify-between items-center'>
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        Brands
+                    </h2>
+
+                    <button onClick={() => setShowCreate(true)} className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
+                        Create Brand
+                    </button>
+                </div>
+            }>
             <Head title="Brands" />
 
+            <Create showCreate={showCreate} 
+                categories={allCategories}
+                onCreate={onCreate}
+                onClose={() => setShowCreate(false)} />
+
             <Edit brand={editItem} 
+                categories={allCategories}
                 onClose={() => setEditItem(null)} 
                 onUpdate={item => {
-                    updateBrand(item)
+                    onUpdate(item)
                     setEditItem(null)
                 }}
             />
