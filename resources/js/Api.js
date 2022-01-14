@@ -5,6 +5,7 @@ export default class Api {
                 data {
                     id
                     amount
+                    created_at
                     brand {
                         id
                         name
@@ -21,11 +22,12 @@ export default class Api {
          }`});
     }
 
-    updateTransaction({id, amount, brand}) {
+    updateTransaction({id, amount, brand, createdAt}) {
         return axios.post('/graphql', {query: `mutation {
-            updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand}) {
+            updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand} created_at: """${createdAt}""") {
                 id
                 amount
+                created_at
                 brand {
                     id
                     name

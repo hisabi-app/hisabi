@@ -4582,7 +4582,7 @@ var Api = /*#__PURE__*/function () {
     key: "getTransactions",
     value: function getTransactions(page) {
       return axios.post('/graphql', {
-        query: "query {\n            transactions(page: ".concat(page, ") {\n                data {\n                    id\n                    amount\n                    brand {\n                        id\n                        name\n                        category {\n                            name\n                            type\n                        }\n                    }\n                }\n                paginatorInfo {\n                    hasMorePages\n                }\n            }\n         }")
+        query: "query {\n            transactions(page: ".concat(page, ") {\n                data {\n                    id\n                    amount\n                    created_at\n                    brand {\n                        id\n                        name\n                        category {\n                            name\n                            type\n                        }\n                    }\n                }\n                paginatorInfo {\n                    hasMorePages\n                }\n            }\n         }")
       });
     }
   }, {
@@ -4590,9 +4590,10 @@ var Api = /*#__PURE__*/function () {
     value: function updateTransaction(_ref) {
       var id = _ref.id,
           amount = _ref.amount,
-          brand = _ref.brand;
+          brand = _ref.brand,
+          createdAt = _ref.createdAt;
       return axios.post('/graphql', {
-        query: "mutation {\n            updateTransaction(id: ".concat(id, " amount: ").concat(amount, " brand_id: ").concat(brand, ") {\n                id\n                amount\n                brand {\n                    id\n                    name\n                    category {\n                        name\n                        type\n                    }\n                }\n            }\n         }")
+        query: "mutation {\n            updateTransaction(id: ".concat(id, " amount: ").concat(amount, " brand_id: ").concat(brand, " created_at: \"\"\"").concat(createdAt, "\"\"\") {\n                id\n                amount\n                created_at\n                brand {\n                    id\n                    name\n                    category {\n                        name\n                        type\n                    }\n                }\n            }\n         }")
       });
     }
   }, {
@@ -7228,10 +7229,15 @@ function Edit(_ref) {
       amount = _useState4[0],
       setAmount = _useState4[1];
 
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(0),
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(''),
       _useState6 = _slicedToArray(_useState5, 2),
-      brand = _useState6[0],
-      setBrand = _useState6[1];
+      createdAt = _useState6[0],
+      setCreatedAt = _useState6[1];
+
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(0),
+      _useState8 = _slicedToArray(_useState7, 2),
+      brand = _useState8[0],
+      setBrand = _useState8[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_3__.useEffect)(function () {
     Api.getAllBrands().then(function (_ref2) {
@@ -7243,13 +7249,15 @@ function Edit(_ref) {
     if (!transaction) return;
     setAmount(transaction.amount);
     setBrand(transaction.brand.id);
+    setCreatedAt(transaction.created_at);
   }, [transaction]);
 
   var update = function update() {
     Api.updateTransaction({
       id: transaction.id,
       amount: amount,
-      brand: brand
+      brand: brand,
+      createdAt: createdAt
     }).then(function (_ref3) {
       var data = _ref3.data;
       onUpdate(data.data.updateTransaction);
@@ -7264,7 +7272,7 @@ function Edit(_ref) {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Label__WEBPACK_IMPORTED_MODULE_1__["default"], {
           forInput: "amount",
-          value: "Amount"
+          value: "Amount (".concat(AppCurrency, ")")
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Input__WEBPACK_IMPORTED_MODULE_0__["default"], {
           type: "text",
           name: "amount",
@@ -7272,6 +7280,20 @@ function Edit(_ref) {
           className: "mt-1 block w-full",
           handleChange: function handleChange(e) {
             return setAmount(e.target.value);
+          }
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        className: "mt-4",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Label__WEBPACK_IMPORTED_MODULE_1__["default"], {
+          forInput: "date",
+          value: "Date"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Components_Input__WEBPACK_IMPORTED_MODULE_0__["default"], {
+          type: "date",
+          name: "date",
+          value: createdAt,
+          className: "mt-1 block w-full",
+          handleChange: function handleChange(e) {
+            return setCreatedAt(e.target.value);
           }
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
@@ -7291,7 +7313,7 @@ function Edit(_ref) {
           children: brands.map(function (brand) {
             return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("option", {
               value: brand.id,
-              children: [brand.name, brand.category ? "(" + brand.category.name + ")" : '']
+              children: [brand.name, brand.category ? " (" + brand.category.name + ")" : '']
             }, brand.id);
           })
         })]
@@ -7457,6 +7479,10 @@ function Index(_ref) {
                         children: "Type"
                       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("th", {
                         scope: "col",
+                        className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+                        children: "Date"
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("th", {
+                        scope: "col",
                         className: "relative py-3",
                         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
                           className: "sr-only",
@@ -7485,6 +7511,9 @@ function Index(_ref) {
                         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: item.brand.category ? item.brand.category.type : '-'
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
+                          className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
+                          children: item.created_at
                         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
                           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {

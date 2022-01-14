@@ -73,6 +73,9 @@ export default function Index({auth}) {
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Type
                                                 </th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Date
+                                                </th>
                                                 <th scope="col" className="relative py-3">
                                                     <span className="sr-only">Edit</span>
                                                 </th>
@@ -86,6 +89,7 @@ export default function Index({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.name : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.type : '-'}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.created_at}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>

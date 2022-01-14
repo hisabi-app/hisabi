@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export default function Edit({transaction, onClose, onUpdate}) {
     const [brands, setBrands] = useState([])
     const [amount, setAmount] = useState(0)
+    const [createdAt, setCreatedAt] = useState('')
     const [brand, setBrand] = useState(0)
 
     useEffect(() => {
@@ -21,13 +22,15 @@ export default function Edit({transaction, onClose, onUpdate}) {
 
         setAmount(transaction.amount)
         setBrand(transaction.brand.id)
+        setCreatedAt(transaction.created_at)
     }, [transaction])
 
     const update = () => {
         Api.updateTransaction({
             id: transaction.id,
             amount,
-            brand
+            brand,
+            createdAt
         })
         .then(({data}) => {
             onUpdate(data.data.updateTransaction)
@@ -43,7 +46,7 @@ export default function Edit({transaction, onClose, onUpdate}) {
                 transaction &&
                 <div>
                     <div>
-                        <Label forInput="amount" value="Amount" />
+                        <Label forInput="amount" value={`Amount (${AppCurrency})`} />
 
                         <Input
                             type="text"
@@ -51,6 +54,18 @@ export default function Edit({transaction, onClose, onUpdate}) {
                             value={amount}
                             className="mt-1 block w-full"
                             handleChange={(e) => setAmount(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="mt-4">
+                        <Label forInput="date" value="Date" />
+
+                        <Input
+                            type="date"
+                            name="date"
+                            value={createdAt}
+                            className="mt-1 block w-full"
+                            handleChange={(e) => setCreatedAt(e.target.value)}
                         />
                     </div>
 
@@ -67,7 +82,7 @@ export default function Edit({transaction, onClose, onUpdate}) {
                       >
                         {brands.map(brand => <option value={brand.id} key={brand.id}>
                             {brand.name} 
-                            {brand.category ? "("+brand.category.name+")" : ''}
+                            {brand.category ? " ("+brand.category.name+")" : ''}
                             </option>)}
                       </select>
                     </div>
