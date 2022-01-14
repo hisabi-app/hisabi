@@ -19,7 +19,7 @@ export default function Dashboard({auth, errors, metrics, graphqlQueries}) {
             <Head title="Dashboard" />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto flex flex-wrap -mx-3 lg:-mx-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto flex flex-wrap md:px-6">
                     {metrics.map( metric => {
                         metric.data = metricsData[metric.graphql_query]
                         return <Wrapper 
