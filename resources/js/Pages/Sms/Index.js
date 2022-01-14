@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
 import Create from './Create';
 import Edit from './Edit';
+import Delete from './Delete';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -13,6 +14,7 @@ export default function Sms({auth}) {
     const [loading, setLoading] = useState(false);
     const [showCreate, setShowCreate] = useState(false);
     const [editItem, setEditItem] = useState(null);
+    const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -27,7 +29,7 @@ export default function Sms({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
-    const updateItem = (updatedItem) => {
+    const onUpdate = (updatedItem) => {
         setSms(sms.map(item => {
             if(item.id === updatedItem.id) {
                 return updatedItem
@@ -64,10 +66,18 @@ export default function Sms({auth}) {
             <Edit sms={editItem} 
                 onClose={() => setEditItem(null)} 
                 onUpdate={item => {
-                    updateItem(item)
+                    onUpdate(item)
                     setEditItem(null)
                 }}
                 />
+            
+            <Delete item={deleteItem} 
+                resource="Sms"
+                onClose={() => setDeleteItem(null)}
+                onDelete={() => {
+                    setSms(sms.filter(item => item.id != deleteItem.id));
+                    setDeleteItem(null)
+                }}  />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -104,6 +114,12 @@ export default function Sms({auth}) {
                                                             
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>}
+
+                                                        <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
+                                                            <span className="sr-only">Delete</span>
+                                                            
+                                                            <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))}

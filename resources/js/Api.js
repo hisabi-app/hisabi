@@ -192,4 +192,12 @@ export default class Api {
             } 
         }`});
     }
+
+    deleteSms({id}) {
+        return axios.post('/graphql', {query: `mutation { 
+            deleteSms(id: ${id}) { 
+                id
+            } 
+        }`});
+    }
 }

@@ -66,4 +66,5 @@ type Mutation {
   
   createSms(body: String!): [Sms]
   updateSms(id: ID! body: String!): Sms
+  deleteSms(id: ID!): Sms @delete
 }
