@@ -42,7 +42,7 @@ export default function Index({auth}) {
         setShowCreate(false)
         setTransactions([createdItem, ...transactions])
 
-        Engine.animateRowItem('item-' + createdItem.id);
+        Engine.animateRowItem(createdItem.id);
     }
 
     const onUpdate = (updatedItem) => {
@@ -54,7 +54,7 @@ export default function Index({auth}) {
             return transaction
         }));
 
-        Engine.animateRowItem('item-' + updatedItem.id)
+        Engine.animateRowItem(updatedItem.id)
         setEditItem(null)
     }
 
@@ -88,8 +88,11 @@ export default function Index({auth}) {
                 resource="Transaction"
                 onClose={() => setDeleteItem(null)}
                 onDelete={() => {
-                    setTransactions(transactions.filter(item => item.id != deleteItem.id));
+                    let tempDeleteItem = deleteItem;
                     setDeleteItem(null)
+                    Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+                        setTransactions(transactions.filter(item => item.id != deleteItem.id));
+                    })
                 }}  />
         
             <div className="py-12">

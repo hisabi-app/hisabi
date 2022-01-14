@@ -5592,11 +5592,20 @@ var Engine = /*#__PURE__*/function () {
     key: "animateRowItem",
     value: function animateRowItem(id) {
       var animation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'updated';
-      var rowItem = document.getElementById(id);
-      if (!rowItem) return;
+      var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var rowItem = document.getElementById('item-' + id);
+
+      if (!rowItem) {
+        return;
+      }
+
       rowItem.classList.remove(animation);
       setTimeout(function () {
         rowItem.classList.add(animation);
+
+        if (callback != null) {
+          setTimeout(callback, 500);
+        }
       }, 50);
     }
   }, {
@@ -6349,7 +6358,7 @@ function Index(_ref) {
   var onCreate = function onCreate(createdItem) {
     setShowCreate(false);
     setBrands([createdItem].concat(_toConsumableArray(brands)));
-    Engine.animateRowItem('item-' + createdItem.id);
+    Engine.animateRowItem(createdItem.id);
   };
 
   var _onUpdate = function onUpdate(updatedItem) {
@@ -6360,7 +6369,7 @@ function Index(_ref) {
 
       return brand;
     }));
-    Engine.animateRowItem('item-' + updatedItem.id);
+    Engine.animateRowItem(updatedItem.id);
   };
 
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -6853,14 +6862,14 @@ function Index(_ref) {
 
       return category;
     }));
-    Engine.animateRowItem('item-' + updatedItem.id);
+    Engine.animateRowItem(updatedItem.id);
     setEditCategory(null);
   };
 
   var onCreate = function onCreate(createdItem) {
     setShowCreate(false);
     setCategories([createdItem].concat(_toConsumableArray(categories)));
-    Engine.animateRowItem('item-' + createdItem.id);
+    Engine.animateRowItem(createdItem.id);
   };
 
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -7397,7 +7406,7 @@ function Sms(_ref) {
 
       return item;
     }));
-    Engine.animateRowItem('item-' + updatedItem.id);
+    Engine.animateRowItem(updatedItem.id);
   };
 
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -7443,10 +7452,13 @@ function Sms(_ref) {
         return setDeleteItem(null);
       },
       onDelete: function onDelete() {
-        setSms(sms.filter(function (item) {
-          return item.id != deleteItem.id;
-        }));
+        var tempDeleteItem = deleteItem;
         setDeleteItem(null);
+        Engine.animateRowItem(tempDeleteItem.id, 'deleted', function () {
+          setSms(sms.filter(function (item) {
+            return item.id != tempDeleteItem.id;
+          }));
+        });
       }
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
       className: "py-12",
@@ -7975,7 +7987,7 @@ function Index(_ref) {
   var onCreate = function onCreate(createdItem) {
     setShowCreate(false);
     setTransactions([createdItem].concat(_toConsumableArray(transactions)));
-    Engine.animateRowItem('item-' + createdItem.id);
+    Engine.animateRowItem(createdItem.id);
   };
 
   var onUpdate = function onUpdate(updatedItem) {
@@ -7986,7 +7998,7 @@ function Index(_ref) {
 
       return transaction;
     }));
-    Engine.animateRowItem('item-' + updatedItem.id);
+    Engine.animateRowItem(updatedItem.id);
     setEditItem(null);
   };
 
@@ -8028,10 +8040,13 @@ function Index(_ref) {
         return setDeleteItem(null);
       },
       onDelete: function onDelete() {
-        setTransactions(transactions.filter(function (item) {
-          return item.id != deleteItem.id;
-        }));
+        var tempDeleteItem = deleteItem;
         setDeleteItem(null);
+        Engine.animateRowItem(tempDeleteItem.id, 'deleted', function () {
+          setTransactions(transactions.filter(function (item) {
+            return item.id != deleteItem.id;
+          }));
+        });
       }
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
       className: "py-12",

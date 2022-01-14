@@ -40,7 +40,7 @@ export default function Index({auth}) {
         setShowCreate(false)
         setBrands([createdItem, ...brands])
 
-        Engine.animateRowItem('item-' + createdItem.id);
+        Engine.animateRowItem(createdItem.id);
     }
     
     const onUpdate = (updatedItem) => {
@@ -52,7 +52,7 @@ export default function Index({auth}) {
             return brand
         }));
 
-        Engine.animateRowItem('item-' + updatedItem.id)
+        Engine.animateRowItem(updatedItem.id)
     }
 
     return (

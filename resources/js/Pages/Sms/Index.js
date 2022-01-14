@@ -38,7 +38,7 @@ export default function Sms({auth}) {
             return item
         }));
 
-        Engine.animateRowItem('item-' + updatedItem.id)
+        Engine.animateRowItem(updatedItem.id)
     }
 
     return (
@@ -75,8 +75,11 @@ export default function Sms({auth}) {
                 resource="Sms"
                 onClose={() => setDeleteItem(null)}
                 onDelete={() => {
-                    setSms(sms.filter(item => item.id != deleteItem.id));
+                    let tempDeleteItem = deleteItem;
                     setDeleteItem(null)
+                    Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+                        setSms(sms.filter(item => item.id != tempDeleteItem.id));
+                    })
                 }}  />
 
             <div className="py-12">

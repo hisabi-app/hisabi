@@ -36,7 +36,7 @@ export default function Index({auth}) {
             return category
         }));
 
-        Engine.animateRowItem('item-' + updatedItem.id);
+        Engine.animateRowItem(updatedItem.id);
         setEditCategory(null)
     }
 
@@ -44,7 +44,7 @@ export default function Index({auth}) {
         setShowCreate(false)
         setCategories([createdItem, ...categories])
 
-        Engine.animateRowItem('item-' + createdItem.id);
+        Engine.animateRowItem(createdItem.id);
     }
     
     return (

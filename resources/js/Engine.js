@@ -13,15 +13,18 @@ export default class Engine {
         return num.format(format)
     }
 
-    animateRowItem(id, animation = 'updated') {
-        let rowItem = document.getElementById(id);
+    animateRowItem(id, animation = 'updated', callback = null) {
+        let rowItem = document.getElementById('item-' + id);
 
-        if(! rowItem) return;
+        if(! rowItem) { return; }
         
         rowItem.classList.remove(animation);
         
         setTimeout(() => {
             rowItem.classList.add(animation); 
+            if(callback != null) {
+                setTimeout(callback, 500);
+            }
         }, 50);
     }
 

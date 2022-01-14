@@ -11,6 +11,10 @@
     animation: updated 1s ease-in-out 1;
 }
 
+.deleted {
+    animation: deleted 0.5s ease-in-out 1;
+}
+
 @keyframes loaded {
     50% {
         background-color: #f6fbff;
@@ -20,5 +24,12 @@
 @keyframes updated {
     50% {
         background-color: #f6fffa;
+    }
+}
+
+@keyframes deleted {
+    100% {
+        background-color: red;
+        opacity: 0;
     }
 }
