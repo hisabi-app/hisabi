@@ -36,6 +36,13 @@ export default function Index({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
+    const onCreate = (createdItem) => {
+        setShowCreate(false)
+        setBrands([createdItem, ...brands])
+
+        Engine.animateRowItem('item-' + createdItem.id);
+    }
+    
     const onUpdate = (updatedItem) => {
         setBrands(brands.map(brand => {
             if(brand.id === updatedItem.id) {
@@ -46,13 +53,6 @@ export default function Index({auth}) {
         }));
 
         Engine.animateRowItem('item-' + updatedItem.id)
-    }
-
-    const onCreate = (createdItem) => {
-        setShowCreate(false)
-        setBrands([createdItem, ...brands])
-
-        Engine.animateRowItem('item-' + createdItem.id);
     }
 
     return (

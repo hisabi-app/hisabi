@@ -3,19 +3,10 @@ import Label from "@/Components/Label";
 import SidePanel from '@/Components/SidePanel';
 import { useEffect, useState } from "react";
 
-export default function Edit({transaction, onClose, onUpdate}) {
-    const [brands, setBrands] = useState([])
+export default function Edit({brands, transaction, onClose, onUpdate}) {
     const [amount, setAmount] = useState(0)
     const [createdAt, setCreatedAt] = useState('')
     const [brand, setBrand] = useState(0)
-
-    useEffect(() => {
-        Api.getAllBrands()
-            .then(({data}) => {
-                setBrands(data.data.allBrands)
-            })
-            .catch(console.error);
-    }, []);
 
     useEffect(() => {
         if(! transaction) return;

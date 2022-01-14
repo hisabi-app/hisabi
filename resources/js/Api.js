@@ -22,6 +22,24 @@ export default class Api {
          }`});
     }
 
+    createTransaction({amount, brandId, createdAt}) {
+        return axios.post('/graphql', {query: `mutation {
+            createTransaction(amount: ${amount} brand_id: ${brandId} created_at: """${createdAt}""") {
+                id
+                amount
+                created_at
+                brand {
+                    id
+                    name
+                    category {
+                        name
+                        type
+                    }
+                }
+            }
+         }`});
+    }
+    
     updateTransaction({id, amount, brand, createdAt}) {
         return axios.post('/graphql', {query: `mutation {
             updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand} created_at: """${createdAt}""") {
