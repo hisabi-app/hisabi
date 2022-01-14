@@ -9,6 +9,7 @@ class DashboardController extends Controller
     public function index()
     {
         $metrics = config('finance.reports');
+        
         $graphqlQueries = array_map(function($metric) {
             return $metric['graphql_query'];
         }, $metrics);

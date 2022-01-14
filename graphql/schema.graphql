@@ -51,7 +51,7 @@ type Query {
 
     totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["expenses"])
     totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])
-    expensesPerCategory: [TransactionStatistics!]!
+    expensesPerCategory: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])
 }
 
 type Mutation {
