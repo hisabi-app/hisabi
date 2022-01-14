@@ -56,8 +56,8 @@ export default function Edit({category, onClose, onUpdate}) {
                         onChange={(e) => setType(e.target.value)}
                         className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
-                        <option value="INCOME">INCOME</option>
                         <option value="EXPENSES">EXPENSES</option>
+                        <option value="INCOME">INCOME</option>
                       </select>
                     </div>
 

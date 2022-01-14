@@ -107,9 +107,19 @@ export default class Api {
          }`});
     }
 
+    createCategory({name, type}) {
+        return axios.post('/graphql', {query: `mutation {
+            createCategory(name: """${name}""" type: """${type}""") {
+                id
+                name
+                type
+            }
+         }`});
+    }
+
     updateCategory({id, name, type}) {
         return axios.post('/graphql', {query: `mutation {
-            updateCategory(id: ${id} name: "${name}" type: "${type}") {
+            updateCategory(id: ${id} name: """${name}""" type: """${type}""") {
                 id
                 name
                 type

@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
 import Edit from './Edit';
+import Create from './Create';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -11,6 +12,7 @@ export default function Index({auth}) {
     const [hasMorePages, setHasMorePages] = useState(true);
     const [loading, setLoading] = useState(false);
     const [editCategory, setEditCategory] = useState(null);
+    const [showCreate, setShowCreate] = useState(false);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -25,28 +27,48 @@ export default function Index({auth}) {
             .catch(console.error);
     }, [currentPage]);
 
-    const updateCategory = (updatedCategory) => {
+    const onUpdate = (updatedItem) => {
         setCategories(categories.map(category => {
-            if(category.id === updatedCategory.id) {
-                return updatedCategory
+            if(category.id === updatedItem.id) {
+                return updatedItem
             }
             
             return category
         }));
 
-        Engine.animateRowItem('item-' + updatedCategory.id);
+        Engine.animateRowItem('item-' + updatedItem.id);
+        setEditCategory(null)
+    }
+
+    const onCreate = (createdItem) => {
+        setShowCreate(false)
+        setCategories([createdItem, ...categories])
+
+        Engine.animateRowItem('item-' + createdItem.id);
     }
     
     return (
-        <Authenticated auth={auth}>
+        <Authenticated auth={auth}
+            header={
+                <div className='flex justify-between items-center'>
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        Categories
+                    </h2>
+
+                    <button onClick={() => setShowCreate(true)} className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
+                        Create Category
+                    </button>
+                </div>
+            }>
             <Head title="Categories" />
+
+            <Create showCreate={showCreate} 
+                onCreate={onCreate}
+                onClose={() => setShowCreate(false)} />
 
             <Edit category={editCategory} 
                 onClose={() => setEditCategory(null)} 
-                onUpdate={category => {
-                    updateCategory(category)
-                    setEditCategory(null)
-                }}
+                onUpdate={onUpdate}
                 />
         
             <div className="py-12">

@@ -41,17 +41,17 @@ export default function Sms({auth}) {
 
     return (
         <Authenticated auth={auth} 
-        header={
-            <div className='flex justify-between items-center'>
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    SMS Parser
-                </h2>
+            header={
+                <div className='flex justify-between items-center'>
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        SMS Parser
+                    </h2>
 
-                <button onClick={() => setShowCreate(true)} className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
-                    Parse SMS
-                </button>
-            </div>
-        }>
+                    <button onClick={() => setShowCreate(true)} className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
+                        Parse SMS
+                    </button>
+                </div>
+            }>
             <Head title="SMS Parser" />
 
             <Create showCreate={showCreate} 
