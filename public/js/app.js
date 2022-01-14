@@ -4697,11 +4697,12 @@ var Api = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "deleteSms",
-    value: function deleteSms(_ref9) {
-      var id = _ref9.id;
+    key: "delete",
+    value: function _delete(_ref9) {
+      var id = _ref9.id,
+          resource = _ref9.resource;
       return axios.post('/graphql', {
-        query: "mutation { \n            deleteSms(id: ".concat(id, ") { \n                id\n            } \n        }")
+        query: "mutation { \n            delete".concat(resource, "(id: ").concat(id, ") { \n                id\n            } \n        }")
       });
     }
   }]);
@@ -4824,6 +4825,131 @@ function Checkbox(_ref) {
     onChange: function onChange(e) {
       return handleChange(e);
     }
+  });
+}
+
+/***/ }),
+
+/***/ "./resources/js/Components/Delete.js":
+/*!*******************************************!*\
+  !*** ./resources/js/Components/Delete.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Delete)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _headlessui_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/components/transitions/transition.esm.js");
+/* harmony import */ var _headlessui_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/components/dialog/dialog.esm.js");
+/* harmony import */ var _heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @heroicons/react/outline */ "./node_modules/@heroicons/react/outline/esm/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+function Delete(_ref) {
+  var item = _ref.item,
+      resource = _ref.resource,
+      onClose = _ref.onClose,
+      onDelete = _ref.onDelete;
+  var cancelButtonRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+
+  var deleteItem = function deleteItem() {
+    Api["delete"]({
+      id: item.id,
+      resource: resource
+    }).then(function () {
+      return onDelete();
+    })["catch"](console.error);
+  };
+
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_3__.Transition.Root, {
+    show: item != null,
+    as: react__WEBPACK_IMPORTED_MODULE_0__.Fragment,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_4__.Dialog, {
+      as: "div",
+      className: "fixed z-10 inset-0 overflow-y-auto",
+      initialFocus: cancelButtonRef,
+      onClose: onClose,
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+        className: "flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_3__.Transition.Child, {
+          as: react__WEBPACK_IMPORTED_MODULE_0__.Fragment,
+          enter: "ease-out duration-300",
+          enterFrom: "opacity-0",
+          enterTo: "opacity-100",
+          leave: "ease-in duration-200",
+          leaveFrom: "opacity-100",
+          leaveTo: "opacity-0",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_4__.Dialog.Overlay, {
+            className: "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+          className: "hidden sm:inline-block sm:align-middle sm:h-screen",
+          "aria-hidden": "true",
+          children: "\u200B"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_3__.Transition.Child, {
+          as: react__WEBPACK_IMPORTED_MODULE_0__.Fragment,
+          enter: "ease-out duration-300",
+          enterFrom: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+          enterTo: "opacity-100 translate-y-0 sm:scale-100",
+          leave: "ease-in duration-200",
+          leaveFrom: "opacity-100 translate-y-0 sm:scale-100",
+          leaveTo: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+            className: "inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+              className: "bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+                className: "sm:flex sm:items-start",
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                  className: "mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10",
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__.ExclamationIcon, {
+                    className: "h-6 w-6 text-red-600",
+                    "aria-hidden": "true"
+                  })
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+                  className: "mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_4__.Dialog.Title, {
+                    as: "h3",
+                    className: "text-lg leading-6 font-medium text-gray-900",
+                    children: "Delete Resource"
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                    className: "mt-2",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
+                      className: "text-sm text-gray-500",
+                      children: "Are you sure you want to delete this resource?"
+                    })
+                  })]
+                })]
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+              className: "bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
+                type: "button",
+                className: "w-full inline-flex justify-center outline-none rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm",
+                onClick: function onClick() {
+                  return deleteItem();
+                },
+                children: "Delete"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
+                type: "button",
+                className: "mt-3 w-full inline-flex justify-center outline-none rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm",
+                onClick: function onClick() {
+                  return onClose();
+                },
+                ref: cancelButtonRef,
+                children: "Cancel"
+              })]
+            })]
+          })
+        })]
+      })
+    })
   });
 }
 
@@ -7030,130 +7156,6 @@ function Create(_ref) {
 
 /***/ }),
 
-/***/ "./resources/js/Pages/Sms/Delete.js":
-/*!******************************************!*\
-  !*** ./resources/js/Pages/Sms/Delete.js ***!
-  \******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ Delete)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _headlessui_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/components/transitions/transition.esm.js");
-/* harmony import */ var _headlessui_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @headlessui/react */ "./node_modules/@headlessui/react/dist/components/dialog/dialog.esm.js");
-/* harmony import */ var _heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @heroicons/react/outline */ "./node_modules/@heroicons/react/outline/esm/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
-
-
-
-function Delete(_ref) {
-  var item = _ref.item,
-      resource = _ref.resource,
-      onClose = _ref.onClose,
-      onDelete = _ref.onDelete;
-  var cancelButtonRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-
-  var deleteItem = function deleteItem() {
-    Api["delete".concat(resource)]({
-      id: item.id
-    }).then(function () {
-      return onDelete();
-    })["catch"](console.error);
-  };
-
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_3__.Transition.Root, {
-    show: item != null,
-    as: react__WEBPACK_IMPORTED_MODULE_0__.Fragment,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_4__.Dialog, {
-      as: "div",
-      className: "fixed z-10 inset-0 overflow-y-auto",
-      initialFocus: cancelButtonRef,
-      onClose: onClose,
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-        className: "flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_3__.Transition.Child, {
-          as: react__WEBPACK_IMPORTED_MODULE_0__.Fragment,
-          enter: "ease-out duration-300",
-          enterFrom: "opacity-0",
-          enterTo: "opacity-100",
-          leave: "ease-in duration-200",
-          leaveFrom: "opacity-100",
-          leaveTo: "opacity-0",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_4__.Dialog.Overlay, {
-            className: "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
-          className: "hidden sm:inline-block sm:align-middle sm:h-screen",
-          "aria-hidden": "true",
-          children: "\u200B"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_3__.Transition.Child, {
-          as: react__WEBPACK_IMPORTED_MODULE_0__.Fragment,
-          enter: "ease-out duration-300",
-          enterFrom: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
-          enterTo: "opacity-100 translate-y-0 sm:scale-100",
-          leave: "ease-in duration-200",
-          leaveFrom: "opacity-100 translate-y-0 sm:scale-100",
-          leaveTo: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-            className: "inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-              className: "bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-                className: "sm:flex sm:items-start",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-                  className: "mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__.ExclamationIcon, {
-                    className: "h-6 w-6 text-red-600",
-                    "aria-hidden": "true"
-                  })
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-                  className: "mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_headlessui_react__WEBPACK_IMPORTED_MODULE_4__.Dialog.Title, {
-                    as: "h3",
-                    className: "text-lg leading-6 font-medium text-gray-900",
-                    children: "Delete Resource"
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-                    className: "mt-2",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-                      className: "text-sm text-gray-500",
-                      children: "Are you sure you want to delete this resource?"
-                    })
-                  })]
-                })]
-              })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-              className: "bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-                type: "button",
-                className: "w-full inline-flex justify-center outline-none rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm",
-                onClick: function onClick() {
-                  return deleteItem();
-                },
-                children: "Delete"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-                type: "button",
-                className: "mt-3 w-full inline-flex justify-center outline-none rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm",
-                onClick: function onClick() {
-                  return onClose();
-                },
-                ref: cancelButtonRef,
-                children: "Cancel"
-              })]
-            })]
-          })
-        })]
-      })
-    })
-  });
-}
-
-/***/ }),
-
 /***/ "./resources/js/Pages/Sms/Edit.js":
 /*!****************************************!*\
   !*** ./resources/js/Pages/Sms/Edit.js ***!
@@ -7306,7 +7308,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_LoadMore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/LoadMore */ "./resources/js/Components/LoadMore.js");
 /* harmony import */ var _Create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Create */ "./resources/js/Pages/Sms/Create.js");
 /* harmony import */ var _Edit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Edit */ "./resources/js/Pages/Sms/Edit.js");
-/* harmony import */ var _Delete__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Delete */ "./resources/js/Pages/Sms/Delete.js");
+/* harmony import */ var _Components_Delete__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Components/Delete */ "./resources/js/Components/Delete.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -7434,7 +7436,7 @@ function Sms(_ref) {
 
         setEditItem(null);
       }
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_Delete__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_Components_Delete__WEBPACK_IMPORTED_MODULE_7__["default"], {
       item: deleteItem,
       resource: "Sms",
       onClose: function onClose() {
@@ -7878,7 +7880,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Pages_Transaction_Edit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Pages/Transaction/Edit */ "./resources/js/Pages/Transaction/Edit.js");
 /* harmony import */ var _Create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Create */ "./resources/js/Pages/Transaction/Create.js");
 /* harmony import */ var _Components_LoadMore__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Components/LoadMore */ "./resources/js/Components/LoadMore.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _Components_Delete__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Components/Delete */ "./resources/js/Components/Delete.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -7898,6 +7901,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -7946,6 +7950,11 @@ function Index(_ref) {
       showCreate = _useState14[0],
       setShowCreate = _useState14[1];
 
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState16 = _slicedToArray(_useState15, 2),
+      deleteItem = _useState16[0],
+      setDeleteItem = _useState16[1];
+
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     Api.getAllBrands().then(function (_ref2) {
       var data = _ref2.data;
@@ -7981,14 +7990,14 @@ function Index(_ref) {
     setEditItem(null);
   };
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_3__["default"], {
     auth: auth,
-    header: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+    header: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
       className: "flex justify-between items-center",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h2", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("h2", {
         className: "font-semibold text-xl text-gray-800 leading-tight",
         children: "Transactions"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("button", {
         onClick: function onClick() {
           return setShowCreate(true);
         },
@@ -7996,111 +8005,136 @@ function Index(_ref) {
         children: "Create Transaction"
       })]
     }),
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_2__.Head, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_inertiajs_inertia_react__WEBPACK_IMPORTED_MODULE_2__.Head, {
       title: "Transactions"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_Create__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_Create__WEBPACK_IMPORTED_MODULE_5__["default"], {
       showCreate: showCreate,
       brands: allBrands,
       onCreate: onCreate,
       onClose: function onClose() {
         return setShowCreate(false);
       }
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_Pages_Transaction_Edit__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_Pages_Transaction_Edit__WEBPACK_IMPORTED_MODULE_4__["default"], {
       transaction: editItem,
       brands: allBrands,
       onUpdate: onUpdate,
       onClose: function onClose() {
         return setEditItem(null);
       }
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_Components_Delete__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      item: deleteItem,
+      resource: "Transaction",
+      onClose: function onClose() {
+        return setDeleteItem(null);
+      },
+      onDelete: function onDelete() {
+        setTransactions(transactions.filter(function (item) {
+          return item.id != deleteItem.id;
+        }));
+        setDeleteItem(null);
+      }
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
       className: "py-12",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
         className: "max-w-7xl mx-auto sm:px-6 lg:px-8",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
           className: "flex flex-col",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
             className: "-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
               className: "py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
                 className: "shadow overflow-hidden border-b border-gray-200 sm:rounded-lg",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("table", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("table", {
                   className: "min-w-full divide-y divide-gray-200",
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("thead", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("thead", {
                     className: "bg-gray-50",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("tr", {
-                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("tr", {
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                         children: "Id"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                         children: "Amount"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                         children: "Category"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                         children: "Brand"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                         children: "Type"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("th", {
                         scope: "col",
                         className: "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                         children: "Date"
-                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("th", {
                         scope: "col",
                         className: "relative py-3",
-                        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+                        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
                           className: "sr-only",
                           children: "Edit"
                         })
                       })]
                     })
-                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("tbody", {
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("tbody", {
                     className: "bg-white divide-y divide-gray-200",
                     children: transactions.map(function (item) {
-                      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("tr", {
+                      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("tr", {
                         className: "loaded",
                         id: 'item-' + item.id,
-                        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("td", {
+                        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: item.id
-                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("td", {
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: [AppCurrency, " ", Engine.formatNumber(item.amount, null)]
-                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("td", {
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: item.brand.category ? item.brand.category.name : '-'
-                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("td", {
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: item.brand.name
-                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("td", {
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: item.brand.category ? item.brand.category.type : '-'
-                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("td", {
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800",
                           children: item.created_at
-                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("td", {
+                        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("td", {
                           className: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium",
-                          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
+                          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("button", {
                             onClick: function onClick() {
                               return setEditItem(item);
                             },
                             type: "button",
-                            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+                            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
                               className: "sr-only",
                               children: "Edit"
-                            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__.PencilAltIcon, {
+                            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__.PencilAltIcon, {
                               className: "h-5 w-5 text-gray-500",
                               "aria-hidden": "true"
                             })]
-                          })
+                          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("button", {
+                            onClick: function onClick() {
+                              return setDeleteItem(item);
+                            },
+                            type: "button",
+                            className: "ml-2",
+                            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
+                              className: "sr-only",
+                              children: "Delete"
+                            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_heroicons_react_outline__WEBPACK_IMPORTED_MODULE_1__.TrashIcon, {
+                              className: "h-5 w-5 text-gray-500",
+                              "aria-hidden": "true"
+                            })]
+                          })]
                         })]
                       }, item.id);
                     })
@@ -8108,7 +8142,7 @@ function Index(_ref) {
                 })
               })
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_Components_LoadMore__WEBPACK_IMPORTED_MODULE_6__["default"], {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_Components_LoadMore__WEBPACK_IMPORTED_MODULE_6__["default"], {
             hasMorePages: hasMorePages,
             loading: loading,
             onClick: function onClick() {
@@ -61379,8 +61413,6 @@ var map = {
 	"./Dashboard.js": "./resources/js/Pages/Dashboard.js",
 	"./Sms/Create": "./resources/js/Pages/Sms/Create.js",
 	"./Sms/Create.js": "./resources/js/Pages/Sms/Create.js",
-	"./Sms/Delete": "./resources/js/Pages/Sms/Delete.js",
-	"./Sms/Delete.js": "./resources/js/Pages/Sms/Delete.js",
 	"./Sms/Edit": "./resources/js/Pages/Sms/Edit.js",
 	"./Sms/Edit.js": "./resources/js/Pages/Sms/Edit.js",
 	"./Sms/Index": "./resources/js/Pages/Sms/Index.js",

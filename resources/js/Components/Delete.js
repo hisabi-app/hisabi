@@ -6,7 +6,7 @@ export default function Delete({item, resource, onClose, onDelete}) {
   const cancelButtonRef = useRef(null)
   
   const deleteItem = () => {
-    Api[`delete${resource}`]({id: item.id})
+    Api.delete({id: item.id, resource: resource})
         .then(() => onDelete())
         .catch(console.error)
   }

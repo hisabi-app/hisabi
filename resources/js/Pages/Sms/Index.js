@@ -5,7 +5,7 @@ import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/LoadMore';
 import Create from './Create';
 import Edit from './Edit';
-import Delete from './Delete';
+import Delete from '@/Components/Delete';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);

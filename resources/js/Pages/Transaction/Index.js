@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from '@/Pages/Transaction/Edit';
 import Create from './Create';
 import LoadMore from '@/Components/LoadMore';
+import Delete from '@/Components/Delete';
 
 export default function Index({auth}) {
     const [transactions, setTransactions] = useState([]);
@@ -14,7 +15,8 @@ export default function Index({auth}) {
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
-    
+    const [deleteItem, setDeleteItem] = useState(null);
+
     useEffect(() => {
         Api.getAllBrands()
             .then(({data}) => {
@@ -81,6 +83,14 @@ export default function Index({auth}) {
                 onUpdate={onUpdate}
                 onClose={() => setEditItem(null)} 
             />
+
+            <Delete item={deleteItem} 
+                resource="Transaction"
+                onClose={() => setDeleteItem(null)}
+                onDelete={() => {
+                    setTransactions(transactions.filter(item => item.id != deleteItem.id));
+                    setDeleteItem(null)
+                }}  />
         
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -127,6 +137,12 @@ export default function Index({auth}) {
                                                         <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                                                        </button>
+
+                                                        <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
+                                                            <span className="sr-only">Delete</span>
+                                                            
+                                                            <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>
                                                 </tr>

@@ -193,9 +193,9 @@ export default class Api {
         }`});
     }
 
-    deleteSms({id}) {
+    delete({id, resource}) {
         return axios.post('/graphql', {query: `mutation { 
-            deleteSms(id: ${id}) { 
+            delete${resource}(id: ${id}) { 
                 id
             } 
         }`});
