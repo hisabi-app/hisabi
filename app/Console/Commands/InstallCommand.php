@@ -82,9 +82,9 @@ EOT;
     public function writeWelcomeMessage()
     {
         if ($this->confirm('Would you like to show some love by supporting this project?')) {
-            if(PHP_OS_FAMILY == 'Darwin') exec('open https://opencollective.com/persona-finance');
-            if(PHP_OS_FAMILY == 'Windows') exec('start https://opencollective.com/persona-finance');
-            if(PHP_OS_FAMILY == 'Linux') exec('xdg-open https://opencollective.com/persona-finance');
+            if(PHP_OS_FAMILY == 'Darwin') exec('open https://github.com/saleem-hadad/personal-finance');
+            if(PHP_OS_FAMILY == 'Windows') exec('start https://github.com/saleem-hadad/personal-finance');
+            if(PHP_OS_FAMILY == 'Linux') exec('xdg-open https://github.com/saleem-hadad/personal-finance');
 
             $this->line("Thanks! Means the world to me!");
         }
