@@ -1,4 +1,6 @@
-# 💰 Self-hosted personal finance web app
+# 💰 FINANCE
+
+FINANCE is a very simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
 
 ## 🛠 Features
 
@@ -8,7 +10,7 @@
 
 ## 🎮 Documentation & Demo
 
-Read [full documentation]() and try the app [demo live]().
+Read [full documentation](https://finance-demo.saleem.dev/docs) and try the app [demo live](https://finance-demo.saleem.dev/).
 
 ## ▶️ Installation 
 
