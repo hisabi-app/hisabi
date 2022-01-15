@@ -28,7 +28,9 @@
     },
     "dependencies": {
         "@heroicons/react": "^1.0.5",
+        "chart.js": "^3.7.0",
         "graphql": "^16.2.0",
-        "numbro": "^2.3.6"
+        "numbro": "^2.3.6",
+        "react-chartjs-2": "^4.0.0"
     }
 }

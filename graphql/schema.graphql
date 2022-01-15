@@ -25,12 +25,6 @@ type Transaction {
     created_at: Date!
 }
 
-type TransactionStatistics {
-    category_id: Int!
-    total: Float!
-    category: Category
-}
-
 type Sms {
     id: ID!
     body: String!
@@ -42,16 +36,17 @@ type Query {
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     allBrands: [Brand!]! @all
-    brands: [Brand!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
+    brands: [Brand!]! @paginate(defaultCount: 25) @orderBy(column: category_id direction: ASC)
 
     allCategories: [Category!]! @all
     categories: [Category!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: transaction_id direction: ASC)
 
-    totalExpenses: Float! @aggregate(model: Transaction column: amount function: SUM scopes:["expenses"])
-    totalIncome: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])
-    expensesPerCategory: Float! @aggregate(model: Transaction column: amount function: SUM scopes: ["income"])
+    totalExpenses(range: String): Json
+    totalIncome(range: String): Json
+    expensesPerCategory(range: String): Json
+    incomePerCategory(range: String): Json
 }
 
 type Mutation {

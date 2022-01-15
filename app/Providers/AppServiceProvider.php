@@ -9,6 +9,10 @@ use App\BusinessLogic\SmsTransactionProcessor;
 use App\Contracts\SmsParser as SmsParserContract;
 use App\Contracts\SmsTemplateDetector as SmsTemplateDetectorContract;
 use App\Contracts\SmsTransactionProcessor as SmsTransactionProcessorContract;
+use App\Domain\Ranges\CurrentMonth;
+use App\Domain\Ranges\CurrentYear;
+use App\Domain\Ranges\LastMonth;
+use App\Domain\Ranges\LastYear;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +26,21 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SmsParserContract::class, SmsParser::class);
         $this->app->bind(SmsTemplateDetectorContract::class, SmsTemplateDetector::class);
         $this->app->bind(SmsTransactionProcessorContract::class, SmsTransactionProcessor::class);
+
+        // TODO: find a better way to load classes based on base class Range
+        $this->app->bind('findRangeByKey', function($_, $params) {
+            $key = $params['key'];
+
+            return collect([
+                new CurrentMonth,
+                new LastMonth,
+                new CurrentYear,
+                new LastYear,
+            ])->first(function ($range) use($key) {
+                return $key === $range->key();
+            }) ?: null;
+            
+        });
     }
 
     /**

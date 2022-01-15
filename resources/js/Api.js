@@ -200,4 +200,14 @@ export default class Api {
             } 
         }`});
     }
+
+    query(query, range = null) {
+        if(range == null) {
+            return axios.post('/graphql', {query: `query { ${query} }`});    
+        }
+
+        return axios.post('/graphql', {query: `query { 
+            ${query}(range: """${range}""") 
+        }`});
+    }
 }

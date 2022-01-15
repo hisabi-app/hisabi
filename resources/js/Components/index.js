@@ -1,8 +1,10 @@
 import React from "react";
 import ValueMetric from "./ValueMetric";
+import PartitionMetric from "./PartitionMetric";
  
 const components = {
-  'value-metric': ValueMetric
+  'value-metric': ValueMetric,
+  'partition-metric': PartitionMetric,
 };
 
 export const renderComponent = (component, props, children) => {

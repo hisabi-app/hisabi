@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 
 abstract class Range implements JsonSerializable
 {
-    protected $key;
     protected $name;
     protected $start;
     protected $end;

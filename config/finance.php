@@ -1,5 +1,17 @@
 <?php
 
+use \App\Domain\Ranges\CurrentMonth;
+use \App\Domain\Ranges\LastMonth;
+use \App\Domain\Ranges\CurrentYear;
+use \App\Domain\Ranges\LastYear;
+
+$ranges = [
+    new CurrentMonth,
+    new LastMonth,
+    new CurrentYear,
+    new LastYear,
+];
+
 return [
     'sms_templates' => [
         'Purchase of AED {amount} with {card} at {brand},',
@@ -13,24 +25,28 @@ return [
             'graphql_query' => 'totalIncome',
             'component' => 'value-metric',
             'width' => '1/2',
+            'ranges' => $ranges,
         ],
         [
             'name' => 'Total Expenses',
             'graphql_query' => 'totalExpenses',
             'component' => 'value-metric',
             'width' => '1/2',
+            'ranges' => $ranges,
         ],
         [
             'name' => 'Expenses per Category',
             'graphql_query' => 'expensesPerCategory',
             'component' => 'partition-metric',
             'width' => '1/2',
-            'ranges' => [
-                \App\Domain\Ranges\CurrentMonth::class,
-                \App\Domain\Ranges\LastMonth::class,
-                \App\Domain\Ranges\CurrentYear::class,
-                \App\Domain\Ranges\LastYear::class,
-            ],
+            'ranges' => $ranges,
+        ],
+        [
+            'name' => 'Income per Category',
+            'graphql_query' => 'incomePerCategory',
+            'component' => 'partition-metric',
+            'width' => '1/2',
+            'ranges' => $ranges,
         ],
 
         // Brand per category partition for this month

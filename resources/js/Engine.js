@@ -35,4 +35,26 @@ export default class Engine {
 
         return stringValue
     }
+
+    colors() {
+        return [
+            {tailwind: 'bg-red-500', hex: '#ef4444'},
+            {tailwind: 'bg-amber-500', hex: '#f59e0b'},
+            {tailwind: 'bg-orange-500', hex: '#f97316'},
+            {tailwind: 'bg-yellow-500', hex: '#eab308'},
+            {tailwind: 'bg-green-500', hex: '#22c55e'},
+            {tailwind: 'bg-lime-500', hex: '#84cc16'},
+            {tailwind: 'bg-sky-500', hex: '#0ea5e9'},
+            {tailwind: 'bg-teal-500', hex: '#14b8a6'},
+            {tailwind: 'bg-blue-500', hex: '#3b82f6'},
+            {tailwind: 'bg-indigo-500', hex: '#6366f1'},
+            {tailwind: 'bg-fuchsia-500', hex: '#d946ef'},
+            {tailwind: 'bg-pink-500', hex: '#ec4899'},
+            {tailwind: 'bg-rose-500', hex: '#f43f5e'},
+        ];
+    }
+
+    getTailwindColor(index) {
+        return this.colors()[index] ? this.colors()[index].tailwind : "bg-gray-500";
+    }
 }
