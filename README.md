@@ -14,14 +14,51 @@
 
 ## 🎮 Documentation & Demo
 
-Read [full documentation](https://finance-demo.saleem.dev/docs) and try the app [demo live](https://finance-demo.saleem.dev/).
+Read [full documentation](https://finance-demo.saleem.dev/docs) and try the app with [live demo](https://finance-demo.saleem.dev/).
 
 ## ▶️ Installation 
 
-> Docker
+> Docker Installation
+
+```bash
+# step 0: clone the app
+git clone https://github.com/saleem-hadad/finance && cd finance
+
+# step 1: run migration
+./vendor/bin/sail artisan migrate
+
+# step 2: install command
+./vendor/bin/sail artisan finance:install
+
+# step 3: serve the app
+./vendor/bin/sail up
+```
+
+Once done, visit the app on `http://localhost`
 
 
-> Laravel app
+> Normal Laravel App
+
+If you wish installing the app using normal Laravel environment, make sure you have PHP, MySQL, and composer already installed and then run the following commands:
+
+```bash
+# step 0: clone the app
+git clone https://github.com/saleem-hadad/finance && cd finance
+
+# step 1: install deps
+composer install
+
+# step 2: 
+php artisan migrate
+
+# step 3: install command
+php artisan finance:install
+
+# step 4: serve the app
+php artisan serve
+```
+
+Once done, visit the app on `http://localhost:8000`
 
 
 ## 🪚 Built with
