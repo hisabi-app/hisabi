@@ -5,7 +5,7 @@
 ---
 
 - [Overview](#overview)
-- [Installing Finance](#installing-finance)
+- [Installation](#installation)
 - [Usage](#usage)
 - [Story](#story)
 - [Credits](#credits)
@@ -14,10 +14,12 @@
 <a name="overview"></a>
 ## Overview 
 
-FINANCE is a very simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
+**FINANCE** is a very simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
 
-<a name="installing-finance"></a>
-## Installing Finance
+![finance](/images/finance.jpg)
+
+<a name="installation"></a>
+## Installation
 
 >{info} Docker Installation
 
