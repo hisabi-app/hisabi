@@ -4,9 +4,14 @@ namespace App\GraphQL\Queries;
 
 use App\Models\Brand;
 use Illuminate\Support\Facades\DB;
+use App\Domain\Metrics\RelationPartitionMetric;
 
-class TotalPerBrand
+class TotalPerBrand extends RelationPartitionMetric
 {
+    protected $relationGraphqlQuery = 'allCategories';
+    protected $relationDisplayUsing = 'name';
+    protected $relationForeignKey = 'category_id';
+
     /**
      * @param  null  $_
      * @param  array<string, mixed>  $args
@@ -14,7 +19,7 @@ class TotalPerBrand
     public function __invoke($_, array $args)
     {
         $rangeData = app('findRangeByKey', ["key" => $args['range']]);
-        $categoryId = $args['category_id'] ?? 41;
+        $categoryId = $args['category_id'];
 
         $query = Brand::query()
             ->where('category_id', $categoryId)

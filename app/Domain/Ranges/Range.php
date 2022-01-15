@@ -2,28 +2,17 @@
 
 namespace App\Domain\Ranges;
 
-use JsonSerializable;
+use App\Domain\Element;
 use Illuminate\Support\Str;
 
-abstract class Range implements JsonSerializable
+abstract class Range extends Element
 {
-    protected $name;
     protected $start;
     protected $end;
-
-    public function humanizedName()
-    {
-        return Str::title(Str::snake(class_basename(get_class($this)), ' '));
-    }
 
     public function key()
     {
         return Str::slug($this->name(), '-', null);
-    }
-
-    public function name()
-    {
-        return $this->name ?: $this->humanizedName();
     }
 
     abstract public function start();
@@ -37,11 +26,10 @@ abstract class Range implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        return [
+        return array_merge(parent::jsonSerialize(), [
             'key' => $this->key(),
-            'name' => $this->name(),
             'start' => $this->start(),
             'end' => $this->end(),
-        ];
+        ]);
     }
 }

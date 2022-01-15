@@ -4,8 +4,9 @@ namespace App\GraphQL\Queries;
 
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
+use App\Domain\Metrics\PartitionMetric;
 
-class IncomePerCategory
+class IncomePerCategory extends PartitionMetric
 {
     /**
      * @param  null  $_

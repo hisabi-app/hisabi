@@ -3,8 +3,9 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Transaction;
+use App\Domain\Metrics\ValueMetric;
 
-class TotalIncome
+class TotalIncome extends ValueMetric
 {
     /**
      * @param  null  $_
