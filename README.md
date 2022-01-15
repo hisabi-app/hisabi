@@ -5,6 +5,7 @@
 </p>
 
 <p align="center"><img src="./public/images/finance.jpg" /></p>
+<p align="center"><a href="#" target="__blank"><img height="40" src="./public/images/video.png" /></a></p>
 
 ## 🛠 Features
 
