@@ -6,7 +6,9 @@
 2. [x] Parse SMS bank transactions
 3. [x] Detailed analysis of income and expenses 
 
-## 🎮 Demo
+## 🎮 Documentation & Demo
+
+Read [full documentation]() and try the app [demo live]().
 
 ## ▶️ Installation 
 
@@ -15,14 +17,6 @@
 
 > Laravel app
 
-
-## 🧠 Customization 
-
-### SMS templates
-
-### Currency
-
-### Reports and analysis 
 
 ## 🪚 Built with
 
