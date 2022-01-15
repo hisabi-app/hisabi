@@ -13,9 +13,9 @@
 2. [x] Parse SMS bank transactions
 3. [x] Detailed analysis of income and expenses 
 
-## 🎮 Documentation & Demo
+## 🎮 Demo
 
-Read [full documentation](https://finance-demo.saleem.dev/docs) and try the app with [live demo](https://finance-demo.saleem.dev/).
+Try the app with [live demo](https://finance-demo.saleem.dev/).
 
 ## ▶️ Installation 
 
@@ -61,6 +61,8 @@ php artisan serve
 
 Once done, visit the app on `http://localhost:8000`
 
+
+Read [full documentation](https://finance-demo.saleem.dev/docs)
 
 ## 🪚 Built with
 
