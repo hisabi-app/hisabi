@@ -1,6 +1,10 @@
-# 💰 FINANCE
+<h1 align="center"><img height="150" src="./public/images/logo.png" /></h1>
 
-FINANCE is a very simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
+<p align="center">
+  <b>FINANCE is a very simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money</b>
+</p>
+
+<br />
 
 ## 🛠 Features
 
@@ -30,4 +34,4 @@ Read [full documentation](https://finance-demo.saleem.dev/docs) and try the app 
 
 ## 🔖 License
 
-This project is licensed under the MIT License. Enjoy!
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/saleem-hadad/finance/blob/main/LICENSE) file for details.

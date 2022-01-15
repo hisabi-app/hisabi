@@ -134,4 +134,4 @@ This app uses few open-source libraries and packages, many thanks to the web com
 <a name="licence"></a>
 ## Licence
 
-This project is licensed under the MIT License - see the [LICENSE.md]() file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/saleem-hadad/finance/blob/main/LICENSE) file for details.
