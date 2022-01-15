@@ -3,11 +3,11 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Transaction;
-use Illuminate\Support\Facades\DB;
-use App\Domain\Metrics\RelationTrendMetric;
-use App\Domain\Ranges\LastTwelveMonths;
-use App\Domain\Ranges\CurrentYear;
 use App\Domain\Ranges\LastYear;
+use App\Domain\Ranges\CurrentYear;
+use Illuminate\Support\Facades\DB;
+use App\Domain\Ranges\LastTwelveMonths;
+use App\Domain\Metrics\RelationTrendMetric;
 
 class TotalPerBrandTrend extends RelationTrendMetric
 {
@@ -37,8 +37,9 @@ class TotalPerBrandTrend extends RelationTrendMetric
             ->whereHas('brand', function ($query) use($brandId) {
                 return $query->where('id', $brandId);
             })
-            ->select(DB::raw("date_format(created_at, '%Y-%M') as label, SUM(transactions.amount) as value"))
-            ->groupBy(DB::raw("label"));
+            ->select(DB::raw("date_format(created_at, '%Y-%m') as label, SUM(transactions.amount) as value"))
+            ->groupBy(DB::raw("label"))
+            ->orderBy("label");
 
         if($rangeData) {
             $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
