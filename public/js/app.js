@@ -5282,11 +5282,12 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-chart_js__WEBPACK_IMPORTED_MODULE_1__.Chart.register(chart_js__WEBPACK_IMPORTED_MODULE_1__.ArcElement, chart_js__WEBPACK_IMPORTED_MODULE_1__.Tooltip, chart_js__WEBPACK_IMPORTED_MODULE_1__.Legend, chart_js__WEBPACK_IMPORTED_MODULE_1__.LinearScale, chart_js__WEBPACK_IMPORTED_MODULE_1__.DoughnutController, chart_js__WEBPACK_IMPORTED_MODULE_1__.BarElement, chart_js__WEBPACK_IMPORTED_MODULE_1__.CategoryScale);
+chart_js__WEBPACK_IMPORTED_MODULE_1__.Chart.register(chart_js__WEBPACK_IMPORTED_MODULE_1__.ArcElement, chart_js__WEBPACK_IMPORTED_MODULE_1__.DoughnutController);
 function PartitionMetric(_ref) {
   var name = _ref.name,
       graphql_query = _ref.graphql_query,
-      ranges = _ref.ranges;
+      ranges = _ref.ranges,
+      relation = _ref.relation;
 
   var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState2 = _slicedToArray(_useState, 2),
@@ -5303,13 +5304,46 @@ function PartitionMetric(_ref) {
       chartRef = _useState6[0],
       setChartRef = _useState6[1];
 
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
+      _useState8 = _slicedToArray(_useState7, 2),
+      relationData = _useState8[0],
+      setRelationData = _useState8[1];
+
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0),
+      _useState10 = _slicedToArray(_useState9, 2),
+      selectedRelationId = _useState10[0],
+      setSelectedRelationId = _useState10[1];
+
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (!relation) {
+      return;
+    }
+
+    Api.query(relation.graphql_query + "{ id ".concat(relation.display_using, " }")).then(function (_ref2) {
+      var data = _ref2.data;
+      setRelationData(data.data[relation.graphql_query]);
+      setSelectedRelationId(data.data[relation.graphql_query][0].id);
+    })["catch"](console.error);
+  }, []);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     setData(null);
-    Api.query(graphql_query, selectedRange).then(function (_ref2) {
-      var data = _ref2.data;
+
+    if (relation) {
+      if (selectedRelationId) {
+        Api.query(graphql_query + "(range: \"\"\"".concat(selectedRange, "\"\"\" ").concat(relation.foreign_key, ": ").concat(selectedRelationId, ")")).then(function (_ref3) {
+          var data = _ref3.data;
+          return setData(JSON.parse(data.data[graphql_query]));
+        })["catch"](console.error);
+      }
+
+      return;
+    }
+
+    Api.query(graphql_query, selectedRange).then(function (_ref4) {
+      var data = _ref4.data;
       return setData(JSON.parse(data.data[graphql_query]));
     })["catch"](console.error);
-  }, [selectedRange]);
+  }, [selectedRelationId, selectedRange]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     if (data == null) {
       return;
@@ -5365,9 +5399,25 @@ function PartitionMetric(_ref) {
       className: "px-6 py-4",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
         className: "flex justify-between items-center mb-2",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h3", {
-          className: "mr-3 text-base text-gray-700 font-bold",
-          children: name
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+          className: "flex items-center",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h3", {
+            className: "mr-2 text-base text-gray-700 font-bold",
+            children: name
+          }), relation && relationData && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("select", {
+            className: "ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline",
+            name: "relation",
+            value: selectedRelationId,
+            onChange: function onChange(e) {
+              setSelectedRelationId(e.target.value);
+            },
+            children: relationData.map(function (relationItem) {
+              return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("option", {
+                value: relationItem.id,
+                children: relationItem[relation.display_using]
+              }, relationItem.id);
+            })
+          })]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("select", {
           className: "ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline",
           name: "range",

@@ -48,13 +48,22 @@ return [
             'width' => '1/2',
             'ranges' => $ranges,
         ],
+        [
+            'name' => 'Total per Brand',
+            'graphql_query' => 'totalPerBrand',
+            'component' => 'partition-metric',
+            'width' => '1/2',
+            'ranges' => $ranges,
+            'relation' => [
+                'graphql_query' => 'allCategories',
+                'display_using' => 'name',
+                'foreign_key' => 'category_id',
+            ]
+        ],
 
-        // Brand per category partition for this month
-        // Brand per category partition for last month
-
-        // Total Income graph for the last 12 months
-        // Total Expenses graph for the last 12 months
-        // Graph for expenses per category for the last 12 months
-        // Brand graph for the last 12 months
+        // Total Income graph
+        // Total Expenses graph
+        // Expenses per Category graph
+        // Transactions per Brand graph
     ]
 ];

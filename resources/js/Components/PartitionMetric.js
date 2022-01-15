@@ -1,23 +1,46 @@
 import { useEffect, useState } from "react";
-import { Chart, ArcElement, Tooltip, Legend, LinearScale, DoughnutController, BarElement, CategoryScale } from 'chart.js';
+import { Chart, ArcElement, DoughnutController } from 'chart.js';
 
 import Card from "./Card";
 import LoadingView from "./LoadingView";
 
-Chart.register(ArcElement, Tooltip, Legend, LinearScale, DoughnutController, BarElement, CategoryScale);
+Chart.register(ArcElement, DoughnutController);
 
-export default function PartitionMetric({ name, graphql_query, ranges }) {
+export default function PartitionMetric({ name, graphql_query, ranges, relation }) {
     const [data, setData] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges[0].key);
     const [chartRef, setChartRef] = useState(null);
+    const [relationData, setRelationData] = useState([]);
+    const [selectedRelationId, setSelectedRelationId] = useState(0);
+
+    useEffect(() => {
+        if(! relation) { return; }
+
+        Api.query(relation.graphql_query + `{ id ${relation.display_using} }`)
+            .then(({data}) => {
+                setRelationData(data.data[relation.graphql_query])
+                setSelectedRelationId(data.data[relation.graphql_query][0].id)
+            })
+            .catch(console.error)
+    }, [])
 
     useEffect(() => {
         setData(null);
 
+        if(relation) {
+            if (selectedRelationId) {
+                Api.query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`)
+                    .then(({data}) => setData(JSON.parse(data.data[graphql_query])))
+                    .catch(console.error)
+            }
+
+            return;
+        }
+        
         Api.query(graphql_query, selectedRange)
             .then(({data}) => setData(JSON.parse(data.data[graphql_query])))
             .catch(console.error)
-    }, [selectedRange])
+    }, [selectedRelationId, selectedRange])
 
     useEffect(() => {
         if(data == null) { return; }
@@ -65,8 +88,17 @@ export default function PartitionMetric({ name, graphql_query, ranges }) {
         <Card className="relative">
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="mr-3 text-base text-gray-700 font-bold">{ name }</h3>
-                    
+                    <div className="flex items-center">
+                        <h3 className="mr-2 text-base text-gray-700 font-bold">{ name }</h3>
+
+                        {relation && relationData && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
+                            name="relation"
+                            value={selectedRelationId}
+                            onChange={(e) => {setSelectedRelationId(e.target.value)}}>
+                            {relationData.map(relationItem => <option key={relationItem.id} value={relationItem.id}>{relationItem[relation.display_using]}</option>)}
+                        </select>}
+                    </div>
+
                     <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                         name="range"
                         value={selectedRange}

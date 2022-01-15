@@ -43,10 +43,11 @@ type Query {
 
     sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: transaction_id direction: ASC)
 
-    totalExpenses(range: String): Json
-    totalIncome(range: String): Json
-    expensesPerCategory(range: String): Json
-    incomePerCategory(range: String): Json
+    totalExpenses(range: String!): Json
+    totalIncome(range: String!): Json
+    expensesPerCategory(range: String!): Json
+    incomePerCategory(range: String!): Json
+    totalPerBrand(range: String! category_id: Int): Json
 }
 
 type Mutation {
