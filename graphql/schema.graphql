@@ -45,9 +45,15 @@ type Query {
 
     totalExpenses(range: String!): Json
     totalIncome(range: String!): Json
+    
     expensesPerCategory(range: String!): Json
     incomePerCategory(range: String!): Json
     totalPerBrand(range: String! category_id: Int): Json
+
+    totalIncomeTrend(range: String!): Json
+    totalExpensesTrend(range: String!): Json
+    totalPerCategoryTrend(range: String! id: ID!): Json
+    totalPerBrandTrend(range: String! id: ID!): Json
 }
 
 type Mutation {

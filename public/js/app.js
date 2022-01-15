@@ -5634,6 +5634,234 @@ function SidePanel(_ref) {
 
 /***/ }),
 
+/***/ "./resources/js/Components/TrendMetric.js":
+/*!************************************************!*\
+  !*** ./resources/js/Components/TrendMetric.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ TrendMetric)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var chart_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! chart.js */ "./node_modules/chart.js/dist/chart.esm.js");
+/* harmony import */ var _Card__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Card */ "./resources/js/Components/Card.js");
+/* harmony import */ var _LoadingView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./LoadingView */ "./resources/js/Components/LoadingView.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+
+chart_js__WEBPACK_IMPORTED_MODULE_1__.Chart.register(chart_js__WEBPACK_IMPORTED_MODULE_1__.LineElement, chart_js__WEBPACK_IMPORTED_MODULE_1__.Tooltip, chart_js__WEBPACK_IMPORTED_MODULE_1__.LineController, chart_js__WEBPACK_IMPORTED_MODULE_1__.CategoryScale, chart_js__WEBPACK_IMPORTED_MODULE_1__.LinearScale, chart_js__WEBPACK_IMPORTED_MODULE_1__.PointElement, chart_js__WEBPACK_IMPORTED_MODULE_1__.Filler);
+function TrendMetric(_ref) {
+  var name = _ref.name,
+      graphql_query = _ref.graphql_query,
+      ranges = _ref.ranges,
+      relation = _ref.relation;
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState2 = _slicedToArray(_useState, 2),
+      data = _useState2[0],
+      setData = _useState2[1];
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(ranges[0].key),
+      _useState4 = _slicedToArray(_useState3, 2),
+      selectedRange = _useState4[0],
+      setSelectedRange = _useState4[1];
+
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState6 = _slicedToArray(_useState5, 2),
+      chartRef = _useState6[0],
+      setChartRef = _useState6[1];
+
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
+      _useState8 = _slicedToArray(_useState7, 2),
+      relationData = _useState8[0],
+      setRelationData = _useState8[1];
+
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0),
+      _useState10 = _slicedToArray(_useState9, 2),
+      selectedRelationId = _useState10[0],
+      setSelectedRelationId = _useState10[1];
+
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (!relation) {
+      return;
+    }
+
+    Api.query(relation.graphql_query + "{ id ".concat(relation.display_using, " }")).then(function (_ref2) {
+      var data = _ref2.data;
+      setRelationData(data.data[relation.graphql_query]);
+      setSelectedRelationId(data.data[relation.graphql_query][0].id);
+    })["catch"](console.error);
+  }, []);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    setData(null);
+
+    if (relation) {
+      if (selectedRelationId) {
+        Api.query(graphql_query + "(range: \"\"\"".concat(selectedRange, "\"\"\" ").concat(relation.foreign_key, ": ").concat(selectedRelationId, ")")).then(function (_ref3) {
+          var data = _ref3.data;
+          return setData(JSON.parse(data.data[graphql_query]));
+        })["catch"](console.error);
+      }
+
+      return;
+    }
+
+    Api.query(graphql_query, selectedRange).then(function (_ref4) {
+      var data = _ref4.data;
+      return setData(JSON.parse(data.data[graphql_query]));
+    })["catch"](console.error);
+  }, [selectedRelationId, selectedRange]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (data == null) {
+      return;
+    }
+
+    if (chartRef != null) {
+      chartRef.destroy();
+    }
+
+    var ctx = document.getElementById(graphql_query).getContext('2d');
+    setChartRef(new chart_js__WEBPACK_IMPORTED_MODULE_1__.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(function (item) {
+          return item.label;
+        }),
+        datasets: [{
+          data: data.map(function (item) {
+            return item.value;
+          }),
+          borderColor: '#0ea5e9',
+          backgroundColor: 'rgba(14, 165, 233, 0.2)',
+          pointHoverRadius: 6,
+          pointRadius: 4,
+          pointBackgroundColor: '#0ea5e9',
+          fill: 'start',
+          tension: 0.4
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: 5
+          },
+          autoPadding: false
+        },
+        plugins: {
+          filler: {
+            propagate: false
+          },
+          tooltip: {
+            displayColors: false,
+            backgroundColor: '#fff',
+            borderColor: '#0ea5e9',
+            borderWidth: 1,
+            titleColor: '#0ea5e9',
+            bodyColor: '#0ea5e9',
+            xAlign: 'center',
+            yAlign: 'center'
+          }
+        },
+        scales: {
+          y: {
+            display: false,
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          },
+          x: {
+            display: false,
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    }));
+  }, [data]);
+
+  if (data == null) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Card__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      className: "relative",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_LoadingView__WEBPACK_IMPORTED_MODULE_3__["default"], {})
+    });
+  }
+
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_Card__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    className: "relative overflow-hidden",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+      className: "px-6 py-4",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        className: "flex justify-between items-center mb-2",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+          className: "flex items-center",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h3", {
+            className: "mr-2 text-base text-gray-700 font-bold",
+            children: name
+          }), relation && relationData && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("select", {
+            className: "ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline",
+            name: "relation",
+            value: selectedRelationId,
+            onChange: function onChange(e) {
+              setSelectedRelationId(e.target.value);
+            },
+            children: relationData.map(function (relationItem) {
+              return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("option", {
+                value: relationItem.id,
+                children: relationItem[relation.display_using]
+              }, relationItem.id);
+            })
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("select", {
+          className: "ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline",
+          name: "range",
+          value: selectedRange,
+          onChange: function onChange(e) {
+            setSelectedRange(e.target.value);
+          },
+          children: ranges.map(function (range) {
+            return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("option", {
+              value: range.key,
+              children: range.name
+            }, range.key);
+          })
+        })]
+      })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+      className: "absolute w-full left-0 right-0 bottom-0 h-20",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("canvas", {
+        id: graphql_query
+      })
+    })]
+  });
+}
+
+/***/ }),
+
 /***/ "./resources/js/Components/ValidationErrors.js":
 /*!*****************************************************!*\
   !*** ./resources/js/Components/ValidationErrors.js ***!
@@ -5806,6 +6034,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _ValueMetric__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ValueMetric */ "./resources/js/Components/ValueMetric.js");
 /* harmony import */ var _PartitionMetric__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PartitionMetric */ "./resources/js/Components/PartitionMetric.js");
+/* harmony import */ var _TrendMetric__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TrendMetric */ "./resources/js/Components/TrendMetric.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -5815,9 +6044,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 var components = {
   'value-metric': _ValueMetric__WEBPACK_IMPORTED_MODULE_1__["default"],
-  'partition-metric': _PartitionMetric__WEBPACK_IMPORTED_MODULE_2__["default"]
+  'partition-metric': _PartitionMetric__WEBPACK_IMPORTED_MODULE_2__["default"],
+  'trend-metric': _TrendMetric__WEBPACK_IMPORTED_MODULE_3__["default"]
 };
 var renderComponent = function renderComponent(component, props, children) {
   if (typeof components[component] !== "undefined") {
