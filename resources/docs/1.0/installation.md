@@ -14,7 +14,7 @@
 <a name="overview"></a>
 ## Overview 
 
-**FINANCE** is a very simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
+**FINANCE** is a simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
 
 ![finance](/images/finance.jpg)
 <p align="center"><a href="#" target="__blank"><img style="height: 40px" src="/images/video.png" /></a></p>

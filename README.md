@@ -1,7 +1,7 @@
 <h1 align="center">FINANCE</h1>
 
 <p align="center">
-  <b>FINANCE is a very simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money</b>
+  <b>FINANCE is a simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money</b>
 </p>
 
 <p align="center"><img src="./public/images/finance.jpg" /></p>

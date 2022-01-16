@@ -31,7 +31,7 @@ export default function Edit({sms, onClose, onUpdate}) {
                     onClose={onClose} 
                     title={"Fix SMS Parsing"}>
             <div className="p-1 rounded border-l-2 border-blue-500 pl-2 bg-blue-50">
-                In order to make sure parsing this SMS is correct, please add the correspoding SMS template in the config file <span className="bg-blue-100 rounded px-1">config/finance.php</span> under <span className="bg-blue-100 rounded px-1">sms_templates</span>. <br/><br/> Once you finish, you can try to parse the SMS again. To learn more, please visit the <a className="underline" href="#">documentation</a> or <a className="underline" href="#">watch this video ▶️</a>
+                In order to make sure parsing this SMS is correct, please add the correspoding SMS template in the config file <span className="bg-blue-100 rounded px-1">config/finance.php</span> under <span className="bg-blue-100 rounded px-1">sms_templates</span>. <br/><br/> Once you finish, you can try to parse the SMS again. To learn more, please visit the <a className="underline" target="__blank" href="/docs/1.0/sms-parser">documentation</a>
             </div>
             {
                 sms &&

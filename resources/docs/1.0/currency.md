@@ -4,4 +4,11 @@
 
 ---
 
-sgsgd
+To change the app currency, please modify the value of `currency` in the `config/finance.php`.
+
+```php
+return [
+    'currency' => 'USD', # <-- Example
+    ...
+]
+```
