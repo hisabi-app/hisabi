@@ -6,7 +6,6 @@ import LoadMore from '@/Components/LoadMore';
 import Create from './Create';
 import Edit from './Edit';
 import Delete from '@/Components/Delete';
-import NoContent from '@/Components/NoContent';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -87,10 +86,8 @@ export default function Sms({auth}) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {sms.length == 0 && <NoContent />}
-                    
-                    {sms.length > 0 && <div className="flex flex-col">
-                        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="flex flex-col">
+                        {sms.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                     <table className="min-w-full divide-y divide-gray-200">
@@ -135,10 +132,10 @@ export default function Sms({auth}) {
                                     </table>
                                 </div>
                             </div>
-                        </div>
+                        </div>}
 
-                        <LoadMore hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
-                    </div>}
+                        <LoadMore hasContent={sms.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
+                    </div>
                 </div>
             </div>
         </Authenticated>

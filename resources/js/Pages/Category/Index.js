@@ -6,7 +6,6 @@ import LoadMore from '@/Components/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
 import Delete from '@/Components/Delete';
-import NoContent from '@/Components/NoContent';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -89,10 +88,8 @@ export default function Index({auth}) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {categories.length == 0 && <NoContent />}
-                    
-                    {categories.length > 0 && <div className="flex flex-col">
-                        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="flex flex-col">
+                        {categories.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                     <table className="min-w-full divide-y divide-gray-200">
@@ -136,10 +133,10 @@ export default function Index({auth}) {
                                     </table>
                                 </div>
                             </div>
-                        </div>
+                        </div>}
 
-                        <LoadMore hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
-                    </div>}
+                        <LoadMore hasContent={categories.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
+                    </div>
                 </div>
             </div>
         </Authenticated>
