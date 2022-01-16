@@ -25,17 +25,31 @@
 >{info} Docker Installation
 
 ```bash
-# step 0: clone the app
+# step 1: clone the repo
 git clone https://github.com/saleem-hadad/finance && cd finance
 
-# step 1: run migration
+# step 2: create .env file
+cp .env.sail.example .env
+
+# step 3: install deps via composer
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v $(pwd):/var/www/html \
+    -w /var/www/html \
+    laravelsail/php81-composer:latest \
+    composer install --ignore-platform-reqs
+
+# step 4: serve the app
+./vendor/bin/sail up -d
+
+# step 5: generate app key
+./vendor/bin/sail artisan key:generate
+
+# step 6: run migration
 ./vendor/bin/sail artisan migrate
 
-# step 2: install command
+# step 7: run install command and follow the instructions
 ./vendor/bin/sail artisan finance:install
-
-# step 3: serve the app
-./vendor/bin/sail up
 ```
 
 Once done, visit the app on `http://localhost`
@@ -46,19 +60,25 @@ Once done, visit the app on `http://localhost`
 If you wish installing the app using normal Laravel environment, make sure you have PHP, MySQL, and composer already installed and then run the following commands:
 
 ```bash
-# step 0: clone the app
+# step 1: clone the repo
 git clone https://github.com/saleem-hadad/finance && cd finance
 
-# step 1: install deps
+# step 2: create .env file
+cp .env.example .env
+
+# step 3: install deps via composer
 composer install
 
-# step 2: 
+# step 4: generate app key
+php artisan key:generate
+
+# step 5: run the migration
 php artisan migrate
 
-# step 3: install command
+# step 6: run install command and follow the instructions
 php artisan finance:install
 
-# step 4: serve the app
+# step 7: serve the app
 php artisan serve
 ```
 
