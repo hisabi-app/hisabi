@@ -7,6 +7,9 @@
 <p align="center"><img src="./public/images/finance.jpg" /></p>
 <p align="center"><a href="#" target="__blank"><img height="40" src="./public/images/video.png" /></a></p>
 
+## Sponsors
+Support this project by becoming a sponsor ❤️. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/larecipe)
+
 ## 🛠 Features
 
 1. [x] Self-hosted - full control over your data privacy 
