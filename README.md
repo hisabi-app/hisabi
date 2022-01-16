@@ -4,8 +4,8 @@
   <b>FINANCE is a simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money</b>
 </p>
 
-<p align="center"><img src="./public/images/finance.jpg" /></p>
-<p align="center"><a href="#" target="__blank"><img height="40" src="./public/images/video.png" /></a></p>
+<p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img src="./public/images/finance.jpg" /></a></p>
+<p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img height="40" src="./public/images/video.png" /></a></p>
 
 ## 💰 Sponsors
 Support this project by becoming a sponsor ❤️. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/larecipe)

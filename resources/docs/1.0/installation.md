@@ -1,6 +1,6 @@
 # Installation
 
-> {success.fa-video} If you are a visual learner, please watch this video instead.
+> {success.fa-video} If you are a visual learner, please watch this [video](https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy) instead.
 
 ---
 
@@ -17,7 +17,7 @@
 **FINANCE** is a simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
 
 ![finance](/images/finance.jpg)
-<p align="center"><a href="#" target="__blank"><img style="height: 40px" src="/images/video.png" /></a></p>
+<p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img style="height: 40px" src="/images/video.png" /></a></p>
 
 <a name="installation"></a>
 ## Installation

@@ -1,6 +1,6 @@
 # Reports
 
-> {success.fa-video} If you are a visual learner, please watch this video instead.
+> {success.fa-video} If you are a visual learner, please watch this [video](https://www.youtube.com/watch?v=eYp1cYMTiTs&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&index=4&ab_channel=ILoveMathAcademy) instead.
 
 ---
 
