@@ -25,17 +25,24 @@ Try the app with [live demo](https://finance-demo.saleem.dev/).
 > Docker Installation
 
 ```bash
-# step 0: clone the app
 git clone https://github.com/saleem-hadad/finance && cd finance
 
-# step 1: run migration
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v $(pwd):/var/www/html \
+    -w /var/www/html \
+    laravelsail/php81-composer:latest \
+    composer install --ignore-platform-reqs
+
+cp .env.sail.example .env
+
+./vendor/bin/sail up -d
+
+./vendor/bin/sail artisan key:generate
+
 ./vendor/bin/sail artisan migrate
 
-# step 2: install command
 ./vendor/bin/sail artisan finance:install
-
-# step 3: serve the app
-./vendor/bin/sail up
 ```
 
 Once done, visit the app on `http://localhost`
@@ -48,6 +55,10 @@ If you wish installing the app using normal Laravel environment, make sure you h
 ```bash
 # step 0: clone the app
 git clone https://github.com/saleem-hadad/finance && cd finance
+
+cp .env.example .env
+
+php artisan key:generate
 
 # step 1: install deps
 composer install
