@@ -12,6 +12,7 @@ use App\Contracts\SmsTransactionProcessor as SmsTransactionProcessorContract;
 use App\Domain\Ranges\CurrentMonth;
 use App\Domain\Ranges\CurrentYear;
 use App\Domain\Ranges\LastMonth;
+use App\Domain\Ranges\LastTwelveMonths;
 use App\Domain\Ranges\LastYear;
 
 class AppServiceProvider extends ServiceProvider
@@ -36,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
                 new LastMonth,
                 new CurrentYear,
                 new LastYear,
+                new LastTwelveMonths,
             ])->first(function ($range) use($key) {
                 return $key === $range->key();
             }) ?: null;
