@@ -45,6 +45,7 @@ type Query {
 
     totalExpenses(range: String!): Json
     totalIncome(range: String!): Json
+    totalCash: Json
     
     expensesPerCategory(range: String!): Json
     incomePerCategory(range: String!): Json
