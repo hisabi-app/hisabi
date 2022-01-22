@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/php:8.1-stretch
+      - image: circleci/php:8.0-stretch
 
     steps:
       - checkout
