@@ -1,82 +1,15 @@
-# PHP CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-php/ for more details
-#
 version: 2
 jobs:
   test:
     docker:
-      # Specify the version you desire here
-      - image: circleci/php:7.2-stretch
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # Using the RAM variation mitigates I/O contention
-      # for database intensive operations.
-      # - image: circleci/mysql:5.7-ram
-      # - image: redis:3
-      - image: circleci/mysql:8.0.20-ram
-        command: mysqld --default-authentication-plugin=mysql_native_password
-        environment:
-          MYSQL_USER: forge
-          MYSQL_DATABASE: forge
-          MYSQL_ROOT_PASSWORD: ''
-          MYSQL_PASSWORD: 'forge'
+      - image: circleci/php:8.1-stretch
 
     steps:
       - checkout
-      - run:
-          name: Install MySQL driver
-          command: |
-            sudo docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd
-            sudo docker-php-ext-install zip bcmath pdo_mysql
-      - run:
-          name: Install Node
-          command: |
-            curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-      # Download and cache dependencies
-
-      # composer cache
-      - restore_cache:
-          keys:
-          # "composer.json" can be used if "composer.json"
-          # is not committed to the repository.
-          - composer-v1-{{ checksum "composer.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - composer-v1-
       - run: composer install -n --prefer-dist
-      - save_cache:
-          key: composer-v1-{{ checksum "composer.lock" }}
-          paths:
-            - vendor
-
-      # node cache
-      - restore_cache:
-          keys:
-            - node-v4-{{ checksum "package.json" }}
-            - node-v4-
-      - run: npm install
-      - save_cache:
-          key: node-v4-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-            - ~/.yarn
-
-      # prepare the database
       - run: touch storage/testing.sqlite
       - run: php artisan migrate --env=testing --database=mysql --force
-
-      # run tests with phpunit or codecept
-      #- run: ./vendor/bin/phpunit
-      # this example uses codecept but you're not limited to it
-      - run: ./vendor/bin/codecept build
-      - run: ./vendor/bin/codecept run --xml result.xml
-      - store_test_results:
-          path: tests/_output
-      - store_artifacts:
-          path: tests/_output
+      - run: ./vendor/bin/phpunit
 
 workflows:
   version: 2
