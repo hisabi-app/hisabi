@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/php:8.0-stretch
+      - image: circleci/8.0-node-browsers-legacy
 
     steps:
       - checkout
