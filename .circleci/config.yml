@@ -7,8 +7,6 @@ jobs:
     steps:
       - checkout
       - run: composer install -n --prefer-dist
-      - run: touch storage/testing.sqlite
-      - run: php artisan migrate --env=testing --database=mysql --force
       - run: ./vendor/bin/phpunit
 
 workflows:
