@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/8.0-node-browsers-legacy
+      - image: circleci/php:8.0.3-zts-buster-node
 
     steps:
       - checkout
