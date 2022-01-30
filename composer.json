@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "aws/aws-sdk-php": "^3.199",
         "binarytorch/larecipe": "^2.4",
         "dompdf/dompdf": "^1.1",
         "fruitcake/laravel-cors": "^2.0",
