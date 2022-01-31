@@ -43,10 +43,24 @@ class ReportManager implements ReportManagerContract
 
             $brandsData = $this->calculateAndAddAllBrandsData($brandsData, $category);
 
-            $this->addSection($category->name, $brandsData);
+            // issue with rendering big row using Dompdf library, 
+            // the workaround is to split the list of brands to
+            // multiple sections that each one can fit in page.
+            $this->splitBrandListIntoPages($brandsData, $category);
         }
 
         return $this->data;
+    }
+
+    protected function splitBrandListIntoPages($brandsData, $category)
+    {
+        if(count(array_chunk($brandsData, 25)) > 1) {
+            foreach(array_chunk($brandsData, 25) as $index => $chunk) {
+                $this->addSection($category->name . "-" . $index + 1, $chunk);
+            }
+        }else {
+            $this->addSection($category->name, $brandsData);
+        }
     }
 
     protected function addSection($sectionName, $data)
