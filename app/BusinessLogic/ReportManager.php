@@ -140,7 +140,7 @@ class ReportManager implements ReportManagerContract
     protected function getTotalIncome()
     {
         $total = Transaction::income()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
-        $totalExcludingThisMonth = Transaction::income()->whereBetween('created_at', [now()->startOfMonth()->subMonth(), now()->endOfMonth()->subMonth()])->sum('amount');
+        $totalExcludingThisMonth = Transaction::income()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
         
         $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
         
@@ -156,7 +156,7 @@ class ReportManager implements ReportManagerContract
     protected function getTotalExpenses()
     {
         $total = Transaction::expenses()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
-        $totalExcludingThisMonth = Transaction::expenses()->whereBetween('created_at', [now()->startOfMonth()->subMonth(), now()->endOfMonth()->subMonth()])->sum('amount');
+        $totalExcludingThisMonth = Transaction::expenses()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
         
         $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
         

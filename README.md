@@ -14,7 +14,8 @@ Support this project by becoming a sponsor ❤️. Your logo will show up here w
 
 1. [x] Self-hosted - full control over your data privacy 
 2. [x] Parse SMS bank transactions
-3. [x] Detailed analysis of income and expenses 
+3. [x] Detailed analysis of income and expenses
+4. [x] Detailed monthly report of income and expenses - [see example](https://github.com/saleem-hadad/finance/pull/4)
 
 ## 🎮 Demo
 
