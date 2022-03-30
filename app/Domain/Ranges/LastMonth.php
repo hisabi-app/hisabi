@@ -6,11 +6,11 @@ class LastMonth extends Range
 {
     public function start()
     {
-        return now()->subMonth()->startOfMonth()->format("Y-m-d");
+        return now()->subMonthNoOverflow()->startOfMonth()->format("Y-m-d");
     }
     
     public function end()
     {
-        return now()->subMonth()->endOfMonth()->format("Y-m-d");
+        return now()->subMonthNoOverflow()->endOfMonth()->format("Y-m-d");
     }
 }
