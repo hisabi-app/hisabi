@@ -7,6 +7,7 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
     const [amount, setAmount] = useState(0)
     const [createdAt, setCreatedAt] = useState('')
     const [brand, setBrand] = useState(0)
+    const [note, setNote] = useState('')
 
     useEffect(() => {
         if(! transaction) return;
@@ -14,6 +15,7 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
         setAmount(transaction.amount)
         setBrand(transaction.brand.id)
         setCreatedAt(transaction.created_at)
+        setNote(transaction.note)
     }, [transaction])
 
     const update = () => {
@@ -21,7 +23,8 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
             id: transaction.id,
             amount,
             brand,
-            createdAt
+            createdAt,
+            note
         })
         .then(({data}) => {
             onUpdate(data.data.updateTransaction)
@@ -76,6 +79,18 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
                             {brand.category ? " ("+brand.category.name+")" : ''}
                             </option>)}
                       </select>
+                    </div>
+
+                    <div className="mt-4">
+                        <Label forInput="note" value="Note (optional)" />
+
+                        <Input
+                            type="text"
+                            name="note"
+                            value={note}
+                            className="mt-1 block w-full"
+                            handleChange={(e) => setNote(e.target.value)}
+                        />
                     </div>
 
                     <div className="flex items-center justify-end mt-4">

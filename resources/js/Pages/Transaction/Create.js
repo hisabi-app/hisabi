@@ -7,6 +7,7 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
     const [amount, setAmount] = useState(0);
     const [brandId, setBrandId] = useState(0);
     const [createdAt, setCreatedAt] = useState('');
+    const [note, setNote] = useState('');
     const [isReady, setIsReady] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -22,6 +23,7 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
             amount,
             brandId,
             createdAt,
+            note
         })
         .then(({data}) => {
             onCreate(data.data.createTransaction)
@@ -78,6 +80,18 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
                         {brand.category ? " ("+brand.category.name+")" : ''}
                         </option>)}
                     </select>
+                </div>
+
+                <div className="mt-4">
+                    <Label forInput="note" value="Note (optional)" />
+
+                    <Input
+                        type="text"
+                        name="note"
+                        value={note}
+                        className="mt-1 block w-full"
+                        handleChange={(e) => setNote(e.target.value)}
+                    />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
