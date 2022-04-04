@@ -26,7 +26,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_has_name()
     {
-        $sut = Category::factory()->make(['name' => 'categoryTest']);
+        $sut = Category::factory()->create(['name' => 'categoryTest']);
 
         $this->assertEquals("categoryTest", $sut->name);
     }
@@ -34,7 +34,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_has_type()
     {
-        $sut = Category::factory()->make(['type' => Category::EXPENSES]);
+        $sut = Category::factory()->create(['type' => Category::EXPENSES]);
 
         $this->assertEquals(Category::EXPENSES, $sut->type);
     }

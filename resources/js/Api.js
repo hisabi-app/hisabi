@@ -6,6 +6,7 @@ export default class Api {
                     id
                     amount
                     created_at
+                    note
                     brand {
                         id
                         name
@@ -22,12 +23,13 @@ export default class Api {
          }`});
     }
 
-    createTransaction({amount, brandId, createdAt}) {
+    createTransaction({amount, brandId, createdAt, note}) {
         return axios.post('/graphql', {query: `mutation {
-            createTransaction(amount: ${amount} brand_id: ${brandId} created_at: """${createdAt}""") {
+            createTransaction(amount: ${amount} brand_id: ${brandId} created_at: """${createdAt}""" note: """${note}""") {
                 id
                 amount
                 created_at
+                note
                 brand {
                     id
                     name
@@ -40,12 +42,13 @@ export default class Api {
          }`});
     }
     
-    updateTransaction({id, amount, brand, createdAt}) {
+    updateTransaction({id, amount, brand, createdAt, note}) {
         return axios.post('/graphql', {query: `mutation {
-            updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand} created_at: """${createdAt}""") {
+            updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand} created_at: """${createdAt}""" note: """${note}""") {
                 id
                 amount
                 created_at
+                note
                 brand {
                     id
                     name

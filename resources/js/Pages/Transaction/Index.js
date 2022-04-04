@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { PencilAltIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from '@/Pages/Transaction/Edit';
@@ -133,13 +133,25 @@ export default function Index({auth}) {
                                             {transactions.map((item) => (
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {Engine.formatNumber(item.amount, null)}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {Engine.formatNumber(item.amount, null)}  </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.name : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.type : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.created_at}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button onClick={() => setEditItem(item)} type="button">
+                                                        {item.note && 
+                                                            <button>
+                                                                <div class="relative flex flex-col items-center group">
+                                                                    <InformationCircleIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                                                                    <div class="absolute bottom-0 flex flex-col items-center hidden mb-6 group-hover:flex">
+                                                                        <span class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{item.note}</span>
+                                                                        <div class="w-3 h-3 -mt-2 rotate-45 bg-gray-700"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        }
+
+                                                        <button onClick={() => setEditItem(item)} type="button" className="ml-2">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
