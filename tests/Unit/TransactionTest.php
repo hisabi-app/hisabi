@@ -13,9 +13,17 @@ class TransactionTest extends TestCase
     /** @test */
     public function it_has_amount()
     {
-        $sut = Transaction::factory()->make(['amount' => 10]);
+        $sut = Transaction::factory()->create(['amount' => 10]);
 
         $this->assertEquals(10, $sut->amount);
+    }
+
+    /** @test */
+    public function it_can_have_note()
+    {
+        $sut = Transaction::factory()->create(['note' => 'some note']);
+
+        $this->assertEquals('some note', $sut->note);
     }
 
     /** @test */

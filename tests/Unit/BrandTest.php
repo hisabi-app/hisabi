@@ -13,7 +13,7 @@ class BrandTest extends TestCase
     /** @test */
     public function it_has_name()
     {
-        $sut = Brand::factory()->make(['name' => 'test']);
+        $sut = Brand::factory()->create(['name' => 'test']);
 
         $this->assertEquals("test", $sut->name);
     }
