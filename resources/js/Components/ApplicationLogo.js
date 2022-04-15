@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function ApplicationLogo({ className }) {
+export default function ApplicationLogo() {
     return (
-        <p>💰 FINANCE</p>
+        <p data-testid="application-logo">💰 FINANCE</p>
     );
 }
