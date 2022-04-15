@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/php:8.0.3-zts-buster-node
+      - image: cimg/php:8.0.3
 
     steps:
       - checkout
