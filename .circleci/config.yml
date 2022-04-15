@@ -2,22 +2,15 @@ version: 2
 jobs:
   test:
     docker:
-      - image: cimg/php:8.1.5
+      - image: cimg/php:8.1.5-node
 
     steps:
       - checkout
-      
-      - run:
-          name: Install Node
-          command: |
-            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-      - run: npm install
-
       - run: composer install -n --prefer-dist
       - run: cp .env.example .env
       - run: php artisan key:generate
       - run: ./vendor/bin/phpunit
+      - run: npm install
       - run: npm test
 
 workflows:
