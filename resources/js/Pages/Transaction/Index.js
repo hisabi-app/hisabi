@@ -4,8 +4,8 @@ import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from '@/Pages/Transaction/Edit';
 import Create from './Create';
-import LoadMore from '@/Components/LoadMore';
-import Delete from '@/Components/Delete';
+import LoadMore from '@/Components/Global/LoadMore';
+import Delete from '@/Components/Global/Delete';
 
 export default function Index({auth}) {
     const [transactions, setTransactions] = useState([]);

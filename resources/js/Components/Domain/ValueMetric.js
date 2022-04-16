@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Card from "./Card";
-import LoadingView from "./LoadingView";
+import Card from "../Global/Card";
+import LoadingView from "../Global/LoadingView";
 
 function ValueMetric({name, graphql_query, ranges}) {
     const [data, setData] = useState(null);

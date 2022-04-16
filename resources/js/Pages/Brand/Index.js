@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 import Authenticated from '@/Layouts/Authenticated';
-import LoadMore from '@/Components/LoadMore';
+import LoadMore from '@/Components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
-import Delete from '@/Components/Delete';
+import Delete from '@/Components/Global/Delete';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);

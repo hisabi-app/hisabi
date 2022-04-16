@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ApplicationLogo from '@/Components/Global/ApplicationLogo';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import NavLink from '@/Components/Global/NavLink';
+import ResponsiveNavLink from '@/Components/Global/ResponsiveNavLink';
 import { Link } from '@inertiajs/inertia-react';
 
 export default function Authenticated({ header, children }) {

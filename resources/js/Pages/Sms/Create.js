@@ -1,5 +1,5 @@
-import Label from "@/Components/Label";
-import SidePanel from '@/Components/SidePanel';
+import Label from "@/Components/Global/Label";
+import SidePanel from '@/Components/Global/SidePanel';
 import { useState } from "react";
 
 export default function Create({showCreate, onClose, onCreate}) {

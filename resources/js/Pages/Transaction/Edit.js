@@ -1,6 +1,6 @@
-import Input from "@/Components/Input";
-import Label from "@/Components/Label";
-import SidePanel from '@/Components/SidePanel';
+import Input from "@/Components/Global/Input";
+import Label from "@/Components/Global/Label";
+import SidePanel from '@/Components/Global/SidePanel';
 import { useEffect, useState } from "react";
 
 export default function Edit({brands, transaction, onClose, onUpdate}) {
