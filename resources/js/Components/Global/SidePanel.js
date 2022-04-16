@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 
@@ -9,7 +9,6 @@ export default function SidePanel({children, toggleOpen, onClose, title}) {
     setOpen(toggleOpen)
   }, [toggleOpen])
 
-  // fire notification to the parent
   useEffect(() => {
     ! open && setTimeout(() =>  onClose && onClose(), 500)
   }, [open])

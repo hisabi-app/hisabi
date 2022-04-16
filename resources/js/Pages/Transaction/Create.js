@@ -1,7 +1,8 @@
+import React, { useEffect, useState } from "react";
+
 import Input from "@/Components/Global/Input";
 import Label from "@/Components/Global/Label";
 import SidePanel from '@/Components/Global/SidePanel';
-import { useEffect, useState } from "react";
 
 export default function Create({brands, showCreate, onClose, onCreate}) {
     const [amount, setAmount] = useState(0);

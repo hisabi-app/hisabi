@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
+
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/Global/LoadMore';
 import Create from './Create';

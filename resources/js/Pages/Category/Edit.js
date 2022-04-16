@@ -1,7 +1,8 @@
+import React, { useEffect, useState } from "react";
+
 import Input from "@/Components/Global/Input";
 import Label from "@/Components/Global/Label";
 import SidePanel from '@/Components/Global/SidePanel';
-import { useEffect, useState } from "react";
 
 export default function Edit({category, onClose, onUpdate}) {
     const [name, setName] = useState('')

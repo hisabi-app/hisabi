@@ -1,7 +1,8 @@
+import React, { useState, useEffect } from "react";
+
 import Input from "@/Components/Global/Input";
 import Label from "@/Components/Global/Label";
 import SidePanel from '@/Components/Global/SidePanel';
-import { useState, useEffect } from "react";
 
 export default function Edit({sms, onClose, onUpdate}) {
     const [loading, setLoading] = useState(false);

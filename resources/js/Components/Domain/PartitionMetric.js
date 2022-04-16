@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Chart, ArcElement, DoughnutController } from 'chart.js';
 
 import Card from "../Global/Card";
