@@ -3,7 +3,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationIcon } from '@heroicons/react/outline'
 
 export default function Delete({item, resource, onClose, onDelete}) {
-  const cancelButtonRef = useRef(null)
+  const cancelButtonRef = useRef()
   
   const deleteItem = () => {
     Api.delete({id: item.id, resource: resource})
@@ -50,7 +50,7 @@ export default function Delete({item, resource, onClose, onDelete}) {
                       Delete Resource
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
+                      <p data-testid="delete-warning" className="text-sm text-gray-500">
                         Are you sure you want to delete this resource?
                       </p>
                     </div>

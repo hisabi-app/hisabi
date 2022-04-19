@@ -78,7 +78,6 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
                             Update
                         </button>
                         }
-                        
                     </div>
                 </div>
             }
