@@ -143,11 +143,11 @@ export default function Index({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         {item.note && 
                                                             <button>
-                                                                <div class="relative flex flex-col items-center group">
+                                                                <div className="relative flex flex-col items-center group">
                                                                     <InformationCircleIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                                    <div class="absolute bottom-0 flex flex-col items-center hidden mb-6 group-hover:flex">
-                                                                        <span class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{item.note}</span>
-                                                                        <div class="w-3 h-3 -mt-2 rotate-45 bg-gray-700"></div>
+                                                                    <div className="absolute bottom-0 flex flex-col items-center hidden mb-6 group-hover:flex">
+                                                                        <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{item.note}</span>
+                                                                        <div className="w-3 h-3 -mt-2 rotate-45 bg-gray-700"></div>
                                                                     </div>
                                                                 </div>
                                                             </button>
