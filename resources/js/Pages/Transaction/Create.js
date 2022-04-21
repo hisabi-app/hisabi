@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import Input from "@/Components/Global/Input";
 import Label from "@/Components/Global/Label";
+import { createTransaction } from "../../Api";
 import SidePanel from '@/Components/Global/SidePanel';
 
 export default function Create({brands, showCreate, onClose, onCreate}) {
@@ -20,14 +21,14 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
         if(loading || ! isReady) { return; }
         setLoading(true);
 
-        Api.createTransaction({
+        createTransaction({
             amount,
             brandId,
             createdAt,
             note
         })
         .then(({data}) => {
-            onCreate(data.data.createTransaction)
+            onCreate(data.createTransaction)
             setBrandId(0)
             setAmount(0)
             setCreatedAt('')

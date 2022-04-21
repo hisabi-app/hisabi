@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Input from "@/Components/Global/Input";
 import Label from "@/Components/Global/Label";
 import SidePanel from '@/Components/Global/SidePanel';
+import { updateBrand } from "../../Api";
 
 export default function Edit({categories, brand, onClose, onUpdate}) {
     const [name, setName] = useState(0)
@@ -18,13 +19,13 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
     }, [brand])
 
     const update = () => {
-        Api.updateBrand({
+        updateBrand({
             id: brand.id,
             name,
             category
         })
         .then(({data}) => {
-            onUpdate(data.data.updateBrand)
+            onUpdate(data.updateBrand)
             setCategory(0)
         })
         .catch(console.error);

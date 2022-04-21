@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Input from "@/Components/Global/Input";
 import Label from "@/Components/Global/Label";
 import SidePanel from '@/Components/Global/SidePanel';
+import { updateSms } from "../../Api";
 
 export default function Edit({sms, onClose, onUpdate}) {
     const [loading, setLoading] = useState(false);
@@ -19,10 +20,10 @@ export default function Edit({sms, onClose, onUpdate}) {
 
         setLoading(true);
 
-        Api.updateSms({ id: sms.id, body })
+        updateSms({ id: sms.id, body })
             .then(({data}) => {
                 setLoading(false);
-                onUpdate(data.data.updateSms)
+                onUpdate(data.updateSms)
             })
             .catch(console.error);
     }

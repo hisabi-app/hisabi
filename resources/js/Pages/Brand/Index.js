@@ -7,6 +7,7 @@ import LoadMore from '@/Components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
 import Delete from '@/Components/Global/Delete';
+import { getAllCategories, getBrands } from '../../Api';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
@@ -19,9 +20,9 @@ export default function Index({auth}) {
     const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
-        Api.getAllCategories()
+        getAllCategories()
             .then(({data}) => {
-                setAllCategories(data.data.allCategories)
+                setAllCategories(data.allCategories)
             })
             .catch(console.error);
     }, []);
@@ -30,10 +31,10 @@ export default function Index({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getBrands(currentPage)
+        getBrands(currentPage)
             .then(({data}) => {
-                setBrands([...brands, ...data.data.brands.data])
-                setHasMorePages(data.data.brands.paginatorInfo.hasMorePages)
+                setBrands([...brands, ...data.brands.data])
+                setHasMorePages(data.brands.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);

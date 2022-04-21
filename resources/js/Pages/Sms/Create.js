@@ -2,16 +2,17 @@ import React, { useState } from "react";
 
 import Label from "@/Components/Global/Label";
 import SidePanel from '@/Components/Global/SidePanel';
+import { createSms } from "../../Api";
 
 export default function Create({showCreate, onClose, onCreate}) {
     const [sms, setSms] = useState('')
 
     const create = () => {
-        Api.createSms({
+        createSms({
             sms
         })
         .then(({data}) => {
-            onCreate(data.data.createSms)
+            onCreate(data.createSms)
             setSms('')
         })
         .catch(console.error);

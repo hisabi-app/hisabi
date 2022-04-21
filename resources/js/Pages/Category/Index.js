@@ -7,6 +7,7 @@ import LoadMore from '@/Components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
 import Delete from '@/Components/Global/Delete';
+import { getCategories } from '../../Api';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -21,10 +22,10 @@ export default function Index({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getCategories(currentPage)
+        getCategories(currentPage)
             .then(({data}) => {
-                setCategories([...categories, ...data.data.categories.data])
-                setHasMorePages(data.data.categories.paginatorInfo.hasMorePages)
+                setCategories([...categories, ...data.categories.data])
+                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);

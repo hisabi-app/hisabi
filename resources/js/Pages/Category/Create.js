@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Input from "@/Components/Global/Input";
 import Label from "@/Components/Global/Label";
 import SidePanel from '@/Components/Global/SidePanel';
+import { createCategory } from "../../Api";
 
 export default function Create({showCreate, onClose, onCreate}) {
     const [name, setName] = useState('')
@@ -18,12 +19,12 @@ export default function Create({showCreate, onClose, onCreate}) {
         if(loading || ! isReady) { return; }
         setLoading(true);
 
-        Api.createCategory({
+        createCategory({
             name,
             type
         })
         .then(({data}) => {
-            onCreate(data.data.createCategory)
+            onCreate(data.createCategory)
             setName('')
             setLoading(false);
         })

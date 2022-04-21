@@ -7,6 +7,7 @@ import Edit from '@/Pages/Transaction/Edit';
 import Create from './Create';
 import LoadMore from '@/Components/Global/LoadMore';
 import Delete from '@/Components/Global/Delete';
+import { getTransactions, getAllBrands } from '../../Api';
 
 export default function Index({auth}) {
     const [transactions, setTransactions] = useState([]);
@@ -19,9 +20,9 @@ export default function Index({auth}) {
     const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
-        Api.getAllBrands()
+        getAllBrands()
             .then(({data}) => {
-                setAllBrands(data.data.allBrands)
+                setAllBrands(data.allBrands)
             })
             .catch(console.error);
     }, []);
@@ -30,10 +31,10 @@ export default function Index({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getTransactions(currentPage)
+        getTransactions(currentPage)
             .then(({data}) => {
-                setTransactions([...transactions, ...data.data.transactions.data])
-                setHasMorePages(data.data.transactions.paginatorInfo.hasMorePages)
+                setTransactions([...transactions, ...data.transactions.data])
+                setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);

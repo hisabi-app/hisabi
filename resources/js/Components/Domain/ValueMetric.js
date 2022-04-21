@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import { query } from '../../Api';
 import Card from "../Global/Card";
 import LoadingView from "../Global/LoadingView";
 
@@ -10,8 +11,8 @@ function ValueMetric({name, graphql_query, ranges}) {
     useEffect(() => {
         setData(null);
 
-        Api.query(graphql_query, selectedRange)
-            .then(({data}) => setData(data.data[graphql_query]))
+        query(graphql_query, selectedRange)
+            .then(({data}) => setData(data[graphql_query]))
             .catch(console.error)
     }, [selectedRange])
 

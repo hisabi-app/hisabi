@@ -12,7 +12,7 @@ import Delete from '../Delete';
 const server = setupServer(
     graphql.mutation('deleteCategory', (req, res, ctx) => {
         return res(
-            ctx.data({}),
+            ctx.data(),
         )
     })
 )
