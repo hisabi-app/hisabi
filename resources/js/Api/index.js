@@ -1,6 +1,3 @@
-// fix cache issue
-// find alternative to toPromise?
-
 export * from './common.js';
 export * from './categories.js';
 export * from './brands.js';

@@ -1,9 +1,9 @@
-import { createClient } from '@urql/core';
+import { createClient, dedupExchange, fetchExchange } from '@urql/core';
 import 'isomorphic-unfetch';
 
 export default createClient({
   url: '/graphql',
-  maskTypename: true,
+  maskTypename: false,
   fetchOptions: () => {
     const token = document.head.querySelector('meta[name="csrf-token"]');
 
@@ -15,4 +15,5 @@ export default createClient({
         },
     };
   },
+  exchanges: [dedupExchange, fetchExchange]
 });
