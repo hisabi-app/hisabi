@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Chart, ArcElement, DoughnutController } from 'chart.js';
+import { sumBy } from 'lodash';
 
 import Card from "../Global/Card";
 import LoadingView from "../Global/LoadingView";
@@ -82,7 +83,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
         )
     }
 
-    let total = _.sumBy(data, 'value');
+    let total = sumBy(data, 'value');
 
     return ( 
         <Card className="relative">

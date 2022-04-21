@@ -2,11 +2,13 @@ import React, { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationIcon } from '@heroicons/react/outline'
 
+import { deleteResource } from '../../Api';
+
 export default function Delete({item, resource, onClose, onDelete}) {
   const cancelButtonRef = useRef()
   
   const deleteItem = () => {
-    Api.delete({id: item.id, resource: resource})
+    deleteResource({id: item.id, resource: resource})
         .then(() => onDelete())
         .catch(console.error)
   }
