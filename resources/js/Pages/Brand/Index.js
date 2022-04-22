@@ -8,6 +8,7 @@ import Edit from './Edit';
 import Create from './Create';
 import Delete from '@/Components/Domain/Delete';
 import { getAllCategories, getBrands } from '../../Api';
+import { animateRowItem } from '../../Utils';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
@@ -44,7 +45,7 @@ export default function Index({auth}) {
         setShowCreate(false)
         setBrands([createdItem, ...brands])
 
-        Engine.animateRowItem(createdItem.id);
+        animateRowItem(createdItem.id);
     }
     
     const onUpdate = (updatedItem) => {
@@ -56,13 +57,13 @@ export default function Index({auth}) {
             return brand
         }));
 
-        Engine.animateRowItem(updatedItem.id)
+        animateRowItem(updatedItem.id)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
-        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+        animateRowItem(tempDeleteItem.id, 'deleted', () => {
             setBrands(brands.filter(item => item.id != tempDeleteItem.id));
         })
     }

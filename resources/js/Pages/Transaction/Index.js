@@ -8,6 +8,7 @@ import Create from './Create';
 import LoadMore from '@/Components/Global/LoadMore';
 import Delete from '@/Components/Domain/Delete';
 import { getTransactions, getAllBrands } from '../../Api';
+import { animateRowItem, formatNumber } from '../../Utils';
 
 export default function Index({auth}) {
     const [transactions, setTransactions] = useState([]);
@@ -44,7 +45,7 @@ export default function Index({auth}) {
         setShowCreate(false)
         setTransactions([createdItem, ...transactions])
 
-        Engine.animateRowItem(createdItem.id);
+        animateRowItem(createdItem.id);
     }
 
     const onUpdate = (updatedItem) => {
@@ -56,14 +57,14 @@ export default function Index({auth}) {
             return transaction
         }));
 
-        Engine.animateRowItem(updatedItem.id)
+        animateRowItem(updatedItem.id)
         setEditItem(null)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
-        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+        animateRowItem(tempDeleteItem.id, 'deleted', () => {
             setTransactions(transactions.filter(item => item.id != deleteItem.id));
         })
     };
@@ -135,7 +136,7 @@ export default function Index({auth}) {
                                             {transactions.map((item) => (
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {Engine.formatNumber(item.amount, null)}  </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {formatNumber(item.amount, null)}  </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.name : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.type : '-'}</td>

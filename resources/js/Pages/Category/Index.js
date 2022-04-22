@@ -8,6 +8,7 @@ import Edit from './Edit';
 import Create from './Create';
 import Delete from '@/Components/Domain/Delete';
 import { getCategories } from '../../Api';
+import { animateRowItem } from '../../Utils';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -35,7 +36,7 @@ export default function Index({auth}) {
         setShowCreate(false)
         setCategories([createdItem, ...categories])
 
-        Engine.animateRowItem(createdItem.id);
+        animateRowItem(createdItem.id);
     }
 
     const onUpdate = (updatedItem) => {
@@ -47,14 +48,14 @@ export default function Index({auth}) {
             return category
         }));
 
-        Engine.animateRowItem(updatedItem.id);
+        animateRowItem(updatedItem.id);
         setEditCategory(null)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
-        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+        animateRowItem(tempDeleteItem.id, 'deleted', () => {
             setCategories(categories.filter(item => item.id != tempDeleteItem.id));
         })
     }

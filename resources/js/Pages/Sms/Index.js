@@ -8,6 +8,7 @@ import Create from './Create';
 import Edit from './Edit';
 import Delete from '@/Components/Domain/Delete';
 import { getSms } from '../../Api';
+import { animateRowItem, cutString } from '../../Utils';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -40,13 +41,13 @@ export default function Sms({auth}) {
             return item
         }));
 
-        Engine.animateRowItem(updatedItem.id)
+        animateRowItem(updatedItem.id)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
-        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+        animateRowItem(tempDeleteItem.id, 'deleted', () => {
             setSms(sms.filter(item => item.id != tempDeleteItem.id));
         })
     }
@@ -113,7 +114,7 @@ export default function Sms({auth}) {
                                             {sms.map((item) => (
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{Engine.cutString(item.body, 50)}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{cutString(item.body, 50)}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transaction_id ? '✅' : '❌'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         {! item.transaction_id && <button onClick={() => setEditItem(item)} type="button">

@@ -17,7 +17,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation }) {
     useEffect(() => {
         if(! relation) { return; }
 
-        query(relation.graphql_query + `{ id ${relation.display_using} }`)
+        query(relation.graphql_query + `{ id ${relation.display_using} }`, null, 'CustomQuery')
             .then(({data}) => {
                 setRelationData(data[relation.graphql_query])
                 setSelectedRelationId(data[relation.graphql_query][0].id)
@@ -30,7 +30,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation }) {
 
         if(relation) {
             if (selectedRelationId) {
-                query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`)
+                query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`, null, 'CustomQuery')
                     .then(({data}) => setData(JSON.parse(data[graphql_query])))
                     .catch(console.error)
             }
