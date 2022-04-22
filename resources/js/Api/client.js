@@ -5,15 +5,18 @@ export default createClient({
   url: '/graphql',
   maskTypename: false,
   fetchOptions: () => {
-    const token = document.head.querySelector('meta[name="csrf-token"]');
-
     return {
         credentials: 'include',
         headers: { 
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN' : token ? token.content : '',
+            'X-Xsrf-Token': getCookieValue('XSRF-TOKEN')
         },
     };
   },
   exchanges: [dedupExchange, fetchExchange]
 });
+
+const getCookieValue = (name) => {
+  let match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'))
+  return match ? decodeURIComponent(match[3]) : null
+}
