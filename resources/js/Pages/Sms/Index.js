@@ -6,7 +6,7 @@ import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/Global/LoadMore';
 import Create from './Create';
 import Edit from './Edit';
-import Delete from '@/Components/Global/Delete';
+import Delete from '@/Components/Domain/Delete';
 import { getSms } from '../../Api';
 
 export default function Sms({auth}) {

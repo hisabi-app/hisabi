@@ -6,7 +6,7 @@ import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
-import Delete from '@/Components/Global/Delete';
+import Delete from '@/Components/Domain/Delete';
 import { getCategories } from '../../Api';
 
 export default function Index({auth}) {

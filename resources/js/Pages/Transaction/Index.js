@@ -6,7 +6,7 @@ import Authenticated from '@/Layouts/Authenticated';
 import Edit from '@/Pages/Transaction/Edit';
 import Create from './Create';
 import LoadMore from '@/Components/Global/LoadMore';
-import Delete from '@/Components/Global/Delete';
+import Delete from '@/Components/Domain/Delete';
 import { getTransactions, getAllBrands } from '../../Api';
 
 export default function Index({auth}) {
