@@ -45,5 +45,8 @@
         "numbro": "^2.3.6",
         "react-chartjs-2": "^4.0.0",
         "urql": "^2.2.0"
+    },
+    "jest": {
+        "setupFilesAfterEnv": ["./jest.setup.js"]
     }
 }

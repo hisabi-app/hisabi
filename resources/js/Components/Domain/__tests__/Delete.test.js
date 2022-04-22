@@ -1,26 +1,8 @@
 import * as React from 'react'
-import { cleanup, screen, render, fireEvent, waitFor } from '@testing-library/react';
+import { screen, render, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import 'intersection-observer';
-import { graphql } from 'msw'
-import {setupServer} from 'msw/node'
 
 import Delete from '../Delete';
-
-const server = setupServer(
-  graphql.mutation('DeleteResource', (req, res, ctx) => {
-        return res(
-            ctx.data({id: 1}),
-        )
-    })
-)
-
-beforeAll(() => server.listen())
-afterEach(() => {
-  server.resetHandlers()
-  cleanup()
-})
-afterAll(() => server.close())
 
 it('If item not passed then delete popup will not be shown', () => {
   render(<Delete />);
