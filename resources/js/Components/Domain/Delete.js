@@ -9,7 +9,9 @@ export default function Delete({item, resource, onClose, onDelete}) {
   
   const deleteItem = () => {
     deleteResource({id: item.id, resource: resource})
-        .then(() => onDelete())
+        .then(() => {
+          onDelete()
+        })
         .catch(console.error)
   }
 

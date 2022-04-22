@@ -4,7 +4,7 @@ import client from './client.js';
 export const deleteResource = ({id, resource}) => {
     return client
         .mutation(gql`
-            mutation {
+            mutation DeleteResource {
                 delete${resource}(id: ${id}) {
                     id
                 }

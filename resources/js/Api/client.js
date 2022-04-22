@@ -2,7 +2,7 @@ import { createClient, dedupExchange, fetchExchange } from '@urql/core';
 import 'isomorphic-unfetch';
 
 export default createClient({
-  url: '/graphql',
+  url: location.origin + '/graphql',
   maskTypename: false,
   fetchOptions: () => {
     return {

@@ -2,25 +2,25 @@ import * as React from 'react'
 import { cleanup, screen, render, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import 'intersection-observer';
-
 import { graphql } from 'msw'
 import {setupServer} from 'msw/node'
 
 import Delete from '../Delete';
 
-//
 const server = setupServer(
-    graphql.mutation('deleteCategory', (req, res, ctx) => {
+  graphql.mutation('DeleteResource', (req, res, ctx) => {
         return res(
-            ctx.data(),
+            ctx.data({id: 1}),
         )
     })
 )
 
 beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
+afterEach(() => {
+  server.resetHandlers()
+  cleanup()
+})
 afterAll(() => server.close())
-///
 
 it('If item not passed then delete popup will not be shown', () => {
   render(<Delete />);
@@ -50,12 +50,12 @@ it('If delete is pressed then onDelete is triggered', async () => {
   const onCloseCallback = jest.fn();
   const onDeleteCallback = jest.fn();
 
-  render(<Delete item={{id: 1}} onClose={onCloseCallback} onDelete={onDeleteCallback} />);
+  render(<Delete resource="Category" item={{id: 1}} onClose={onCloseCallback} onDelete={onDeleteCallback} />);
 
   fireEvent.click(screen.getByText('Delete'))
 
   await waitFor(() => {
-    expect(onDeleteCallback).toHaveBeenCalled()
-    expect(onCloseCallback).not.toHaveBeenCalled()
+    expect(onDeleteCallback).toHaveBeenCalledTimes(1)
+    expect(onCloseCallback).toHaveBeenCalledTimes(0)
   })
 });
