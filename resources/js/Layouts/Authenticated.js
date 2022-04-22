@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/inertia-react';
+
+import NavLink from '@/Components/Global/NavLink';
+import ApplicationLogo from '@/Components/Global/ApplicationLogo';
+import ResponsiveNavLink from '@/Components/Global/ResponsiveNavLink';
 
 export default function Authenticated({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);

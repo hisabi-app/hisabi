@@ -1,7 +1,9 @@
-import Input from "@/Components/Input";
-import Label from "@/Components/Label";
-import SidePanel from '@/Components/SidePanel';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+
+import Input from "@/Components/Global/Input";
+import Label from "@/Components/Global/Label";
+import SidePanel from '@/Components/Global/SidePanel';
+import { createBrand } from '../../Api';
 
 export default function Edit({categories, showCreate, onClose, onCreate}) {
     const [name, setName] = useState('')
@@ -17,12 +19,12 @@ export default function Edit({categories, showCreate, onClose, onCreate}) {
         if(loading || ! isReady) { return; }
         setLoading(true);
 
-        Api.createBrand({
+        createBrand({
             name,
             categoryId
         })
         .then(({data}) => {
-            onCreate(data.data.createBrand)
+            onCreate(data.createBrand)
             setCategoryId(0)
             setName('')
             setLoading(false);

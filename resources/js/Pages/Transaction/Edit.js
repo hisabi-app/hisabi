@@ -1,7 +1,9 @@
-import Input from "@/Components/Input";
-import Label from "@/Components/Label";
-import SidePanel from '@/Components/SidePanel';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import Input from "@/Components/Global/Input";
+import Label from "@/Components/Global/Label";
+import SidePanel from '@/Components/Global/SidePanel';
+import { updateTransaction } from "../../Api";
 
 export default function Edit({brands, transaction, onClose, onUpdate}) {
     const [amount, setAmount] = useState(0)
@@ -15,11 +17,11 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
         setAmount(transaction.amount)
         setBrand(transaction.brand.id)
         setCreatedAt(transaction.created_at)
-        setNote(transaction.note)
+        setNote(transaction.note ?? '')
     }, [transaction])
 
     const update = () => {
-        Api.updateTransaction({
+        updateTransaction({
             id: transaction.id,
             amount,
             brand,
@@ -27,7 +29,7 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
             note
         })
         .then(({data}) => {
-            onUpdate(data.data.updateTransaction)
+            onUpdate(data.updateTransaction)
         })
         .catch(console.error);
     }

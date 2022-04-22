@@ -1,7 +1,7 @@
 import React from "react";
-import ValueMetric from "./ValueMetric";
-import PartitionMetric from "./PartitionMetric";
-import TrendMetric from "./TrendMetric";
+import ValueMetric from "./Domain/ValueMetric";
+import PartitionMetric from "./Domain/PartitionMetric";
+import TrendMetric from "./Domain/TrendMetric";
  
 const components = {
   'value-metric': ValueMetric,

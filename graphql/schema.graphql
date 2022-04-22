@@ -37,7 +37,7 @@ type Query {
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     allBrands: [Brand!]! @all
-    brands: [Brand!]! @paginate(defaultCount: 25) @orderBy(column: category_id direction: ASC)
+    brands: [Brand!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     allCategories: [Category!]! @all
     categories: [Category!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)

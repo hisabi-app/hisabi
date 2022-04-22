@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
+
 import Authenticated from '@/Layouts/Authenticated';
-import LoadMore from '@/Components/LoadMore';
+import LoadMore from '@/Components/Global/LoadMore';
 import Create from './Create';
 import Edit from './Edit';
-import Delete from '@/Components/Delete';
+import Delete from '@/Components/Domain/Delete';
+import { getSms } from '../../Api';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -20,10 +22,10 @@ export default function Sms({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getSms(currentPage)
+        getSms(currentPage)
             .then(({data}) => {
-                setSms([...sms, ...data.data.sms.data])
-                setHasMorePages(data.data.sms.paginatorInfo.hasMorePages)
+                setSms([...sms, ...data.sms.data])
+                setHasMorePages(data.sms.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);

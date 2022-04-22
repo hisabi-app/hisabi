@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { PencilAltIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
+
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from '@/Pages/Transaction/Edit';
 import Create from './Create';
-import LoadMore from '@/Components/LoadMore';
-import Delete from '@/Components/Delete';
+import LoadMore from '@/Components/Global/LoadMore';
+import Delete from '@/Components/Domain/Delete';
+import { getTransactions, getAllBrands } from '../../Api';
 
 export default function Index({auth}) {
     const [transactions, setTransactions] = useState([]);
@@ -18,9 +20,9 @@ export default function Index({auth}) {
     const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
-        Api.getAllBrands()
+        getAllBrands()
             .then(({data}) => {
-                setAllBrands(data.data.allBrands)
+                setAllBrands(data.allBrands)
             })
             .catch(console.error);
     }, []);
@@ -29,10 +31,10 @@ export default function Index({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getTransactions(currentPage)
+        getTransactions(currentPage)
             .then(({data}) => {
-                setTransactions([...transactions, ...data.data.transactions.data])
-                setHasMorePages(data.data.transactions.paginatorInfo.hasMorePages)
+                setTransactions([...transactions, ...data.transactions.data])
+                setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
@@ -141,11 +143,11 @@ export default function Index({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         {item.note && 
                                                             <button>
-                                                                <div class="relative flex flex-col items-center group">
+                                                                <div className="relative flex flex-col items-center group">
                                                                     <InformationCircleIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                                    <div class="absolute bottom-0 flex flex-col items-center hidden mb-6 group-hover:flex">
-                                                                        <span class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{item.note}</span>
-                                                                        <div class="w-3 h-3 -mt-2 rotate-45 bg-gray-700"></div>
+                                                                    <div className="absolute bottom-0 flex flex-col items-center hidden mb-6 group-hover:flex">
+                                                                        <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{item.note}</span>
+                                                                        <div className="w-3 h-3 -mt-2 rotate-45 bg-gray-700"></div>
                                                                     </div>
                                                                 </div>
                                                             </button>

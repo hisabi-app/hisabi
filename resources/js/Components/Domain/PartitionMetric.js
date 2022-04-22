@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Chart, ArcElement, DoughnutController } from 'chart.js';
+import { sumBy } from 'lodash';
 
-import Card from "./Card";
-import LoadingView from "./LoadingView";
+import { query } from '../../Api';
+import Card from "../Global/Card";
+import LoadingView from "../Global/LoadingView";
 
 Chart.register(ArcElement, DoughnutController);
 
@@ -16,10 +18,10 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
     useEffect(() => {
         if(! relation) { return; }
 
-        Api.query(relation.graphql_query + `{ id ${relation.display_using} }`)
+        query(relation.graphql_query + `{ id ${relation.display_using} }`)
             .then(({data}) => {
-                setRelationData(data.data[relation.graphql_query])
-                setSelectedRelationId(data.data[relation.graphql_query][0].id)
+                setRelationData(data[relation.graphql_query])
+                setSelectedRelationId(data[relation.graphql_query][0].id)
             })
             .catch(console.error)
     }, [])
@@ -29,16 +31,16 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
 
         if(relation) {
             if (selectedRelationId) {
-                Api.query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`)
-                    .then(({data}) => setData(JSON.parse(data.data[graphql_query])))
+                query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`)
+                    .then(({data}) => setData(JSON.parse(data[graphql_query])))
                     .catch(console.error)
             }
 
             return;
         }
         
-        Api.query(graphql_query, selectedRange)
-            .then(({data}) => setData(JSON.parse(data.data[graphql_query])))
+        query(graphql_query, selectedRange)
+            .then(({data}) => setData(JSON.parse(data[graphql_query])))
             .catch(console.error)
     }, [selectedRelationId, selectedRange])
 
@@ -82,7 +84,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
         )
     }
 
-    let total = _.sumBy(data, 'value');
+    let total = sumBy(data, 'value');
 
     return ( 
         <Card className="relative">
