@@ -5,6 +5,7 @@ import { sumBy } from 'lodash';
 import { query } from '../../Api';
 import Card from "../Global/Card";
 import LoadingView from "../Global/LoadingView";
+import { colors, formatNumber, getTailwindColor } from '../../Utils';
 
 Chart.register(ArcElement, DoughnutController);
 
@@ -18,7 +19,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
     useEffect(() => {
         if(! relation) { return; }
 
-        query(relation.graphql_query + `{ id ${relation.display_using} }`)
+        query(relation.graphql_query + `{ id ${relation.display_using} }`, null, 'CustomQuery')
             .then(({data}) => {
                 setRelationData(data[relation.graphql_query])
                 setSelectedRelationId(data[relation.graphql_query][0].id)
@@ -31,7 +32,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
 
         if(relation) {
             if (selectedRelationId) {
-                query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`)
+                query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`, null, 'CustomQuery')
                     .then(({data}) => setData(JSON.parse(data[graphql_query])))
                     .catch(console.error)
             }
@@ -58,7 +59,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
                 labels: data.map(item => item.label),
                 datasets: [{
                   data: data.map(item => item.value),
-                  backgroundColor: Engine.colors().map(color => color.hex),
+                  backgroundColor: colors().map(color => color.hex),
                   cutout: '75%',
                   borderWidth: 0
                 }]
@@ -117,8 +118,8 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
                     <div className="overflow-hidden overflow-y-auto max-h-22">
                         <ul className="list-reset">
                             {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
-                                <span className={`inline-block rounded-full w-2 h-2 mr-2 ${Engine.getTailwindColor(index)}`} />
-                                {item.label} ({AppCurrency} {item.value} - {total > 0 && Engine.formatNumber(item.value * 100 / total) + "%"})
+                                <span className={`inline-block rounded-full w-2 h-2 mr-2 ${getTailwindColor(index)}`} />
+                                {item.label} ({AppCurrency} {item.value} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
                             </li>)}
                         </ul>
                     </div>

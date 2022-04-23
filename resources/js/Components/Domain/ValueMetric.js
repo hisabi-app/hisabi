@@ -3,17 +3,17 @@ import React, { useEffect, useState } from 'react';
 import { query } from '../../Api';
 import Card from "../Global/Card";
 import LoadingView from "../Global/LoadingView";
+import { formatNumber, getAppCurrency } from '../../Utils';
 
-function ValueMetric({name, graphql_query, ranges}) {
+export default function ValueMetric({name, graphql_query, ranges}) {
     const [data, setData] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges ? ranges[0].key : null);
 
-    useEffect(() => {
+    useEffect(async () => {
         setData(null);
 
-        query(graphql_query, selectedRange)
-            .then(({data}) => setData(data[graphql_query]))
-            .catch(console.error)
+        let { data } = await query(graphql_query, selectedRange);
+        setData(data[graphql_query])
     }, [selectedRange])
 
     if(data == null) {
@@ -39,11 +39,9 @@ function ValueMetric({name, graphql_query, ranges}) {
                 </div>
 
                 <p className="flex items-center text-4xl mb-4">
-                    { AppCurrency } { Engine.formatNumber(data) }
+                    { getAppCurrency() } { formatNumber(data) }
                 </p>
             </div>
         </Card>
     );
-}
-
-export default ValueMetric;
+};

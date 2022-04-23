@@ -13,11 +13,13 @@ export const deleteResource = ({id, resource}) => {
         .toPromise();
 }
 
-export const query = (query, range = null) => {
+export const query = (query, range = null, queryName = null) => {
+    const queryCustomName = queryName ? queryName : query;
+
     if(range == null) {
         return client
             .query(gql`
-                query {
+                query ${queryCustomName} {
                     ${query}
                 }
             `)
@@ -26,30 +28,9 @@ export const query = (query, range = null) => {
     
     return client
             .query(gql`
-                query {
+                query ${queryCustomName} {
                     ${query}(range: """${range}""") 
                 }
-            `)
+            `, {range})
             .toPromise();
 }
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
