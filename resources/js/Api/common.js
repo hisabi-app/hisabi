@@ -31,6 +31,6 @@ export const query = (query, range = null, queryName = null) => {
                 query ${queryCustomName} {
                     ${query}(range: """${range}""") 
                 }
-            `)
+            `, {range})
             .toPromise();
 }

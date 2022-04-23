@@ -8,7 +8,9 @@ export const handlers = [
     }),
     graphql.query('valueMetricSampleQuery', (req, res, ctx) => {
         return res(
-            ctx.data({'valueMetricSampleQuery': 2132}),
+            ctx.data({
+                'valueMetricSampleQuery': req.body.variables.range === 'current-month' ? 3000 : 2000
+            }),
         )
     }),
 ];
