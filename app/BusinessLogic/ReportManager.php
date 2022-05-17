@@ -2,12 +2,12 @@
 
 namespace App\BusinessLogic;
 
-use App\Contracts\ReportManager as ReportManagerContract;
-use App\Domain\Ranges\CurrentMonth;
-use App\Domain\Ranges\LastMonth;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Transaction;
+use App\Domain\Ranges\LastMonth;
+use App\Domain\Ranges\CurrentMonth;
+use App\Contracts\ReportManager as ReportManagerContract;
 
 class ReportManager implements ReportManagerContract
 {

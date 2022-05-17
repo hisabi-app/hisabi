@@ -69,7 +69,7 @@ class SmsTransactionProcessorTest extends TestCase
 
         $smsFromDB = Sms::first();
         $this->assertEquals($knownBrand->name, $smsFromDB->transaction->brand->name);
-        $this->assertEquals('39.0', $smsFromDB->transaction->amount);
+        $this->assertEquals('38.7', $smsFromDB->transaction->amount);
     }
 
     /** @test */
