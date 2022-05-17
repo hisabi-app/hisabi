@@ -48,7 +48,7 @@ class Transaction extends Model
         $amount = (float) filter_var($amountFromSms, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
         return static::create([
-            'amount' => round($amount),
+            'amount' => $amount,
             'brand_id' => $brand->id,
         ]);
     }
