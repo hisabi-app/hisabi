@@ -119,7 +119,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
                         <ul className="list-reset">
                             {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
                                 <span className={`inline-block rounded-full w-2 h-2 mr-2 ${getTailwindColor(index)}`} />
-                                {item.label} ({AppCurrency} {item.value} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
+                                {item.label} ({AppCurrency} {formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
                             </li>)}
                         </ul>
                     </div>
