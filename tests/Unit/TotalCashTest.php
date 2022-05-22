@@ -15,16 +15,25 @@ class TotalCashTest extends TestCase
     /** @test */
     public function it_returns_correct_data()
     {
-        $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);
         $incomeCategory = Category::factory()->create(['type' => Category::INCOME]);
+        $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);
+        $investmentCategory = Category::factory()->create(['type' => Category::INVESTMENT]);
+        $savingsCategory = Category::factory()->create(['type' => Category::SAVINGS]);
 
-        $expensesBrand = Brand::factory()->create(['category_id' => $expensesCategory->id]);
         $incomeBrand = Brand::factory()->create(['category_id' => $incomeCategory->id]);
+        $expensesBrand = Brand::factory()->create(['category_id' => $expensesCategory->id]);
+        $investmentBrand = Brand::factory()->create(['category_id' => $investmentCategory->id]);
+        $savingsBrand = Brand::factory()->create(['category_id' => $savingsCategory->id]);
 
-        // Expenses
-        Transaction::factory()->create(['brand_id' => $expensesBrand, 'amount' => 3444]);
         // Income
-        Transaction::factory()->create(['brand_id' => $incomeBrand->id, 'amount' => 10001]);
+        Transaction::factory()->create(['brand_id' => $incomeBrand->id, 'amount' => 1000]);
+        // Expenses
+        Transaction::factory()->create(['brand_id' => $expensesBrand, 'amount' => 200]);
+        // Investment
+        Transaction::factory()->create(['brand_id' => $investmentBrand->id, 'amount' => 300]);
+        // Savings
+        Transaction::factory()->create(['brand_id' => $savingsBrand->id, 'amount' => 100]);
+
 
         $this->graphQL(/** @lang GraphQL */ '
             {
@@ -32,7 +41,7 @@ class TotalCashTest extends TestCase
             }
             ')->assertJson([
                 'data' => [
-                    'totalCash' => '6557'
+                    'totalCash' => '400'
                 ],
             ]);
     }

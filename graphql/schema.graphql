@@ -44,8 +44,10 @@ type Query {
 
     sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: transaction_id direction: ASC)
 
-    totalExpenses(range: String!): Json
     totalIncome(range: String!): Json
+    totalExpenses(range: String!): Json
+    totalSavings: Json
+    totalInvestment: Json
     totalCash: Json
     
     expensesPerCategory(range: String!): Json

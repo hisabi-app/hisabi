@@ -2,8 +2,10 @@
 
 use App\GraphQL\Queries\TotalCash;
 use App\GraphQL\Queries\TotalIncome;
+use App\GraphQL\Queries\TotalSavings;
 use App\GraphQL\Queries\TotalExpenses;
 use App\GraphQL\Queries\TotalPerBrand;
+use App\GraphQL\Queries\TotalInvestment;
 use App\GraphQL\Queries\TotalIncomeTrend;
 use App\GraphQL\Queries\IncomePerCategory;
 use App\GraphQL\Queries\TotalExpensesTrend;
@@ -20,6 +22,8 @@ return [
     ],
     'reports' => [
         new TotalCash,
+        new TotalSavings,
+        new TotalInvestment,
         new TotalIncome,
         new TotalExpenses,
         new IncomePerCategory,

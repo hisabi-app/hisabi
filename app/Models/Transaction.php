@@ -34,6 +34,20 @@ class Transaction extends Model
         });
     }
 
+    public function scopeSavings($query) 
+    {
+        return $query->whereHas('brand.category', function ($query) {
+            return $query->where('type', Category::SAVINGS);
+        });
+    }
+
+    public function scopeInvestment($query) 
+    {
+        return $query->whereHas('brand.category', function ($query) {
+            return $query->where('type', Category::INVESTMENT);
+        });
+    }
+
     public static function tryCreateFromSms($sms) 
     {
         $brandFromSms = $sms->meta['data']['brand'] ?? null;

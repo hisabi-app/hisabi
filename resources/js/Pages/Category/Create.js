@@ -60,6 +60,8 @@ export default function Create({showCreate, onClose, onCreate}) {
                         >
                         <option value="EXPENSES">EXPENSES</option>
                         <option value="INCOME">INCOME</option>
+                        <option value="SAVINGS">SAVINGS</option>
+                        <option value="INVESTMENT">INVESTMENT</option>
                     </select>
                 </div>
 

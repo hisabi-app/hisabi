@@ -20,7 +20,9 @@ class TotalCash extends ValueMetric
     {
         $income = Transaction::income()->sum('amount');
         $expenses = Transaction::expenses()->sum('amount');
+        $investment = Transaction::investment()->sum('amount');
+        $savings = Transaction::savings()->sum('amount');
 
-        return $income - $expenses;
+        return $income - ($expenses + $investment + $savings);
     }
 }
