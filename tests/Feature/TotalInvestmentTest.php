@@ -8,26 +8,26 @@ use App\Models\Category;
 use App\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class TotalExpensesTest extends TestCase
+class TotalInvestmentTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
     public function it_returns_correct_data()
     {
-        $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);
-        
-        $expensesBrand = Brand::factory()->create(['category_id' => $expensesCategory->id]);
-        
-        Transaction::factory()->create(['brand_id' => $expensesBrand, 'amount' => 10001]);
-        
+        $investmentCategory = Category::factory()->create(['type' => Category::INVESTMENT]);
+
+        $investmentBrand = Brand::factory()->create(['category_id' => $investmentCategory->id]);
+
+        Transaction::factory()->create(['brand_id' => $investmentBrand->id, 'amount' => 133]);
+
         $this->graphQL(/** @lang GraphQL */ '
             {
-                totalExpenses(range: "current-year")
+                totalInvestment
             }
             ')->assertJson([
                 'data' => [
-                    'totalExpenses' => '"10001.0"'
+                    'totalInvestment' => '"133.0"'
                 ],
             ]);
     }

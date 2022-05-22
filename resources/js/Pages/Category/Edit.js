@@ -60,6 +60,8 @@ export default function Edit({category, onClose, onUpdate}) {
                       >
                         <option value="EXPENSES">EXPENSES</option>
                         <option value="INCOME">INCOME</option>
+                        <option value="SAVINGS">SAVINGS</option>
+                        <option value="INVESTMENT">INVESTMENT</option>
                       </select>
                     </div>
 

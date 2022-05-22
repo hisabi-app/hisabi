@@ -22,6 +22,18 @@ class CategoryTest extends TestCase
     {
         $this->assertEquals(Category::INCOME, "INCOME");
     }
+
+    /** @test */
+    public function class_has_investment_constant()
+    {
+        $this->assertEquals(Category::INVESTMENT, "INVESTMENT");
+    }
+
+    /** @test */
+    public function class_has_savings_constant()
+    {
+        $this->assertEquals(Category::SAVINGS, "SAVINGS");
+    }
     
     /** @test */
     public function it_has_name()
