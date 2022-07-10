@@ -22,6 +22,9 @@ return [
         'AED {amount} has been debited from {account} using {card} at {brand} on {datetime}.',
         '{brand} of AED {amount} has been credited to your {account} on {datetime}.',
         'Your {brand} of AED {amount} has been credited to your {account} on {datetime}.',
+        'Outward {brand} of AED {amount} is debited from your {account}. Your {card} as of {datetime}.',
+        'An ATM cash {brand} of AED{amount} has been debited from your {account} on {datetime}.',
+        '{brand} PAYMENT for {card} via MOBAPP of AED {amount} was debited from {account}.'
     ],
     'reports' => [
         new TotalCash,
