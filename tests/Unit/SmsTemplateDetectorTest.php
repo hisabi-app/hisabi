@@ -22,15 +22,16 @@ class SmsTemplateDetectorTest extends TestCase
     public function it_returns_correct_matched_template_with_extracted_data()
     {
         Config::set('finance.sms_templates', [
-            'hello this is {amount}, but this is {brand}!'
+            'hello this is {amount}, but this is {brand} on {datetime}.'
         ]);
 
         $sut = new SmsTemplateDetector;
 
-        $smsTemplate = $sut->detect("hello this is 10, but this is someBrand!");
+        $smsTemplate = $sut->detect("hello this is 10, but this is someBrand on 20-06-2022 10:10.");
 
-        $this->assertEquals('hello this is {amount}, but this is {brand}!', $smsTemplate->body());
+        $this->assertEquals('hello this is {amount}, but this is {brand} on {datetime}.', $smsTemplate->body());
         $this->assertEquals('10', $smsTemplate->data()['amount']);
         $this->assertEquals('someBrand', $smsTemplate->data()['brand']);
+        $this->assertEquals('20-06-2022 10:10', $smsTemplate->data()['datetime']);
     }
 }
