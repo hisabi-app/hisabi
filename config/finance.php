@@ -18,7 +18,10 @@ return [
     'sms_templates' => [
         'Purchase of AED {amount} with {card} at {brand},',
         'Payment of AED {amount} to {brand} with {card}.',
-        '{brand} of AED {amount} has been credited ',
+        '{brand} of AED {amount} has been credited into ',
+        'AED {amount} has been debited from {account} using {card} at {brand} on {datetime}.',
+        '{brand} of AED {amount} has been credited to your {account} on {datetime}.',
+        'Your {brand} of AED {amount} has been credited to your {account} on {datetime}.',
     ],
     'reports' => [
         new TotalCash,

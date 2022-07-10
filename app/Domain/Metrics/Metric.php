@@ -41,7 +41,7 @@ abstract class Metric extends Element
         return $this->graphqlQuery ?: Str::camel(class_basename(get_class($this)));
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array_merge(parent::jsonSerialize(), [
             'component' => $this->component(),

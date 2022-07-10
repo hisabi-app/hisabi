@@ -15,6 +15,8 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
             $templateCopy = str_replace("{amount}", "(.*?)", $templateCopy);
             $templateCopy = str_replace("{brand}", "(.*?)", $templateCopy);
             $templateCopy = str_replace("{card}", "(.*?)", $templateCopy);
+            $templateCopy = str_replace("{account}", "(.*?)", $templateCopy);
+            $templateCopy = str_replace("{datetime}", "(.*?(?=\.))", $templateCopy);
             
             if(preg_match("/{$templateCopy}/", $sms, $matchedParts)) {
                 $partsWithValues = $this->getPartsWithValues($matchedParts, $template);
@@ -41,6 +43,12 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
         }
         if(strpos($templateBody, "{card}") !== false) {
             $partsPositionsInTemplate['card'] = strpos($templateBody, "{card}");
+        }
+        if(strpos($templateBody, "{account}") !== false) {
+            $partsPositionsInTemplate['account'] = strpos($templateBody, "{account}");
+        }
+        if(strpos($templateBody, "{datetime}") !== false) {
+            $partsPositionsInTemplate['datetime'] = strpos($templateBody, "{datetime}");
         }
     
         asort($partsPositionsInTemplate);

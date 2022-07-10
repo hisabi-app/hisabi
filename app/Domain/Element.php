@@ -19,7 +19,7 @@ abstract class Element implements JsonSerializable
         return $this->name ?: $this->humanizedName();
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'name' => $this->name(),
