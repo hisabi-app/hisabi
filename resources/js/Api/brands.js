@@ -56,11 +56,11 @@ export const createBrand = ({name, categoryId}) => {
         .toPromise();
 }
 
-export const updateBrand = ({id, name, category}) => {
+export const updateBrand = ({id, name, categoryId}) => {
     return client
         .mutation(gql`
             mutation {
-                updateBrand(id: ${id} name: "${name}" category_id: ${category}) {
+                updateBrand(id: ${id} name: "${name}" category_id: ${categoryId}) {
                     id
                     name
                     category {
