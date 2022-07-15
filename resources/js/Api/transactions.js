@@ -52,11 +52,11 @@ export const createTransaction = ({amount, brandId, createdAt, note}) => {
         .toPromise();
 }
 
-export const updateTransaction = ({id, amount, brand, createdAt, note}) => {
+export const updateTransaction = ({id, amount, brandId, createdAt, note}) => {
     return client
         .mutation(gql`
             mutation {
-                updateTransaction(id: ${id} amount: ${amount} brand_id: ${brand} created_at: """${createdAt}""" note: """${note}""") {
+                updateTransaction(id: ${id} amount: ${amount} brand_id: ${brandId} created_at: """${createdAt}""" note: """${note}""") {
                     id
                     amount
                     created_at
