@@ -28,7 +28,7 @@ class TotalExpensesTest extends TestCase
             }
             ')->assertJson([
                 'data' => [
-                    'totalExpenses' => '{"value":10001.0,"previous":0.0}'
+                    'totalExpenses' => '{"value":"10001.0","previous":0}'
                 ],
             ]);
     }
@@ -51,7 +51,7 @@ class TotalExpensesTest extends TestCase
             }
             ')->assertJson([
                 'data' => [
-                    'totalExpenses' => '{"value":0.0,"previous":10001.0}'
+                    'totalExpenses' => '{"value":0,"previous":"10001.0"}'
                 ],
             ]);
     }

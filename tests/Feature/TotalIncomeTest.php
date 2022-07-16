@@ -51,7 +51,7 @@ class TotalIncomeTest extends TestCase
             }
             ')->assertJson([
                 'data' => [
-                    'totalIncome' => '{"value":0.0,"previous":133.0}'
+                    'totalIncome' => '{"value":0.0,"previous":"133.0"}'
                 ],
             ]);
     }
