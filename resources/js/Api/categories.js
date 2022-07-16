@@ -8,6 +8,7 @@ export const getAllCategories = () => {
                     allCategories { 
                         id 
                         name
+                        color
                     } 
                 }
             `)
@@ -23,6 +24,7 @@ export const getCategories = (page) => {
                         id
                         name
                         type
+                        color
                     }
                     paginatorInfo {
                         hasMorePages
@@ -33,28 +35,30 @@ export const getCategories = (page) => {
         .toPromise();
 }
 
-export const createCategory = ({name, type}) => {
+export const createCategory = ({name, type, color}) => {
     return client
         .mutation(gql`
             mutation {
-                createCategory(name: """${name}""" type: """${type}""") {
+                createCategory(name: """${name}""" type: """${type}""" color: """${color}""") {
                     id
                     name
                     type
+                    color
                 }
             }
         `)
         .toPromise();
 }
 
-export const updateCategory = ({id, name, type}) => {
+export const updateCategory = ({id, name, type, color}) => {
     return client
         .mutation(gql`
             mutation {
-                updateCategory(id: ${id} name: """${name}""" type: """${type}""") {
+                updateCategory(id: ${id} name: """${name}""" type: """${type}""" color: """${color}""") {
                     id
                     name
                     type
+                    color
                 }
             }
         `)

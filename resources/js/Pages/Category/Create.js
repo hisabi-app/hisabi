@@ -8,6 +8,7 @@ import { createCategory } from "../../Api";
 export default function Create({showCreate, onClose, onCreate}) {
     const [name, setName] = useState('')
     const [type, setType] = useState('EXPENSES')
+    const [color, setColor] = useState('')
     const [isReady, setIsReady] = useState(false)
     const [loading, setLoading] = useState(false);
 
@@ -21,7 +22,8 @@ export default function Create({showCreate, onClose, onCreate}) {
 
         createCategory({
             name,
-            type
+            type,
+            color
         })
         .then(({data}) => {
             onCreate(data.createCategory)
@@ -64,6 +66,29 @@ export default function Create({showCreate, onClose, onCreate}) {
                         <option value="INVESTMENT">INVESTMENT</option>
                     </select>
                 </div>
+
+                <div className="col-span-6 sm:col-span-3 mt-4">
+                    <Label forInput="color" value="Color" />
+                    
+                    <select
+                        id="color"
+                        name="color"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        >
+                        <option value="">Select color</option>
+                        <option value="badge-red">Red</option>
+                        <option value="badge-blue">Blue</option>
+                        <option value="badge-green">Green</option>
+                        <option value="badge-orange">Orange</option>
+                        <option value="badge-purple">Purple</option>
+                        <option value="badge-pink">Pink</option>
+                        <option value="badge-indigo">Indigo</option>
+                        <option value="badge-gray">Gray</option>
+                    </select>
+                </div>
+
 
                 <div className="flex items-center justify-end mt-4">
                     <button onClick={create} className={`inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150 ${isReady ? '' : 'disabled opacity-25'}`}>
