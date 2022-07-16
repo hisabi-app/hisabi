@@ -18,6 +18,8 @@ class TotalSavings extends ValueMetric
      */
     public function __invoke($_, array $args)
     {
-        return Transaction::savings()->sum('amount');
+        return [
+            'value' => Transaction::savings()->sum('amount')
+        ];
     }
 }

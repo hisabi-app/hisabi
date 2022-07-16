@@ -4,6 +4,7 @@ namespace App\GraphQL\Queries;
 
 use App\Models\Transaction;
 use App\Domain\Metrics\ValueMetric;
+use App\Contracts\HasPreviousRange;
 
 class TotalExpenses extends ValueMetric
 {
@@ -21,6 +22,20 @@ class TotalExpenses extends ValueMetric
             $query->whereBetween('created_at', [$rangeData->start(), $rangeData->end()]);
         }
 
-        return $query->sum('amount');
+        $previous = 0;
+
+        if(is_a($rangeData, HasPreviousRange::class)) {
+            $previous = Transaction::query()
+                ->expenses()
+                ->whereBetween('created_at', [
+                    $rangeData->previousRangeStart(), 
+                    $rangeData->previousRangeEnd()
+                ])->sum('amount');
+        }
+
+        return [
+            'value' => $query->sum('amount'),
+            'previous' => $previous
+        ];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Domain\Ranges;
 
-class CurrentYear extends Range
+use App\Contracts\HasPreviousRange;
+
+class CurrentYear extends Range implements HasPreviousRange
 {
     public function start()
     {
@@ -12,5 +14,15 @@ class CurrentYear extends Range
     public function end()
     {
         return now()->endOfYear()->format("Y-m-d");
+    }
+
+    public function previousRangeStart()
+    {
+        return now()->subYear()->startOfYear()->format("Y-m-d");
+    }
+
+    public function previousRangeEnd()
+    {
+        return now()->subYear()->endOfYear()->format("Y-m-d");
     }
 }
