@@ -27,7 +27,7 @@ class TotalInvestmentTest extends TestCase
             }
             ')->assertJson([
                 'data' => [
-                    'totalInvestment' => '"133.0"'
+                    'totalInvestment' => '{"value":"133.0"}'
                 ],
             ]);
     }

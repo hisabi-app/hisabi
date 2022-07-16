@@ -18,6 +18,8 @@ class TotalInvestment extends ValueMetric
      */
     public function __invoke($_, array $args)
     {
-        return Transaction::investment()->sum('amount');
+        return [
+            'value' => Transaction::investment()->sum('amount')
+        ];
     }
 }

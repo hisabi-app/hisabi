@@ -2,7 +2,9 @@
 
 namespace App\Domain\Ranges;
 
-class CurrentMonth extends Range
+use App\Contracts\HasPreviousRange;
+
+class CurrentMonth extends Range implements HasPreviousRange
 {
     public function start()
     {
@@ -12,5 +14,15 @@ class CurrentMonth extends Range
     public function end()
     {
         return now()->endOfMonth()->format("Y-m-d");
+    }
+
+    public function previousRangeStart()
+    {
+        return now()->subMonth()->startOfMonth()->format("Y-m-d");
+    }
+
+    public function previousRangeEnd()
+    {
+        return now()->subMonth()->endOfMonth()->format("Y-m-d");
     }
 }

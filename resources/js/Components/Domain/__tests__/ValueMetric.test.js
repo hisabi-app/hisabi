@@ -69,3 +69,15 @@ it('it fetches data if a range is selected', async () => {
 
     await waitFor(() => expect(screen.getByText(/2k/i)).toBeVisible())
 })
+
+it('it displays decrease if previous value is higher than current', async () => {
+    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQueryWithPreviousHigher"/>);
+
+    await waitFor(() => expect(screen.getByText(/25% Decrease/i)).toBeVisible())
+})
+
+it('it displays increase if previous value is lower than current', async () => {
+    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQueryWithPreviousLower"/>);
+
+    await waitFor(() => expect(screen.getByText(/50% Increase/i)).toBeVisible())
+})

@@ -7,10 +7,38 @@ export const handlers = [
         )
     }),
     graphql.query('valueMetricSampleQuery', (req, res, ctx) => {
+        let data = {
+            'valueMetricSampleQuery': JSON.stringify({
+                'value': req.body.variables.range === 'current-month' ? 3000 : 2000
+            })
+        };
+
         return res(
-            ctx.data({
-                'valueMetricSampleQuery': req.body.variables.range === 'current-month' ? 3000 : 2000
-            }),
+            ctx.data(data),
+        )
+    }),
+    graphql.query('valueMetricSampleQueryWithPreviousHigher', (req, res, ctx) => {
+        let data = {
+            'valueMetricSampleQueryWithPreviousHigher': JSON.stringify({
+                'value': 3000,
+                'previous': 4000
+            })
+        };
+
+        return res(
+            ctx.data(data),
+        )
+    }),
+    graphql.query('valueMetricSampleQueryWithPreviousLower', (req, res, ctx) => {
+        let data = {
+            'valueMetricSampleQueryWithPreviousLower': JSON.stringify({
+                'value': 3000,
+                'previous': 2000
+            })
+        };
+
+        return res(
+            ctx.data(data),
         )
     }),
 ];
