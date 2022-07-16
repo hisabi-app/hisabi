@@ -1,33 +1,39 @@
-import Input from "@/Components/Input";
-import Label from "@/Components/Label";
-import SidePanel from '@/Components/SidePanel';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import Input from "@/Components/Global/Input";
+import Label from "@/Components/Global/Label";
+import { createTransaction } from "../../Api";
+import Combobox from "@/Components/Global/Combobox";
+import SidePanel from '@/Components/Global/SidePanel';
 
 export default function Create({brands, showCreate, onClose, onCreate}) {
     const [amount, setAmount] = useState(0);
-    const [brandId, setBrandId] = useState(0);
+    const [brand, setBrand] = useState(null);
     const [createdAt, setCreatedAt] = useState('');
+    const [note, setNote] = useState('');
     const [isReady, setIsReady] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        setIsReady(amount != 0 && brandId != 0 && createdAt != '' ? true : false);
-    }, [amount, brandId, createdAt])
+        setIsReady(amount != 0 && brand != null && createdAt != '' ? true : false);
+    }, [amount, brand, createdAt])
 
     const create = () => {
         if(loading || ! isReady) { return; }
         setLoading(true);
 
-        Api.createTransaction({
+        createTransaction({
             amount,
-            brandId,
+            brandId: brand.id,
             createdAt,
+            note
         })
         .then(({data}) => {
-            onCreate(data.data.createTransaction)
-            setBrandId(0)
+            onCreate(data.createTransaction)
+            setBrand(null)
             setAmount(0)
             setCreatedAt('')
+            setNote('')
             setLoading(false);
         })
         .catch(console.error);
@@ -63,21 +69,25 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
                 </div>
 
                 <div className="col-span-6 sm:col-span-3 mt-4">
-                    <Label forInput="brand" value="Brand" />
+                        <Combobox 
+                            label="Brand" 
+                            items={brands} 
+                            onChange={(item) => setBrand(item)}
+                            displayInputValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
+                            displayOptionValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
+                            />
+                </div>
 
-                    <select
-                        id="brand"
-                        name="brand"
-                        value={brandId}
-                        onChange={(e) => setBrandId(e.target.value)}
-                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        >
-                        <option value={0}>Select one</option>
-                        {brands.map(brand => <option value={brand.id} key={brand.id}>
-                        {brand.name} 
-                        {brand.category ? " ("+brand.category.name+")" : ''}
-                        </option>)}
-                    </select>
+                <div className="mt-4">
+                    <Label forInput="note" value="Note (optional)" />
+
+                    <Input
+                        type="text"
+                        name="note"
+                        value={note}
+                        className="mt-1 block w-full"
+                        handleChange={(e) => setNote(e.target.value)}
+                    />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">

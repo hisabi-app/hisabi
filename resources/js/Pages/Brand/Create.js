@@ -1,7 +1,10 @@
-import Input from "@/Components/Input";
-import Label from "@/Components/Label";
-import SidePanel from '@/Components/SidePanel';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+
+import Input from "@/Components/Global/Input";
+import Label from "@/Components/Global/Label";
+import Combobox from "@/Components/Global/Combobox";
+import SidePanel from '@/Components/Global/SidePanel';
+import { createBrand } from '../../Api';
 
 export default function Edit({categories, showCreate, onClose, onCreate}) {
     const [name, setName] = useState('')
@@ -17,12 +20,12 @@ export default function Edit({categories, showCreate, onClose, onCreate}) {
         if(loading || ! isReady) { return; }
         setLoading(true);
 
-        Api.createBrand({
+        createBrand({
             name,
             categoryId
         })
         .then(({data}) => {
-            onCreate(data.data.createBrand)
+            onCreate(data.createBrand)
             setCategoryId(0)
             setName('')
             setLoading(false);
@@ -47,19 +50,13 @@ export default function Edit({categories, showCreate, onClose, onCreate}) {
                     />
                 </div>
 
-                <div className="col-span-6 sm:col-span-3 mt-4">
-                    <Label forInput="category" value="Category" />
 
-                    <select
-                        id="category"
-                        name="category"
-                        value={categoryId}
-                        onChange={(e) => setCategoryId(e.target.value)}
-                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        >
-                        <option value={0}>Select one</option>
-                        {categories.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}
-                    </select>
+                <div className="col-span-6 sm:col-span-3 mt-4">
+                    <Combobox 
+                        label="Category" 
+                        items={categories} 
+                        onChange={(item) => setCategoryId(item.id)}
+                        />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">

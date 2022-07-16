@@ -13,9 +13,9 @@ class SmsTest extends TestCase
     /** @test */
     public function it_has_body()
     {
-        $sut = Sms::factory()->make(['name' => 'someName']);
+        $sut = Sms::factory()->create(['body' => 'someName']);
 
-        $this->assertEquals("someName", $sut->name);
+        $this->assertEquals("someName", $sut->body);
     }
 
     /** @test */

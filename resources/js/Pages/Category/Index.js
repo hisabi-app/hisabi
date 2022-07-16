@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
+
 import Authenticated from '@/Layouts/Authenticated';
-import LoadMore from '@/Components/LoadMore';
+import LoadMore from '@/Components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
-import Delete from '@/Components/Delete';
+import Delete from '@/Components/Domain/Delete';
+import { getCategories } from '../../Api';
+import { animateRowItem } from '../../Utils';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -20,10 +23,10 @@ export default function Index({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getCategories(currentPage)
+        getCategories(currentPage)
             .then(({data}) => {
-                setCategories([...categories, ...data.data.categories.data])
-                setHasMorePages(data.data.categories.paginatorInfo.hasMorePages)
+                setCategories([...categories, ...data.categories.data])
+                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
@@ -33,7 +36,7 @@ export default function Index({auth}) {
         setShowCreate(false)
         setCategories([createdItem, ...categories])
 
-        Engine.animateRowItem(createdItem.id);
+        animateRowItem(createdItem.id);
     }
 
     const onUpdate = (updatedItem) => {
@@ -45,14 +48,14 @@ export default function Index({auth}) {
             return category
         }));
 
-        Engine.animateRowItem(updatedItem.id);
+        animateRowItem(updatedItem.id);
         setEditCategory(null)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
-        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+        animateRowItem(tempDeleteItem.id, 'deleted', () => {
             setCategories(categories.filter(item => item.id != tempDeleteItem.id));
         })
     }

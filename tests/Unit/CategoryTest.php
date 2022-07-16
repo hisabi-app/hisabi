@@ -22,11 +22,23 @@ class CategoryTest extends TestCase
     {
         $this->assertEquals(Category::INCOME, "INCOME");
     }
+
+    /** @test */
+    public function class_has_investment_constant()
+    {
+        $this->assertEquals(Category::INVESTMENT, "INVESTMENT");
+    }
+
+    /** @test */
+    public function class_has_savings_constant()
+    {
+        $this->assertEquals(Category::SAVINGS, "SAVINGS");
+    }
     
     /** @test */
     public function it_has_name()
     {
-        $sut = Category::factory()->make(['name' => 'categoryTest']);
+        $sut = Category::factory()->create(['name' => 'categoryTest']);
 
         $this->assertEquals("categoryTest", $sut->name);
     }
@@ -34,7 +46,7 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_has_type()
     {
-        $sut = Category::factory()->make(['type' => Category::EXPENSES]);
+        $sut = Category::factory()->create(['type' => Category::EXPENSES]);
 
         $this->assertEquals(Category::EXPENSES, $sut->type);
     }

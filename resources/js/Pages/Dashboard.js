@@ -1,9 +1,10 @@
-import Wrapper from '@/Components/Wrapper';
-import { renderComponent } from '@/Components';
-import { Head } from '@inertiajs/inertia-react';
 import React from 'react';
+import { Head } from '@inertiajs/inertia-react';
+
+import Wrapper from '@/Components/Global/Wrapper';
+import { renderComponent } from '@/Components';
 import Authenticated from '@/Layouts/Authenticated';
-import NoContent from '@/Components/NoContent';
+import NoContent from '@/Components/Global/NoContent';
 
 export default function Dashboard({auth, metrics, hasData}) {
     return (

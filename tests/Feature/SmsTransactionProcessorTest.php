@@ -13,7 +13,7 @@ class SmsTransactionProcessorTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function not_valid_tempalte_should_create_sms_without_transaction()
+    public function not_valid_template_should_create_sms_without_transaction()
     {
         $sms = "some sms body here";
 
@@ -69,7 +69,7 @@ class SmsTransactionProcessorTest extends TestCase
 
         $smsFromDB = Sms::first();
         $this->assertEquals($knownBrand->name, $smsFromDB->transaction->brand->name);
-        $this->assertEquals('39.0', $smsFromDB->transaction->amount);
+        $this->assertEquals('38.7', $smsFromDB->transaction->amount);
     }
 
     /** @test */
@@ -119,5 +119,21 @@ class SmsTransactionProcessorTest extends TestCase
 
         $this->assertEquals(1, $result->count());
         $this->assertNotNull($result[0]->meta);
+    }
+
+    /** @test */
+    public function it_creates_transaction_with_provided_datetime_if_passed_and_valid()
+    {
+        $knownBrand = Brand::factory()->create(['name' => 'someBrand']);
+
+        $sms = "AED 5.65 has been debited from account 8118 using debit card at someBrand on 25-06-2022 13:29. Your avl";
+
+        $sut = app(SmsTransactionProcessor::class);
+        $sut->process($sms);
+
+        $smsFromDB = Sms::first();
+        $this->assertEquals($knownBrand->name, $smsFromDB->transaction->brand->name);
+        $this->assertEquals('5.65', $smsFromDB->transaction->amount);
+        $this->assertEquals('25-06-2022', $smsFromDB->transaction->created_at->format('d-m-Y'));
     }
 }

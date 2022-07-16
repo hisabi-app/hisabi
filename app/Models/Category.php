@@ -11,6 +11,8 @@ class Category extends Model
 
     const INCOME = "INCOME";
     const EXPENSES = "EXPENSES";
+    const SAVINGS = "SAVINGS";
+    const INVESTMENT = "INVESTMENT";
 
     protected $guarded = [];
 

@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: cimg/php:8.0.17-node
+
+    steps:
+      - checkout
+      - run: composer install -n --prefer-dist
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+      - run: ./vendor/bin/phpunit
+      - run: npm install
+      - run: npm test
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - test

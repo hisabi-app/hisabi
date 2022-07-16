@@ -18,10 +18,11 @@ class CreateTransactionTest extends TestCase
 
         $this->graphQL(/** @lang GraphQL */ '
             mutation {
-                createTransaction(amount: 100 brand_id: 1 created_at: """2022-05-01""") {
+                createTransaction(amount: 100 brand_id: 1 created_at: """2022-05-01""" note: """someNote""") {
                     id
                     amount
                     created_at
+                    note
                     brand {
                         id
                         name
@@ -38,6 +39,7 @@ class CreateTransactionTest extends TestCase
                         "id" => 1,
                         "amount" => 100,
                         "created_at" => "2022-05-01",
+                        "note" => "someNote",
                         "brand" => [
                             "id" => $brand->id,
                             "name" => $brand->name,

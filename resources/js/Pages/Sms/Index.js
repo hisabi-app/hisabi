@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
+
 import Authenticated from '@/Layouts/Authenticated';
-import LoadMore from '@/Components/LoadMore';
+import LoadMore from '@/Components/Global/LoadMore';
 import Create from './Create';
 import Edit from './Edit';
-import Delete from '@/Components/Delete';
+import Delete from '@/Components/Domain/Delete';
+import { getSms } from '../../Api';
+import { animateRowItem, cutString } from '../../Utils';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -20,10 +23,10 @@ export default function Sms({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        Api.getSms(currentPage)
+        getSms(currentPage)
             .then(({data}) => {
-                setSms([...sms, ...data.data.sms.data])
-                setHasMorePages(data.data.sms.paginatorInfo.hasMorePages)
+                setSms([...sms, ...data.sms.data])
+                setHasMorePages(data.sms.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
@@ -38,13 +41,13 @@ export default function Sms({auth}) {
             return item
         }));
 
-        Engine.animateRowItem(updatedItem.id)
+        animateRowItem(updatedItem.id)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
-        Engine.animateRowItem(tempDeleteItem.id, 'deleted', () => {
+        animateRowItem(tempDeleteItem.id, 'deleted', () => {
             setSms(sms.filter(item => item.id != tempDeleteItem.id));
         })
     }
@@ -111,7 +114,7 @@ export default function Sms({auth}) {
                                             {sms.map((item) => (
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{Engine.cutString(item.body, 50)}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{cutString(item.body, 50)}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transaction_id ? '✅' : '❌'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         {! item.transaction_id && <button onClick={() => setEditItem(item)} type="button">

@@ -8,7 +8,7 @@ abstract class RelationPartitionMetric extends PartitionMetric
     protected $relationDisplayUsing;
     protected $relationForeignKey;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array_merge(parent::jsonSerialize(), [
             'relation' => [

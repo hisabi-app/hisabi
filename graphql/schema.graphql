@@ -23,6 +23,7 @@ type Transaction {
     amount: Float!
     brand: Brand! @belongsTo
     created_at: Date!
+    note: String
 }
 
 type Sms {
@@ -36,15 +37,18 @@ type Query {
     transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     allBrands: [Brand!]! @all
-    brands: [Brand!]! @paginate(defaultCount: 25) @orderBy(column: category_id direction: ASC)
+    brands: [Brand!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     allCategories: [Category!]! @all
     categories: [Category!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
 
     sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: transaction_id direction: ASC)
 
-    totalExpenses(range: String!): Json
     totalIncome(range: String!): Json
+    totalExpenses(range: String!): Json
+    totalSavings: Json
+    totalInvestment: Json
+    totalCash: Json
     
     expensesPerCategory(range: String!): Json
     incomePerCategory(range: String!): Json
@@ -57,8 +61,8 @@ type Query {
 }
 
 type Mutation {
-  createTransaction(amount: Float! brand_id: Int! created_at: String!): Transaction @create
-  updateTransaction(id: ID! amount: Float! brand_id: Int! created_at: String!): Transaction @update
+  createTransaction(amount: Float! brand_id: Int! created_at: String! note: String): Transaction @create
+  updateTransaction(id: ID! amount: Float! brand_id: Int! created_at: String! note: String): Transaction @update
   deleteTransaction(id: ID!): Transaction @delete
   
   createBrand(name: String! category_id: Int!): Brand @create
