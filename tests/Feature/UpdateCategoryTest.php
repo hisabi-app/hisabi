@@ -15,28 +15,23 @@ class UpdateCategoryTest extends TestCase
     {
         $category = Category::factory()->create(['name' => 'oldName']);
 
-        $this->graphQL(
-            /** @lang GraphQL */
-            '
+        $this->graphQL(/** @lang GraphQL */ '
             mutation {
-                updateCategory(id: 1 name: """someNewName""" type: """newType""" color: """newColor""") {
+                updateCategory(id: 1 name: """someNewName""" type: """newType""") {
                     id
                     name
                     type
-                    color
                 }
             }
-            '
-        )->assertJson([
-            'data' => [
-                'updateCategory' => [
-                    "id" => 1,
-                    "name" => "someNewName",
-                    "type" => "newType",
-                    "color" => "newColor",
+            ')->assertJson([
+                'data' => [
+                    'updateCategory' => [
+                        "id" => 1,
+                        "name" => "someNewName",
+                        "type" => "newType",
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
         $this->assertEquals("someNewName", $category->fresh()->name);
     }
