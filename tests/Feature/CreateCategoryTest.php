@@ -31,7 +31,7 @@ class CreateCategoryTest extends TestCase
                     "id" => 1,
                     "name" => "someName",
                     "type" => "someType",
-                    "color" => "someColor",
+                    "color" => "someColor"
                 ],
             ],
         ]);

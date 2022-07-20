@@ -16,8 +16,8 @@ class CategoriesTest extends TestCase
         $category = Category::factory()->create();
 
         $this->graphQL(
-        /** @lang GraphQL */
-        '
+            /** @lang GraphQL */
+            '
             {
                 categories(page: 1) {
                     data {
@@ -31,7 +31,8 @@ class CategoriesTest extends TestCase
                     }
                 }
             }
-            ')->assertJson([
+            '
+        )->assertJson([
             'data' => [
                 'categories' => [
                     "data" => [
@@ -39,7 +40,7 @@ class CategoriesTest extends TestCase
                             'id' => $category->id,
                             'name' => $category->name,
                             'type' => $category->type,
-                            'color' => $category->color,
+                            'color' => $category->color
                         ],
                     ],
                     "paginatorInfo" => [
