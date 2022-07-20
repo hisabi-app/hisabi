@@ -17,37 +17,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-});
-
-
-Route::get('/brand/create', function (Request $request) {
-    return Brand::get();
-});
-
-Route::get('/brands', function (Request $request) {
-    return Brand::get();
-});
-
-Route::get('/categories', function (Request $request) {
-    return Category::get();
-});
-
-Route::get('/transactions', function (Request $request) {
-    return Transaction::with('brand')->get()->transform(function ($transaction) {
-        return [
-            'id' => $transaction->id,
-            'amount' => $transaction->amount,
-            'brand' => $transaction->brand->name,
-            'created_at' => $transaction->created_at,
-            'updated_at' => $transaction->updated_at,
-        ];
-    });
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
 });
