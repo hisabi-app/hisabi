@@ -38,21 +38,21 @@ type Sms {
 type Query {
     transactions: [Transaction!]!
         @paginate(defaultCount: 25)
-        @orderBy(column: id, direction: DESC)
+        @orderBy(column: id direction: DESC)
 
     allBrands: [Brand!]! @all
     brands: [Brand!]!
         @paginate(defaultCount: 25)
-        @orderBy(column: id, direction: DESC)
+        @orderBy(column: id direction: DESC)
 
     allCategories: [Category!]! @all
     categories: [Category!]!
         @paginate(defaultCount: 25)
-        @orderBy(column: id, direction: DESC)
+        @orderBy(column: id direction: DESC)
 
     sms: [Sms!]!
         @paginate(defaultCount: 100)
-        @orderBy(column: transaction_id, direction: ASC)
+        @orderBy(column: transaction_id direction: ASC)
 
     totalIncome(range: String!): Json
     totalExpenses(range: String!): Json
@@ -62,12 +62,12 @@ type Query {
 
     expensesPerCategory(range: String!): Json
     incomePerCategory(range: String!): Json
-    totalPerBrand(range: String!, category_id: Int): Json
+    totalPerBrand(range: String! category_id: Int): Json
 
     totalIncomeTrend(range: String!): Json
     totalExpensesTrend(range: String!): Json
-    totalPerCategoryTrend(range: String!, id: ID!): Json
-    totalPerBrandTrend(range: String!, id: ID!): Json
+    totalPerCategoryTrend(range: String! id: ID!): Json
+    totalPerBrandTrend(range: String! id: ID!): Json
 }
 
 type Mutation {
@@ -86,11 +86,11 @@ type Mutation {
     ): Transaction @update
     deleteTransaction(id: ID!): Transaction @delete
 
-    createBrand(name: String!, category_id: Int!): Brand @create
-    updateBrand(id: ID!, name: String!, category_id: Int!): Brand @update
+    createBrand(name: String! category_id: Int!): Brand @create
+    updateBrand(id: ID! name: String! category_id: Int!): Brand @update
     deleteBrand(id: ID!): Brand @delete
 
-    createCategory(name: String!, type: String!, color: String!): Category
+    createCategory(name: String! type: String! color: String!): Category
         @create
     updateCategory(
         id: ID!
@@ -101,6 +101,6 @@ type Mutation {
     deleteCategory(id: ID!): Category @delete
 
     createSms(body: String!): [Sms]
-    updateSms(id: ID!, body: String!): Sms
+    updateSms(id: ID! body: String!): Sms
     deleteSms(id: ID!): Sms @delete
 }
