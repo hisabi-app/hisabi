@@ -117,7 +117,7 @@ export default function Index({auth}) {
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
                                                     <td className="whitespace-nowrap">
-                                                    <span className={"badge " + item.color}>
+                                                    <span className={"badge badge-" + item.color}>
                                                         {item.name}
                                                         </span>
                                                     </td>
