@@ -22,5 +22,16 @@ module.exports = {
         },
     },
 
+    safelist: [
+        'badge-red',
+        'badge-blue',
+        'badge-green',
+        'badge-orange',
+        'badge-purple',
+        'badge-pink',
+        'badge-indigo',
+        'badge-gray',
+       ],
+
     plugins: [require('@tailwindcss/forms')],
 };
