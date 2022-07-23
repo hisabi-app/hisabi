@@ -8,7 +8,7 @@
 <p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img height="40" src="./public/images/video.png" /></a></p>
 
 ## 💰 Sponsors
-Support this project by becoming a sponsor ❤️. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/larecipe)
+Support this project by becoming a sponsor ❤️. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/personal-finance)
 
 <a href="https://www.producthunt.com/posts/finance?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-finance" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=343310&theme=light" alt="FINANCE - 💰&#0032;Open&#0032;source&#0032;self&#0045;hosted&#0032;personal&#0032;finance&#0032;tracking&#0032;web&#0032;app | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
