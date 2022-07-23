@@ -8,7 +8,7 @@ import { createCategory } from "../../Api";
 export default function Create({showCreate, onClose, onCreate}) {
     const [name, setName] = useState('')
     const [type, setType] = useState('EXPENSES')
-    const [color, setColor] = useState('badge-gray')
+    const [color, setColor] = useState('gray')
     const [isReady, setIsReady] = useState(false)
     const [loading, setLoading] = useState(false);
 
