@@ -54,9 +54,9 @@ class CategoryTest extends TestCase
     /** @test */
     public function it_has_color()
     {
-        $sut = Category::factory()->create(['color' => 'badge-gray']);
+        $sut = Category::factory()->create(['color' => 'gray']);
 
-        $this->assertEquals('badge-gray', $sut->color);
+        $this->assertEquals('gray', $sut->color);
     }
 
     /** @test */
