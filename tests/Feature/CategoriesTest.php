@@ -40,7 +40,7 @@ class CategoriesTest extends TestCase
                             'id' => $category->id,
                             'name' => $category->name,
                             'type' => $category->type,
-                            'color' => $category->color
+                            'color' => 'badge-gray'
                         ],
                     ],
                     "paginatorInfo" => [
