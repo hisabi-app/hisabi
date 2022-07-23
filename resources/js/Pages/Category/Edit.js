@@ -8,7 +8,7 @@ import { updateCategory } from "../../Api";
 export default function Edit({category, onClose, onUpdate}) {
     const [name, setName] = useState('')
     const [type, setType] = useState('')
-    const [color, setColor] = useState('')
+    const [color, setColor] = useState('gray')
 
     useEffect(() => {
         if(! category) return;
