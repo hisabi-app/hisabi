@@ -2,7 +2,8 @@
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
-scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 scalar Json @scalar(class: "MLL\\GraphQLScalars\\JSON")
 
@@ -10,6 +11,7 @@ type Category {
     id: ID!
     name: String!
     type: String!
+    color: String
 }
 
 type Brand {
@@ -34,22 +36,30 @@ type Sms {
 }
 
 type Query {
-    transactions: [Transaction!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
+    transactions: [Transaction!]!
+        @paginate(defaultCount: 25)
+        @orderBy(column: id direction: DESC)
 
     allBrands: [Brand!]! @all
-    brands: [Brand!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
+    brands: [Brand!]!
+        @paginate(defaultCount: 25)
+        @orderBy(column: id direction: DESC)
 
     allCategories: [Category!]! @all
-    categories: [Category!]! @paginate(defaultCount: 25) @orderBy(column: id direction: DESC)
+    categories: [Category!]!
+        @paginate(defaultCount: 25)
+        @orderBy(column: id direction: DESC)
 
-    sms: [Sms!]! @paginate(defaultCount: 100) @orderBy(column: transaction_id direction: ASC)
+    sms: [Sms!]!
+        @paginate(defaultCount: 100)
+        @orderBy(column: transaction_id direction: ASC)
 
     totalIncome(range: String!): Json
     totalExpenses(range: String!): Json
     totalSavings: Json
     totalInvestment: Json
     totalCash: Json
-    
+
     expensesPerCategory(range: String!): Json
     incomePerCategory(range: String!): Json
     totalPerBrand(range: String! category_id: Int): Json
@@ -61,19 +71,36 @@ type Query {
 }
 
 type Mutation {
-  createTransaction(amount: Float! brand_id: Int! created_at: String! note: String): Transaction @create
-  updateTransaction(id: ID! amount: Float! brand_id: Int! created_at: String! note: String): Transaction @update
-  deleteTransaction(id: ID!): Transaction @delete
-  
-  createBrand(name: String! category_id: Int!): Brand @create
-  updateBrand(id: ID! name: String! category_id: Int!): Brand @update
-  deleteBrand(id: ID!): Brand @delete
-  
-  createCategory(name: String! type: String!): Category @create
-  updateCategory(id: ID! name: String! type: String!): Category @update
-  deleteCategory(id: ID!): Category @delete
-  
-  createSms(body: String!): [Sms]
-  updateSms(id: ID! body: String!): Sms
-  deleteSms(id: ID!): Sms @delete
+    createTransaction(
+        amount: Float!
+        brand_id: Int!
+        created_at: String!
+        note: String
+    ): Transaction @create
+    updateTransaction(
+        id: ID!
+        amount: Float!
+        brand_id: Int!
+        created_at: String!
+        note: String
+    ): Transaction @update
+    deleteTransaction(id: ID!): Transaction @delete
+
+    createBrand(name: String! category_id: Int!): Brand @create
+    updateBrand(id: ID! name: String! category_id: Int!): Brand @update
+    deleteBrand(id: ID!): Brand @delete
+
+    createCategory(name: String! type: String! color: String!): Category
+        @create
+    updateCategory(
+        id: ID!
+        name: String!
+        type: String!
+        color: String!
+    ): Category @update
+    deleteCategory(id: ID!): Category @delete
+
+    createSms(body: String!): [Sms]
+    updateSms(id: ID! body: String!): Sms
+    deleteSms(id: ID!): Sms @delete
 }

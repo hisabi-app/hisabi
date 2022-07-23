@@ -34,7 +34,7 @@ class CategoryTest extends TestCase
     {
         $this->assertEquals(Category::SAVINGS, "SAVINGS");
     }
-    
+
     /** @test */
     public function it_has_name()
     {
@@ -52,11 +52,19 @@ class CategoryTest extends TestCase
     }
 
     /** @test */
+    public function it_has_color()
+    {
+        $sut = Category::factory()->create(['color' => 'gray']);
+
+        $this->assertEquals('gray', $sut->color);
+    }
+
+    /** @test */
     public function category_can_have_brands()
     {
         $sut = Category::factory()
-                    ->has(Brand::factory()->count(3))
-                    ->create();
+            ->has(Brand::factory()->count(3))
+            ->create();
 
         $this->assertCount(3, $sut->brands);
     }

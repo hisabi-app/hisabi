@@ -15,34 +15,39 @@ class CategoriesTest extends TestCase
     {
         $category = Category::factory()->create();
 
-        $this->graphQL(/** @lang GraphQL */ '
+        $this->graphQL(
+            /** @lang GraphQL */
+            '
             {
                 categories(page: 1) {
                     data {
                         id
                         name
                         type
+                        color
                     }
                     paginatorInfo {
                         hasMorePages
                     }
                 }
             }
-            ')->assertJson([
-                'data' => [
-                    'categories' => [
-                        "data" => [
-                            [
-                                'id' => $category->id,
-                                'name' => $category->name,
-                                'type' => $category->type,
-                            ],
+            '
+        )->assertJson([
+            'data' => [
+                'categories' => [
+                    "data" => [
+                        [
+                            'id' => $category->id,
+                            'name' => $category->name,
+                            'type' => $category->type,
+                            'color' => 'gray',
                         ],
-                        "paginatorInfo" => [
-                            "hasMorePages" => false
-                        ]
                     ],
+                    "paginatorInfo" => [
+                        "hasMorePages" => false
+                    ]
                 ],
-            ]);
+            ],
+        ]);
     }
 }
