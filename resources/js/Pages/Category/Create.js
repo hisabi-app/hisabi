@@ -77,7 +77,6 @@ export default function Create({showCreate, onClose, onCreate}) {
                         onChange={(e) => setColor(e.target.value)}
                         className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         >
-                        <option value="">Select color</option>
                         <option value="red">Red</option>
                         <option value="blue">Blue</option>
                         <option value="green">Green</option>
