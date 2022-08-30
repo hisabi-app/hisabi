@@ -98,6 +98,13 @@ Read [full documentation](https://finance-demo.saleem.dev/docs)
 4. MySQL
 5. Docker
 
+## JetBrains Sponsorship
+Thank you, JetBrains for sponsoring the license ❤️
+
+<a href="https://www.jetbrains.com/community/opensource/#support" target="__blank">
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png?_gl=1*18f1z4q*_ga*MTI4MDYwODYzNy4xNjUyMzU3ODM3*_ga_9J976DJZ68*MTY2MTg3NDM2NC4xMi4xLjE2NjE4NzUxNTAuMC4wLjA.&_ga=2.85008921.1685901777.1661797034-1280608637.1652357837" width="250px" />
+</a>
+
 ## 🔖 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/saleem-hadad/finance/blob/main/LICENSE) file for details.
