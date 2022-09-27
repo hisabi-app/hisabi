@@ -8,8 +8,8 @@ import Create from './Create';
 import Edit from './Edit';
 import Button from '@/Components/Global/Button';
 import Delete from '@/Components/Domain/Delete';
-import { getSms } from '../../Api';
-import { animateRowItem, cutString } from '../../Utils';
+import { getSms } from '@/Api';
+import { animateRowItem, cutString } from '@/Utils';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -38,7 +38,7 @@ export default function Sms({auth}) {
             if(item.id === updatedItem.id) {
                 return updatedItem
             }
-            
+
             return item
         }));
 
@@ -54,7 +54,7 @@ export default function Sms({auth}) {
     }
 
     return (
-        <Authenticated auth={auth} 
+        <Authenticated auth={auth}
             header={
                 <div className='flex justify-between items-center'>
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight">
@@ -66,22 +66,22 @@ export default function Sms({auth}) {
             }>
             <Head title="SMS Parser" />
 
-            <Create showCreate={showCreate} 
+            <Create showCreate={showCreate}
                 onCreate={(createdSms) => {
                     setShowCreate(false)
                     setSms([...createdSms, ...sms])
                 }}
                 onClose={() => setShowCreate(false)} />
-        
-            <Edit sms={editItem} 
-                onClose={() => setEditItem(null)} 
+
+            <Edit sms={editItem}
+                onClose={() => setEditItem(null)}
                 onUpdate={item => {
                     onUpdate(item)
                     setEditItem(null)
                 }}
                 />
-            
-            <Delete item={deleteItem} 
+
+            <Delete item={deleteItem}
                 resource="Sms"
                 onClose={() => setDeleteItem(null)}
                 onDelete={onDelete}  />
@@ -118,13 +118,13 @@ export default function Sms({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         {! item.transaction_id && <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
-                                                            
+
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>}
 
                                                         <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
                                                             <span className="sr-only">Delete</span>
-                                                            
+
                                                             <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>
