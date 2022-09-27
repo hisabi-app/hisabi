@@ -94,7 +94,7 @@ class TotalIncome extends ValueMetric // <-- Required
             $query->whereBetween('created_at', [$rangeData->start(), $rangeData->end()]);
         }
 
-        return $query->sum('amount');
+        return ['value' => $query->sum('amount')];
     }
 }
 ```
