@@ -8,8 +8,8 @@ import Edit from './Edit';
 import Create from './Create';
 import Button from '@/Components/Global/Button';
 import Delete from '@/Components/Domain/Delete';
-import { getAllCategories, getBrands } from '../../Api';
-import { animateRowItem } from '../../Utils';
+import { getAllCategories, getBrands } from '@/Api';
+import { animateRowItem } from '@/Utils';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
@@ -48,13 +48,13 @@ export default function Index({auth}) {
 
         animateRowItem(createdItem.id);
     }
-    
+
     const onUpdate = (updatedItem) => {
         setBrands(brands.map(brand => {
             if(brand.id === updatedItem.id) {
                 return updatedItem
             }
-            
+
             return brand
         }));
 
@@ -82,21 +82,21 @@ export default function Index({auth}) {
             }>
             <Head title="Brands" />
 
-            <Create showCreate={showCreate} 
+            <Create showCreate={showCreate}
                 categories={allCategories}
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit brand={editItem} 
+            <Edit brand={editItem}
                 categories={allCategories}
-                onClose={() => setEditItem(null)} 
+                onClose={() => setEditItem(null)}
                 onUpdate={item => {
                     onUpdate(item)
                     setEditItem(null)
                 }}
             />
 
-            <Delete item={deleteItem} 
+            <Delete item={deleteItem}
                 resource="Brand"
                 onClose={() => setDeleteItem(null)}
                 onDelete={onDelete}  />
@@ -129,7 +129,7 @@ export default function Index({auth}) {
                                                 <tr key={item.id} className={`loaded ${item.category ? '' : 'bg-red-100'}`} id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category ? item.category.name : '-'}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category ? <span className={"badge badge-" + item.category.color}>{item.category.name}</span> : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
@@ -138,7 +138,7 @@ export default function Index({auth}) {
 
                                                         <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
                                                             <span className="sr-only">Delete</span>
-                                                            
+
                                                             <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>

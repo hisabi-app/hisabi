@@ -5,13 +5,13 @@ export const getAllBrands = () => {
     return client
             .query(gql`
                 query {
-                    allBrands { 
-                        id 
+                    allBrands {
+                        id
                         name
                         category {
                             name
                         }
-                    } 
+                    }
                 }
             `)
             .toPromise();
@@ -28,6 +28,7 @@ export const getBrands = (page) => {
                             category {
                                 id
                                 name
+                                color
                             }
                         }
                         paginatorInfo {

@@ -17,6 +17,7 @@ export const getTransactions = (page) => {
                                 category {
                                     name
                                     type
+                                    color
                                 }
                             }
                         }

@@ -8,8 +8,8 @@ import Create from './Create';
 import LoadMore from '@/Components/Global/LoadMore';
 import Button from '@/Components/Global/Button';
 import Delete from '@/Components/Domain/Delete';
-import { getTransactions, getAllBrands } from '../../Api';
-import { animateRowItem, formatNumber } from '../../Utils';
+import { getTransactions, getAllBrands } from '@/Api';
+import { animateRowItem, formatNumber } from '@/Utils';
 
 export default function Index({auth}) {
     const [transactions, setTransactions] = useState([]);
@@ -54,7 +54,7 @@ export default function Index({auth}) {
             if(transaction.id === updatedItem.id) {
                 return updatedItem
             }
-            
+
             return transaction
         }));
 
@@ -83,22 +83,22 @@ export default function Index({auth}) {
             }>
             <Head title="Transactions" />
 
-            <Create showCreate={showCreate} 
+            <Create showCreate={showCreate}
                 brands={allBrands}
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit transaction={editItem} 
+            <Edit transaction={editItem}
                 brands={allBrands}
                 onUpdate={onUpdate}
-                onClose={() => setEditItem(null)} 
+                onClose={() => setEditItem(null)}
             />
 
-            <Delete item={deleteItem} 
+            <Delete item={deleteItem}
                 resource="Transaction"
                 onClose={() => setDeleteItem(null)}
                 onDelete={onDelete}  />
-        
+
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="flex flex-col">
@@ -115,13 +115,10 @@ export default function Index({auth}) {
                                                     Amount
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Category
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Brand
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Type
+                                                    Category
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Date
@@ -136,12 +133,11 @@ export default function Index({auth}) {
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {formatNumber(item.amount, null)}  </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.name : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? item.brand.category.type : '-'}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? <span className={"badge badge-" + item.brand.category.color}>{item.brand.category.name} ({item.brand.category.type})</span> : '-'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.created_at}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        {item.note && 
+                                                        {item.note &&
                                                             <button>
                                                                 <div className="relative flex flex-col items-center group">
                                                                     <InformationCircleIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
@@ -160,7 +156,7 @@ export default function Index({auth}) {
 
                                                         <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
                                                             <span className="sr-only">Delete</span>
-                                                            
+
                                                             <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>
