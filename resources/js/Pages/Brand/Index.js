@@ -6,6 +6,7 @@ import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
+import Button from '@/Components/Global/Button';
 import Delete from '@/Components/Domain/Delete';
 import { getAllCategories, getBrands } from '../../Api';
 import { animateRowItem } from '../../Utils';
@@ -76,9 +77,7 @@ export default function Index({auth}) {
                         Brands
                     </h2>
 
-                    <button onClick={() => setShowCreate(true)} className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
-                        Create Brand
-                    </button>
+                    <Button children={"Create Brand"} type="button" onClick={() => setShowCreate(true)} />
                 </div>
             }>
             <Head title="Brands" />
