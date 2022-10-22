@@ -20,7 +20,7 @@ class NumberOfTransactions extends PartitionMetric
 
         $query = Transaction::query()
             ->join('brands', 'brands.id', '=', 'transactions.brand_id')
-            ->join('categories', 'categories.id', '=', 'brands.id')
+            ->join('categories', 'categories.id', '=', 'brands.category_id')
             ->select("categories.type as label", DB::raw("count(transactions.id) as value"))
             ->groupBy("categories.type")
             ->orderBy('value', 'DESC');

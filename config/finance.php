@@ -50,12 +50,12 @@ return [
         new TotalPerCategoryTrend,
         new TotalPerBrandTrend,
         (new SectionDivider)->withTitle("💰 Facts"),
-        (new NumberOfTransactions)->setWidth('1/3'),
-        (new NumberOfTransactionsPerCategory)->setWidth('1/3'),
-        (new NumberOfTransactionsPerBrand)->setWidth('1/3'),
-        (new HighestValueTransaction)->setWidth('1/3'),
-        (new LowestValueTransaction)->setWidth('1/3'),
-        (new AverageValueTransaction)->setWidth('1/3'),
+        (new NumberOfTransactions)->setWidth('1/2'),
+        (new NumberOfTransactionsPerCategory)->setWidth('1/2'),
+        (new NumberOfTransactionsPerBrand)->setWidth('1/2'),
+        (new HighestValueTransaction)->setWidth('1/2'),
+        (new LowestValueTransaction)->setWidth('1/2'),
+        (new AverageValueTransaction)->setWidth('1/2'),
         (new TransactionsStandardDeviation)->setWidth('full'),
     ]
 ];
