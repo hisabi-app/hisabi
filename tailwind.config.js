@@ -31,6 +31,9 @@ module.exports = {
         'badge-pink',
         'badge-indigo',
         'badge-gray',
+        'md:w-1/2',
+        'md:w-1/3',
+        'md:w-1/4',
        ],
 
     plugins: [require('@tailwindcss/forms')],
