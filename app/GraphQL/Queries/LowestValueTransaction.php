@@ -19,8 +19,8 @@ class LowestValueTransaction extends PartitionMetric
         $query = Transaction::query()
             ->join('brands', 'brands.id', '=', 'transactions.brand_id')
             ->join('categories', 'categories.id', '=', 'brands.id')
-            ->select("categories.type as label", DB::raw("min(transactions.amount) as value"))
-            ->groupBy("categories.type")
+            ->select("categories.name as label", DB::raw("min(transactions.amount) as value"))
+            ->groupBy("categories.name")
             ->orderBy('value', 'DESC');
 
         if($rangeData) {
