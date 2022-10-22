@@ -7,7 +7,7 @@ use App\Domain\Metrics\ValueMetric;
 
 class TotalCash extends ValueMetric
 {
-    public function ranges() 
+    public function ranges()
     {
         return null;
     }
