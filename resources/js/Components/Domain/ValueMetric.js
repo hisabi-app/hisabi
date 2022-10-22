@@ -36,7 +36,7 @@ export default function ValueMetric({name, graphql_query, ranges}) {
     const increaseOrDecrease = () => {
         if (previous == 0 || previous == null || value == 0)
           return 0
-  
+
         return (((value - previous) / previous) * 100).toFixed(2)
     }
 
@@ -73,8 +73,8 @@ export default function ValueMetric({name, graphql_query, ranges}) {
                 </p>
 
                 {increaseOrDecrease() !== 0 && <div className="flex">
-                    {increaseOrDecreaseLabel() == 'Increase' && <TrendingUpIcon className={["mr-2 h-5 w-5", increaseColor()].join(' ')} aria-hidden="true" />}
-                    {increaseOrDecreaseLabel() == 'Decrease' && <TrendingDownIcon className={["mr-2 h-5 w-5", decreaseColor()].join(' ')} aria-hidden="true" />}
+                    {increaseOrDecreaseLabel() === 'Increase' && <TrendingUpIcon className={["mr-2 h-5 w-5", increaseColor()].join(' ')} aria-hidden="true" />}
+                    {increaseOrDecreaseLabel() === 'Decrease' && <TrendingDownIcon className={["mr-2 h-5 w-5", decreaseColor()].join(' ')} aria-hidden="true" />}
 
                     {growthPercentage() !== 0 && <p className="text-gray-500 font-bold">
                         {growthPercentage()}% {increaseOrDecreaseLabel()}
