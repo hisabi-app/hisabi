@@ -122,6 +122,10 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
                                 {item.label} ({AppCurrency} {formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
                             </li>)}
                         </ul>
+
+                        {data.length == 0 && <p className="flex items-center text-gray-500">
+                            No data found
+                        </p>}
                     </div>
                 </div>
             </div>
