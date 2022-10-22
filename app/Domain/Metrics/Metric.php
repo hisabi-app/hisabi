@@ -15,6 +15,7 @@ abstract class Metric extends Element
     protected $width = '1/2';
     protected $ranges = [];
     protected $graphqlQuery;
+    protected $showCurrency = true;
 
     public function component()
     {
@@ -24,6 +25,13 @@ abstract class Metric extends Element
     public function width()
     {
         return $this->width;
+    }
+
+    public function setWidth($width)
+    {
+        $this->width = $width;
+        
+        return $this;
     }
 
     public function ranges()
@@ -47,7 +55,8 @@ abstract class Metric extends Element
             'component' => $this->component(),
             'width' => $this->width(),
             'ranges' => $this->ranges(),
-            'graphql_query' => $this->graphqlQuery()
+            'graphql_query' => $this->graphqlQuery(),
+            'show_currency' => $this->showCurrency,
         ]);
     }
 }
