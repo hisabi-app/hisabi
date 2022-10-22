@@ -40,6 +40,14 @@ class MetricTest extends TestCase
         $this->assertEquals('1/2', $sut->width());
     }
 
+     /** @test */
+     public function it_has_set_width_method()
+     {
+         $sut = new FakeMetric;
+ 
+         $this->assertEquals('1/4', $sut->setWidth('1/4')->width());
+     }
+
     /** @test */
     public function it_has_default_ranges()
     {

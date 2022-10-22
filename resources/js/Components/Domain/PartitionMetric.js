@@ -9,7 +9,7 @@ import { colors, formatNumber, getTailwindColor } from '../../Utils';
 
 Chart.register(ArcElement, DoughnutController);
 
-export default function PartitionMetric({ name, graphql_query, ranges, relation }) {
+export default function PartitionMetric({ name, graphql_query, ranges, relation, show_currency }) {
     const [data, setData] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges[0].key);
     const [chartRef, setChartRef] = useState(null);
@@ -119,9 +119,13 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation 
                         <ul className="list-reset">
                             {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
                                 <span className={`inline-block rounded-full w-2 h-2 mr-2 ${getTailwindColor(index)}`} />
-                                {item.label} ({AppCurrency} {formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
+                                {item.label} ({show_currency && <>{AppCurrency} </>}{formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
                             </li>)}
                         </ul>
+
+                        {data.length == 0 && <p className="flex items-center text-gray-500">
+                            No data found
+                        </p>}
                     </div>
                 </div>
             </div>
