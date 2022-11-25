@@ -8,15 +8,9 @@ jobs:
   get_data:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@master
       - name: Update diagram
-        id: make_diagram
-        uses: githubocto/repo-visualizer@0.7.1
+        uses: githubocto/repo-visualizer@main
         with:
-          output_file: "output-diagram.svg"
-          artifact_name: "finance-diagram"
-          should_push: false
-      - name: Get artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: "finance-diagram"
-          path: "downloads"
+          excluded_paths: "ignore,.github"
