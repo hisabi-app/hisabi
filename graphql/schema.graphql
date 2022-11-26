@@ -78,6 +78,7 @@ type Query {
     lowestValueTransaction(range: String!): Json
     averageValueTransaction(range: String!): Json
     transactionsStandardDeviation(range: String! id: ID!): Json
+    financeVisualizationCirclePackMetric(range: String!): Json
 }
 
 type Mutation {

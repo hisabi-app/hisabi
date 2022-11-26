@@ -20,6 +20,7 @@ use App\GraphQL\Queries\AverageValueTransaction;
 use App\GraphQL\Queries\NumberOfTransactionsPerBrand;
 use App\GraphQL\Queries\TransactionsStandardDeviation;
 use App\GraphQL\Queries\NumberOfTransactionsPerCategory;
+use App\GraphQL\Queries\FinanceVisualizationCirclePackMetric;
 
 return [
     'currency' => 'AED',
@@ -57,5 +58,7 @@ return [
         (new LowestValueTransaction)->setWidth('1/2'),
         (new AverageValueTransaction)->setWidth('1/2'),
         (new TransactionsStandardDeviation)->setWidth('full'),
+        (new SectionDivider)->withTitle("🧬 Visualization"),
+        (new FinanceVisualizationCirclePackMetric)->setWidth('full'),
     ]
 ];
