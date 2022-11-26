@@ -43,6 +43,7 @@
         "@heroicons/react": "^1.0.5",
         "chart.js": "^3.7.0",
         "chartjs-plugin-annotation": "^2.0.1",
+        "circlepack-chart": "^1.7.1",
         "graphql": "^16.3.0",
         "numbro": "^2.3.6",
         "react-chartjs-2": "^4.0.0",
