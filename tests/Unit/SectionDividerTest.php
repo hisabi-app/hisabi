@@ -2,9 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Domain\SectionDivider;
 use Tests\TestCase;
-
-use App\GraphQL\Queries\SectionDivider;
 
 class SectionDividerTest extends TestCase
 {
