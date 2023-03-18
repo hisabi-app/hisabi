@@ -4,6 +4,7 @@ namespace App\Domain\Metrics;
 
 use App\Domain\Element;
 use Illuminate\Support\Str;
+use App\Domain\Ranges\AllTime;
 use \App\Domain\Ranges\LastYear;
 use \App\Domain\Ranges\LastMonth;
 use \App\Domain\Ranges\CurrentYear;
@@ -41,6 +42,7 @@ abstract class Metric extends Element
             new LastMonth,
             new CurrentYear,
             new LastYear,
+            new AllTime,
         ];
     }
 
