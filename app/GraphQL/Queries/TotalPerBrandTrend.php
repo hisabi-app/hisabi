@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Transaction;
+use App\Domain\Ranges\AllTime;
 use App\Domain\Ranges\LastYear;
 use App\Domain\Ranges\CurrentYear;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ class TotalPerBrandTrend extends RelationTrendMetric
             new LastTwelveMonths,
             new CurrentYear,
             new LastYear,
+            new AllTime,
         ];
     }
 
