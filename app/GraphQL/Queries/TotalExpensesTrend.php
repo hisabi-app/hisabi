@@ -3,6 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Transaction;
+use App\Domain\Ranges\AllTime;
 use App\Domain\Ranges\LastYear;
 use Illuminate\Support\Facades\DB;
 use App\Domain\Ranges\CurrentYear;
@@ -17,6 +18,7 @@ class TotalExpensesTrend extends TrendMetric
             new LastTwelveMonths,
             new CurrentYear,
             new LastYear,
+            new AllTime,
         ];
     }
 
