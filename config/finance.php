@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\SectionDivider;
+use App\GraphQL\Queries\NetWorth;
 use App\GraphQL\Queries\TotalCash;
 use App\GraphQL\Queries\TotalIncome;
 use App\GraphQL\Queries\TotalSavings;
@@ -37,9 +38,10 @@ return [
     ],
     'reports' => [
         (new SectionDivider)->withTitle("🔎 Overview"),
-        (new TotalCash)->setWidth('1/3'),
-        (new TotalSavings)->setWidth('1/3'),
-        (new TotalInvestment)->setWidth('1/3'),
+        (new NetWorth)->setWidth('1/4'),
+        (new TotalCash)->setWidth('1/4'),
+        (new TotalSavings)->setWidth('1/4'),
+        (new TotalInvestment)->setWidth('1/4'),
         (new SectionDivider)->withTitle("📊 Analytics"),
         new TotalIncome,
         new TotalExpenses,

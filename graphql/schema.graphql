@@ -61,6 +61,7 @@ type Query {
     totalSavings: Json
     totalInvestment: Json
     totalCash: Json
+    netWorth: Json
 
     expensesPerCategory(range: String!): Json
     incomePerCategory(range: String!): Json
