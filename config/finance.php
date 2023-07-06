@@ -34,7 +34,8 @@ return [
         'Your {brand} of AED {amount} has been credited to your {account} on {datetime}.',
         'Outward {brand} of AED {amount} is debited from your {account}. Your {card} as of {datetime}.',
         'An ATM cash {brand} of AED{amount} has been debited from your {account} on {datetime}.',
-        '{brand} PAYMENT for {card} via MOBAPP of AED {amount} was debited from {account}.'
+        '{brand} PAYMENT for {card} via MOBAPP of AED {amount} was debited from {account}.',
+        // 'From HSBC: Your {name} ending with {card} has been used for AED {amount} on {datetime} at {brand}.'
     ],
     'reports' => [
         (new SectionDivider)->withTitle("🔎 Overview"),
