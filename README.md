@@ -25,48 +25,69 @@ Try the app with [live demo](https://finance-demo.saleem.dev/).
 
 > Docker Installation
 
+1. Method one (recommended)
+   
 ```bash
 git clone https://github.com/saleem-hadad/finance && cd finance
 
 make build # build the docker image
-make run # same as docker-compose up -d
+make run # the same as docker-compose up -d
 
 # wait for a few seconds to allow the DB to finish the setup then run
 make install # only for the first time
 ```
 
-Once done, visit the app on `http://localhost`
+2. Method two (using docker-compose public hosted docker image)
 
-
-> Normal Laravel App
-
-If you wish installing the app using normal Laravel environment, make sure you have PHP, MySQL, and composer already installed and then run the following commands:
-
-```bash
-# step 1: clone the repo
-git clone https://github.com/saleem-hadad/finance && cd finance
-
-# step 2: create .env file
-cp .env.example .env
-
-# step 3: install deps via composer
-composer install
-
-# step 4: generate app key
-php artisan key:generate
-
-# step 5: run the migration
-php artisan migrate
-
-# step 6: run install command and follow the instructions
-php artisan finance:install
-
-# step 7: serve the app
-php artisan serve
+First, create a `docker-compose.yml` file
+```yml
+version: '3'
+services:
+    app:
+        image: 'salee2m1/finance:1.0.0'
+        ports:
+            - "80:80"
+        networks:
+            - finance
+        depends_on:
+            - mysql
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        ports:
+            - '3306:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: 'root'
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: 'finance'
+            MYSQL_USER: 'finance'
+            MYSQL_PASSWORD: 'finance'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'financemysql:/var/lib/mysql'
+        networks:
+            - finance
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-proot"]
+            retries: 3
+            timeout: 5s
+networks:
+    finance:
+        driver: bridge
+volumes:
+    financemysql:
+        driver: local
 ```
 
-Once done, visit the app on `http://localhost:8000`
+Then, inside the same directory run
 
+```bash
+docker-compose up -d
+# wait for a few seconds to run the DB then run
+docker-compose run app php artisan migrate
+docker-compose run app php artisan finance:install
+```
+
+Once done, visit the app on `http://localhost`
 
 Read [full documentation](https://finance-demo.saleem.dev/docs)
 
