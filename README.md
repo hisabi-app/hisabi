@@ -37,7 +37,8 @@ make run # the same as docker-compose up -d
 make install # only for the first time
 ```
 
-2. Method two (using docker-compose public hosted docker image)
+<details>
+<summary>2. Method two (using docker-compose public hosted docker image)</summary>
 
 First, create a `docker-compose.yml` file
 ```yml
@@ -87,17 +88,11 @@ docker-compose run app php artisan migrate
 docker-compose run app php artisan finance:install
 ```
 
+</details>
+
 Once done, visit the app on `http://localhost`
 
 Read [full documentation](https://finance-demo.saleem.dev/docs)
-
-## 🪚 Built with
-
-1. Laravel
-2. Inertia & ReactJs
-3. GraphQL
-4. MySQL
-5. Docker
 
 ## JetBrains Sponsorship
 Thank you, JetBrains for sponsoring the license ❤️
@@ -113,6 +108,14 @@ Thank you, JetBrains for sponsoring the license ❤️
 ## Project Visualization
 
 ![Visualization of this repo](./diagram.svg)
+
+## 🪚 Built with
+
+1. Laravel
+2. Inertia & ReactJs
+3. GraphQL
+4. MySQL
+5. Docker
 
 ## 🔖 License
 
