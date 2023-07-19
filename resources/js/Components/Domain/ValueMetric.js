@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { TrendingUpIcon, TrendingDownIcon } from '@heroicons/react/solid';
+import { TrendingUpIcon, TrendingDownIcon, InformationCircleIcon } from '@heroicons/react/solid';
 
 import { query } from '../../Api';
 import Card from "../Global/Card";
 import LoadingView from "../Global/LoadingView";
 import { formatNumber, getAppCurrency } from '../../Utils';
 
-export default function ValueMetric({name, graphql_query, ranges}) {
+export default function ValueMetric({name, helpText, graphql_query, ranges}) {
     const [value, setValue] = useState(null);
     const [previous, setPrevious] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges ? ranges[0].key : null);
@@ -55,7 +55,7 @@ export default function ValueMetric({name, graphql_query, ranges}) {
     const decreaseColor = () => name.toLowerCase().includes("expense") ? 'text-green-500' : 'text-red-500'
 
     return (
-        <Card>
+        <Card className='relative'>
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="mr-3 text-base text-gray-700 font-bold">{ name }</h3>
@@ -85,6 +85,14 @@ export default function ValueMetric({name, graphql_query, ranges}) {
                     </p>}
                 </div>}
             </div>
+
+            {helpText && <div className="absolute bottom-1 right-1 flex flex-col items-center group">
+                <InformationCircleIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                <div className="absolute bottom-0 flex flex-col items-center hidden mb-6 group-hover:flex w-48">
+                    <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{helpText}</span>
+                    <div className="w-3 h-3 -mt-2 rotate-45 bg-gray-700"></div>
+                </div>
+            </div>}
         </Card>
     );
 };
