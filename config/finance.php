@@ -48,13 +48,13 @@ return [
         new TotalExpenses,
         new TotalIncomeTrend,
         new TotalExpensesTrend,
-        
+
         (new SectionDivider)->withTitle("📊 Categories Analytics"),
         new IncomePerCategory,
         new ExpensesPerCategory,
         new TotalPerCategoryTrend,
-        new ChangeRatePerBrandTrend,
-        
+//        new ChangeRatePerBrandTrend,
+
         (new SectionDivider)->withTitle("📊 Brands Analytics"),
         new TotalPerBrand,
         new TotalPerBrandTrend,
@@ -69,5 +69,8 @@ return [
         (new TransactionsStandardDeviation)->setWidth('full'),
         (new SectionDivider)->withTitle("🧬 Visualization"),
         (new FinanceVisualizationCirclePackMetric)->setWidth('full'),
+    ],
+    'gpt' => [
+        'model' => env('GPT_MODEL', 'gpt-3.5-turbo') // gpt-4, gpt-3.5-turbo
     ]
 ];

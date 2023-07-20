@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/outline';
 import { customQuery } from '../../Api';
-import { AtSymbolIcon } from '@heroicons/react/solid';
+import {AtSymbolIcon, MinusIcon, XIcon} from '@heroicons/react/solid';
 import FloatingButton from './FloatingButton';
 
 export default function FinanceGPT() {
@@ -78,7 +78,12 @@ export default function FinanceGPT() {
             <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 <div className="p-4">
                     <div>
-                        <p>FinanceGPT</p>
+                        <div className='flex justify-between'>
+                            <p>FinanceGPT (Beta)</p>
+                            <button>
+                                <XIcon onClick={() => setOpen(false)} className='text-gray-500 w-4 h-4' />
+                            </button>
+                        </div>
                         <p className='text-xs text-gray-500'>The information provided by FinanceGPT is for general informational purposes only. When using FinanceGPT, please be aware that we use large language model technology provided by OpenAl, located in the United States.</p>
                     </div>
                     <div className="mb-4">
@@ -95,24 +100,29 @@ export default function FinanceGPT() {
                         ) : (
                             <div key={index} className="flex mb-2 items-center">
                             <div className="bg-gray-200 text-sm py-2 px-4 rounded-lg">
-                                {msg.content}
+                                {msg.content.split('\n').map((line, index) => (
+                                    <span key={index}>
+                                        {line}
+                                        <br />
+                                    </span>
+                                ))}
                             </div>
                             </div>
                         )
                         )}
-                        {loading && 
+                        {loading &&
                             <div className="flex mb-2 items-center">
                               <AtSymbolIcon className="animate-spin text-teal-500 h-5 w-5 mr-2 inline-block" />
                             </div>
                         }
                     </div>
                     <div className='flex gap-x-1 mb-2'>
-                        <button type="button" 
+                        <button type="button"
                         onClick={() => setMessage('how much can I save money approximately?')}
                         className="text-gray-500 border rounded-full px-1 text-xs focus:outline-none">
                             how much can I save money approximately?
                         </button>
-                        <button type="button" 
+                        <button type="button"
                         onClick={() => setMessage('what is my top expense last month?')}
                             className="text-gray-500 border rounded-full px-1 text-xs focus:outline-none">
                             what is my top expense last month?
