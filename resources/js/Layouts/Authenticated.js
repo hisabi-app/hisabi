@@ -4,7 +4,6 @@ import { Link } from '@inertiajs/inertia-react';
 import NavLink from '@/Components/Global/NavLink';
 import ApplicationLogo from '@/Components/Global/ApplicationLogo';
 import ResponsiveNavLink from '@/Components/Global/ResponsiveNavLink';
-import FloatingButton from '@/Components/Global/FloatingButton';
 import FinanceGPT from '@/Components/Global/FinanceGPT';
 
 export default function Authenticated({ header, children }) {
@@ -133,9 +132,8 @@ export default function Authenticated({ header, children }) {
 
             <main>{children}</main>
 
-            <FloatingButton />
-
-            <FinanceGPT isOpen={true} />
+            
+            <FinanceGPT />
         </div>
     );
 }
