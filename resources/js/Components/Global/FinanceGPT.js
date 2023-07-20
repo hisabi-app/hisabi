@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/outline';
 import { customQuery } from '../../Api';
-import {AtSymbolIcon, MinusIcon, XIcon} from '@heroicons/react/solid';
+import {AtSymbolIcon, XIcon} from '@heroicons/react/solid';
 import FloatingButton from './FloatingButton';
 
 export default function FinanceGPT() {
