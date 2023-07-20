@@ -17,18 +17,18 @@ class TotalExpensesTest extends TestCase
     public function it_returns_correct_value()
     {
         $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);
-        
+
         $expensesBrand = Brand::factory()->create(['category_id' => $expensesCategory->id]);
-        
+
         Transaction::factory()->create(['brand_id' => $expensesBrand, 'amount' => 10001]);
-        
+
         $this->graphQL(/** @lang GraphQL */ '
             {
                 totalExpenses(range: "current-year")
             }
             ')->assertJson([
                 'data' => [
-                    'totalExpenses' => '{"value":"10001.0","previous":0}'
+                    'totalExpenses' => '{"value":10001,"previous":0}'
                 ],
             ]);
     }
@@ -40,18 +40,18 @@ class TotalExpensesTest extends TestCase
         Carbon::setTestNow(Carbon::create(2021, 1, 18));
 
         $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);
-        
+
         $expensesBrand = Brand::factory()->create(['category_id' => $expensesCategory->id]);
-        
+
         Transaction::factory()->create(['brand_id' => $expensesBrand, 'amount' => 10001, 'created_at' => now()->subYear()]);
-        
+
         $this->graphQL(/** @lang GraphQL */ '
             {
                 totalExpenses(range: "current-year")
             }
             ')->assertJson([
                 'data' => [
-                    'totalExpenses' => '{"value":0,"previous":"10001.0"}'
+                    'totalExpenses' => '{"value":0,"previous":10001}'
                 ],
             ]);
     }
