@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: cimg/php:8.0.17-node
+      - image: cimg/php:8.2.8
 
     steps:
       - checkout
