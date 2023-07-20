@@ -34,3 +34,12 @@ export const query = (query, range = null, queryName = null) => {
             `, {range})
             .toPromise();
 }
+
+
+export const customQuery = (query) => {
+    return client
+            .query(gql`
+                query { ${query} }
+            `)
+            .toPromise();
+}

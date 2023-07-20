@@ -18,6 +18,9 @@ module.exports = {
             },
             minHeight: {
                 '22': '5.625rem'
+            },
+            animation: {
+                'spin-slow': 'spin 7s linear infinite',
             }
         },
     },

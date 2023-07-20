@@ -17,6 +17,7 @@ use App\GraphQL\Queries\NumberOfTransactions;
 use App\GraphQL\Queries\TotalPerCategoryTrend;
 use App\GraphQL\Queries\LowestValueTransaction;
 use App\GraphQL\Queries\AverageValueTransaction;
+use App\GraphQL\Queries\ChangeRatePerBrandTrend;
 use App\GraphQL\Queries\HighestValueTransaction;
 use App\GraphQL\Queries\NumberOfTransactionsPerBrand;
 use App\GraphQL\Queries\TransactionsStandardDeviation;
@@ -38,21 +39,26 @@ return [
         // 'From HSBC: Your {name} ending with {card} has been used for AED {amount} on {datetime} at {brand}.'
     ],
     'reports' => [
-        (new SectionDivider)->withTitle("🔎 Overview"),
-        (new NetWorth)->setWidth('1/4'),
-        (new TotalCash)->setWidth('1/4'),
+        (new SectionDivider)->withTitle("🎖️ Account Overview"),
+        (new NetWorth)->setWidth('1/4')->help('The total value of your assets minus your liabilities (expenses)'),
+        (new TotalCash)->setWidth('1/4')->help('The available cash = income - (expenses + savings + investments)'),
         (new TotalSavings)->setWidth('1/4'),
         (new TotalInvestment)->setWidth('1/4'),
-        (new SectionDivider)->withTitle("📊 Analytics"),
         new TotalIncome,
         new TotalExpenses,
-        new IncomePerCategory,
-        new ExpensesPerCategory,
-        new TotalPerBrand,
         new TotalIncomeTrend,
         new TotalExpensesTrend,
+
+        (new SectionDivider)->withTitle("📊 Categories Analytics"),
+        new IncomePerCategory,
+        new ExpensesPerCategory,
         new TotalPerCategoryTrend,
+//        new ChangeRatePerBrandTrend,
+
+        (new SectionDivider)->withTitle("📊 Brands Analytics"),
+        new TotalPerBrand,
         new TotalPerBrandTrend,
+
         (new SectionDivider)->withTitle("💰 Facts"),
         (new NumberOfTransactions)->setWidth('1/2'),
         (new NumberOfTransactionsPerCategory)->setWidth('1/2'),
@@ -63,5 +69,8 @@ return [
         (new TransactionsStandardDeviation)->setWidth('full'),
         (new SectionDivider)->withTitle("🧬 Visualization"),
         (new FinanceVisualizationCirclePackMetric)->setWidth('full'),
+    ],
+    'gpt' => [
+        'model' => env('GPT_MODEL', 'gpt-3.5-turbo') // gpt-4, gpt-3.5-turbo
     ]
 ];

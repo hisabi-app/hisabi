@@ -14,6 +14,7 @@ abstract class Metric extends Element
 {
     protected $component;
     protected $width = '1/2';
+    protected $helpText;
     protected $ranges = [];
     protected $graphqlQuery;
     protected $showCurrency = true;
@@ -31,6 +32,13 @@ abstract class Metric extends Element
     public function setWidth($width)
     {
         $this->width = $width;
+        
+        return $this;
+    }
+
+    public function help($helpText)
+    {
+        $this->helpText = $helpText;
         
         return $this;
     }
@@ -56,6 +64,7 @@ abstract class Metric extends Element
         return array_merge(parent::jsonSerialize(), [
             'component' => $this->component(),
             'width' => $this->width(),
+            'helpText' => $this->helpText,
             'ranges' => $this->ranges(),
             'graphql_query' => $this->graphqlQuery(),
             'show_currency' => $this->showCurrency,

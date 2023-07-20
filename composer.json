@@ -5,28 +5,29 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.4|^8.0",
         "aws/aws-sdk-php": "^3.199",
         "binarytorch/larecipe": "^2.4",
         "dompdf/dompdf": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "inertiajs/inertia-laravel": "^0.4.5",
-        "laravel/framework": "^8.75",
+        "inertiajs/inertia-laravel": "^0.6.9",
+        "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.8",
         "laravel/tinker": "^2.5",
         "mll-lab/graphql-php-scalars": "^5.2",
         "mll-lab/laravel-graphql-playground": "^2.5",
         "nuwave/lighthouse": "^5.33",
+        "openai-php/laravel": "^0.6.3",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
-        "facade/ignition": "^2.5",
+        "spatie/laravel-ignition": "^1.0",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^1.6",
         "laravel/sail": "^1.12",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.10",
+        "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.5.10"
     },
     "autoload": {
@@ -64,7 +65,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

@@ -45,13 +45,15 @@ First, create a `docker-compose.yml` file
 version: '3'
 services:
     app:
-        image: 'salee2m1/finance:1.0.0'
+        image: 'salee2m1/finance:1.9.0'
         ports:
             - "80:80"
         networks:
             - finance
         depends_on:
-            - mysql
+            - mysql OPENAI_API_KEY
+        environment:
+            OPENAI_API_KEY: 'YOUR_OPENAI_API_KEY'
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
