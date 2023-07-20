@@ -18,6 +18,7 @@
         "mll-lab/graphql-php-scalars": "^5.2",
         "mll-lab/laravel-graphql-playground": "^2.5",
         "nuwave/lighthouse": "^5.33",
+        "openai-php/laravel": "^0.6.3",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
@@ -64,7 +65,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
