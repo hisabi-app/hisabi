@@ -14,7 +14,7 @@ Support this project by becoming a sponsor ❤️. Your logo will show up here w
 
 1. [x] Self-hosted - full control over your data privacy 
 2. [x] Parse SMS bank transactions
-3. [x] Powerful AI model - FinanceGPT 🔥
+3. [x] Powerful AI model - FinanceGPT 🔥 - [DEMO](https://www.youtube.com/watch?v=QFM2nqv1eJY&ab_channel=SaleemHadad)
 4. [x] Detailed analysis of income and expenses
 5. [x] Detailed monthly report of income and expenses - [see example](https://github.com/saleem-hadad/finance/pull/4)
 
