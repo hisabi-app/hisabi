@@ -120,21 +120,75 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
             ];
         }
 
+        // TODO: move this out later
+        const drawLinearRegressionLine = (data) => {
+            let regressor = {};
+
+            let x_values = Array.from({ length: data.length }, (_, index) => index + 1);;
+            let y_values = data.map(item => item.value);
+            
+            let x_mean = x_values.reduce((a, b) => a + b, 0)/x_values.length;
+            let y_mean = y_values.reduce((a, b) => a + b, 0)/y_values.length;
+            
+            let slope = 0, slope_numerator = 0, slope_denominator = 0;
+            for(let i=0; i<x_values.length; i++){
+                slope_numerator += (x_values[i]-x_mean)*(y_values[i]-y_mean);
+                slope_denominator += Math.pow((x_values[i]-x_mean),2);
+            }
+
+            slope = slope_numerator/slope_denominator;
+
+            regressor['slope'] = slope;
+            let intercept = y_mean - x_mean*slope;
+
+            regressor['intercept'] = intercept;
+
+            let y_hat = [];
+            for(let i=0; i<x_values.length; i++){
+                y_hat.push(x_values[i]*regressor['slope']+regressor['intercept']);
+            }
+
+            regressor['y_hat'] = y_hat;
+            
+            let residual_sum_of_squares = 0, total_sum_of_squares = 0, r2 = 0;
+
+            for(let i=0; i<y_values.length; i++){
+                residual_sum_of_squares+= Math.pow((y_hat[i]-y_values[i]),2);
+                total_sum_of_squares += Math.pow((y_hat[i]-y_mean),2);
+            }
+            
+            r2 = 1- residual_sum_of_squares/total_sum_of_squares;
+            
+            regressor['r2'] = r2;
+
+            return {
+                type: 'line',
+                label: 'Line of Best Fit (r2: '+String(r2)+')',
+                data: y_hat,
+                borderColor: '#eaeaea',
+                pointRadius: 0,
+                borderWidth: 2,
+            }
+        }
+
         const ctx = document.getElementById(graphql_query).getContext('2d');
         setChartRef(new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.map(item => item.label),
-                datasets: [{
-                  data: data.map(item => item.value),
-                  borderColor: '#0ea5e9',
-                  backgroundColor: 'rgba(14, 165, 233, 0.2)',
-                  pointHoverRadius: 6,
-                  pointRadius: 4,
-                  pointBackgroundColor: '#0ea5e9',
-                  fill: 'start',
-                  tension: 0.4,
-                }]
+                datasets: [
+                    {
+                        data: data.map(item => item.value),
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                        pointHoverRadius: 8,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#0ea5e9',
+                        fill: 'start',
+                        tension: 0.4,
+                    },
+                    drawLinearRegressionLine(data)
+                ]
             },
             options: {
                 maintainAspectRatio: false,
