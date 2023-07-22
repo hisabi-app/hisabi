@@ -120,6 +120,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
             ];
         }
 
+        // TODO: move this out later
         const drawLinearRegressionLine = (data) => {
             let regressor = {};
 
