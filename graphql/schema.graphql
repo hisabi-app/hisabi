@@ -41,20 +41,20 @@ input Message {
 }
 
 type Query {
-    transactions: [Transaction!]!
-        @paginate(defaultCount: 25)
+    transactions(search: String @search): [Transaction!]!
+        @paginate(defaultCount: 50)
         @lazyLoad(relations: ["brand"])
         @orderBy(column: id direction: DESC)
 
     allBrands: [Brand!]! @all
     brands: [Brand!]!
-        @paginate(defaultCount: 25)
+        @paginate(defaultCount: 50)
         @lazyLoad(relations: ["category"])
         @orderBy(column: id direction: DESC)
 
     allCategories: [Category!]! @all
     categories: [Category!]!
-        @paginate(defaultCount: 25)
+        @paginate(defaultCount: 50)
         @orderBy(column: id direction: DESC)
 
     sms: [Sms!]!
