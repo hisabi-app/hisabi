@@ -126,10 +126,11 @@ class SmsTransactionProcessorTest extends TestCase
     {
         $knownBrand = Brand::factory()->create(['name' => 'someBrand']);
 
-        $sms = "AED 5.65 has been debited from account 8118 using debit card at someBrand on 25-06-2022 13:29. Your avl";
+        $sms = "AED 5.65 has been debited from account 8118 using debit card at someBrand on 25-06-2022 13:29.";
 
         $sut = app(SmsTransactionProcessor::class);
         $sut->process($sms);
+
 
         $smsFromDB = Sms::first();
         $this->assertEquals($knownBrand->name, $smsFromDB->transaction->brand->name);

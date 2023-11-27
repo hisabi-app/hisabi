@@ -36,12 +36,12 @@ class SmsTemplateDetectorTest extends TestCase
                     'brand' => 'InternetProvider',
                 ]
             ],
-            'AED {amount} has been debited from {account} using {card} at {brand} on {datetime}.' => [
+            'AED {amount} has been debited from {account} using {card} at {brand} on {date} {time}.' => [
                 'message' => 'AED 100 has been debited from SavingsAccount using DebitCard at Supermarket on 25-12-2023 14:00.',
                 'expectedData' => [
                     'amount' => '100',
                     'brand' => 'Supermarket',
-                    'datetime' => '25-12-2023 14:00'
+                    'datetime' => '25-12-2023'
                 ]
             ],
         ];

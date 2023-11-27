@@ -45,6 +45,12 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
             if(empty($matchedParts[$i])) {
                 continue;
             }
+            if($keys[$i] == "date") {
+                $date = $matchedParts[$i];
+                $date = str_replace("/", "-", $date);
+                $smsInformation["datetime"] = $date;
+            }
+
             $smsInformation[$keys[$i]] = $matchedParts[$i];
         }
 
@@ -96,10 +102,7 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
      */
     public function getMaskedSmsTemplate(mixed $template): string|array|null
     {
-        // special case for datetime
-        $templateCopy = str_replace("{datetime}", "(.*?(?=\.))", $template);
-
-        return preg_replace("/\{.*?}/", "(.*?)", $templateCopy);
+        return preg_replace("/\{.*?}/", "(.*?)", $template);
     }
 }
 
