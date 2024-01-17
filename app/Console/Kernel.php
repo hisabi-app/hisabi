@@ -16,6 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('finance:report')->onOneServer()->lastDayOfMonth('23:00');
+
+        $schedule->command('cache:prune-stale-tags')->hourly();
+
     }
 
     /**
