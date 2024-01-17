@@ -7,62 +7,102 @@ use App\Contracts\SmsTemplateDetector as SmsTemplateDetectorContract;
 
 class SmsTemplateDetector implements SmsTemplateDetectorContract
 {
-    public function detect($sms)
+    /**
+     * @param $sms
+     * @return SmsTemplate|null
+     */
+    public function detect($sms): ?SmsTemplate
     {
-        foreach(config('finance.sms_templates') as $template) {
-            $templateCopy = $template;
+        $detectedTemplate = $this->getDetectedTemplate($sms);
 
-            $templateCopy = str_replace("{amount}", "(.*?)", $templateCopy);
-            $templateCopy = str_replace("{brand}", "(.*?)", $templateCopy);
-            $templateCopy = str_replace("{card}", "(.*?)", $templateCopy);
-            $templateCopy = str_replace("{account}", "(.*?)", $templateCopy);
-            $templateCopy = str_replace("{datetime}", "(.*?(?=\.))", $templateCopy);
-            
-            if(preg_match("/{$templateCopy}/", $sms, $matchedParts)) {
-                $partsWithValues = $this->getPartsWithValues($matchedParts, $template);
-                
-                return SmsTemplate::make(
-                    $template,
-                    $partsWithValues,
-                );
-            }
+        if(! $detectedTemplate) {
+            return null;
         }
 
-        return null;
+        $smsInformation = $this->extractSmsInformation($detectedTemplate, $sms);
+
+        return SmsTemplate::make(
+            $detectedTemplate,
+            $smsInformation,
+        );
     }
 
-    protected function getPartsWithValues($matchedParts, $templateBody)
+    /**
+     * @param $template
+     * @param $sms
+     * @return array
+     */
+    private function extractSmsInformation($template, $sms): array
     {
-        $partsPositionsInTemplate = [];
+        $keys = $this->extractPlaceholdersKeys($template);
+        $maskedSmsTemplate = $this->getMaskedSmsTemplate($template);
+        preg_match("/{$maskedSmsTemplate}/", $sms, $matchedParts);
+        array_shift($matchedParts);
 
-        if(strpos($templateBody, "{amount}") !== false) {
-            $partsPositionsInTemplate['amount'] = strpos($templateBody, "{amount}");
-        }
-        if(strpos($templateBody, "{brand}") !== false) {
-            $partsPositionsInTemplate['brand'] = strpos($templateBody, "{brand}");
-        }
-        if(strpos($templateBody, "{card}") !== false) {
-            $partsPositionsInTemplate['card'] = strpos($templateBody, "{card}");
-        }
-        if(strpos($templateBody, "{account}") !== false) {
-            $partsPositionsInTemplate['account'] = strpos($templateBody, "{account}");
-        }
-        if(strpos($templateBody, "{datetime}") !== false) {
-            $partsPositionsInTemplate['datetime'] = strpos($templateBody, "{datetime}");
-        }
-    
-        asort($partsPositionsInTemplate);
+        $smsInformation = [];
 
-        $index = 1;
-        $partsWithValues = [];
-        foreach($partsPositionsInTemplate as $part => $value) {
-            if(! empty($matchedParts[$index])) {
-                $partsWithValues[$part] = $matchedParts[$index];
+        for($i = 0; $i < count($keys); $i++) {
+            if(empty($matchedParts[$i])) {
+                continue;
             }
-            $index++;
+            if($keys[$i] == "date") {
+                $date = $matchedParts[$i];
+                $date = str_replace("/", "-", $date);
+                $smsInformation["datetime"] = $date;
+            }
+
+            $smsInformation[$keys[$i]] = $matchedParts[$i];
         }
-        
-        return $partsWithValues;
+
+        return $smsInformation;
+    }
+
+    /**
+     * @param $sms
+     * @return array|string|null
+     */
+    private function getDetectedTemplate($sms): array|string|null
+    {
+        $detectedTemplate = null;
+
+        foreach(config('finance.sms_templates') as $template) {
+            $maskedSmsTemplate = $this->getMaskedSmsTemplate($template);
+
+            if(preg_match("/{$maskedSmsTemplate}/", $sms)) {
+                $detectedTemplate = $template;
+                break;
+            }
+        }
+
+        return $detectedTemplate;
+    }
+
+    /**
+     * @param $string
+     * @return mixed
+     */
+    private function extractPlaceholdersKeys($string): mixed
+    {
+        // Regular expression to match content inside curly braces
+        $pattern = '/\{([^}]*)}/';
+
+        // Array to store the matches
+        $matches = [];
+
+        // Perform the regex match
+        preg_match_all($pattern, $string, $matches);
+
+        // The matches are in the second element of the result
+        return $matches[1];
+    }
+
+    /**
+     * @param mixed $template
+     * @return array|string|string[]|null
+     */
+    public function getMaskedSmsTemplate(mixed $template): string|array|null
+    {
+        return preg_replace("/\{.*?}/", "(.*?)", $template);
     }
 }
 

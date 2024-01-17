@@ -21,17 +21,42 @@ class SmsTemplateDetectorTest extends TestCase
     /** @test */
     public function it_returns_correct_matched_template_with_extracted_data()
     {
-        Config::set('finance.sms_templates', [
-            'hello this is {amount}, but this is {brand} on {datetime}.'
-        ]);
+        $templates = [
+            'Purchase of AED {amount} with {card} at {brand},' => [
+                'message' => 'Purchase of AED 500 with Visa at ElectronicsStore,',
+                'expectedData' => [
+                    'amount' => '500',
+                    'brand' => 'ElectronicsStore'
+                ]
+            ],
+            'Payment of AED {amount} to {brand} with {card}.' => [
+                'message' => 'Payment of AED 200 to InternetProvider with MasterCard.',
+                'expectedData' => [
+                    'amount' => '200',
+                    'brand' => 'InternetProvider',
+                ]
+            ],
+            'AED {amount} has been debited from {account} using {card} at {brand} on {date} {time}.' => [
+                'message' => 'AED 100 has been debited from SavingsAccount using DebitCard at Supermarket on 25-12-2023 14:00.',
+                'expectedData' => [
+                    'amount' => '100',
+                    'brand' => 'Supermarket',
+                    'datetime' => '25-12-2023'
+                ]
+            ],
+        ];
+
+        Config::set('finance.sms_templates', array_keys($templates));
 
         $sut = new SmsTemplateDetector;
 
-        $smsTemplate = $sut->detect("hello this is 10, but this is someBrand on 20-06-2022 10:10.");
+        foreach ($templates as $template => $data) {
+            $smsTemplate = $sut->detect($data['message']);
 
-        $this->assertEquals('hello this is {amount}, but this is {brand} on {datetime}.', $smsTemplate->body());
-        $this->assertEquals('10', $smsTemplate->data()['amount']);
-        $this->assertEquals('someBrand', $smsTemplate->data()['brand']);
-        $this->assertEquals('20-06-2022 10:10', $smsTemplate->data()['datetime']);
+            $this->assertEquals($template, $smsTemplate->body());
+            foreach ($data['expectedData'] as $key => $value) {
+                $this->assertEquals($value, $smsTemplate->data()[$key]);
+            }
+        }
     }
 }
