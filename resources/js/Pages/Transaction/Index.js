@@ -126,7 +126,7 @@ export default function Index({auth}) {
                                     <input
                                         type="text"
                                         name="search"
-                                        placeholder='Search (beta)'
+                                        placeholder='🔍 Search'
                                         onChange={performSearch}
                                         className="block w-full rounded-full border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                                     />

@@ -77,9 +77,9 @@ class Transaction extends Model implements Searchable
      * @param $query
      * @return Builder
      */
-    public function search($query): Builder
+    public static function search($query): Builder
     {
-        return $this->newQuery()
+        return (new static())->newQuery()
             ->where('amount', 'LIKE', "%$query%")
             ->orWhere('note', 'LIKE', "%$query%")
             ->orWhereHas('brand', function($builder) use($query) {
