@@ -37,4 +37,17 @@ class BrandTest extends TestCase
 
         $this->assertCount(1, $sut->transactions);
     }
+
+    /** @test */
+    public function is_does_search_about_amount_brand_or_note()
+    {
+        Brand::factory()->forCategory(['name' => 'internet'])->create(['name' => 'google']);
+        Brand::factory()->forCategory(['name' => 'shopping'])->create(['name' => 'ikea']);
+        Brand::factory()->forCategory(['name' => 'shopping'])->create(['name' => 'lulu']);
+
+        $this->assertCount(1, Brand::search('goo')->get());
+        $this->assertCount(1, Brand::search('internet')->get());
+        $this->assertCount(2, Brand::search('shopping')->get());
+        $this->assertCount(0, Brand::search('other')->get());
+    }
 }

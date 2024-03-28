@@ -17,11 +17,11 @@ export const getAllBrands = () => {
             .toPromise();
 }
 
-export const getBrands = (page) => {
+export const getBrands = (page, searchQuery) => {
     return client
             .query(gql`
                 query {
-                    brands(page: ${page}) {
+                    brands(search: """${searchQuery}""" page: ${page}) {
                         data {
                             id
                             name
