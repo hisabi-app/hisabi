@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Contracts\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Category extends Model
+class Category extends Model implements Searchable
 {
     use HasFactory;
 
@@ -26,5 +28,15 @@ class Category extends Model
     public function brands()
     {
         return $this->hasMany(Brand::class);
+    }
+
+    /**
+     * @param $query
+     * @return Builder
+     */
+    public static function search($query): Builder
+    {
+        return (new static())->newQuery()
+            ->where('name', 'LIKE', "%$query%");
     }
 }

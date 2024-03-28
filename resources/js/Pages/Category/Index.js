@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/inertia-react';
 
@@ -10,11 +10,13 @@ import Button from '@/Components/Global/Button';
 import Delete from '@/Components/Domain/Delete';
 import { getCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';
+import {debounce} from "lodash";
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [editCategory, setEditCategory] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
@@ -24,7 +26,7 @@ export default function Index({auth}) {
         if(! hasMorePages) return;
         setLoading(true);
 
-        getCategories(currentPage)
+        getCategories(currentPage, searchQuery)
             .then(({data}) => {
                 setCategories([...categories, ...data.categories.data])
                 setHasMorePages(data.categories.paginatorInfo.hasMorePages)
@@ -32,6 +34,18 @@ export default function Index({auth}) {
             })
             .catch(console.error);
     }, [currentPage]);
+
+    useEffect(() => {
+        setLoading(true);
+
+        getCategories(currentPage, searchQuery)
+            .then(({data}) => {
+                setCategories([...categories, ...data.categories.data])
+                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
+                setLoading(false);
+            })
+            .catch(console.error);
+    }, [searchQuery]);
 
     const onCreate = (createdItem) => {
         setShowCreate(false)
@@ -61,17 +75,38 @@ export default function Index({auth}) {
         })
     }
 
-    return (
-        <Authenticated auth={auth}
-            header={
-                <div className='flex justify-between items-center'>
-                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                        Categories
-                    </h2>
+    const performSearchHandler = (e) => {
+        setCategories([]);
+        setSearchQuery(e.target.value ?? '');
+        setCurrentPage(1);
+    }
 
-                    <Button children={"Create Category"} type="button" onClick={() => setShowCreate(true)} />
+    const performSearch = useMemo(
+        () => debounce(performSearchHandler, 300)
+        , []);
+
+    const header = <div className="w-full pb-3 mb-4 px-4 sm:px-0">
+        <h2 className='text-lg text-gray-600'>Categories</h2>
+
+        <div className='flex justify-between items-center mt-2'>
+            <div>
+                <div className="relative flex items-center">
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder='🔍 Search'
+                        onChange={performSearch}
+                        className="block w-full rounded-full border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
+                    />
                 </div>
-            }>
+            </div>
+
+            <Button children={"Create Category"} type="button" onClick={() => setShowCreate(true)} />
+        </div>
+    </div>
+
+    return (
+        <Authenticated auth={auth}>
             <Head title="Categories" />
 
             <Create showCreate={showCreate}
@@ -90,6 +125,8 @@ export default function Index({auth}) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {header}
+
                     <div className="flex flex-col">
                         {categories.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">

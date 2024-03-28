@@ -5,21 +5,21 @@ export const getAllCategories = () => {
     return client
             .query(gql`
                 query {
-                    allCategories { 
-                        id 
+                    allCategories {
+                        id
                         name
                         color
-                    } 
+                    }
                 }
             `)
             .toPromise();
 }
 
-export const getCategories = (page) => {
+export const getCategories = (page, searchQuery) => {
     return client
         .query(gql`
             query {
-                categories(page: ${page}) {
+                categories(search: """${searchQuery}""" page: ${page}) {
                     data {
                         id
                         name

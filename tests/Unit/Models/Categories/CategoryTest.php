@@ -68,4 +68,15 @@ class CategoryTest extends TestCase
 
         $this->assertCount(3, $sut->brands);
     }
+
+    /** @test */
+    public function is_does_search_about_amount_brand_or_note()
+    {
+        Category::factory()->create(['name' => 'debt']);
+        Category::factory()->create(['name' => 'deee']);
+
+        $this->assertCount(0, Category::search('goo')->get());
+        $this->assertCount(1, Category::search('debt')->get());
+        $this->assertCount(2, Category::search('de')->get());
+    }
 }
