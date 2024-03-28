@@ -3,8 +3,8 @@
 namespace Tests\Unit\Models\Sms;
 
 use App\Models\Sms;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SmsTest extends TestCase
 {
@@ -45,5 +45,14 @@ class SmsTest extends TestCase
                     ->create();
 
         $this->assertEquals(1001, $sut->transaction->amount);
+    }
+
+    /** @test */
+    public function is_does_search_about_amount_brand_or_note()
+    {
+        Sms::factory()->create(['body' => 'body of the sms']);
+
+        $this->assertCount(0, Sms::search('goo')->get());
+        $this->assertCount(1, Sms::search('dy of t')->get());
     }
 }
