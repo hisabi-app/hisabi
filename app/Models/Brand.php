@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Contracts\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Brand extends Model
+class Brand extends Model implements Searchable
 {
     use HasFactory;
-    
+
     protected $guarded = [];
 
     protected static function booted()
@@ -38,5 +40,18 @@ class Brand extends Model
         }
 
         return static::create(['name' => $name]);
+    }
+
+    /**
+     * @param $query
+     * @return Builder
+     */
+    public static function search($query): Builder
+    {
+        return (new static())->newQuery()
+            ->where('name', 'LIKE', "%$query%")
+            ->orWhereHas('category', function($builder) use($query) {
+                return $builder->where('name', 'LIKE', "%$query%");
+            });
     }
 }

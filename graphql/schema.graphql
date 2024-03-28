@@ -47,7 +47,7 @@ type Query {
         @orderBy(column: id direction: DESC)
 
     allBrands: [Brand!]! @all
-    brands: [Brand!]!
+    brands(search: String @search): [Brand!]!
         @paginate(defaultCount: 50)
         @lazyLoad(relations: ["category"])
         @orderBy(column: id direction: DESC)
