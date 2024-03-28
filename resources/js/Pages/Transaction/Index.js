@@ -42,7 +42,19 @@ export default function Index({auth}) {
                 setLoading(false);
             })
             .catch(console.error);
-    }, [currentPage, searchQuery]);
+    }, [currentPage]);
+
+    useEffect(() => {
+        setLoading(true);
+
+        getTransactions(currentPage, searchQuery)
+            .then(({data}) => {
+                setTransactions([...transactions, ...data.transactions.data])
+                setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
+                setLoading(false);
+            })
+            .catch(console.error);
+    }, [searchQuery]);
 
     const onCreate = (createdItem) => {
         setShowCreate(false)
@@ -107,7 +119,7 @@ export default function Index({auth}) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="w-full pb-3 mb-4 px-4 sm:px-0">
                         <h2 className='text-lg text-gray-600'>Transactions</h2>
-                        
+
                         <div className='flex justify-between items-center mt-2'>
                             <div>
                                 <div className="relative flex items-center">
@@ -120,11 +132,11 @@ export default function Index({auth}) {
                                     />
                                 </div>
                             </div>
-                            
+
                             <Button children={"Create Transaction"} type="button" onClick={() => setShowCreate(true)} />
                         </div>
                     </div>
-                    
+
                     <div className="flex flex-col">
                         {transactions.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
