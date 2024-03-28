@@ -53,7 +53,7 @@ type Query {
         @orderBy(column: id direction: DESC)
 
     allCategories: [Category!]! @all
-    categories: [Category!]!
+    categories(search: String @search): [Category!]!
         @paginate(defaultCount: 50)
         @orderBy(column: id direction: DESC)
 
