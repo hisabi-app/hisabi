@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Directives;
 
-use App\Models\Transaction;
+use App\Contracts\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 use Nuwave\Lighthouse\Support\Contracts\ArgBuilderDirective;
@@ -29,11 +29,8 @@ GRAPHQL;
      */
     public function handleBuilder($builder, $value): Builder
     {
-        if($builder->getModel() instanceof Transaction) {
-            return $builder->where('amount', 'LIKE', "%$value%")
-                ->orWhereHas('brand', function($builder) use($value) {
-                    return $builder->where('name', 'LIKE', "%$value%");
-                })->orWhere('note', 'LIKE', "%$value%");
+        if($builder->getModel() instanceof Searchable) {
+            return $builder->getModel()->search($value);
         }
 
         return $builder;
