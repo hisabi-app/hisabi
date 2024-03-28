@@ -1,11 +1,11 @@
 import { gql } from '@urql/core';
 import client from './client.js';
 
-export const getSms = (page) => {
+export const getSms = (page, searchQuery) => {
     return client
             .query(gql`
                 query {
-                    sms(page: ${page}) {
+                    sms(search: """${searchQuery}""" page: ${page}) {
                         data {
                             id
                             body
@@ -38,11 +38,11 @@ export const updateSms = ({id, body}) => {
     return client
         .mutation(gql`
             mutation {
-                updateSms(id: ${id} body: """${body}""") { 
+                updateSms(id: ${id} body: """${body}""") {
                     id
                     body
                     transaction_id
-                } 
+                }
             }
         `)
         .toPromise();

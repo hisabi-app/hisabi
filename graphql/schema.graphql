@@ -57,7 +57,7 @@ type Query {
         @paginate(defaultCount: 50)
         @orderBy(column: id direction: DESC)
 
-    sms: [Sms!]!
+    sms(search: String @search): [Sms!]!
         @paginate(defaultCount: 100)
         @orderBy(column: transaction_id direction: ASC)
 
