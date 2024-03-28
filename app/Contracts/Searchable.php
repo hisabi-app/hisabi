@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Builder;
 
 interface Searchable
 {
-    public function search($query): Builder;
+    public static function search($query): Builder;
 }

@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Models\Transactions;
 
+use Tests\TestCase;
 use App\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class TransactionTest extends TestCase
 {
@@ -34,5 +34,18 @@ class TransactionTest extends TestCase
                     ->create();
 
         $this->assertEquals('testName', $sut->brand->name);
+    }
+
+    /** @test */
+    public function is_does_search_about_amount_brand_or_note()
+    {
+        Transaction::factory()
+            ->forBrand(['name' => 'some existing brand'])
+            ->create(['amount' => 20.5, 'note' => 'this is a gift']);
+
+        $this->assertCount(1, Transaction::search('20')->get());
+        $this->assertCount(0, Transaction::search('50')->get());
+        $this->assertCount(1, Transaction::search('existing')->get());
+        $this->assertCount(1, Transaction::search('gift')->get());
     }
 }

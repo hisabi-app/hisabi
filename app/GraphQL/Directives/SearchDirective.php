@@ -30,7 +30,7 @@ GRAPHQL;
     public function handleBuilder($builder, $value): Builder
     {
         if($builder->getModel() instanceof Searchable) {
-            return $builder->getModel()->search($value);
+            return $builder->getModel()::search($value);
         }
 
         return $builder;
