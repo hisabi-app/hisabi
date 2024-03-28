@@ -11,7 +11,7 @@
         "dompdf/dompdf": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.6.9",
-        "laravel/framework": "^9.0|^10.0",
+        "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.5",
         "mll-lab/graphql-php-scalars": "^6.2",
