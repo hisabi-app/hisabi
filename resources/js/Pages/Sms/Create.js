@@ -38,7 +38,7 @@ export default function Create({showCreate, onClose, onCreate}) {
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
-                    {sms && <button onClick={create} className="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
+                    {sms && <button onClick={create} className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150">
                         Parse
                     </button>}
                 </div>

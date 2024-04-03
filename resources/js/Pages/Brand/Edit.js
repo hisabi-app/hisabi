@@ -65,12 +65,12 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
 
                     <div className="flex items-center justify-end mt-4">
                         {isReady && 
-                        <button onClick={update} className="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150">
+                        <button onClick={update} className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150">
                             Update
                         </button>
                         }
                         {!isReady && 
-                        <button className="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150 opacity-25" disabled>
+                        <button className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150 opacity-25" disabled>
                             Update
                         </button>
                         }
