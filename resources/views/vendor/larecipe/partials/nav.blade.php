@@ -5,10 +5,6 @@
         <div class="flex items-center flex-no-shrink">
             <a href="{{ url('/') }}" class="flex items-center flex-no-shrink text-black mx-4">
                 @include("larecipe::partials.logo")
-
-                <p class="inline-block font-semibold mx-1 text-grey-dark">
-                    {{ config('app.name') }}
-                </p>
             </a>
 
             <div class="switch">

@@ -9,7 +9,7 @@ const FloatingButton = ({onClick}) => {
         className='bg-teal-500 hover:bg-teal-600 text-white p-2 rounded-full shadow-xl flex items-center'
       >
         <CogIcon className="w-6 h-6 animate-spin-slow" />
-        <p>FinanceGPT</p>
+        <p>HisabiGPT</p>
       </button>
     </div>
   );
