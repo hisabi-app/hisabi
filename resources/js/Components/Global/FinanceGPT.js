@@ -79,12 +79,12 @@ export default function FinanceGPT() {
                 <div className="p-4">
                     <div>
                         <div className='flex justify-between'>
-                            <p>FinanceGPT (Beta)</p>
+                            <p>HisabiGPT (Beta)</p>
                             <button>
                                 <XIcon onClick={() => setOpen(false)} className='text-gray-500 w-4 h-4' />
                             </button>
                         </div>
-                        <p className='text-xs text-gray-500'>The information provided by FinanceGPT is for general informational purposes only. When using FinanceGPT, please be aware that we use large language model technology provided by OpenAl, located in the United States.</p>
+                        <p className='text-xs text-gray-500'>The information provided by HisabiGPT is for general informational purposes only. When using HisabiGPT, please be aware that we use large language model technology provided by OpenAl, located in the United States.</p>
                     </div>
                     <div className="mb-4">
                         {chatHistory.map((msg, index) =>

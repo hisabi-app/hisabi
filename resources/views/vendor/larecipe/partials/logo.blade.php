@@ -1,1 +1,1 @@
-💰
+<img width="100" src="/images/logo.svg" />
