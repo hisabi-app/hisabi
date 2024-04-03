@@ -1,7 +1,9 @@
-<h1 align="center">hisabi</h1>
+<h1 align="center">
+<img width="300" src="./public/images/logo.svg" />    
+</h1>
 
 <p align="center">
-  <b>hisabi is a simple yet powerful, self-hosted personal finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money. It's also powered by ChatGPT!</b>
+  <b>Hisabi is a simple yet powerful, self-hosted personal finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money. It's also powered by ChatGPT!</b>
 </p>
 
 <p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img src="./public/images/finance.jpg" /></a></p>
@@ -29,7 +31,7 @@ Try the app with [live demo](https://finance-demo.saleem.dev/).
 1. Method one (recommended)
    
 ```bash
-git clone https://github.com/saleem-hadad/finance && cd finance
+git clone https://github.com/hisabi-app/hisabi && cd hisabi
 
 make build # build the docker image
 make run # the same as docker-compose up -d
