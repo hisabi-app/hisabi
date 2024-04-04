@@ -65,7 +65,7 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
     {
         $detectedTemplate = null;
 
-        foreach(config('finance.sms_templates') as $template) {
+        foreach(config('hisabi.sms_templates') as $template) {
             $maskedSmsTemplate = $this->getMaskedSmsTemplate($template);
 
             if(preg_match("/{$maskedSmsTemplate}/", $sms)) {

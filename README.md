@@ -18,7 +18,7 @@ Support this project by becoming a sponsor ❤️. Your logo will show up here w
 2. [x] Parse SMS bank transactions
 3. [x] Powerful AI model - HisabiGPT 🔥 - [DEMO](https://www.youtube.com/watch?v=QFM2nqv1eJY&ab_channel=SaleemHadad)
 4. [x] Detailed analysis of income and expenses
-5. [x] Detailed monthly report of income and expenses - [see example](https://github.com/saleem-hadad/finance/pull/4)
+5. [x] Detailed monthly report of income and expenses - [see example](https://github.com/hisabi-app/hisabi/pull/4)
 
 ## 🎮 Demo
 
@@ -48,11 +48,11 @@ First, create a `docker-compose.yml` file
 version: '3'
 services:
     app:
-        image: 'salee2m1/finance:1.9.0'
+        image: 'salee2m1/hisabi:2.0.0'
         ports:
             - "80:80"
         networks:
-            - finance
+            - hisabi
         depends_on:
             - mysql
         environment:
@@ -64,23 +64,23 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: 'root'
             MYSQL_ROOT_HOST: "%"
-            MYSQL_DATABASE: 'finance'
-            MYSQL_USER: 'finance'
-            MYSQL_PASSWORD: 'finance'
+            MYSQL_DATABASE: 'hisabi'
+            MYSQL_USER: 'hisabi'
+            MYSQL_PASSWORD: 'hisabi'
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
-            - 'financemysql:/var/lib/mysql'
+            - 'hisabimysql:/var/lib/mysql'
         networks:
-            - finance
+            - hisabi
         healthcheck:
             test: ["CMD", "mysqladmin", "ping", "-proot"]
             retries: 3
             timeout: 5s
 networks:
-    finance:
+    hisabi:
         driver: bridge
 volumes:
-    financemysql:
+    hisabimysql:
         driver: local
 ```
 
@@ -90,7 +90,7 @@ Then, inside the same directory run
 docker-compose up -d
 # wait for a few seconds to run the DB then run
 docker-compose run app php artisan migrate
-docker-compose run app php artisan finance:install
+docker-compose run app php artisan hisabi:install
 ```
 
 </details>
@@ -124,4 +124,4 @@ Thank you, JetBrains for sponsoring the license ❤️
 
 ## 🔖 License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/saleem-hadad/finance/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/hisabi-app/hisabi/blob/main/LICENSE) file for details.

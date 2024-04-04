@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/inertia-react';
 import NavLink from '@/Components/Global/NavLink';
 import ApplicationLogo from '@/Components/Global/ApplicationLogo';
 import ResponsiveNavLink from '@/Components/Global/ResponsiveNavLink';
-import FinanceGPT from '@/Components/Global/FinanceGPT';
+import HisabiGPT from '@/Components/Global/HisabiGPT';
 
 export default function Authenticated({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -133,7 +133,7 @@ export default function Authenticated({ header, children }) {
             <main>{children}</main>
 
             
-            <FinanceGPT />
+            <HisabiGPT />
         </div>
     );
 }

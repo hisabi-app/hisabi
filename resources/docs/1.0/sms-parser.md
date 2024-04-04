@@ -4,15 +4,16 @@
 
 ---
 
-- [Overview](#overview)
-- [Custom SMS Template](#sms-template)
+- [SMS Parser](#sms-parser)
+  - [Overview](#overview)
+  - [Custom SMS Template](#custom-sms-template)
 
 <a name="overview"></a>
 ## Overview
 
 A fast and automatic way of tracking financial data is by readying the transactions' SMS messages if you have them from your bank. For me, I sit down every week to copy-past the SMS messages that I had received and let this app parse the needed information from each SMS.
 
-Each bank might send a different SMS template and, therefore, you need to register the needed SMS templates in the `config/finance.php` under `sms_templates`.
+Each bank might send a different SMS template and, therefore, you need to register the needed SMS templates in the `config/hisabi.php` under `sms_templates`.
 
 Examples from the registered templates are:
 
@@ -42,7 +43,7 @@ Salary of AED 1000.0 has been credited
 <a name="sms-template"></a>
 ## Custom SMS Template
 
-If you wish to register a custom SMS template, you can register it under `config/finance.php` file under `sms_templates` as a string. However, please make sure to include the two required placeholders: `{amount}` and `{brand}`.
+If you wish to register a custom SMS template, you can register it under `config/hisabi.php` file under `sms_templates` as a string. However, please make sure to include the two required placeholders: `{amount}` and `{brand}`.
 
 For example, let's say the message you receive for any offline purchase as follow:
 
@@ -57,7 +58,7 @@ Dear Customer, You have made a payment of USD {amount} using {card} to {brand} f
 ```
 
 ```php
-# config/finance.php
+# config/hisabi.php
 
 return [
     ...

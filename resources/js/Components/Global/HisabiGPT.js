@@ -5,7 +5,7 @@ import { customQuery } from '../../Api';
 import {AtSymbolIcon, XIcon} from '@heroicons/react/solid';
 import FloatingButton from './FloatingButton';
 
-export default function FinanceGPT() {
+export default function HisabiGPT() {
   const [message, setMessage] = useState('');
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,10 +40,10 @@ export default function FinanceGPT() {
     setLoading(true);
 
     let messages = newChat.map((message) => `{role: "${message.role}" content: """${message.content.replace(/"/g, '\\"')}"""}`);
-    let graphql_query = `financeGPT(messages: [${messages}])`;
+    let graphql_query = `hisabiGPT(messages: [${messages}])`;
 
     let { data } = await customQuery(graphql_query);
-    let parsedData = JSON.parse(data['financeGPT']);
+    let parsedData = JSON.parse(data['hisabiGPT']);
 
     setChatHistory([...chatHistory, parsedData]);
     setLoading(false);

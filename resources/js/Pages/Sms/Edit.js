@@ -33,7 +33,7 @@ export default function Edit({sms, onClose, onUpdate}) {
                     onClose={onClose} 
                     title={"Fix SMS Parsing"}>
             <div className="p-1 rounded border-l-2 border-orange-500 pl-2 bg-orange-50">
-                In order to make sure parsing this SMS is correct, please add the correspoding SMS template in the config file <span className="bg-orange-100 rounded px-1">config/finance.php</span> under <span className="bg-orange-100 rounded px-1">sms_templates</span>. <br/><br/> Once you finish, you can try to parse the SMS again. To learn more, please visit the <a className="underline" target="__blank" href="/docs/1.0/sms-parser">documentation</a>
+                In order to make sure parsing this SMS is correct, please add the correspoding SMS template in the config file <span className="bg-orange-100 rounded px-1">config/hisabi.php</span> under <span className="bg-orange-100 rounded px-1">sms_templates</span>. <br/><br/> Once you finish, you can try to parse the SMS again. To learn more, please visit the <a className="underline" target="__blank" href="/docs/1.0/sms-parser">documentation</a>
             </div>
             {
                 sms &&

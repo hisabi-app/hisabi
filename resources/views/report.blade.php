@@ -53,7 +53,7 @@
             <tr>
                 <td width="160">
                     <span style="font-size: 28px;">
-                        FINANCE
+                        hisabi
                     </span>
                 </td>
 

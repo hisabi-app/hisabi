@@ -87,7 +87,7 @@ type Query {
     transactionsStandardDeviation(range: String! id: ID!): Json
     financeVisualizationCirclePackMetric(range: String!): Json
 
-    financeGPT(messages: [Message]): Json
+    hisabiGPT(messages: [Message]): Json
 }
 
 type Mutation {

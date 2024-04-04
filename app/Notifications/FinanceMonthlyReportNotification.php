@@ -44,7 +44,7 @@ class FinanceMonthlyReportNotification extends Notification
     {
         $data = [
             'sections' => app(ReportManager::class)->generate(),
-            'currency' => config('finance.currency'),
+            'currency' => config('hisabi.currency'),
             'month' => now()->format('M Y')
         ];
 

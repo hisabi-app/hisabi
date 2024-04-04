@@ -6,7 +6,7 @@ services:
         ports:
             - "80:80"
         networks:
-            - finance
+            - hisabi
         depends_on:
             - mysql
     mysql:
@@ -16,21 +16,21 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: 'root'
             MYSQL_ROOT_HOST: "%"
-            MYSQL_DATABASE: 'finance'
-            MYSQL_USER: 'finance'
-            MYSQL_PASSWORD: 'finance'
+            MYSQL_DATABASE: 'hisabi'
+            MYSQL_USER: 'hisabi'
+            MYSQL_PASSWORD: 'hisabi'
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
-            - 'financemysql:/var/lib/mysql'
+            - 'hisabimysql:/var/lib/mysql'
         networks:
-            - finance
+            - hisabi
         healthcheck:
             test: ["CMD", "mysqladmin", "ping", "-proot"]
             retries: 3
             timeout: 5s
 networks:
-    finance:
+    hisabi:
         driver: bridge
 volumes:
-    financemysql:
+    hisabimysql:
         driver: local

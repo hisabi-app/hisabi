@@ -4,17 +4,18 @@
 
 ---
 
-- [Overview](#overview)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Story](#story)
-- [Credits](#credits)
-- [Licence](#licence)
+  - [Overview](#overview)
+  - [Installation](#installation-1)
+  - [Usage](#usage)
+  - [Story (optional)](#story-optional)
+  - [Credits](#credits)
+  - [Licence](#licence)
 
 <a name="overview"></a>
 ## Overview 
 
-**FINANCE** is a simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
+**hisabi** is a simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
 
 ![finance](/images/finance.jpg)
 <p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img style="height: 40px" src="/images/video.png" /></a></p>
@@ -22,65 +23,6 @@
 <a name="installation"></a>
 ## Installation
 
->{info} Docker Installation
-
-```bash
-# step 1: clone the repo
-git clone https://github.com/saleem-hadad/finance && cd finance
-
-# step 2: create .env file
-cp .env.sail.example .env
-
-# step 3: install deps via composer
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v $(pwd):/var/www/html \
-    -w /var/www/html \
-    laravelsail/php81-composer:latest \
-    composer install --ignore-platform-reqs
-
-# step 4: serve the app
-./vendor/bin/sail up -d
-
-# step 5: generate app key
-./vendor/bin/sail artisan key:generate
-
-# step 6: run migration
-./vendor/bin/sail artisan migrate
-
-# step 7: run install command and follow the instructions
-./vendor/bin/sail artisan finance:install
-```
-
-Once done, visit the app on `http://localhost`
-
-
->{info} Normal Laravel App
-
-If you wish installing the app using normal Laravel environment, make sure you have PHP, MySQL, and composer already installed and then run the following commands:
-
-```bash
-# step 1: clone the repo
-git clone https://github.com/saleem-hadad/finance && cd finance
-
-# step 2: create .env file
-cp .env.example .env
-
-# step 3: install deps via composer
-composer install
-
-# step 4: generate app key
-php artisan key:generate
-
-# step 5: run the migration
-php artisan migrate
-
-# step 6: run install command and follow the instructions
-php artisan finance:install
-
-# step 7: serve the app
-php artisan serve
-```
 
 Once done, visit the app on `http://localhost:8000`
 
@@ -121,7 +63,7 @@ This SMS will create a new transaction with AED 125.5 amount and brand is IKEA. 
 
 >{warning} Note
 
-If the SMS provided to the parser does not match with any registered templates, the entry will be marked as invalid SMS. However, you can add the missing template in the `config/finance.php` and then try to parse the SMS again from the user interface.
+If the SMS provided to the parser does not match with any registered templates, the entry will be marked as invalid SMS. However, you can add the missing template in the `config/hisabi.php` and then try to parse the SMS again from the user interface.
 
 >{success} View reports
 
@@ -157,4 +99,4 @@ This app uses few open-source libraries and packages, many thanks to the web com
 <a name="licence"></a>
 ## Licence
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/saleem-hadad/finance/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/hisabi-app/hisabi/blob/main/LICENSE) file for details.

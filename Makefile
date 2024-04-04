@@ -7,4 +7,4 @@ stop:
 	docker-compose down
 	
 install:
-	docker-compose exec app php artisan migrate --force && docker-compose exec app php artisan finance:install
+	docker-compose exec app php artisan migrate --force && docker-compose exec app php artisan hisabi:install

@@ -4,7 +4,7 @@
 
 ---
 
-To change the app currency, please modify the value of `currency` in the `config/finance.php`.
+To change the app currency, please modify the value of `currency` in the `config/hisabi.php`.
 
 ```php
 return [

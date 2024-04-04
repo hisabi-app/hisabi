@@ -4,16 +4,17 @@
 
 ---
 
-- [Overview](#overview)
-- [Available Reports](#reports)
-- [Custom Report](#custom-report)
+- [Reports](#reports)
+  - [Overview](#overview)
+  - [Available Reports](#available-reports)
+  - [Custom Report](#custom-report)
 
 <a name="overview"></a>
 ## Overview
 
-FINANCE comes with many built-in reports(metrics) to generate useful financial data and understand the distribution and trends of expenses vs income.
+hisabi comes with many built-in reports(metrics) to generate useful financial data and understand the distribution and trends of expenses vs income.
 
-Any report must be registered in the config file `config/finance.php` under `reports`.
+Any report must be registered in the config file `config/hisabi.php` under `reports`.
 
 ```php
 return [
@@ -102,7 +103,7 @@ class TotalIncome extends ValueMetric // <-- Required
 Once you created the report, add the reference to it in the config file:
 
 ```php
-// config/finance.php
+// config/hisabi.php
 
 return [
     ...

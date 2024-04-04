@@ -46,7 +46,7 @@ class SmsTemplateDetectorTest extends TestCase
             ],
         ];
 
-        Config::set('finance.sms_templates', array_keys($templates));
+        Config::set('hisabi.sms_templates', array_keys($templates));
 
         $sut = new SmsTemplateDetector;
 

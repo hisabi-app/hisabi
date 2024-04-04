@@ -13,7 +13,7 @@ class ReportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'finance:report';
+    protected $signature = 'hisabi:report';
 
     /**
      * The console command description.

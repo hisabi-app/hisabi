@@ -20,8 +20,8 @@
     <body class="font-sans antialiased">
         @inertia
         <script>
-            window.AppCurrency = "{{ config('finance.currency') }}";
-            window.AppSmsTemplates = "{{ implode('\n', config('finance.sms_templates')) }}";
+            window.AppCurrency = "{{ config('hisabi.currency') }}";
+            window.AppSmsTemplates = "{{ implode('\n', config('hisabi.sms_templates')) }}";
         </script>
     </body>
 </html>
