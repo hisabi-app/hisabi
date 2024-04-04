@@ -48,7 +48,7 @@ First, create a `docker-compose.yml` file
 version: '3'
 services:
     app:
-        image: 'salee2m1/hisabi:2.0.0'
+        image: 'salee2m1/hisabi:2.0.1'
         ports:
             - "80:80"
         networks:
