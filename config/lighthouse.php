@@ -40,9 +40,9 @@ return [
             AttemptAuthentication::class,
 
             // Logs every incoming GraphQL query.
-            // \Nuwave\Lighthouse\Support\Http\Middleware\LogGraphQLQueries::class,
+            // \Nuwave\Lighthouse\Http\Middleware\LogGraphQLQueries::class,
             'web',
-            'auth'
+            'auth:sanctum',
         ],
 
         /*
