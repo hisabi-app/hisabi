@@ -13,7 +13,7 @@ The entire backend is built on top of GraphQL. You can interact with the API usi
 
 |Method| URI                             |Headers|
 |:-|:--------------------------------|:-|
-|POST| `{{config('app.url')}}/graphql` |Default|
+|POST| `/graphql` |Default|
 
 
 > {info} GraphQL request example

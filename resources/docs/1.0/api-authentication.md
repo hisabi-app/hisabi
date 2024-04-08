@@ -12,7 +12,7 @@
 
 |Method| URI                               |Headers|
 |:-|:----------------------------------|:-|
-|POST| `{{config('app.url')}}/api/login` |Default|
+|POST| `/api/login` |Default|
 
 ### Body Params
 
