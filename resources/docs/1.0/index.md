@@ -5,6 +5,9 @@
     - [Currency](/{{route}}/{{version}}/currency)
     - [Reports](/{{route}}/{{version}}/reports)
     - [Ranges](/{{route}}/{{version}}/ranges)
+- ## API
+    - [Authentication](/{{route}}/{{version}}/api-authentication)
+    - [GraphQL](/{{route}}/{{version}}/api-graphql)
 - ## Support
     - [Bug Reports](/{{route}}/{{version}}/bug-reports)
     - [Contribution](/{{route}}/{{version}}/contribution)
