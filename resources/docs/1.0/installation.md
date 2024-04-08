@@ -15,16 +15,34 @@
 <a name="overview"></a>
 ## Overview 
 
-**hisabi** is a simple yet powerful, self-hosted finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money.
+**Hisabi** is a simple yet powerful, self-hosted personal finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money. It's also powered by ChatGPT!
 
-![finance](/images/finance.jpg)
+<br/>
+![finance](/images/showcase.png)
 <p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img style="height: 40px" src="/images/video.png" /></a></p>
 
 <a name="installation"></a>
 ## Installation
 
+1. Clone the repository and navigate to the project directory:
 
-Once done, visit the app on `http://localhost:8000`
+```bash
+git clone https://github.com/hisabi-app/hisabi && cd hisabi && make build
+```
+
+Run the app:
+
+```bash
+make run # the same as docker-compose up -d 
+```
+
+Then wait for a few seconds to allow the DB to finish the setup then run:
+
+```bash
+make install # only for the first time
+```
+
+Once done, visit the app on `http://localhost:8000` and login with your account you just created in the installation step.
 
 <a name="usage"></a>
 ## Usage
