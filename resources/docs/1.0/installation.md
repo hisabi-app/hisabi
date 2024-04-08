@@ -15,7 +15,7 @@
 <a name="overview"></a>
 ## Overview 
 
-**Hisabi** is a simple yet powerful, self-hosted personal finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money. It's also powered by ChatGPT!
+**hisabi** is a simple yet powerful, self-hosted personal finance tracking web app with the ability to parse SMS transactions and generate very useful insights about your money. It's also powered by ChatGPT!
 
 <br/>
 ![finance](/images/showcase.png)
