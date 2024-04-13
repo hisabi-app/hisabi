@@ -30,6 +30,7 @@ export const getBrands = (page, searchQuery) => {
                                 name
                                 color
                             }
+                            transactionsCount
                         }
                         paginatorInfo {
                             hasMorePages
@@ -51,6 +52,7 @@ export const createBrand = ({name, categoryId}) => {
                         id
                         name
                     }
+                    transactionsCount
                 }
             }
         `)
@@ -68,6 +70,7 @@ export const updateBrand = ({id, name, categoryId}) => {
                         id
                         name
                     }
+                    transactionsCount
                 }
             }
         `)

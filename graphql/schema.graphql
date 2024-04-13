@@ -18,6 +18,7 @@ type Brand {
     id: ID!
     name: String!
     category: Category @belongsTo
+    transactionsCount: Int! @count(relation: "transactions")
 }
 
 type Transaction {

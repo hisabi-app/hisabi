@@ -156,6 +156,9 @@ export default function Index({auth}) {
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Category
                                                 </th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Total Transactions
+                                                </th>
                                                 <th scope="col" className="relative py-3">
                                                     <span className="sr-only">Edit</span>
                                                 </th>
@@ -167,6 +170,7 @@ export default function Index({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category ? <span className={"badge badge-" + item.category.color}>{item.category.name}</span> : '-'}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transactionsCount}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
