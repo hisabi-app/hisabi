@@ -120,7 +120,10 @@ type Mutation {
     ): Category @update
     deleteCategory(id: ID! @whereKey): Category @delete
 
-    createSms(body: String!): [Sms]
+    createSms(
+        body: String!
+        created_at: String
+    ): [Sms]
     updateSms(id: ID! body: String!): Sms
     deleteSms(id: ID! @whereKey): Sms @delete
 }
