@@ -20,7 +20,8 @@ class CreateSms
     public function __invoke($_, array $args)
     {
         $sms = $args['body'];
+        $created_at = $args['created_at'] ?? null;
 
-        return $this->smsTransactionProcessor->process($sms);
+        return $this->smsTransactionProcessor->process($sms, $created_at);
     }
 }

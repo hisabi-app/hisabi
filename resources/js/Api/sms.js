@@ -20,11 +20,11 @@ export const getSms = (page, searchQuery) => {
             .toPromise();
 }
 
-export const createSms = ({sms}) => {
+export const createSms = ({sms, createdAt}) => {
     return client
         .mutation(gql`
             mutation {
-                createSms(body: """${sms}""") {
+                createSms(body: """${sms}""" created_at: """${createdAt ? createdAt : ''}""") {
                     id
                     body
                     transaction_id

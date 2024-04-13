@@ -137,4 +137,20 @@ class SmsTransactionProcessorTest extends TestCase
         $this->assertEquals('5.65', $smsFromDB->transaction->amount);
         $this->assertEquals('25-06-2022', $smsFromDB->transaction->created_at->format('d-m-Y'));
     }
+
+    /** @test */
+    public function it_creates_transaction_with_provided_default_datetime_if_no_datetime_found()
+    {
+        $knownBrand = Brand::factory()->create(['name' => 'someBrand']);
+
+        $sms = "Payment of AED 38.7 to someBrand with Credit Card ending 9048. Avl Cr. Limit is AED 53,750.64.";
+
+        $sut = app(SmsTransactionProcessor::class);
+        $sut->process($sms, "2026-06-01");
+
+        $smsFromDB = Sms::first();
+        $this->assertEquals($knownBrand->name, $smsFromDB->transaction->brand->name);
+        $this->assertEquals('38.7', $smsFromDB->transaction->amount);
+        $this->assertEquals('01-06-2026', $smsFromDB->transaction->created_at->format('d-m-Y'));
+    }
 }
