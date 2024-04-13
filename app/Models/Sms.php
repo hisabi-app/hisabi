@@ -35,7 +35,7 @@ class Sms extends Model implements Searchable
 
     public function setDefaultDateIfNotFound($defaultDate = null): void
     {
-        if(! isset($this->meta['data']['datetime']) && $defaultDate !== null) {
+        if(! isset($this->meta['data']['datetime']) && $defaultDate !== null && ! empty($defaultDate)) {
             $this->meta = array_merge_recursive($this->meta, [
                 'data' => [
                     'datetime' => $defaultDate,
