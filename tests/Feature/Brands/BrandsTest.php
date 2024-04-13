@@ -14,6 +14,8 @@ class BrandsTest extends TestCase
     public function it_returns_correct_data()
     {
         $brand = Brand::factory()->create();
+        $brand->transactions()->create(['amount' => 1000]);
+        $brand->transactions()->create(['amount' => 233]);
 
         $this->graphQL(/** @lang GraphQL */ '
             {
@@ -25,6 +27,7 @@ class BrandsTest extends TestCase
                             id
                             name
                         }
+                        transactionsCount
                     }
                     paginatorInfo {
                         hasMorePages
@@ -41,7 +44,8 @@ class BrandsTest extends TestCase
                                 "category" => [
                                     "id" => $brand->category->id,
                                     "name" => $brand->category->name,
-                                ]
+                                ],
+                                "transactionsCount" => 2,
                             ],
                         ],
                         "paginatorInfo" => [
