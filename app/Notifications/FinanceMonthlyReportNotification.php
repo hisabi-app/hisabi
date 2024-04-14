@@ -2,12 +2,11 @@
 
 namespace App\Notifications;
 
-use App\Contracts\ReportManager;
-use App\Services\PdfRenderer;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
+use App\Services\PdfRenderer;
+use App\Contracts\ReportManager;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class FinanceMonthlyReportNotification extends Notification
 {
@@ -45,13 +44,13 @@ class FinanceMonthlyReportNotification extends Notification
         $data = [
             'sections' => app(ReportManager::class)->generate(),
             'currency' => config('hisabi.currency'),
-            'month' => now()->format('M Y')
+            'range' => now()->format('M Y')
         ];
 
         return (new MailMessage)
                     ->subject('Finance report for ' . $data['month'])
                     ->line('Please find the finance report attachment for ' . $data['month'])
-                    ->attachData(PdfRenderer::render('report', $data), 'finance-report.pdf');
+                    ->attachData(PdfRenderer::render('report', $data), 'hisabi-report.pdf');
     }
 
     /**
