@@ -1,15 +1,14 @@
 <?php
 
+use Illuminate\Http\Request;
 use App\Contracts\ReportManager;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\SmsController;
-use App\Services\PdfRenderer;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::redirect('/', '/dashboard');
 
