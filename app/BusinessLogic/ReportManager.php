@@ -2,23 +2,31 @@
 
 namespace App\BusinessLogic;
 
+use Carbon\Carbon;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Transaction;
-use App\Domain\Ranges\LastMonth;
-use App\Domain\Ranges\CurrentMonth;
 use App\Contracts\ReportManager as ReportManagerContract;
 
 class ReportManager implements ReportManagerContract
 {
     protected $data = [];
+    private Carbon $startDateModel;
+    private Carbon $endDateModel;
+    private Carbon $startDatePrevMonthModel;
+    private Carbon $endDatePrevMonthModel;
 
-    public function generate() 
+    public function generate($startDate = null, $endDate = null)
     {
-        $newBrands = Brand::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->pluck('name');
+        $startDate = $startDate ?? now();
+        $endDate = $endDate ?? now();
 
-        $currentMonthRange = new CurrentMonth;
-        $lastMonthRange = new LastMonth;
+        $this->startDateModel = Carbon::parse($startDate)->startOfMonth();
+        $this->endDateModel = Carbon::parse($endDate)->endOfMonth();
+        $this->startDatePrevMonthModel = Carbon::parse($startDate)->subMonthNoOverflow()->startOfMonth();
+        $this->endDatePrevMonthModel = Carbon::parse($endDate)->subMonthNoOverflow()->endOfMonth();
+
+        $newBrands = Brand::whereBetween('created_at', [$this->startDateModel, $this->endDateModel])->pluck('name');
 
         $this->addSection('Overview', $this->getOverviewData());
 
@@ -27,9 +35,13 @@ class ReportManager implements ReportManagerContract
             $brandsData = [];
 
             foreach($category->brands as $brand) {
-                $totalCurrentMonth = $brand->transactions()->whereBetween('created_at', [$currentMonthRange->start(), $currentMonthRange->end()])->sum('amount');
-                $totalLastMonth = $brand->transactions()->whereBetween('created_at', [$lastMonthRange->start(), $lastMonthRange->end()])->sum('amount');
+                $totalCurrentMonth = $brand->transactions()->whereBetween('created_at', [$this->startDateModel, $this->endDateModel])->sum('amount');
+                $totalLastMonth = $brand->transactions()->whereBetween('created_at', [$this->startDatePrevMonthModel, $this->endDatePrevMonthModel])->sum('amount');
                 $change = ! $totalLastMonth ? '-' : number_format(($totalCurrentMonth / $totalLastMonth - 1) * 100, 2);
+
+                if($totalCurrentMonth == 0 && $totalLastMonth == 0) {
+                    continue;
+                }
 
                 $brandsData[] = [
                     'name' => $brand->name,
@@ -43,7 +55,7 @@ class ReportManager implements ReportManagerContract
 
             $brandsData = $this->calculateAndAddAllBrandsData($brandsData, $category);
 
-            // issue with rendering big row using Dompdf library, 
+            // issue with rendering big row using Dompdf library,
             // the workaround is to split the list of brands to
             // multiple sections that each one can fit in page.
             $this->splitBrandListIntoPages($brandsData, $category);
@@ -54,13 +66,18 @@ class ReportManager implements ReportManagerContract
 
     protected function splitBrandListIntoPages($brandsData, $category)
     {
+        if(count($brandsData) == 1) {
+            return;
+        }
+
         if(count(array_chunk($brandsData, 25)) > 1) {
             foreach(array_chunk($brandsData, 25) as $index => $chunk) {
                 $this->addSection($category->name . "-" . $index + 1, $chunk);
             }
-        }else {
-            $this->addSection($category->name, $brandsData);
+            return;
         }
+
+        $this->addSection($category->name, $brandsData);
     }
 
     protected function addSection($sectionName, $data)
@@ -119,21 +136,21 @@ class ReportManager implements ReportManagerContract
 
     protected function getTotalCash()
     {
-        $totalIncome = Transaction::income()->sum('amount');
-        $totalExpenses = Transaction::expenses()->sum('amount');
-        $totalInvestment = Transaction::investment()->sum('amount');
-        $totalSavings = Transaction::savings()->sum('amount');
-        
-        $totalIncomeExcludingThisMonth = Transaction::income()->where('created_at', '<', now()->startOfMonth())->sum('amount');
-        $totalExpensesExcludingThisMonth = Transaction::expenses()->where('created_at', '<', now()->startOfMonth())->sum('amount');
-        $totalInvestmentExcludingThisMonth = Transaction::investment()->where('created_at', '<', now()->startOfMonth())->sum('amount');
-        $totalSavingsExcludingThisMonth = Transaction::savings()->where('created_at', '<', now()->startOfMonth())->sum('amount');
-        
+        $totalIncome = Transaction::income()->where('created_at', '<', $this->endDateModel)->sum('amount');
+        $totalExpenses = Transaction::expenses()->where('created_at', '<', $this->endDateModel)->sum('amount');
+        $totalInvestment = Transaction::investment()->where('created_at', '<', $this->endDateModel)->sum('amount');
+        $totalSavings = Transaction::savings()->where('created_at', '<', $this->endDateModel)->sum('amount');
+
+        $totalIncomeExcludingThisMonth = Transaction::income()->where('created_at', '<', $this->startDateModel)->sum('amount');
+        $totalExpensesExcludingThisMonth = Transaction::expenses()->where('created_at', '<', $this->startDateModel)->sum('amount');
+        $totalInvestmentExcludingThisMonth = Transaction::investment()->where('created_at', '<', $this->startDateModel)->sum('amount');
+        $totalSavingsExcludingThisMonth = Transaction::savings()->where('created_at', '<', $this->startDateModel)->sum('amount');
+
         $totalCashTillNow = $totalIncome - ($totalExpenses + $totalInvestment + $totalSavings);
         $totalCashExcludingThisMonth = $totalIncomeExcludingThisMonth - ($totalExpensesExcludingThisMonth + $totalInvestmentExcludingThisMonth + $totalSavingsExcludingThisMonth);
 
         $change = ! $totalCashExcludingThisMonth ? '-' : number_format(($totalCashTillNow / $totalCashExcludingThisMonth - 1) * 100, 2);
-        
+
         return [
             'name' => 'Total Cash',
             'total_current_month' => $totalCashTillNow,
@@ -145,11 +162,11 @@ class ReportManager implements ReportManagerContract
 
     protected function getTotalIncome()
     {
-        $total = Transaction::income()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
-        $totalExcludingThisMonth = Transaction::income()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
-        
+        $total = Transaction::income()->whereBetween('created_at', [$this->startDateModel, $this->endDateModel])->sum('amount');
+        $totalExcludingThisMonth = Transaction::income()->whereBetween('created_at', [$this->startDatePrevMonthModel, $this->endDatePrevMonthModel])->sum('amount');
+
         $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
-        
+
         return [
             'name' => 'Total Income',
             'total_current_month' => $total,
@@ -161,11 +178,11 @@ class ReportManager implements ReportManagerContract
 
     protected function getTotalExpenses()
     {
-        $total = Transaction::expenses()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
-        $totalExcludingThisMonth = Transaction::expenses()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
-        
+        $total = Transaction::expenses()->whereBetween('created_at', [$this->startDateModel, $this->endDateModel])->sum('amount');
+        $totalExcludingThisMonth = Transaction::expenses()->whereBetween('created_at', [$this->startDatePrevMonthModel, $this->endDatePrevMonthModel])->sum('amount');
+
         $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
-        
+
         return [
             'name' => 'Total Expenses',
             'total_current_month' => $total,
@@ -177,11 +194,11 @@ class ReportManager implements ReportManagerContract
 
     protected function getTotalInvestment()
     {
-        $total = Transaction::investment()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
-        $totalExcludingThisMonth = Transaction::investment()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
-        
+        $total = Transaction::investment()->whereBetween('created_at', [$this->startDateModel, $this->endDateModel])->sum('amount');
+        $totalExcludingThisMonth = Transaction::investment()->whereBetween('created_at', [$this->startDatePrevMonthModel, $this->endDatePrevMonthModel])->sum('amount');
+
         $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
-        
+
         return [
             'name' => 'Total Investment',
             'total_current_month' => $total,
@@ -193,11 +210,11 @@ class ReportManager implements ReportManagerContract
 
     protected function getTotalSavings()
     {
-        $total = Transaction::savings()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
-        $totalExcludingThisMonth = Transaction::savings()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
-        
+        $total = Transaction::savings()->whereBetween('created_at', [$this->startDateModel, $this->endDateModel])->sum('amount');
+        $totalExcludingThisMonth = Transaction::savings()->whereBetween('created_at', [$this->startDatePrevMonthModel, $this->endDatePrevMonthModel])->sum('amount');
+
         $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
-        
+
         return [
             'name' => 'Total Savings',
             'total_current_month' => $total,
