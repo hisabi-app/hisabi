@@ -98,6 +98,28 @@ class BudgetTest extends TestCase
     }
 
     /** @test */
+    public function it_has_remaining_days()
+    {
+        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(2), 'reoccurrence' => Budget::CUSTOM]);
+
+        $this->assertEquals(1, $sut->remainingDays);
+    }
+
+    /** @test */
+    public function it_has_remaining_to_spend()
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
+        $sut->categories()->attach($category);
+
+        $category->transactions()->create(['amount' => 100, 'brand_id' => $brand->id]);
+        $category->transactions()->create(['amount' => 200, 'brand_id' => $brand->id]);
+
+        $this->assertEquals(400, $sut->remainingToSpend);
+    }
+
+    /** @test */
     public function it_has_start_and_end_dates_window()
     {
         $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'period' => 1, 'reoccurrence' => Budget::DAILY]);
