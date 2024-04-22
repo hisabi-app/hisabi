@@ -80,7 +80,7 @@ class BudgetTest extends TestCase
     {
         $category = Category::factory()->create();
         $brand = Brand::factory()->create(['category_id' => $category->id]);
-        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(3), 'amount' => 700]);
+        $sut = Budget::factory()->create(['start_at' => now(), 'period' => 3, 'reoccurrence' => Budget::DAILY, 'amount' => 700]);
         $sut->categories()->attach($category);
 
         $category->transactions()->create(['amount' => 600, 'brand_id' => $brand->id]);
