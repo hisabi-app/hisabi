@@ -42,7 +42,7 @@ class Budget extends Model
         return $this->getCurrentWindowStartAndEndDates()[1]->format('Y-m-d');
     }
 
-    public function getTotalAccumulatedTransactionsAmountAttribute()
+    public function getTotalTransactionsAmountAttribute()
     {
         $categories = $this->categories()->with('transactions')->get();
         [$startAt, $endAt] = $this->getCurrentWindowStartAndEndDates();

@@ -16,8 +16,9 @@ type Category {
 
 type Budget {
     id: ID!
+    name: String!
     amount: Float!
-    totalAccumulatedTransactionsAmount: Float!
+    totalTransactionsAmount: Float!
     startAtDate: String!
     endAtDate: String!
 }
