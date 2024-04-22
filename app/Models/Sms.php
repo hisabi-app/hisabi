@@ -6,7 +6,6 @@ use App\Contracts\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use function PHPUnit\Framework\isEmpty;
 
 class Sms extends Model implements Searchable
 {
