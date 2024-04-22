@@ -44,6 +44,10 @@
     height: 150px;
 }
 
+.h-200 {
+    height: 190px;
+}
+
 .loaded {
     animation: loaded 1s ease-in-out 1;
 }

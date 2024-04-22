@@ -19,6 +19,17 @@ class Budget extends Model
 
     protected $guarded = [];
 
+    protected $appends = [
+        'is_saving',
+        'total_spent_percentage',
+        'total_margin_per_day',
+        'start_at_date',
+        'end_at_date',
+        'total_transactions_amount',
+        'remaining_days',
+        'remaining_to_spend',
+    ];
+
     protected $casts = [
         'start_at' => 'datetime',
         'end_at' => 'datetime',
@@ -41,17 +52,17 @@ class Budget extends Model
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getTotalSpentPercentageAttribute(): float
+    public function getTotalSpentPercentageAttribute(): string
     {
         return number_format($this->totalTransactionsAmount / $this->amount * 100, 2);
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getTotalMarginPerDayAttribute(): float
+    public function getTotalMarginPerDayAttribute(): string
     {
         $days = now()->diffInDays($this->end_at);
         $remainingAmount = $this->amount - $this->totalTransactionsAmount;
@@ -61,6 +72,22 @@ class Budget extends Model
         }
 
         return $days == 0 ? number_format($remainingAmount, 2) : number_format($remainingAmount / $days, 2);
+    }
+
+    /**
+     * @return float
+     */
+    public function getRemainingDaysAttribute(): float
+    {
+        return now()->diffInDays($this->end_at_date);
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemainingToSpendAttribute(): string
+    {
+        return number_format($this->amount - $this->totalTransactionsAmount, 2);
     }
 
     /**
