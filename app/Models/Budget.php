@@ -64,7 +64,7 @@ class Budget extends Model
      */
     public function getTotalMarginPerDayAttribute(): string
     {
-        $days = now()->diffInDays($this->end_at);
+        $days = now()->diffInDays($this->end_at_date);
         $remainingAmount = $this->amount - $this->totalTransactionsAmount;
 
         if($days < 0 || $remainingAmount <= 0) {
