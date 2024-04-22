@@ -32,16 +32,56 @@ class Budget extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function getStartAtDateAttribute()
+    /**
+     * @return bool
+     */
+    public function getIsSavingAttribute(): bool
+    {
+        return $this->saving;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalSpentPercentageAttribute(): float
+    {
+        return number_format($this->totalTransactionsAmount / $this->amount * 100, 2);
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalMarginPerDayAttribute(): float
+    {
+        $days = now()->diffInDays($this->end_at);
+        $remainingAmount = $this->amount - $this->totalTransactionsAmount;
+
+        if($days < 0 || $remainingAmount <= 0) {
+            return 0;
+        }
+
+        return $days == 0 ? number_format($remainingAmount, 2) : number_format($remainingAmount / $days, 2);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStartAtDateAttribute(): string
     {
         return $this->getCurrentWindowStartAndEndDates()[0]->format('Y-m-d');
     }
 
-    public function getEndAtDateAttribute()
+    /**
+     * @return string
+     */
+    public function getEndAtDateAttribute(): string
     {
         return $this->getCurrentWindowStartAndEndDates()[1]->format('Y-m-d');
     }
 
+    /**
+     * @return mixed
+     */
     public function getTotalTransactionsAmountAttribute()
     {
         $categories = $this->categories()->with('transactions')->get();
@@ -54,6 +94,9 @@ class Budget extends Model
         });
     }
 
+    /**
+     * @return array|void
+     */
     private function getCurrentWindowStartAndEndDates()
     {
         if($this->reoccurrence === self::CUSTOM) {

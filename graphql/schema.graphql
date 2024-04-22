@@ -19,6 +19,9 @@ type Budget {
     name: String!
     amount: Float!
     totalTransactionsAmount: Float!
+    totalSpentPercentage: Float!
+    TotalMarginPerDay: Float!
+    isSaving: Boolean!
     startAtDate: String!
     endAtDate: String!
 }

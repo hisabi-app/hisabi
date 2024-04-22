@@ -35,7 +35,7 @@ class BudgetTest extends TestCase
     {
         $category = Category::factory()->create();
         $brand = Brand::factory()->create(['category_id' => $category->id]);
-        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1)]);
+        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
         $sut->categories()->attach($category);
 
         $category->transactions()->create(['amount' => 100, 'brand_id' => $brand->id]);
@@ -43,6 +43,49 @@ class BudgetTest extends TestCase
         $category->transactions()->create(['amount' => 200, 'brand_id' => $brand->id, 'created_at' => now()->addDays(2)]);
 
         $this->assertEquals(300, $sut->totalTransactionsAmount);
+        $this->assertEquals(42.86, $sut->totalSpentPercentage);
+    }
+
+    /** @test */
+    public function it_has_isSaving()
+    {
+        $this->assertTrue(Budget::factory()->create(['saving' => true])->isSaving);
+        $this->assertFalse(Budget::factory()->create(['saving' => false])->isSaving);
+    }
+
+    /** @test */
+    public function it_has_totalMarginPerDay_should_return_remaining_if_no_more_days()
+    {
+        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
+        $sut->categories()->attach(Category::factory()->create());
+
+        $this->assertEquals(700, $sut->totalMarginPerDay);
+    }
+
+    /** @test */
+    public function it_has_totalMarginPerDay_should_return_zero_if_over_budget()
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
+        $sut->categories()->attach($category);
+
+        $category->transactions()->create(['amount' => 700, 'brand_id' => $brand->id]);
+
+        $this->assertEquals(0, $sut->totalMarginPerDay);
+    }
+
+    /** @test */
+    public function it_has_totalMarginPerDay_should_return_correct_value()
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(3), 'amount' => 700]);
+        $sut->categories()->attach($category);
+
+        $category->transactions()->create(['amount' => 600, 'brand_id' => $brand->id]);
+
+        $this->assertEquals(50, $sut->totalMarginPerDay);
     }
 
     /** @test */
