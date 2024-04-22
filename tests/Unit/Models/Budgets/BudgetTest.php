@@ -31,7 +31,7 @@ class BudgetTest extends TestCase
     }
 
     /** @test */
-    public function it_has_total_categories_transactions_amount()
+    public function it_has_total_transactions_amount()
     {
         $category = Category::factory()->create();
         $brand = Brand::factory()->create(['category_id' => $category->id]);
@@ -42,7 +42,7 @@ class BudgetTest extends TestCase
         $category->transactions()->create(['amount' => 200, 'brand_id' => $brand->id]);
         $category->transactions()->create(['amount' => 200, 'brand_id' => $brand->id, 'created_at' => now()->addDays(2)]);
 
-        $this->assertEquals(300, $sut->totalAccumulatedTransactionsAmount);
+        $this->assertEquals(300, $sut->totalTransactionsAmount);
     }
 
     /** @test */
