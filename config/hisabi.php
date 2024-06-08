@@ -19,6 +19,7 @@ use App\GraphQL\Queries\LowestValueTransaction;
 use App\GraphQL\Queries\AverageValueTransaction;
 use App\GraphQL\Queries\ChangeRatePerBrandTrend;
 use App\GraphQL\Queries\HighestValueTransaction;
+use App\GraphQL\Queries\TotalPerCategoryDailyTrend;
 use App\GraphQL\Queries\NumberOfTransactionsPerBrand;
 use App\GraphQL\Queries\TransactionsStandardDeviation;
 use App\GraphQL\Queries\NumberOfTransactionsPerCategory;
@@ -53,6 +54,7 @@ return [
         new IncomePerCategory,
         new ExpensesPerCategory,
         new TotalPerCategoryTrend,
+        new TotalPerCategoryDailyTrend,
 //        new ChangeRatePerBrandTrend,
 
         (new SectionDivider)->withTitle("📊 Brands Analytics"),

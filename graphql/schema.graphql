@@ -89,6 +89,7 @@ type Query {
     totalIncomeTrend(range: String!): Json
     totalExpensesTrend(range: String!): Json
     totalPerCategoryTrend(range: String! id: ID!): Json
+    totalPerCategoryDailyTrend(range: String! id: ID!): Json
     totalPerBrandTrend(range: String! id: ID!): Json
     changeRatePerBrandTrend(range: String! id: ID!): Json
 
