@@ -89,7 +89,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
 
     return ( 
         <Card className="relative">
-            <div className="px-6 py-4">
+            <div className="px-6 py-4 flex flex-col h-full">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
                         <h3 className="mr-2 text-base text-gray-700 font-bold">{ name }</h3>
@@ -114,19 +114,17 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
                     <canvas id={graphql_query}></canvas>
                 </div>
 
-                <div className="min-h-22">
-                    <div className="overflow-hidden overflow-y-auto max-h-22">
-                        <ul className="list-reset">
-                            {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
-                                <span className={`inline-block rounded-full w-2 h-2 mr-2 ${getTailwindColor(index)}`} />
-                                {item.label} ({show_currency && <>{AppCurrency} </>}{formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
-                            </li>)}
-                        </ul>
+                <div className='grow overflow-y-auto'>
+                    <ul className="list-reset">
+                        {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
+                            <span className={`inline-block rounded-full w-2 h-2 mr-2 ${getTailwindColor(index)}`} />
+                            {item.label} ({show_currency && <>{AppCurrency} </>}{formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
+                        </li>)}
+                    </ul>
 
-                        {data.length == 0 && <p className="flex items-center text-gray-500">
-                            No data found
-                        </p>}
-                    </div>
+                    {data.length == 0 && <p className="flex items-center text-gray-500">
+                        No data found
+                    </p>}
                 </div>
             </div>
         </Card>
