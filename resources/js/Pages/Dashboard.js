@@ -10,7 +10,7 @@ import Card from "@/Components/Global/Card";
 export default function Dashboard({auth, metrics, budgets, hasData}) {
     return (
         <Authenticated auth={auth}>
-            <Head title="Dashboard" />
+            <Head title="Hisabi Dashboard" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto flex flex-wrap md:px-6">

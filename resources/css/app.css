@@ -40,10 +40,6 @@
     }
 }
 
-.h-150 {
-    height: 150px;
-}
-
 .loaded {
     animation: loaded 1s ease-in-out 1;
 }
