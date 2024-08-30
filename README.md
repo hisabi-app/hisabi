@@ -12,13 +12,13 @@
 ## 💰 Sponsors
 Support this project by becoming a sponsor ❤️. Your logo will show up here with a link to your website. [Become a sponsor](https://github.com/sponsors/saleem-hadad)
 
+Follow me on [LinkedIn](https://www.linkedin.com/in/saleem-hadad/) for updates and latest news.
+
 ## 🛠 Features
 
-1. [x] Self-hosted - full control over your data privacy 
-2. [x] Parse SMS bank transactions
-3. [x] Powerful AI model - HisabiGPT 🔥 - [DEMO](https://www.youtube.com/watch?v=QFM2nqv1eJY&ab_channel=SaleemHadad)
-4. [x] Detailed analysis of income and expenses
-5. [x] Detailed monthly report of income and expenses - [see example](https://github.com/hisabi-app/hisabi/pull/4)
+|<picture><img width="100%" alt="Self hosted" src="./public/images/features/privacy.png"></picture>|<picture><img width="100%" alt="SMS parser" src="./public/images/features/sms.png"></picture>|<picture><img width="100%" alt="HisabiGPT" src="./public/images/features/gpt.png"></picture>|
+|:---:|:---:|:---:|
+|<picture><img width="100%" alt="Reporting" src="./public/images/features/reporting.png"></picture>|<picture><img width="100%" alt="API" src="./public/images/features/api.png"></picture>|<picture><img width="100%" alt="Mobile app" src="./public/images/features/mobie.png"></picture>|
 
 ## 🎮 Demo
 
