@@ -12,6 +12,8 @@ use App\Domain\Metrics\RelationTrendMetric;
 
 class TotalPerBrandTrend extends RelationTrendMetric
 {
+    protected $name = 'Overall Trend by Brand';
+
     protected $relationGraphqlQuery = 'allBrands';
     protected $relationDisplayUsing = 'name';
     protected $relationForeignKey = 'id';

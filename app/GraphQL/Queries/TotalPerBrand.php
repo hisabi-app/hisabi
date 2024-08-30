@@ -8,6 +8,8 @@ use App\Domain\Metrics\RelationPartitionMetric;
 
 class TotalPerBrand extends RelationPartitionMetric
 {
+    protected $name = 'Spending by Brand';
+    
     protected $relationGraphqlQuery = 'allCategories';
     protected $relationDisplayUsing = 'name';
     protected $relationForeignKey = 'category_id';

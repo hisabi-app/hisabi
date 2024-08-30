@@ -12,6 +12,8 @@ use App\Domain\Ranges\LastTwelveMonths;
 
 class TotalIncomeTrend extends TrendMetric
 {
+    protected $name = 'Income Over Time';
+
     public function ranges()
     {
         return [
