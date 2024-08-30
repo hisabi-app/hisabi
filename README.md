@@ -20,6 +20,10 @@ Follow me on [LinkedIn](https://www.linkedin.com/in/saleem-hadad/) for updates a
 |:---:|:---:|:---:|
 |<picture><img width="100%" alt="Reporting" src="./public/images/features/reporting.png"></picture>|<picture><img width="100%" alt="API" src="./public/images/features/api.png"></picture>|<picture><img width="100%" alt="Mobile app" src="./public/images/features/mobie.png"></picture>|
 
+> [!WARNING]  
+> The mobile app is still under development and not yet released. Please check the [source code](https://github.com/hisabi-app/hisabi-mobile) for more information.
+
+
 ## 🎮 Demo
 
 Try the app with [live demo](https://finance-demo.saleem.dev/).
