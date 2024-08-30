@@ -92,7 +92,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
             <div className="px-6 py-4 flex flex-col h-full">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                        <h3 className="mr-2 text-base text-gray-700 font-bold">{ name }</h3>
+                        <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
 
                         {relation && relationData && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                             name="relation"
@@ -110,10 +110,6 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
                     </select>
                 </div>
 
-                <div className="absolute w-20 h-20" style={{right: '35px', top: '40%'}}>
-                    <canvas id={graphql_query}></canvas>
-                </div>
-
                 <div className='grow overflow-y-auto'>
                     <ul className="list-reset">
                         {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
@@ -125,6 +121,10 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
                     {data.length == 0 && <p className="flex items-center text-gray-500">
                         No data found
                     </p>}
+                </div>
+
+                <div className="absolute w-20 h-20" style={{right: '35px', top: '40%'}}>
+                    <canvas id={graphql_query}></canvas>
                 </div>
             </div>
         </Card>

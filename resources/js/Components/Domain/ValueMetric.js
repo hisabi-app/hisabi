@@ -34,7 +34,7 @@ export default function ValueMetric({name, helpText, graphql_query, ranges}) {
     }
 
     const increaseOrDecrease = () => {
-        if (previous == 0 || previous == null || value == 0)
+        if (previous == 0 || previous == null)
           return 0
 
         return (((value - previous) / previous) * 100).toFixed(2)
@@ -56,9 +56,9 @@ export default function ValueMetric({name, helpText, graphql_query, ranges}) {
 
     return (
         <Card className='relative'>
-            <div className="px-6 py-4">
-                <div className="flex justify-between items-center mb-2">
-                    <h3 className="mr-3 text-base text-gray-700 font-bold">{ name }</h3>
+            <div className="px-6 py-4 flex flex-col h-full gap-y-2">
+                <div className="flex grow-0 justify-between items-center">
+                    <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
 
                     {ranges && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                         name="range"
@@ -68,11 +68,11 @@ export default function ValueMetric({name, helpText, graphql_query, ranges}) {
                     </select>}
                 </div>
 
-                <p className="flex items-center text-4xl mb-4">
+                <p className="flex grow-1 items-center text-3xl">
                     { getAppCurrency() } { formatNumber(value) }
                 </p>
 
-                {increaseOrDecrease() !== 0 && <div className="flex">
+                {increaseOrDecrease() !== 0 && <div className="flex grow-0">
                     {increaseOrDecreaseLabel() === 'Increase' && <TrendingUpIcon className={["mr-2 h-5 w-5", increaseColor()].join(' ')} aria-hidden="true" />}
                     {increaseOrDecreaseLabel() === 'Decrease' && <TrendingDownIcon className={["mr-2 h-5 w-5", decreaseColor()].join(' ')} aria-hidden="true" />}
 

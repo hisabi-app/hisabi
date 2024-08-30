@@ -36,7 +36,7 @@ export default function CirclePackMetric({name, graphql_query, ranges}) {
     }
 
     return (
-        <div className={"bg-white shadow rounded-lg"}>
+        <div className={"bg-white shadow rounded-lg w-full overflow-hidden"}>
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="mr-3 text-base text-gray-700 font-bold">{ name }</h3>
