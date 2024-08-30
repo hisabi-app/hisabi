@@ -8,6 +8,8 @@ use App\Domain\Metrics\PartitionMetric;
 
 class IncomePerCategory extends PartitionMetric
 {
+    protected $name = 'Income Sources';
+
     /**
      * @param  null  $_
      * @param  array<string, mixed>  $args

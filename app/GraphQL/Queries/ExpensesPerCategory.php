@@ -8,6 +8,8 @@ use App\Domain\Metrics\PartitionMetric;
 
 class ExpensesPerCategory extends PartitionMetric
 {
+    protected $name = 'Spending by Category';
+
     /**
      * @param  null  $_
      * @param  array<string, mixed>  $args

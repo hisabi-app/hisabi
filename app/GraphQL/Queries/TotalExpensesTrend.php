@@ -12,6 +12,8 @@ use App\Domain\Ranges\LastTwelveMonths;
 
 class TotalExpensesTrend extends TrendMetric
 {
+    protected $name = 'Spending Over Time';
+
     public function ranges()
     {
         return [

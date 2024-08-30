@@ -20,7 +20,7 @@ export default function Dashboard({auth, metrics, budgets, hasData}) {
                             return <Wrapper key={index} width={'1/3'}>
                                 <div className={'bg-white shadow rounded-lg w-full min-h-[170]'}>
                                     <div className="p-4 h-full">
-                                        <h3 className="mr-3 text-base text-gray-700 font-bold">{budget.name}</h3>
+                                        <h3 className="mr-3 text-base text-gray-600">{budget.name}</h3>
                                         <div className="mt-2">
                                             <div className="w-full flex items-center h-6 bg-blue-50 rounded-full relative">
                                                 <div className="h-full text-center font-bold flex items-center justify-center text-white bg-blue-400 rounded-full" style={{width: budget.total_spent_percentage + '%'}}></div>

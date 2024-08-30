@@ -39,7 +39,7 @@ export default function CirclePackMetric({name, graphql_query, ranges}) {
         <div className={"bg-white shadow rounded-lg w-full overflow-hidden"}>
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="mr-3 text-base text-gray-700 font-bold">{ name }</h3>
+                    <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
 
                     {ranges && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                                        name="range"
