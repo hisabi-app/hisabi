@@ -88,7 +88,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
     let total = sumBy(data, 'value');
 
     return ( 
-        <Card className="relative">
+        <Card className="relative" height='h-[160px]'>
             <div className="px-6 py-4 flex flex-col h-full">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
@@ -110,7 +110,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
                     </select>
                 </div>
 
-                <div className='grow overflow-y-auto'>
+                <div className={`${data.length == 0 ? '' : 'pl-[100px]'} grow overflow-y-auto`}>
                     <ul className="list-reset">
                         {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
                             <span className={`inline-block rounded-full w-2 h-2 mr-2 ${getTailwindColor(index)}`} />
@@ -123,7 +123,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
                     </p>}
                 </div>
 
-                <div className="absolute w-20 h-20" style={{right: '35px', top: '40%'}}>
+                <div className="absolute w-16 h-16" style={{left: '30px', top: '40%'}}>
                     <canvas id={graphql_query}></canvas>
                 </div>
             </div>
