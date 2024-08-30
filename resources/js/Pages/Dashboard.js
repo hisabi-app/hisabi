@@ -5,7 +5,6 @@ import Wrapper from '@/Components/Global/Wrapper';
 import { renderComponent } from '@/Components';
 import Authenticated from '@/Layouts/Authenticated';
 import NoContent from '@/Components/Global/NoContent';
-import Card from "@/Components/Global/Card";
 
 export default function Dashboard({auth, metrics, budgets, hasData}) {
     return (
@@ -19,8 +18,8 @@ export default function Dashboard({auth, metrics, budgets, hasData}) {
                     <div className={'w-full flex flex-wrap'}>
                         {budgets.length > 0 && budgets.map( (budget, index) => {
                             return <Wrapper key={index} width={'1/3'}>
-                                <Card className={'w-full'}>
-                                    <div className="p-4">
+                                <div className={'bg-white shadow rounded-lg w-full min-h-[170]'}>
+                                    <div className="p-4 h-full">
                                         <h3 className="mr-3 text-base text-gray-700 font-bold">{budget.name}</h3>
                                         <div className="mt-2">
                                             <div className="w-full flex items-center h-6 bg-blue-50 rounded-full relative">
@@ -36,7 +35,7 @@ export default function Dashboard({auth, metrics, budgets, hasData}) {
 
                                         <p className="text-xs text-gray-500 text-center mt-1">You can spend AED {budget.total_margin_per_day} per day for {budget.remaining_days} more days</p>
                                     </div>
-                                </Card>
+                                </div>
                             </Wrapper>
                         })}
                     </div>

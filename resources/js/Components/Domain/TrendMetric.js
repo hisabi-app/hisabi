@@ -253,7 +253,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                        <h3 className="mr-2 text-base text-gray-700 font-bold">{ name }</h3>
+                        <h3 className="mr-2 text-base text-gray-600">{ name }</h3>
 
                         {relation && relationData && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                             name="relation"
