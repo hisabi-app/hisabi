@@ -7,7 +7,7 @@
     "require": {
         "php": "^8.1",
         "aws/aws-sdk-php": "^3.199",
-        "binarytorch/larecipe": "^2.4",
+        "binarytorch/larecipe": "^2.8.1",
         "dompdf/dompdf": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.6.9",
