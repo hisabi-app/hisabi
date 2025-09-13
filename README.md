@@ -23,7 +23,7 @@ Follow me on [LinkedIn](https://www.linkedin.com/in/saleem-hadad/) for updates a
 
 ## 🎮 Demo
 
-Try the app with [live demo](https://finance-demo.saleem.dev/).
+Try the app with [live demo](https://hisabi.saleem.dev/).
 
 ## ▶️ Installation 
 
@@ -98,7 +98,7 @@ docker-compose run app php artisan hisabi:install
 
 Once done, visit the app on `http://localhost`
 
-Read [full documentation](https://finance-demo.saleem.dev/docs)
+Read [full documentation](https://hisabi.saleem.dev/docs)
 
 ## JetBrains Sponsorship
 Thank you, JetBrains for sponsoring the license ❤️
