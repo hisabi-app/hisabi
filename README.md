@@ -111,9 +111,6 @@ Thank you, JetBrains for sponsoring the license ❤️
 
 [![DigitalOcean Referral Badge](https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg)](https://www.digitalocean.com/?refcode=64aee93d49da&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
 
-## Project Visualization
-
-![Visualization of this repo](./diagram.svg)
 
 ## 🪚 Built with
 
