@@ -13,8 +13,7 @@ class TotalExpensesTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_returns_correct_value()
+    public function test_it_returns_correct_value()
     {
         $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);
 
@@ -33,8 +32,7 @@ class TotalExpensesTest extends TestCase
             ]);
     }
 
-    /** @test */
-    public function it_returns_correct_previous_value()
+    public function test_it_returns_correct_previous_value()
     {
         // mock app date
         Carbon::setTestNow(Carbon::create(2021, 1, 18));

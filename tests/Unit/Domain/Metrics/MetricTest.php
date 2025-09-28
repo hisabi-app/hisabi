@@ -8,40 +8,35 @@ use Tests\TestCase;
 
 class MetricTest extends TestCase
 {
-    /** @test */
-    public function it_has_component()
+    public function test_it_has_component()
     {
         $sut = new FakeMetric;
 
         $this->assertEquals('test-component', $sut->component());
     }
 
-    /** @test */
-    public function it_has_default_name()
+    public function test_it_has_default_name()
     {
         $sut = new FakeMetric;
 
         $this->assertEquals('Fake Metric', $sut->name());
     }
 
-    /** @test */
-    public function it_has_default_width()
+    public function test_it_has_default_width()
     {
         $sut = new FakeMetric;
 
         $this->assertEquals('1/2', $sut->width());
     }
 
-     /** @test */
-     public function it_has_set_width_method()
+     public function test_it_has_set_width_method()
      {
          $sut = new FakeMetric;
 
          $this->assertEquals('1/4', $sut->setWidth('1/4')->width());
      }
 
-    /** @test */
-    public function it_has_default_ranges()
+    public function test_it_has_default_ranges()
     {
         $sut = new FakeMetric;
 
@@ -50,16 +45,14 @@ class MetricTest extends TestCase
         }
     }
 
-    /** @test */
-    public function it_has_default_graphql_query()
+    public function test_it_has_default_graphql_query()
     {
         $sut = new FakeMetric;
 
         $this->assertEquals('fakeMetric', $sut->graphqlQuery());
     }
 
-    /** @test */
-    public function it_is_json_serializeable()
+    public function test_it_is_json_serializeable()
     {
         $sut = new FakeMetric;
 

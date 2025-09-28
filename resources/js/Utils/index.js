@@ -1,10 +1,10 @@
+import numbro from 'numbro';
+
 export const getAppCurrency = () => {
     return window ? window.AppCurrency : ''
 }
 
 export const formatNumber = (number, format = '(0[.]000a)') => {
-    const numbro = require('numbro');
-
     numbro.setDefaults({ thousandSeparated: true, })
 
     const num = numbro(number)

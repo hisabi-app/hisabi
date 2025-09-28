@@ -10,8 +10,7 @@ class UpdateSmsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_update_a_model()
+    public function test_it_update_a_model()
     {
         $sms = Sms::factory()->create(['body' => 'oldBody']);
 

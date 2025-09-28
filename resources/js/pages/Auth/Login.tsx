@@ -4,7 +4,7 @@ import Guest from '@/Layouts/Guest';
 import Input from '@/Components/Global/Input';
 import Label from '@/Components/Global/Label';
 import ValidationErrors from '@/Components/Global/ValidationErrors';
-import { Head, useForm } from '@inertiajs/inertia-react';
+import { Head, useForm } from '@inertiajs/react';
 
 export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({

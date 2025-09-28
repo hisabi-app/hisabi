@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
-import { Head } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/Global/LoadMore';
@@ -8,28 +8,37 @@ import Edit from './Edit';
 import Create from './Create';
 import Button from '@/Components/Global/Button';
 import Delete from '@/Components/Domain/Delete';
-import { getCategories } from '@/Api';
+import { getAllCategories, getBrands } from '@/Api';
 import { animateRowItem } from '@/Utils';
 import {debounce} from "lodash";
 
 export default function Index({auth}) {
-    const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [allCategories, setAllCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
-    const [editCategory, setEditCategory] = useState(null);
+    const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
     const [deleteItem, setDeleteItem] = useState(null);
+
+    useEffect(() => {
+        getAllCategories()
+            .then(({data}) => {
+                setAllCategories(data.allCategories)
+            })
+            .catch(console.error);
+    }, []);
 
     useEffect(() => {
         if(! hasMorePages) return;
         setLoading(true);
 
-        getCategories(currentPage, searchQuery)
+        getBrands(currentPage, searchQuery)
             .then(({data}) => {
-                setCategories([...categories, ...data.categories.data])
-                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
+                setBrands([...brands, ...data.brands.data])
+                setHasMorePages(data.brands.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
@@ -38,10 +47,10 @@ export default function Index({auth}) {
     useEffect(() => {
         setLoading(true);
 
-        getCategories(currentPage, searchQuery)
+        getBrands(currentPage, searchQuery)
             .then(({data}) => {
-                setCategories([...categories, ...data.categories.data])
-                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
+                setBrands([...brands, ...data.brands.data])
+                setHasMorePages(data.brands.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
@@ -49,34 +58,33 @@ export default function Index({auth}) {
 
     const onCreate = (createdItem) => {
         setShowCreate(false)
-        setCategories([createdItem, ...categories])
+        setBrands([createdItem, ...brands])
 
         animateRowItem(createdItem.id);
     }
 
     const onUpdate = (updatedItem) => {
-        setCategories(categories.map(category => {
-            if(category.id === updatedItem.id) {
+        setBrands(brands.map(brand => {
+            if(brand.id === updatedItem.id) {
                 return updatedItem
             }
 
-            return category
+            return brand
         }));
 
-        animateRowItem(updatedItem.id);
-        setEditCategory(null)
+        animateRowItem(updatedItem.id)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
         animateRowItem(tempDeleteItem.id, 'deleted', () => {
-            setCategories(categories.filter(item => item.id != tempDeleteItem.id));
+            setBrands(brands.filter(item => item.id != tempDeleteItem.id));
         })
     }
 
     const performSearchHandler = (e) => {
-        setCategories([]);
+        setBrands([]);
         setSearchQuery(e.target.value ?? '');
         setCurrentPage(1);
     }
@@ -86,7 +94,7 @@ export default function Index({auth}) {
         , []);
 
     const header = <div className="w-full pb-3 mb-4 px-4 sm:px-0">
-        <h2 className='text-lg text-gray-600'>Categories</h2>
+        <h2 className='text-lg text-gray-600'>Brands</h2>
 
         <div className='flex justify-between items-center mt-2'>
             <div>
@@ -101,25 +109,30 @@ export default function Index({auth}) {
                 </div>
             </div>
 
-            <Button children={"Create Category"} type="button" onClick={() => setShowCreate(true)} />
+            <Button children={"Create Brand"} type="button" onClick={() => setShowCreate(true)} />
         </div>
     </div>
 
     return (
         <Authenticated auth={auth}>
-            <Head title="Categories" />
+            <Head title="Brands" />
 
             <Create showCreate={showCreate}
+                categories={allCategories}
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit category={editCategory}
-                onClose={() => setEditCategory(null)}
-                onUpdate={onUpdate}
-                />
+            <Edit brand={editItem}
+                categories={allCategories}
+                onClose={() => setEditItem(null)}
+                onUpdate={item => {
+                    onUpdate(item)
+                    setEditItem(null)
+                }}
+            />
 
             <Delete item={deleteItem}
-                resource="Category"
+                resource="Brand"
                 onClose={() => setDeleteItem(null)}
                 onDelete={onDelete}  />
 
@@ -128,7 +141,7 @@ export default function Index({auth}) {
                     {header}
 
                     <div className="flex flex-col">
-                        {categories.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        {brands.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                     <table className="min-w-full divide-y divide-gray-200">
@@ -141,7 +154,10 @@ export default function Index({auth}) {
                                                     Name
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Type
+                                                    Category
+                                                </th>
+                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Total Transactions
                                                 </th>
                                                 <th scope="col" className="relative py-3">
                                                     <span className="sr-only">Edit</span>
@@ -149,15 +165,14 @@ export default function Index({auth}) {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {categories.map((item) => (
-                                                <tr key={item.id} className='loaded' id={'item-' + item.id}>
+                                            {brands.map((item) => (
+                                                <tr key={item.id} className={`loaded ${item.category ? '' : 'bg-red-100'}`} id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="whitespace-nowrap">
-                                                        <span className={"badge badge-" + item.color}>{item.name}</span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.type}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.category ? <span className={"badge badge-" + item.category.color}>{item.category.name}</span> : '-'}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transactionsCount}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button onClick={() => setEditCategory(item)} type="button">
+                                                        <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
@@ -176,7 +191,7 @@ export default function Index({auth}) {
                             </div>
                         </div>}
 
-                        <LoadMore hasContent={categories.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
+                        <LoadMore hasContent={brands.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
                     </div>
                 </div>
             </div>

@@ -11,14 +11,18 @@ export default function ValueMetric({name, helpText, graphql_query, ranges}) {
     const [previous, setPrevious] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges ? ranges[0].key : null);
 
-    useEffect(async () => {
-        setValue(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            setValue(null);
 
-        let { data } = await query(graphql_query, selectedRange);
-        let parsedData = JSON.parse(data[graphql_query]);
+            let { data } = await query(graphql_query, selectedRange);
+            let parsedData = JSON.parse(data[graphql_query]);
 
-        setValue(parsedData.value)
-        setPrevious(parsedData.previous)
+            setValue(parsedData.value)
+            setPrevious(parsedData.previous)
+        };
+
+        fetchData();
     }, [selectedRange])
 
     if(value == null) {

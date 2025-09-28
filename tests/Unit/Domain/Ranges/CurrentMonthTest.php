@@ -9,8 +9,7 @@ use Tests\TestCase;
 
 class CurrentMonthTest extends TestCase
 {
-    /** @test */
-    public function it_has_correct_json_serializeable()
+    public function test_it_has_correct_json_serializeable()
     {
         // mock app date
         Carbon::setTestNow(Carbon::create(2021, 1, 18));
@@ -25,14 +24,12 @@ class CurrentMonthTest extends TestCase
         ], $sut->jsonSerialize());
     }
 
-    /** @test */
-    public function it_implements_has_previous_range()
+    public function test_it_implements_has_previous_range()
     {
         $this->assertInstanceOf(HasPreviousRange::class, new CurrentMonth);
     }
 
-    /** @test */
-    public function it_has_previous_range_correct_start_and_end_dates()
+    public function test_it_has_previous_range_correct_start_and_end_dates()
     {
         // mock app date
         Carbon::setTestNow(Carbon::create(2021, 1, 18));

@@ -12,8 +12,7 @@ class SmsParserTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_parse_sms_string_using_template_without_saving_to_db()
+    public function test_it_parse_sms_string_using_template_without_saving_to_db()
     {
         $template = SmsTemplate::make("someBody", ['key' => 'value']);
         $smsString = "some sms string here";
@@ -28,8 +27,7 @@ class SmsParserTest extends TestCase
         $this->assertFalse($sms->exists);
     }
 
-    /** @test */
-    public function it_parse_sms_model_using_template_without_saving_to_db()
+    public function test_it_parse_sms_model_using_template_without_saving_to_db()
     {
         $template = SmsTemplate::make("someBody", ['key' => 'value']);
         $smsModel = Sms::make(['meta' => [], 'body' => "some sms string here"]);
@@ -44,8 +42,7 @@ class SmsParserTest extends TestCase
         $this->assertFalse($sms->exists);
     }
 
-    /** @test */
-    public function it_parse_sms_without_template()
+    public function test_it_parse_sms_without_template()
     {
         $smsString = "some sms string here";
 

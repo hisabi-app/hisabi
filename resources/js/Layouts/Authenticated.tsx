@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from '@inertiajs/inertia-react';
+import { Link } from '@inertiajs/react';
 
 import NavLink from '@/Components/Global/NavLink';
 import ApplicationLogo from '@/Components/Global/ApplicationLogo';

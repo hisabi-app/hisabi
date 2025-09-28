@@ -12,8 +12,7 @@ class AverageValueTransactionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_returns_correct_data()
+    public function test_it_returns_correct_data()
     {
         $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);
 

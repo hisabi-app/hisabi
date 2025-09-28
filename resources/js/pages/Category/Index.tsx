@@ -1,35 +1,35 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
-import { Head } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/Components/Global/LoadMore';
-import Create from './Create';
 import Edit from './Edit';
+import Create from './Create';
 import Button from '@/Components/Global/Button';
 import Delete from '@/Components/Domain/Delete';
-import { getSms } from '@/Api';
-import { animateRowItem, cutString } from '@/Utils';
+import { getCategories } from '@/Api';
+import { animateRowItem } from '@/Utils';
 import {debounce} from "lodash";
 
-export default function Sms({auth}) {
-    const [sms, setSms] = useState([]);
+export default function Index({auth}) {
+    const [categories, setCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
+    const [editCategory, setEditCategory] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
-    const [editItem, setEditItem] = useState(null);
     const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
         setLoading(true);
 
-        getSms(currentPage, searchQuery)
+        getCategories(currentPage, searchQuery)
             .then(({data}) => {
-                setSms([...sms, ...data.sms.data])
-                setHasMorePages(data.sms.paginatorInfo.hasMorePages)
+                setCategories([...categories, ...data.categories.data])
+                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
@@ -38,37 +38,45 @@ export default function Sms({auth}) {
     useEffect(() => {
         setLoading(true);
 
-        getSms(currentPage, searchQuery)
+        getCategories(currentPage, searchQuery)
             .then(({data}) => {
-                setSms([...sms, ...data.sms.data])
-                setHasMorePages(data.sms.paginatorInfo.hasMorePages)
+                setCategories([...categories, ...data.categories.data])
+                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
     }, [searchQuery]);
 
+    const onCreate = (createdItem) => {
+        setShowCreate(false)
+        setCategories([createdItem, ...categories])
+
+        animateRowItem(createdItem.id);
+    }
+
     const onUpdate = (updatedItem) => {
-        setSms(sms.map(item => {
-            if(item.id === updatedItem.id) {
+        setCategories(categories.map(category => {
+            if(category.id === updatedItem.id) {
                 return updatedItem
             }
 
-            return item
+            return category
         }));
 
-        animateRowItem(updatedItem.id)
+        animateRowItem(updatedItem.id);
+        setEditCategory(null)
     }
 
     const onDelete = () => {
         let tempDeleteItem = deleteItem;
         setDeleteItem(null)
         animateRowItem(tempDeleteItem.id, 'deleted', () => {
-            setSms(sms.filter(item => item.id != tempDeleteItem.id));
+            setCategories(categories.filter(item => item.id != tempDeleteItem.id));
         })
     }
 
     const performSearchHandler = (e) => {
-        setSms([]);
+        setCategories([]);
         setSearchQuery(e.target.value ?? '');
         setCurrentPage(1);
     }
@@ -78,7 +86,7 @@ export default function Sms({auth}) {
         , []);
 
     const header = <div className="w-full pb-3 mb-4 px-4 sm:px-0">
-        <h2 className='text-lg text-gray-600'>SMS Parser</h2>
+        <h2 className='text-lg text-gray-600'>Categories</h2>
 
         <div className='flex justify-between items-center mt-2'>
             <div>
@@ -93,31 +101,25 @@ export default function Sms({auth}) {
                 </div>
             </div>
 
-            <Button children={"Parse SMS"} type="button" onClick={() => setShowCreate(true)} />
+            <Button children={"Create Category"} type="button" onClick={() => setShowCreate(true)} />
         </div>
     </div>
 
     return (
         <Authenticated auth={auth}>
-            <Head title="SMS Parser" />
+            <Head title="Categories" />
 
             <Create showCreate={showCreate}
-                onCreate={(createdSms) => {
-                    setShowCreate(false)
-                    setSms([...createdSms, ...sms])
-                }}
+                onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit sms={editItem}
-                onClose={() => setEditItem(null)}
-                onUpdate={item => {
-                    onUpdate(item)
-                    setEditItem(null)
-                }}
+            <Edit category={editCategory}
+                onClose={() => setEditCategory(null)}
+                onUpdate={onUpdate}
                 />
 
             <Delete item={deleteItem}
-                resource="Sms"
+                resource="Category"
                 onClose={() => setDeleteItem(null)}
                 onDelete={onDelete}  />
 
@@ -126,7 +128,7 @@ export default function Sms({auth}) {
                     {header}
 
                     <div className="flex flex-col">
-                        {sms.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        {categories.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                     <table className="min-w-full divide-y divide-gray-200">
@@ -136,10 +138,10 @@ export default function Sms({auth}) {
                                                     Id
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Body
+                                                    Name
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Valid
+                                                    Type
                                                 </th>
                                                 <th scope="col" className="relative py-3">
                                                     <span className="sr-only">Edit</span>
@@ -147,17 +149,18 @@ export default function Sms({auth}) {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {sms.map((item) => (
+                                            {categories.map((item) => (
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{cutString(item.body, 50)}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transaction_id ? '✅' : '❌'}</td>
+                                                    <td className="whitespace-nowrap">
+                                                        <span className={"badge badge-" + item.color}>{item.name}</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.type}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        {! item.transaction_id && <button onClick={() => setEditItem(item)} type="button">
+                                                        <button onClick={() => setEditCategory(item)} type="button">
                                                             <span className="sr-only">Edit</span>
-
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                        </button>}
+                                                        </button>
 
                                                         <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
                                                             <span className="sr-only">Delete</span>
@@ -173,7 +176,7 @@ export default function Sms({auth}) {
                             </div>
                         </div>}
 
-                        <LoadMore hasContent={sms.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
+                        <LoadMore hasContent={categories.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
                     </div>
                 </div>
             </div>

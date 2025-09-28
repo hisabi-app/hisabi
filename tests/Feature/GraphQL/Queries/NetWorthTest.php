@@ -12,8 +12,7 @@ class NetWorthTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_returns_correct_data()
+    public function test_it_returns_correct_data()
     {
         $incomeCategory = Category::factory()->create(['type' => Category::INCOME]);
         $expensesCategory = Category::factory()->create(['type' => Category::EXPENSES]);

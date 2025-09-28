@@ -16,15 +16,19 @@ export default function CirclePackMetric({name, graphql_query, ranges}) {
         .color(d => d.color ?? 'white')
         .borderWidth('2px');
 
-    useEffect(async () => {
-        setValue(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            setValue(null);
 
-        let { data } = await query(graphql_query, selectedRange);
-        let parsedData = JSON.parse(data[graphql_query]);
+            let { data } = await query(graphql_query, selectedRange);
+            let parsedData = JSON.parse(data[graphql_query]);
 
-        setValue(parsedData);
-        console.log(parsedData);
-        myChart.data(parsedData)(refContainer.current)
+            setValue(parsedData);
+            console.log(parsedData);
+            myChart.data(parsedData)(refContainer.current)
+        };
+
+        fetchData();
     }, [selectedRange])
 
     if(value == null) {

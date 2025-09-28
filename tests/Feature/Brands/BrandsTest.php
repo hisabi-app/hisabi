@@ -10,8 +10,7 @@ class BrandsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_returns_correct_data()
+    public function test_it_returns_correct_data()
     {
         $brand = Brand::factory()->create();
         $brand->transactions()->create(['amount' => 1000]);

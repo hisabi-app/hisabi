@@ -10,8 +10,7 @@ class DeleteCategoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_delete_a_model()
+    public function test_it_delete_a_model()
     {
         $category = Category::factory()->create();
 

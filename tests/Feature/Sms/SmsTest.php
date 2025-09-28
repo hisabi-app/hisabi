@@ -10,8 +10,7 @@ class SmsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_returns_correct_data()
+    public function test_it_returns_correct_data()
     {
         $sms = Sms::factory()->create();
 

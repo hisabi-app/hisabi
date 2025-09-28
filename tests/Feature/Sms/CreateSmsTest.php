@@ -10,8 +10,7 @@ class CreateSmsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_create_a_model()
+    public function test_it_create_a_model()
     {
         $this->graphQL(/** @lang GraphQL */ '
             mutation {
@@ -36,8 +35,7 @@ class CreateSmsTest extends TestCase
         $this->assertCount(1, Sms::all());
     }
 
-    /** @test */
-    public function it_process_created_at_if_provided()
+    public function test_it_process_created_at_if_provided()
     {
         $this->graphQL(/** @lang GraphQL */ '
             mutation {
