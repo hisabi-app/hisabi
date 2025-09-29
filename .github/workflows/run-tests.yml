@@ -1,4 +1,4 @@
-name: Laravel 12 Tests (SQLite)
+name: Laravel 12 Tests (SQLite + Frontend)
 
 on:
   push:
@@ -21,6 +21,12 @@ jobs:
           extensions: mbstring, bcmath, sqlite
           coverage: none
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
       - name: Cache Composer packages
         uses: actions/cache@v4
         with:
@@ -28,8 +34,14 @@ jobs:
           key: composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: composer-
 
-      - name: Install dependencies
+      - name: Install PHP dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
 
       - name: Copy .env
         run: cp .env.example .env
@@ -51,5 +63,8 @@ jobs:
       - name: Run migrations
         run: php artisan migrate --force
 
-      - name: Run tests
+      - name: Run Laravel tests
         run: php artisan test
+
+      - name: Run frontend tests
+        run: npm run test
