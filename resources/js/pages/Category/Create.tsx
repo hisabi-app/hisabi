@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import Input from "@/Components/Global/Input";
-import Label from "@/Components/Global/Label";
-import SidePanel from '@/Components/Global/SidePanel';
+import Input from "@/components/Global/Input";
+import Label from "@/components/Global/Label";
+import SidePanel from '@/components/Global/SidePanel';
 import { createCategory } from "../../Api";
 
 export default function Create({showCreate, onClose, onCreate}) {
@@ -32,10 +32,10 @@ export default function Create({showCreate, onClose, onCreate}) {
         })
         .catch(console.error);
     }
-    
+
     return (
-        <SidePanel toggleOpen={showCreate} 
-                    onClose={onClose} 
+        <SidePanel toggleOpen={showCreate}
+                    onClose={onClose}
                     title={"Create Category"}>
             <div>
                 <div>
@@ -52,7 +52,7 @@ export default function Create({showCreate, onClose, onCreate}) {
 
                 <div className="col-span-6 sm:col-span-3 mt-4">
                     <Label forInput="type" value="Type" />
-                    
+
                     <select
                         id="type"
                         name="type"
@@ -69,7 +69,7 @@ export default function Create({showCreate, onClose, onCreate}) {
 
                 <div className="col-span-6 sm:col-span-3 mt-4">
                     <Label forInput="color" value="Color" />
-                    
+
                     <select
                         id="color"
                         name="color"

@@ -3,11 +3,11 @@ import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
-import LoadMore from '@/Components/Global/LoadMore';
+import LoadMore from '@/components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
-import Button from '@/Components/Global/Button';
-import Delete from '@/Components/Domain/Delete';
+import Button from '@/components/Global/Button';
+import Delete from '@/components/Domain/Delete';
 import { getCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';
 import {debounce} from "lodash";

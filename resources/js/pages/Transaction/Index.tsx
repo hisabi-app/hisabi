@@ -6,9 +6,9 @@ import { debounce } from 'lodash';
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
 import Create from './Create';
-import LoadMore from '@/Components/Global/LoadMore';
-import Button from '@/Components/Global/Button';
-import Delete from '@/Components/Domain/Delete';
+import LoadMore from '@/components/Global/LoadMore';
+import Button from '@/components/Global/Button';
+import Delete from '@/components/Domain/Delete';
 import { getTransactions, getAllBrands } from '@/Api';
 import { animateRowItem, formatNumber } from '@/Utils';
 

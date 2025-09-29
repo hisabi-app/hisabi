@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 import { updateBrand } from "../../Api";
-import Input from "@/Components/Global/Input";
-import Label from "@/Components/Global/Label";
-import Combobox from "@/Components/Global/Combobox";
-import SidePanel from '@/Components/Global/SidePanel';
+import Input from "@/components/Global/Input";
+import Label from "@/components/Global/Label";
+import Combobox from "@/components/Global/Combobox";
+import SidePanel from '@/components/Global/SidePanel';
 
 export default function Edit({categories, brand, onClose, onUpdate}) {
     const [name, setName] = useState(0)
@@ -33,10 +33,10 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
     }
 
     let isReady = name != '' && category != null;
-    
+
     return (
-        <SidePanel toggleOpen={! brand ? false : true} 
-                    onClose={onClose} 
+        <SidePanel toggleOpen={! brand ? false : true}
+                    onClose={onClose}
                     title={"Edit Brand"}>
             {
                 brand &&
@@ -54,9 +54,9 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
                     </div>
 
                     <div className="col-span-6 sm:col-span-3 mt-4">
-                        <Combobox 
-                            label="Category" 
-                            items={categories} 
+                        <Combobox
+                            label="Category"
+                            items={categories}
                             initialSelectedItem={category}
                             onChange={(item) => setCategory(item)}
                             displayInputValue={(item) => item?.name ?? ''}
@@ -64,12 +64,12 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
                     </div>
 
                     <div className="flex items-center justify-end mt-4">
-                        {isReady && 
+                        {isReady &&
                         <button onClick={update} className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150">
                             Update
                         </button>
                         }
-                        {!isReady && 
+                        {!isReady &&
                         <button className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150 opacity-25" disabled>
                             Update
                         </button>

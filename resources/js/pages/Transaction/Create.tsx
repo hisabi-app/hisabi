@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import Input from "@/Components/Global/Input";
-import Label from "@/Components/Global/Label";
+import Input from "@/components/Global/Input";
+import Label from "@/components/Global/Label";
 import { createTransaction } from "../../Api";
-import Combobox from "@/Components/Global/Combobox";
-import SidePanel from '@/Components/Global/SidePanel';
+import Combobox from "@/components/Global/Combobox";
+import SidePanel from '@/components/Global/SidePanel';
 
 export default function Create({brands, showCreate, onClose, onCreate}) {
     const [amount, setAmount] = useState(0);
@@ -38,10 +38,10 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
         })
         .catch(console.error);
     }
-    
+
     return (
-        <SidePanel toggleOpen={showCreate} 
-                    onClose={onClose} 
+        <SidePanel toggleOpen={showCreate}
+                    onClose={onClose}
                     title={"Create Transaction"}>
             <div>
                 <div>
@@ -69,9 +69,9 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
                 </div>
 
                 <div className="col-span-6 sm:col-span-3 mt-4">
-                        <Combobox 
-                            label="Brand" 
-                            items={brands} 
+                        <Combobox
+                            label="Brand"
+                            items={brands}
                             onChange={(item) => setBrand(item)}
                             displayInputValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
                             displayOptionValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}

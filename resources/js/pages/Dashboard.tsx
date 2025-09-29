@@ -1,10 +1,10 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 
-import Wrapper from '@/Components/Global/Wrapper';
-import { renderComponent } from '@/Components';
+import Wrapper from '@/components/Global/Wrapper';
+import { renderComponent } from '@/components';
 import Authenticated from '@/Layouts/Authenticated';
-import NoContent from '@/Components/Global/NoContent';
+import NoContent from '@/components/Global/NoContent';
 
 export default function Dashboard({auth, metrics, budgets, hasData}) {
     return (

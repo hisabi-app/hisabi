@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 import { updateTransaction } from "../../Api";
-import Input from "@/Components/Global/Input";
-import Label from "@/Components/Global/Label";
-import Combobox from "@/Components/Global/Combobox";
-import SidePanel from '@/Components/Global/SidePanel';
+import Input from "@/components/Global/Input";
+import Label from "@/components/Global/Label";
+import Combobox from "@/components/Global/Combobox";
+import SidePanel from '@/components/Global/SidePanel';
 
 export default function Edit({brands, transaction, onClose, onUpdate}) {
     const [amount, setAmount] = useState(0)
@@ -34,10 +34,10 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
         })
         .catch(console.error);
     }
-    
+
     return (
-        <SidePanel toggleOpen={! transaction ? false : true} 
-                    onClose={onClose} 
+        <SidePanel toggleOpen={! transaction ? false : true}
+                    onClose={onClose}
                     title={"Edit Transaction"}>
             {
                 transaction &&
@@ -67,9 +67,9 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
                     </div>
 
                     <div className="col-span-6 sm:col-span-3 mt-4">
-                        <Combobox 
-                            label="Brand" 
-                            items={brands} 
+                        <Combobox
+                            label="Brand"
+                            items={brands}
                             initialSelectedItem={brand}
                             onChange={(item) => setBrand(item)}
                             displayInputValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}

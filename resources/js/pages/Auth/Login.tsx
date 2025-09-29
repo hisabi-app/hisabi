@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { Button } from '@/Components/ui/button';
+import { Button } from '@/components/ui/button';
 import Guest from '@/Layouts/Guest';
-import Input from '@/Components/Global/Input';
-import Label from '@/Components/Global/Label';
-import ValidationErrors from '@/Components/Global/ValidationErrors';
+import { Input } from '@/components/ui/input';
+import Label from '@/components/Global/Label';
+import ValidationErrors from '@/components/Global/ValidationErrors';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function Login({ status }) {
@@ -46,8 +46,8 @@ export default function Login({ status }) {
                         value={data.email}
                         className="mt-1 block w-full"
                         autoComplete="username"
-                        isFocused={true}
-                        handleChange={onHandleChange}
+                        autoFocus={true}
+                        onChange={onHandleChange}
                     />
                 </div>
 
@@ -60,7 +60,7 @@ export default function Login({ status }) {
                         value={data.password}
                         className="mt-1 block w-full"
                         autoComplete="current-password"
-                        handleChange={onHandleChange}
+                        onChange={onHandleChange}
                     />
                 </div>
 

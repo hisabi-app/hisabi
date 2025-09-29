@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
-import NavLink from '@/Components/Global/NavLink';
-import ApplicationLogo from '@/Components/Global/ApplicationLogo';
-import ResponsiveNavLink from '@/Components/Global/ResponsiveNavLink';
-import HisabiGPT from '@/Components/Global/HisabiGPT';
+import NavLink from '@/components/Global/NavLink';
+import ApplicationLogo from '@/components/Global/ApplicationLogo';
+import ResponsiveNavLink from '@/components/Global/ResponsiveNavLink';
+import HisabiGPT from '@/components/Global/HisabiGPT';
 
 export default function Authenticated({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -132,7 +132,7 @@ export default function Authenticated({ header, children }) {
 
             <main>{children}</main>
 
-            
+
             <HisabiGPT />
         </div>
     );

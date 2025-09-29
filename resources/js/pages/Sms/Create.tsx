@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-import Label from "@/Components/Global/Label";
-import SidePanel from '@/Components/Global/SidePanel';
+import Label from "@/components/Global/Label";
+import SidePanel from '@/components/Global/SidePanel';
 import { createSms } from "../../Api";
-import Input from "@/Components/Global/Input";
+import Input from "@/components/Global/Input";
 
 export default function Create({showCreate, onClose, onCreate}) {
     const [sms, setSms] = useState('');

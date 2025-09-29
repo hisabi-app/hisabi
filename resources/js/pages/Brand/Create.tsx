@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import Input from "@/Components/Global/Input";
-import Label from "@/Components/Global/Label";
-import Combobox from "@/Components/Global/Combobox";
-import SidePanel from '@/Components/Global/SidePanel';
+import Input from "@/components/Global/Input";
+import Label from "@/components/Global/Label";
+import Combobox from "@/components/Global/Combobox";
+import SidePanel from '@/components/Global/SidePanel';
 import { createBrand } from '../../Api';
 
 export default function Edit({categories, showCreate, onClose, onCreate}) {
@@ -32,10 +32,10 @@ export default function Edit({categories, showCreate, onClose, onCreate}) {
         })
         .catch(console.error);
     }
-    
+
     return (
-        <SidePanel toggleOpen={showCreate} 
-                    onClose={onClose} 
+        <SidePanel toggleOpen={showCreate}
+                    onClose={onClose}
                     title={"Create Brand"}>
             <div>
                 <div>
@@ -52,9 +52,9 @@ export default function Edit({categories, showCreate, onClose, onCreate}) {
 
 
                 <div className="col-span-6 sm:col-span-3 mt-4">
-                    <Combobox 
-                        label="Category" 
-                        items={categories} 
+                    <Combobox
+                        label="Category"
+                        items={categories}
                         onChange={(item) => setCategoryId(item.id)}
                         />
                 </div>

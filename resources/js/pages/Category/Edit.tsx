@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import Input from "@/Components/Global/Input";
-import Label from "@/Components/Global/Label";
-import SidePanel from '@/Components/Global/SidePanel';
+import Input from "@/components/Global/Input";
+import Label from "@/components/Global/Label";
+import SidePanel from '@/components/Global/SidePanel';
 import { updateCategory } from "../../Api";
 
 export default function Edit({category, onClose, onUpdate}) {
@@ -30,10 +30,10 @@ export default function Edit({category, onClose, onUpdate}) {
         })
         .catch(console.error);
     }
-    
+
     return (
-        <SidePanel toggleOpen={! category ? false : true} 
-                    onClose={onClose} 
+        <SidePanel toggleOpen={! category ? false : true}
+                    onClose={onClose}
                     title={"Edit Category"}>
             {
                 category &&
@@ -72,7 +72,7 @@ export default function Edit({category, onClose, onUpdate}) {
                     <label htmlFor="type" className="block text-sm font-medium text-gray-700">
                         Type
                       </label>
-                    
+
                     <select
                         id="color"
                         name="color"
