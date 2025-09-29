@@ -15,7 +15,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(72.3% 0.219 149.579);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -162,36 +162,5 @@
 
     .badge-indigo{
         @apply bg-indigo-200 text-indigo-400;
-    }
-}
-
-.loaded {
-    animation: loaded 1s ease-in-out 1;
-}
-
-.updated {
-    animation: updated 1s ease-in-out 1;
-}
-
-.deleted {
-    animation: deleted 0.5s ease-in-out 1;
-}
-
-@keyframes loaded {
-    50% {
-        background-color: #f6fbff;
-    }
-}
-
-@keyframes updated {
-    50% {
-        background-color: #f6fffa;
-    }
-}
-
-@keyframes deleted {
-    100% {
-        background-color: red;
-        opacity: 0;
     }
 }

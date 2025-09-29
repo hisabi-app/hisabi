@@ -164,7 +164,7 @@ export default function Index({ auth }) {
                                         }
                                         {transaction.brand.category && <Badge className={"badge badge-" + transaction.brand.category.color} variant="outline">{transaction.brand.category.name}</Badge>
                                         }
-                                        <p className={`${transaction.brand.category.type == "INCOME" ? 'text-green-500' : ''} min-w-26 text-right`}> {transaction.brand.category.type == "INCOME" ? '+' : '-'}{AppCurrency} {formatNumber(transaction.amount, null)}</p>
+                                        <p className={`${transaction.brand.category.type == "INCOME" ? 'text-green-500' : ''} min-w-26 text-right`}> {transaction.brand.category.type == "INCOME" ? '' : '-'}{AppCurrency} {formatNumber(transaction.amount, null)}</p>
                                     </div>
                                 </CardContent>
                             </Card>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { updateTransaction } from "../../Api";
 import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import Combobox from "@/components/Global/Combobox";
 import SidePanel from '@/components/Global/SidePanel';
 
@@ -96,9 +97,9 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
                     </div>
 
                     <div className="flex items-center justify-end mt-4">
-                        <button onClick={update} className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150">
+                        <Button onClick={update}>
                             Update
-                        </button>
+                        </Button>
                     </div>
                 </div>
             }
