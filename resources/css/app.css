@@ -129,7 +129,7 @@
 
 @layer components {
     .badge{
-        @apply text-xs inline-block py-1 px-2.5 uppercase leading-none text-center whitespace-nowrap align-baseline rounded-full;
+        @apply border-none;
     }
 
     .badge-blue{
