@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import Input from "@/components/Global/Input";
-import Label from "@/components/Global/Label";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { createTransaction } from "../../Api";
 import Combobox from "@/components/Global/Combobox";
 import SidePanel from '@/components/Global/SidePanel';
@@ -45,26 +45,30 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
                     title={"Create Transaction"}>
             <div>
                 <div>
-                    <Label forInput="amount" value={`Amount (${AppCurrency})`} />
+                    <Label htmlFor="amount">
+                        {`Amount (${AppCurrency})`}
+                    </Label>
 
                     <Input
-                        type="text"
+                        type="number"
                         name="amount"
                         value={amount}
                         className="mt-1 block w-full"
-                        handleChange={(e) => setAmount(e.target.value > 0 ? e.target.value : 0)}
+                        onChange={(e) => setAmount(e.target.value > 0 ? e.target.value : 0)}
                     />
                 </div>
 
                 <div className="mt-4">
-                    <Label forInput="date" value="Date" />
+                    <Label htmlFor="date">
+                        Date
+                    </Label>
 
                     <Input
                         type="date"
                         name="date"
                         value={createdAt}
                         className="mt-1 block w-full"
-                        handleChange={(e) => setCreatedAt(e.target.value)}
+                        onChange={(e) => setCreatedAt(e.target.value)}
                     />
                 </div>
 
@@ -79,14 +83,16 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
                 </div>
 
                 <div className="mt-4">
-                    <Label forInput="note" value="Note (optional)" />
+                    <Label htmlFor="note">
+                        Note (optional)
+                    </Label>
 
                     <Input
                         type="text"
                         name="note"
                         value={note}
                         className="mt-1 block w-full"
-                        handleChange={(e) => setNote(e.target.value)}
+                        onChange={(e) => setNote(e.target.value)}
                     />
                 </div>
 
