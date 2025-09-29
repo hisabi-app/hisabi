@@ -54,7 +54,6 @@
         @inertia
         <script>
             window.AppCurrency = "{{ config('hisabi.currency') }}";
-            window.AppSmsTemplates = "{{ implode('\n', config('hisabi.sms_templates')) }}";
         </script>
     </body>
 </html>
