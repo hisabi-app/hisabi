@@ -37,7 +37,7 @@ jobs:
         echo "DB_DATABASE=:memory:" >> .env
 
     - name: Install Composer dependencies
-      run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: Generate application key
       run: php artisan key:generate
