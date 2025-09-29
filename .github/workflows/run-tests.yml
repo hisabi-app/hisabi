@@ -1,4 +1,4 @@
-name: Run Tests
+name: Laravel 12 Tests (SQLite)
 
 on:
   push:
@@ -7,52 +7,49 @@ on:
     branches: [ "main" ]
 
 jobs:
-  run-tests:
+  laravel-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
-        coverage: none
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, bcmath, sqlite
+          coverage: none
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-
 
-    - name: Create .env file
-      run: |
-        echo "APP_NAME=Laravel" > .env
-        echo "APP_ENV=testing" >> .env
-        echo "APP_KEY=" >> .env
-        echo "APP_DEBUG=true" >> .env
-        echo "APP_URL=http://localhost" >> .env
-        echo "DB_CONNECTION=sqlite" >> .env
-        echo "DB_DATABASE=:memory:" >> .env
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    - name: Install Composer dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Copy .env
+        run: cp .env.example .env
 
-    - name: Generate application key
-      run: php artisan key:generate
+      - name: Configure SQLite
+        run: |
+          php -r "
+          file_put_contents('.env', preg_replace(
+              '/DB_CONNECTION=.*/',
+              'DB_CONNECTION=sqlite',
+              file_get_contents('.env')
+          ));
+          file_put_contents('.env', \"\nDB_DATABASE=:memory:\n\", FILE_APPEND);
+          "
 
-    - name: Set directory permissions
-      run: chmod -R 777 storage bootstrap/cache
+      - name: Generate application key
+        run: php artisan key:generate
 
-    - name: Install npm dependencies
-      run: npm ci
+      - name: Run migrations
+        run: php artisan migrate --force
 
-    - name: Build assets
-      run: npm run build
-
-    - name: Execute PHP tests (Unit and Feature tests) via Pest
-      run: php artisan test
-
-    - name: Execute JavaScript tests
-      run: npm run test --if-present
+      - name: Run tests
+        run: php artisan test
