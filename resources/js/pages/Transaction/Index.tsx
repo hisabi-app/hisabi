@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/react';
 import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
-import Edit from '@/Pages/Transaction/Edit';
+import Edit from './Edit';
 import Create from './Create';
 import LoadMore from '@/Components/Global/LoadMore';
 import Button from '@/Components/Global/Button';
