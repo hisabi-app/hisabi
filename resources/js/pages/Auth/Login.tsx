@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Guest from '@/Layouts/Guest';
 import { Input } from '@/components/ui/input';
-import Label from '@/components/Global/Label';
-import ValidationErrors from '@/components/Global/ValidationErrors';
+import { Label } from '@/components/ui/label';
 import { Head, useForm } from '@inertiajs/react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -32,44 +32,39 @@ export default function Login({ status }) {
         <Guest>
             <Head title="Log in" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
-            <ValidationErrors errors={errors} />
-
-            <form onSubmit={submit}>
-                <div>
-                    <Label forInput="email" value="Email" />
-
-                    <Input
-                        type="text"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        autoFocus={true}
-                        onChange={onHandleChange}
-                    />
-                </div>
-
-                <div className="mt-4">
-                    <Label forInput="password" value="Password" />
-
-                    <Input
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={onHandleChange}
-                    />
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <Button size="sm" disabled={processing}>
-                        Log in
-                    </Button>
-                </div>
-            </form>
+            <Card>
+                <CardHeader className="text-center">
+                    <CardTitle className="text-xl">Welcome back</CardTitle>
+                    <CardDescription className="text-sm">Login with your email</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={submit}>
+                        <div className="grid gap-6">
+                            <div className="grid gap-6">
+                                <div className="grid gap-3">
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="m@example.com"
+                                        required
+                                        onChange={onHandleChange}
+                                        name="email"
+                                    />
+                                    {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
+                                </div>
+                                <div className="grid gap-3">
+                                        <Label htmlFor="password">Password</Label>
+                                    <Input id="password" type="password" required onChange={onHandleChange} name="password" />
+                                </div>
+                                <Button type="submit" disabled={processing} className="w-full">
+                                    Login
+                                </Button>
+                            </div>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
         </Guest>
     );
 }
