@@ -1,9 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import CirclePack from "circlepack-chart";
-
 import { query } from '../../Api';
-import Card from "../Global/Card";
 import LoadingView from "../Global/LoadingView";
+import { Card } from '@/components/ui/card';
 
 export default function CirclePackMetric({name, graphql_query, ranges}) {
     const [value, setValue] = useState(null);
@@ -40,7 +39,7 @@ export default function CirclePackMetric({name, graphql_query, ranges}) {
     }
 
     return (
-        <div className={"bg-white shadow rounded-lg w-full overflow-hidden"}>
+        <Card className={"bg-white shadow rounded-lg w-full overflow-hidden"}>
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
@@ -57,6 +56,6 @@ export default function CirclePackMetric({name, graphql_query, ranges}) {
                     <div ref={refContainer}></div>
                 </div>
             </div>
-        </div>
+        </Card>
     );
 };

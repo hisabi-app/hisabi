@@ -6,7 +6,7 @@ import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
-import Button from '@/components/Global/Button';
+import { Button } from '@/components/ui/button';
 import Delete from '@/components/Domain/Delete';
 import { getCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';

@@ -7,7 +7,7 @@ import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
 import Create from './Create';
 import LoadMore from '@/components/Global/LoadMore';
-import Button from '@/components/Global/Button';
+import { Button } from '@/components/ui/button';
 import Delete from '@/components/Domain/Delete';
 import { getTransactions, getAllBrands } from '@/Api';
 import { animateRowItem, formatNumber } from '@/Utils';
@@ -145,19 +145,19 @@ export default function Index({auth}) {
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50">
                                             <tr>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th scope="col" className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">
                                                     Id
                                                 </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th scope="col" className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">
                                                     Amount
                                                 </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th scope="col" className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">
                                                     Brand
                                                 </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th scope="col" className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">
                                                     Category
                                                 </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th scope="col" className="px-6 py-3 text-left text-xs text-gray-500 uppercase tracking-wider">
                                                     Date
                                                 </th>
                                                 <th scope="col" className="relative py-3">
@@ -168,12 +168,12 @@ export default function Index({auth}) {
                                         <tbody className="bg-white divide-y divide-gray-200">
                                             {transactions.map((item) => (
                                                 <tr key={item.id} className='loaded' id={'item-' + item.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{AppCurrency} {formatNumber(item.amount, null)}  </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.brand.category ? <span className={"badge badge-" + item.brand.category.color}>{item.brand.category.name} ({item.brand.category.type})</span> : '-'}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.created_at}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.id}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{AppCurrency} {formatNumber(item.amount, null)}  </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.brand.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.brand.category ? <span className={"badge badge-" + item.brand.category.color}>{item.brand.category.name} ({item.brand.category.type})</span> : '-'}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.created_at}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                                                         {item.note &&
                                                             <button>
                                                                 <div className="relative flex flex-col items-center group">

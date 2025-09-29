@@ -3,7 +3,7 @@ import { Chart, LineElement, Tooltip, LineController, CategoryScale, LinearScale
 import AnnotationPlugin from 'chartjs-plugin-annotation';
 
 import { query } from '../../Api';
-import Card from "../Global/Card";
+import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 
 Chart.register(LineElement, Tooltip, LineController, CategoryScale, LinearScale, PointElement, Filler, AnnotationPlugin);

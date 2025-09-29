@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TrendingUpIcon, TrendingDownIcon, InformationCircleIcon } from '@heroicons/react/solid';
 
 import { query } from '../../Api';
-import Card from "../Global/Card";
+import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber, getAppCurrency } from '../../Utils';
 

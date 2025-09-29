@@ -3,7 +3,7 @@ import { Chart, ArcElement, DoughnutController } from 'chart.js';
 import { sumBy } from 'lodash';
 
 import { query } from '../../Api';
-import Card from "../Global/Card";
+import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { colors, formatNumber, getTailwindColor } from '../../Utils';
 

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Head, useForm } from '@inertiajs/react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
-export default function Login({ status }) {
+export default function Login() {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: ''
