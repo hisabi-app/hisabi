@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Button from '@/Components/Global/Button';
+import { Button } from '@/Components/ui/button';
 import Guest from '@/Layouts/Guest';
 import Input from '@/Components/Global/Input';
 import Label from '@/Components/Global/Label';
@@ -65,7 +65,7 @@ export default function Login({ status }) {
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
-                    <Button className="ml-4" processing={processing}>
+                    <Button size="sm" disabled={processing}>
                         Log in
                     </Button>
                 </div>
