@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/react';
+import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/components/Global/LoadMore';
@@ -9,8 +9,9 @@ import Edit from './Edit';
 import { Button } from '@/components/ui/button';
 import { getSms } from '@/Api';
 import { animateRowItem, cutString } from '@/Utils';
-import {debounce} from "lodash";
 import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function Sms({auth}) {
     const [sms, setSms] = useState([]);
@@ -112,49 +113,32 @@ export default function Sms({auth}) {
                         />
                     </div>
 
-                    <div className="flex flex-col">
-                        {sms.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                                <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Id
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Body
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Valid
-                                                </th>
-                                                <th scope="col" className="relative py-3">
-                                                    <span className="sr-only">Edit</span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                            {sms.map((item) => (
-                                                <tr key={item.id} className='loaded' id={'item-' + item.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{cutString(item.body, 50)}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transaction_id ? '✅' : '❌'}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button onClick={() => setEditItem(item)} type="button">
-                                                            <span className="sr-only">Edit</span>
+                    <div className="grid gap-2">
+                        {sms.length > 0 && sms.map((item) => (
+                            <Card key={item.id} className='py-0' id={'item-' + item.id}>
+                                <CardContent className='flex justify-between items-center px-4 py-3'>
+                                    <div className='flex gap-3 items-center flex-1'>
+                                        <button onClick={() => setEditItem(item)} className='text-left hover:underline flex-1'>
+                                            <p className='font-medium text-sm'>{cutString(item.body, 80)}</p>
+                                            <p className='text-xs text-muted-foreground mt-1'>ID: {item.id}</p>
+                                        </button>
+                                    </div>
+                                    <div className='flex gap-2 items-center'>
+                                        {item.transaction_id ? (
+                                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                                ✅ Valid
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                                                ❌ Invalid
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
 
-                                                            <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>}
-
-                        <LoadMore hasContent={sms.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
+                        <LoadMore hasContent={sms.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage + 1)} />
                     </div>
                 </div>
             </div>

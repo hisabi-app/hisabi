@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/react';
+import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/components/Global/LoadMore';
@@ -9,8 +9,11 @@ import Create from './Create';
 import { Button } from '@/components/ui/button';
 import { getAllCategories, getBrands } from '@/Api';
 import { animateRowItem } from '@/Utils';
-import {debounce} from "lodash";
 import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
+import { Badge } from '@/components/ui/badge';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
@@ -127,52 +130,32 @@ export default function Index({auth}) {
                         />
                     </div>
 
-                    <div className="flex flex-col">
-                        {brands.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                                <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Id
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Name
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Category
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Total Transactions
-                                                </th>
-                                                <th scope="col" className="relative py-3">
-                                                    <span className="sr-only">Edit</span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                            {brands.map((item) => (
-                                                <tr key={item.id} className={`loaded ${item.category ? '' : 'bg-red-100'}`} id={'item-' + item.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.id}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.name}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.category ? <span className={"badge badge-" + item.category.color}>{item.category.name}</span> : '-'}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.transactionsCount}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                                        <button onClick={() => setEditItem(item)} type="button">
-                                                            <span className="sr-only">Edit</span>
-                                                            <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>}
+                    <div className="grid gap-2">
+                        {brands.length > 0 && brands.map((brand) => (
+                            <Card key={brand.id} className='py-0' id={'item-' + brand.id}>
+                                <CardContent className='flex justify-between items-center px-4 py-3'>
+                                    <div className='flex gap-2 items-center'>
+                                        <Avatar className='size-10'>
+                                            <AvatarImage src={brand.image} />
+                                            <AvatarFallback>{brand.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <button onClick={() => setEditItem(brand)} className='font-medium hover:underline'>{brand.name}</button>
+                                            <div className='flex gap-1 text-muted-foreground items-center'>
+                                                <ArrowElbowDownRightIcon size={10} weight="bold" />
+                                                <p className='text-xs'>{brand.category ? <span>{brand.category.name}</span> : '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='flex gap-2 items-center'>
+                                        {brand.category && <Badge className={"badge badge-" + brand.category.color} variant="outline">{brand.category.name}</Badge>}
+                                        <p className='text-muted-foreground text-sm min-w-26 text-right'>{brand.transactionsCount} {brand.transactionsCount === 1 ? 'transaction' : 'transactions'}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
 
-                        <LoadMore hasContent={brands.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
+                        <LoadMore hasContent={brands.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage + 1)} />
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/react';
+import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/components/Global/LoadMore';
@@ -9,8 +9,9 @@ import Create from './Create';
 import { Button } from '@/components/ui/button';
 import { getCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';
-import {debounce} from "lodash";
 import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -114,51 +115,26 @@ export default function Index({auth}) {
                         />
                     </div>
 
-                    <div className="flex flex-col">
-                        {categories.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                                <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Id
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Name
-                                                </th>
-                                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Type
-                                                </th>
-                                                <th scope="col" className="relative py-3">
-                                                    <span className="sr-only">Edit</span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                            {categories.map((item) => (
-                                                <tr key={item.id} className='loaded' id={'item-' + item.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.id}</td>
-                                                    <td className="whitespace-nowrap">
-                                                        <span className={"badge badge-" + item.color}>{item.name}</span>
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.type}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button onClick={() => setEditCategory(item)} type="button">
-                                                            <span className="sr-only">Edit</span>
-                                                            <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>}
-
-                        <LoadMore hasContent={categories.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage+1)} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {categories.length > 0 && categories.map((category) => (
+                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                <CardContent className='flex justify-between items-center px-4 py-3'>
+                                    <div className='flex gap-2 items-center'>
+                                        <button onClick={() => setEditCategory(category)} className='font-medium hover:underline'>
+                                            <Badge className={"badge badge-" + category.color} variant="outline">{category.name}</Badge>
+                                        </button>
+                                    </div>
+                                    <div className='flex gap-2 items-center'>
+                                        <p className={`text-sm font-medium ${category.type === 'INCOME' ? 'text-green-500' : 'text-gray-900'}`}>
+                                            {category.type}
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
                     </div>
+
+                    <LoadMore hasContent={categories.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage + 1)} />
                 </div>
             </div>
         </Authenticated>
