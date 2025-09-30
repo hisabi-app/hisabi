@@ -6,8 +6,10 @@ import Authenticated from '@/Layouts/Authenticated';
 import NoContent from '@/components/Global/NoContent';
 
 export default function Dashboard({ auth, metrics, budgets, hasData }) {
+    const header = <h2>Dashboard</h2>
+
     return (
-        <Authenticated auth={auth}>
+        <Authenticated auth={auth} header={header}>
             <Head title="Hisabi Dashboard" />
 
             <div className="py-12">

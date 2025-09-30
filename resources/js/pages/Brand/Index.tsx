@@ -90,27 +90,15 @@ export default function Index({auth}) {
         () => debounce(performSearchHandler, 300)
         , []);
 
-    const header = <div className="w-full pb-3 mb-4 px-4 sm:px-0">
-        <h2 className='text-lg text-gray-600'>Brands</h2>
-
-        <div className='flex justify-between items-center mt-2'>
-            <div>
-                <div className="grid grid-cols-2 gap-2">
-                    <Input
-                        name="search"
-                        placeholder='Search..'
-                        className='bg-white'
-                        onChange={performSearch}
-                    />
-                </div>
-            </div>
-
-            <Button children={"Create Brand"} type="button" onClick={() => setShowCreate(true)} />
+    const header = (
+        <div className="flex items-center justify-between w-full">
+            <h2>Brands</h2>
+            <Button onClick={() => setShowCreate(true)}>Create Brand</Button>
         </div>
-    </div>
+    )
 
     return (
-        <Authenticated auth={auth}>
+        <Authenticated auth={auth} header={header}>
             <Head title="Brands" />
 
             <Create showCreate={showCreate}
@@ -130,7 +118,14 @@ export default function Index({auth}) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {header}
+                    <div className='mb-6'>
+                        <Input
+                            name="search"
+                            placeholder='Search..'
+                            className='bg-white max-w-sm'
+                            onChange={performSearch}
+                        />
+                    </div>
 
                     <div className="flex flex-col">
                         {brands.length > 0 && <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
