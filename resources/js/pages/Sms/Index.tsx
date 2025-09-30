@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
@@ -7,7 +7,6 @@ import LoadMore from '@/components/Global/LoadMore';
 import Create from './Create';
 import Edit from './Edit';
 import { Button } from '@/components/ui/button';
-import Delete from '@/components/Domain/Delete';
 import { getSms } from '@/Api';
 import { animateRowItem, cutString } from '@/Utils';
 import {debounce} from "lodash";
@@ -21,7 +20,6 @@ export default function Sms({auth}) {
     const [loading, setLoading] = useState(false);
     const [showCreate, setShowCreate] = useState(false);
     const [editItem, setEditItem] = useState(null);
-    const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
         if(! hasMorePages) return;
@@ -60,11 +58,9 @@ export default function Sms({auth}) {
         animateRowItem(updatedItem.id)
     }
 
-    const onDelete = () => {
-        let tempDeleteItem = deleteItem;
-        setDeleteItem(null)
-        animateRowItem(tempDeleteItem.id, 'deleted', () => {
-            setSms(sms.filter(item => item.id != tempDeleteItem.id));
+    const onDelete = (deletedItem) => {
+        animateRowItem(deletedItem.id, 'deleted', () => {
+            setSms(sms.filter(item => item.id != deletedItem.id));
         })
     }
 
@@ -114,12 +110,8 @@ export default function Sms({auth}) {
                     onUpdate(item)
                     setEditItem(null)
                 }}
+                onDelete={onDelete}
                 />
-
-            <Delete item={deleteItem}
-                resource="Sms"
-                onClose={() => setDeleteItem(null)}
-                onDelete={onDelete}  />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -153,16 +145,10 @@ export default function Sms({auth}) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{cutString(item.body, 50)}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800">{item.transaction_id ? '✅' : '❌'}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        {! item.transaction_id && <button onClick={() => setEditItem(item)} type="button">
+                                                        <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
 
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                        </button>}
-
-                                                        <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
-                                                            <span className="sr-only">Delete</span>
-
-                                                            <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>
                                                 </tr>

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-import Input from "@/components/Global/Input";
-import Label from "@/components/Global/Label";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { LongPressButton } from '@/components/ui/long-press-button';
 import SidePanel from '@/components/Global/SidePanel';
-import { updateCategory } from "../../Api";
+import { updateCategory, deleteResource } from "../../Api";
 
-export default function Edit({category, onClose, onUpdate}) {
+export default function Edit({category, onClose, onUpdate, onDelete}) {
     const [name, setName] = useState('')
     const [type, setType] = useState('')
     const [color, setColor] = useState('gray')
@@ -39,21 +41,23 @@ export default function Edit({category, onClose, onUpdate}) {
                 category &&
                 <div>
                     <div>
-                        <Label forInput="name" value="Name" />
+                        <Label htmlFor="name">
+                            Name
+                        </Label>
 
                         <Input
                             type="text"
                             name="name"
                             value={name}
                             className="mt-1 block w-full"
-                            handleChange={(e) => setName(e.target.value)}
+                            onChange={(e) => setName(e.target.value)}
                         />
                     </div>
 
                     <div className="col-span-6 sm:col-span-3 mt-4">
-                      <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+                      <Label htmlFor="type">
                         Type
-                      </label>
+                      </Label>
                       <select
                         id="type"
                         name="type"
@@ -69,9 +73,9 @@ export default function Edit({category, onClose, onUpdate}) {
                     </div>
 
                     <div className="col-span-6 sm:col-span-3 mt-4">
-                    <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-                        Type
-                      </label>
+                    <Label htmlFor="color">
+                        Color
+                      </Label>
 
                     <select
                         id="color"
@@ -92,10 +96,22 @@ export default function Edit({category, onClose, onUpdate}) {
                 </div>
 
 
-                    <div className="flex items-center justify-end mt-4">
-                        <button onClick={update} className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150">
+                    <div className="flex items-center justify-between mt-4">
+                        <LongPressButton
+                            onLongPress={() => {
+                                deleteResource({id: category.id, resource: 'Category'})
+                                    .then(() => {
+                                        onDelete(category)
+                                        onClose()
+                                    })
+                                    .catch(console.error);
+                            }}
+                        >
+                            Hold to Delete
+                        </LongPressButton>
+                        <Button onClick={update}>
                             Update
-                        </button>
+                        </Button>
                     </div>
                 </div>
             }

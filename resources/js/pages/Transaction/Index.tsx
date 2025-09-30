@@ -7,7 +7,6 @@ import Edit from './Edit';
 import Create from './Create';
 import LoadMore from '@/components/Global/LoadMore';
 import { Button } from '@/components/ui/button';
-import Delete from '@/components/Domain/Delete';
 import { getTransactions, getAllBrands } from '@/Api';
 import { animateRowItem, formatNumber } from '@/Utils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,7 +25,6 @@ export default function Index({ auth }) {
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
-    const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
         getAllBrands()
@@ -81,11 +79,9 @@ export default function Index({ auth }) {
         setEditItem(null)
     }
 
-    const onDelete = () => {
-        let tempDeleteItem = deleteItem;
-        setDeleteItem(null)
-        animateRowItem(tempDeleteItem.id, 'deleted', () => {
-            setTransactions(transactions.filter(item => item.id != deleteItem.id));
+    const onDelete = (deletedItem) => {
+        animateRowItem(deletedItem.id, 'deleted', () => {
+            setTransactions(transactions.filter(item => item.id != deletedItem.id));
         })
     };
 
@@ -130,13 +126,9 @@ export default function Index({ auth }) {
             <Edit transaction={editItem}
                 brands={allBrands}
                 onUpdate={onUpdate}
+                onDelete={onDelete}
                 onClose={() => setEditItem(null)}
             />
-
-            <Delete item={deleteItem}
-                resource="Transaction"
-                onClose={() => setDeleteItem(null)}
-                onDelete={onDelete} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

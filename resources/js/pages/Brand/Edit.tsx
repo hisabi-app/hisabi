@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-import { updateBrand } from "../../Api";
-import Input from "@/components/Global/Input";
-import Label from "@/components/Global/Label";
+import { updateBrand, deleteResource } from "../../Api";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { LongPressButton } from '@/components/ui/long-press-button';
 import Combobox from "@/components/Global/Combobox";
 import SidePanel from '@/components/Global/SidePanel';
 
-export default function Edit({categories, brand, onClose, onUpdate}) {
+export default function Edit({categories, brand, onClose, onUpdate, onDelete}) {
     const [name, setName] = useState(0)
     const [category, setCategory] = useState(null)
 
@@ -42,14 +44,16 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
                 brand &&
                 <div>
                     <div>
-                        <Label forInput="name" value="Name" />
+                        <Label htmlFor="name">
+                            Name
+                        </Label>
 
                         <Input
                             type="text"
                             name="name"
                             value={name}
                             className="mt-1 block w-full"
-                            handleChange={(e) => setName(e.target.value)}
+                            onChange={(e) => setName(e.target.value)}
                         />
                     </div>
 
@@ -63,17 +67,22 @@ export default function Edit({categories, brand, onClose, onUpdate}) {
                             />
                     </div>
 
-                    <div className="flex items-center justify-end mt-4">
-                        {isReady &&
-                        <button onClick={update} className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150">
+                    <div className="flex items-center justify-between mt-4">
+                        <LongPressButton
+                            onLongPress={() => {
+                                deleteResource({id: brand.id, resource: 'Brand'})
+                                    .then(() => {
+                                        onDelete(brand)
+                                        onClose()
+                                    })
+                                    .catch(console.error);
+                            }}
+                        >
+                            Hold to Delete
+                        </LongPressButton>
+                        <Button disabled={!isReady} onClick={update}>
                             Update
-                        </button>
-                        }
-                        {!isReady &&
-                        <button className="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-green-500 transition ease-in-out duration-150 opacity-25" disabled>
-                            Update
-                        </button>
-                        }
+                        </Button>
                     </div>
                 </div>
             }

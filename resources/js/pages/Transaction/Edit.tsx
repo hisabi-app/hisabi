@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { updateTransaction } from "../../Api";
+import { updateTransaction, deleteResource } from "../../Api";
 import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { LongPressButton } from '@/components/ui/long-press-button';
 import Combobox from "@/components/Global/Combobox";
 import SidePanel from '@/components/Global/SidePanel';
 
-export default function Edit({brands, transaction, onClose, onUpdate}) {
+export default function Edit({brands, transaction, onClose, onUpdate, onDelete}) {
     const [amount, setAmount] = useState(0)
     const [createdAt, setCreatedAt] = useState('')
     const [brand, setBrand] = useState(null)
@@ -96,7 +97,19 @@ export default function Edit({brands, transaction, onClose, onUpdate}) {
                         />
                     </div>
 
-                    <div className="flex items-center justify-end mt-4">
+                    <div className="flex items-center justify-between mt-4">
+                        <LongPressButton
+                            onLongPress={() => {
+                                deleteResource({id: transaction.id, resource: 'Transaction'})
+                                    .then(() => {
+                                        onDelete(transaction)
+                                        onClose()
+                                    })
+                                    .catch(console.error);
+                            }}
+                        >
+                            Hold to Delete
+                        </LongPressButton>
                         <Button onClick={update}>
                             Update
                         </Button>

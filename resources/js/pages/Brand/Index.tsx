@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { PencilAltIcon } from '@heroicons/react/outline';
 import { Head } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
@@ -7,7 +7,6 @@ import LoadMore from '@/components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
 import { Button } from '@/components/ui/button';
-import Delete from '@/components/Domain/Delete';
 import { getAllCategories, getBrands } from '@/Api';
 import { animateRowItem } from '@/Utils';
 import {debounce} from "lodash";
@@ -22,7 +21,6 @@ export default function Index({auth}) {
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
-    const [deleteItem, setDeleteItem] = useState(null);
 
     useEffect(() => {
         getAllCategories()
@@ -76,11 +74,9 @@ export default function Index({auth}) {
         animateRowItem(updatedItem.id)
     }
 
-    const onDelete = () => {
-        let tempDeleteItem = deleteItem;
-        setDeleteItem(null)
-        animateRowItem(tempDeleteItem.id, 'deleted', () => {
-            setBrands(brands.filter(item => item.id != tempDeleteItem.id));
+    const onDelete = (deletedItem) => {
+        animateRowItem(deletedItem.id, 'deleted', () => {
+            setBrands(brands.filter(item => item.id != deletedItem.id));
         })
     }
 
@@ -129,12 +125,8 @@ export default function Index({auth}) {
                     onUpdate(item)
                     setEditItem(null)
                 }}
+                onDelete={onDelete}
             />
-
-            <Delete item={deleteItem}
-                resource="Brand"
-                onClose={() => setDeleteItem(null)}
-                onDelete={onDelete}  />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -175,12 +167,6 @@ export default function Index({auth}) {
                                                         <button onClick={() => setEditItem(item)} type="button">
                                                             <span className="sr-only">Edit</span>
                                                             <PencilAltIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                                                        </button>
-
-                                                        <button onClick={() => setDeleteItem(item)} type="button" className="ml-2">
-                                                            <span className="sr-only">Delete</span>
-
-                                                            <TrashIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                                                         </button>
                                                     </td>
                                                 </tr>

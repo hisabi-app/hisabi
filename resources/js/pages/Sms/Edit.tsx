@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import SidePanel from '@/components/Global/SidePanel';
-import { updateSms } from "../../Api";
+import { updateSms, deleteResource } from "../../Api";
 import { Button } from "@/components/ui/button";
+import { LongPressButton } from '@/components/ui/long-press-button';
 
-export default function Edit({sms, onClose, onUpdate}) {
+export default function Edit({sms, onClose, onUpdate, onDelete}) {
     const [loading, setLoading] = useState(false);
     const [body, setBody] = useState('')
 
@@ -53,7 +54,19 @@ export default function Edit({sms, onClose, onUpdate}) {
                         />
                     </div>
 
-                    <div className="flex items-center justify-end mt-4">
+                    <div className="flex items-center justify-between mt-4">
+                        <LongPressButton
+                            onLongPress={() => {
+                                deleteResource({id: sms.id, resource: 'Sms'})
+                                    .then(() => {
+                                        onDelete(sms)
+                                        onClose()
+                                    })
+                                    .catch(console.error);
+                            }}
+                        >
+                            Hold to Delete
+                        </LongPressButton>
                         <Button onClick={update}>
                             <span>Parse again</span>
                         </Button>
