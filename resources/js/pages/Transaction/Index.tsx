@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Head } from '@inertiajs/react';
 import { debounce } from 'lodash';
 
@@ -7,13 +7,14 @@ import Edit from './Edit';
 import Create from './Create';
 import LoadMore from '@/components/Global/LoadMore';
 import { Button } from '@/components/ui/button';
-import { getTransactions, getAllBrands } from '@/Api';
+import { getTransactions, getAllBrands, getTransactionStats } from '@/Api';
 import { animateRowItem, formatNumber } from '@/Utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { getAppCurrency } from '@/Utils';
 
 
 export default function Index({ auth }) {
@@ -25,6 +26,27 @@ export default function Index({ auth }) {
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
+    const [stats, setStats] = useState({ totalIncome: 0, totalExpenses: 0, totalTransactions: 0 });
+    const [statsLoading, setStatsLoading] = useState(true);
+
+    const fetchStats = () => {
+        setStatsLoading(true);
+        getTransactionStats()
+            .then(({ data }) => {
+                const income = JSON.parse(data.totalIncome);
+                const expenses = JSON.parse(data.totalExpenses);
+                const transactionCounts = JSON.parse(data.numberOfTransactions);
+                const totalCount = transactionCounts.reduce((sum, item) => sum + item.value, 0);
+                
+                setStats({
+                    totalIncome: income.value,
+                    totalExpenses: expenses.value,
+                    totalTransactions: totalCount
+                });
+            })
+            .catch(console.error)
+            .finally(() => setStatsLoading(false));
+    };
 
     useEffect(() => {
         getAllBrands()
@@ -35,12 +57,17 @@ export default function Index({ auth }) {
     }, []);
 
     useEffect(() => {
+        fetchStats();
+    }, []);
+
+    useEffect(() => {
         if (!hasMorePages) return;
         setLoading(true);
 
         getTransactions(currentPage, searchQuery)
             .then(({ data }) => {
-                setTransactions([...transactions, ...data.transactions.data])
+                const newTransactions = [...transactions, ...data.transactions.data];
+                setTransactions(newTransactions)
                 setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
@@ -52,7 +79,8 @@ export default function Index({ auth }) {
 
         getTransactions(currentPage, searchQuery)
             .then(({ data }) => {
-                setTransactions([...transactions, ...data.transactions.data])
+                const newTransactions = [...transactions, ...data.transactions.data];
+                setTransactions(newTransactions)
                 setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
@@ -118,16 +146,47 @@ export default function Index({ auth }) {
                 onClose={() => setEditItem(null)}
             />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className='mb-6'>
+            <div className="p-4">
+                <div className="max-w-7xl mx-auto grid gap-4">
+                    
+                    {/* Stats Cards */}
+                    <Card className="overflow-hidden p-0">
+                        <div className="grid grid-cols-3 divide-y md:divide-y-0 md:divide-x">
+                            <CardContent className="px-6 py-4">
+                                <div className="text-sm text-muted-foreground mb-2">Total transactions</div>
+                                {statsLoading ? (
+                                    <div className="h-6 w-16 bg-muted animate-pulse rounded"></div>
+                                ) : (
+                                    <div className="font-semibold">{formatNumber(stats.totalTransactions)}</div>
+                                )}
+                            </CardContent>
+                            <CardContent className="px-6 py-4">
+                                <div className="text-sm text-muted-foreground mb-2">Income</div>
+                                {statsLoading ? (
+                                    <div className="h-6 w-24 bg-muted animate-pulse rounded"></div>
+                                ) : (
+                                    <div className="font-semibold">{getAppCurrency()}{formatNumber(stats.totalIncome)}</div>
+                                )}
+                            </CardContent>
+                            <CardContent className="px-6 py-4">
+                                <div className="text-sm text-muted-foreground mb-2">Expenses</div>
+                                {statsLoading ? (
+                                    <div className="h-6 w-24 bg-muted animate-pulse rounded"></div>
+                                ) : (
+                                    <div className="font-semibold">{getAppCurrency()}{formatNumber(stats.totalExpenses)}</div>
+                                )}
+                            </CardContent>
+                        </div>
+                    </Card>
+                    
+                    {transactions.length > 0 && <div>
                         <Input
                             name="search"
                             placeholder='Search..'
-                            className='bg-white max-w-sm'
+                            className='bg-white max-w-56'
                             onChange={performSearch}
                         />
-                    </div>
+                    </div>}
 
                     <div className="grid gap-2">
                         {transactions.length > 0 && transactions.map((transaction) => (
@@ -142,7 +201,7 @@ export default function Index({ auth }) {
                                             <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>{transaction.brand.name} </button>
                                             <div className='flex gap-1 text-muted-foreground items-center'>
                                                 <ArrowElbowDownRightIcon size={10} weight="bold" />
-                                                <p className=' text-xs'>{transaction.brand.category ? <span>{transaction.brand.category.name}</span> : '-'}</p>
+                                                <p className=' text-xs'>{transaction.brand.category ? <span>{transaction.brand.category.name}</span> : '-'} - {transaction.created_at}</p>
                                             </div>
                                         </div>
                                     </div>

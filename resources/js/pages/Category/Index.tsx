@@ -11,7 +11,6 @@ import { getCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 export default function Index({auth}) {
     const [categories, setCategories] = useState([]);
@@ -104,28 +103,28 @@ export default function Index({auth}) {
                 onDelete={onDelete}
                 />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className='mb-6'>
+            <div className="p-4">
+                <div className="max-w-7xl mx-auto">
+                    {categories.length > 0 && <div className='mb-4'>
                         <Input
                             name="search"
                             placeholder='Search..'
-                            className='bg-white max-w-sm'
+                            className='bg-white max-w-56'
                             onChange={performSearch}
                         />
-                    </div>
+                    </div>}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         {categories.length > 0 && categories.map((category) => (
                             <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                <CardContent className='flex justify-between items-center px-4 py-3'>
+                                <CardContent className='flex justify-between items-center p-4'>
                                     <div className='flex gap-2 items-center'>
                                         <button onClick={() => setEditCategory(category)} className='font-medium hover:underline'>
-                                            <Badge className={"badge badge-" + category.color} variant="outline">{category.name}</Badge>
+                                            <p>{category.name}</p>
                                         </button>
                                     </div>
                                     <div className='flex gap-2 items-center'>
-                                        <p className={`text-sm font-medium ${category.type === 'INCOME' ? 'text-green-500' : 'text-gray-900'}`}>
+                                        <p className={`text-sm ${category.type === 'INCOME' ? 'text-green-500' : 'text-gray-900'}`}>
                                             {category.type}
                                         </p>
                                     </div>

@@ -2,7 +2,6 @@ import React from 'react';
 
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
-import HisabiGPT from '@/components/Global/HisabiGPT';
 
 export default function Authenticated({ header, children }: { auth?: any; header?: React.ReactNode; children: React.ReactNode }) {
     return (
@@ -20,7 +19,6 @@ export default function Authenticated({ header, children }: { auth?: any; header
                 <main className="flex-1">
                     {children}
                 </main>
-                <HisabiGPT />
             </SidebarInset>
         </SidebarProvider>
     );

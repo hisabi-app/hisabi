@@ -1,5 +1,6 @@
 import { gql } from '@urql/core';
 import client from './client.js';
+import { customQuery } from './common.js';
 
 export const getTransactions = (page, searchQuery) => {
     return client
@@ -74,4 +75,12 @@ export const updateTransaction = ({id, amount, brandId, createdAt, note}) => {
             }
         `)
         .toPromise();
+}
+
+export const getTransactionStats = () => {
+    return customQuery(`
+        totalIncome(range: "all-time")
+        totalExpenses(range: "all-time")
+        numberOfTransactions(range: "all-time")
+    `);
 }

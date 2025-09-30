@@ -102,16 +102,16 @@ export default function Sms({auth}) {
                 onDelete={onDelete}
                 />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className='mb-6'>
+            <div className="p-4">
+                <div className="max-w-7xl mx-auto">
+                    {sms.length > 0 && <div className='mb-4'>
                         <Input
                             name="search"
                             placeholder='Search..'
-                            className='bg-white max-w-sm'
+                            className='bg-white max-w-56'
                             onChange={performSearch}
                         />
-                    </div>
+                    </div>}
 
                     <div className="grid gap-2">
                         {sms.length > 0 && sms.map((item) => (
@@ -120,7 +120,6 @@ export default function Sms({auth}) {
                                     <div className='flex gap-3 items-center flex-1'>
                                         <button onClick={() => setEditItem(item)} className='text-left hover:underline flex-1'>
                                             <p className='font-medium text-sm'>{cutString(item.body, 80)}</p>
-                                            <p className='text-xs text-muted-foreground mt-1'>ID: {item.id}</p>
                                         </button>
                                     </div>
                                     <div className='flex gap-2 items-center'>

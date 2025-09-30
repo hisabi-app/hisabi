@@ -119,16 +119,16 @@ export default function Index({auth}) {
                 onDelete={onDelete}
             />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className='mb-6'>
+            <div className="p-4">
+                <div className="max-w-7xl mx-auto">
+                    {brands.length > 0 && <div className='mb-4'>
                         <Input
                             name="search"
                             placeholder='Search..'
-                            className='bg-white max-w-sm'
+                            className='bg-white max-w-56'
                             onChange={performSearch}
                         />
-                    </div>
+                    </div>}
 
                     <div className="grid gap-2">
                         {brands.length > 0 && brands.map((brand) => (
