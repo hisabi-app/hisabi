@@ -54,11 +54,6 @@ input Message {
     content: String!
 }
 
-type Notebook {
-    content: String!
-    updated_at: String!
-}
-
 type Query {
     transactions(search: String @search): [Transaction!]!
         @paginate(defaultCount: 50)
@@ -112,7 +107,6 @@ type Query {
     categoryStats(range: String!): Json
 
     hisabiGPT(messages: [Message]): Json
-    notebook: Notebook
 }
 
 type Mutation {
@@ -151,6 +145,4 @@ type Mutation {
     ): [Sms]
     updateSms(id: ID! body: String!): Sms
     deleteSms(id: ID! @whereKey): Sms @delete
-    
-    saveNotebook(content: String!): Notebook
 }

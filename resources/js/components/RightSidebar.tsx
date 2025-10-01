@@ -9,9 +9,9 @@ import HisabiGPT from './Global/HisabiGPT';
 import SmsParser from './Global/SmsParser';
 
 export default function RightSidebar() {
-  const [activePanel, setActivePanel] = useState<'ai' | 'notebook' | 'sms' | null>(null);
+  const [activePanel, setActivePanel] = useState<'ai' | 'sms' | null>(null);
 
-  const togglePanel = (panel: 'ai' | 'notebook' | 'sms') => {
+  const togglePanel = (panel: 'ai' | 'sms') => {
     if (activePanel === panel) {
       setActivePanel(null);
     } else {
@@ -65,7 +65,6 @@ export default function RightSidebar() {
         activePanel ? 'w-[400px]' : 'w-0'
       }`}>
         {activePanel === 'ai' && <HisabiGPT onClose={() => setActivePanel(null)} />}
-        {activePanel === 'notebook' && <Notebook onClose={() => setActivePanel(null)} />}
         {activePanel === 'sms' && <SmsParser onClose={() => setActivePanel(null)} />}
       </div>
     </div>
