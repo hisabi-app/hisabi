@@ -55,22 +55,19 @@ export default function Index({auth}) {
 
     const onUpdate = (updatedItem) => {
         setCategories(categories.map(category => {
-            if(category.id === updatedItem.id) {
-                return updatedItem
+            if (category.id === updatedItem.id) {
+                return updatedItem;
             }
-
-            return category
+            return category;
         }));
-
         animateRowItem(updatedItem.id);
-        setEditCategory(null)
-    }
+    };
 
     const onDelete = (deletedItem) => {
         animateRowItem(deletedItem.id, 'deleted', () => {
             setCategories(categories.filter(item => item.id != deletedItem.id));
-        })
-    }
+        });
+    };
 
     const performSearchHandler = (e) => {
         setCategories([]);
@@ -97,11 +94,12 @@ export default function Index({auth}) {
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit category={editCategory}
-                onClose={() => setEditCategory(null)}
+            <Edit 
+                category={editCategory}
                 onUpdate={onUpdate}
                 onDelete={onDelete}
-                />
+                onClose={() => setEditCategory(null)}
+            />
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto">

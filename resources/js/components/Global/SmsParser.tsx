@@ -150,10 +150,10 @@ export default function SmsParser({ onClose }: SmsParserProps) {
                 />
               </div>
 
-              <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center justify-end gap-2 mt-4">
                 <LongPressButton
                   onLongPress={() => handleDelete(editingSms)}
-                  variant="destructive"
+                  variant="destructiveGhost"
                 >
                   Hold to Delete
                 </LongPressButton>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { updateBrand, deleteResource } from "../../Api";
 import { Input } from '@/components/ui/input';
@@ -6,86 +6,95 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { LongPressButton } from '@/components/ui/long-press-button';
 import Combobox from "@/components/Global/Combobox";
-import SidePanel from '@/components/Global/SidePanel';
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
-export default function Edit({categories, brand, onClose, onUpdate, onDelete}) {
-    const [name, setName] = useState(0)
-    const [category, setCategory] = useState(null)
+export default function Edit({ categories, brand, onUpdate, onDelete, onClose }) {
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState(null);
 
     useEffect(() => {
-        if(! brand) return;
+        if (!brand) return;
 
-        setName(brand.name)
-        if(brand.category) {
-            setCategory(brand.category)
+        setName(brand.name);
+        if (brand.category) {
+            setCategory(brand.category);
         }
-    }, [brand])
+    }, [brand]);
 
-    const update = () => {
+    const handleUpdate = () => {
+        if (!brand || !category) return;
+
+        const brandId = brand.id;
         updateBrand({
-            id: brand.id,
+            id: brandId,
             name,
             categoryId: category.id
         })
-        .then(({data}) => {
-            onUpdate(data.updateBrand)
-            setCategory(null)
+        .then(({ data }) => {
+            onUpdate(data.updateBrand);
+            onClose();
         })
         .catch(console.error);
-    }
+    };
 
-    let isReady = name != '' && category != null;
+    const handleDelete = () => {
+        if (!brand) return;
+
+        const brandToDelete = brand;
+        deleteResource({ id: brandToDelete.id, resource: 'Brand' })
+            .then(() => {
+                onDelete(brandToDelete);
+                onClose();
+            })
+            .catch(console.error);
+    };
+
+    const isReady = name !== '' && category !== null;
 
     return (
-        <SidePanel toggleOpen={! brand ? false : true}
-                    onClose={onClose}
-                    title={"Edit Brand"}>
-            {
-                brand &&
-                <div>
-                    <div>
-                        <Label htmlFor="name">
-                            Name
-                        </Label>
-
-                        <Input
-                            type="text"
-                            name="name"
-                            value={name}
-                            className="mt-1 block w-full"
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="col-span-6 sm:col-span-3 mt-4">
-                        <Combobox
-                            label="Category"
-                            items={categories}
-                            initialSelectedItem={category}
-                            onChange={(item) => setCategory(item)}
-                            displayInputValue={(item) => item?.name ?? ''}
+        <Dialog open={!!brand} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogTitle className="sr-only">Edit Brand</DialogTitle>
+                {brand && (
+                    <div className="space-y-4">
+                        <div>
+                            <Label htmlFor="name">
+                                Name
+                            </Label>
+                            <Input
+                                type="text"
+                                name="name"
+                                value={name}
+                                className="mt-1"
+                                onChange={(e) => setName(e.target.value)}
                             />
-                    </div>
+                        </div>
 
-                    <div className="flex items-center justify-between mt-4">
-                        <LongPressButton
-                            onLongPress={() => {
-                                deleteResource({id: brand.id, resource: 'Brand'})
-                                    .then(() => {
-                                        onDelete(brand)
-                                        onClose()
-                                    })
-                                    .catch(console.error);
-                            }}
-                        >
-                            Hold to Delete
-                        </LongPressButton>
-                        <Button disabled={!isReady} onClick={update}>
-                            Update
-                        </Button>
+                        <div>
+                            <Combobox
+                                label="Category"
+                                items={categories}
+                                initialSelectedItem={category}
+                                onChange={(item) => setCategory(item)}
+                                displayInputValue={(item) => item?.name ?? ''}
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end pt-2 gap-2">
+                            <LongPressButton onLongPress={handleDelete}>
+                                Hold to Delete
+                            </LongPressButton>
+                            <Button disabled={!isReady} onClick={handleUpdate}>
+                                Update
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            }
-        </SidePanel>
-    )
-  }
+                )}
+            </DialogContent>
+        </Dialog>
+    );
+}

@@ -63,29 +63,25 @@ export default function Index({ auth }) {
     }, [searchQuery]);
 
     const onCreate = (createdItem) => {
-        setShowCreate(false)
-        setTransactions([createdItem, ...transactions])
-
+        setShowCreate(false);
+        setTransactions([createdItem, ...transactions]);
         animateRowItem(createdItem.id);
-    }
+    };
 
     const onUpdate = (updatedItem) => {
         setTransactions(transactions.map(transaction => {
             if (transaction.id === updatedItem.id) {
-                return updatedItem
+                return updatedItem;
             }
-
-            return transaction
+            return transaction;
         }));
-
-        animateRowItem(updatedItem.id)
-        setEditItem(null)
-    }
+        animateRowItem(updatedItem.id);
+    };
 
     const onDelete = (deletedItem) => {
         animateRowItem(deletedItem.id, 'deleted', () => {
             setTransactions(transactions.filter(item => item.id != deletedItem.id));
-        })
+        });
     };
 
     const performSearchHandler = (e) => {
@@ -114,7 +110,8 @@ export default function Index({ auth }) {
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit transaction={editItem}
+            <Edit 
+                transaction={editItem}
                 brands={allBrands}
                 onUpdate={onUpdate}
                 onDelete={onDelete}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, forwardRef } from 'react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 import { Combobox } from '@headlessui/react'
 
@@ -6,9 +6,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function ComboboxComponent({label, items, initialSelectedItem, onChange, displayInputValue, displayOptionValue}) {
+const ComboboxComponent = forwardRef(function ComboboxComponent({label, items, initialSelectedItem, onChange, displayInputValue, displayOptionValue}, ref) {
   const [query, setQuery] = useState('')
   const [selectedItem, setSelectedItem] = useState(initialSelectedItem)
+
+  // Sync selectedItem when initialSelectedItem changes
+  useEffect(() => {
+    setSelectedItem(initialSelectedItem)
+  }, [initialSelectedItem])
 
   const filteredItems =
     query === ''
@@ -18,10 +23,11 @@ export default function ComboboxComponent({label, items, initialSelectedItem, on
         })
     
   return (
-    <Combobox as="div" value={selectedItem} onChange={(item) => {
-        setSelectedItem(item)
-        onChange(item)
-    }}>
+    <div ref={ref}>
+      <Combobox value={selectedItem} onChange={(item) => {
+          setSelectedItem(item)
+          onChange(item)
+      }}>
       <Combobox.Label className="block text-sm font-medium text-gray-700">{label}</Combobox.Label>
       <div className="relative mt-1">
         <Combobox.Input
@@ -67,6 +73,9 @@ export default function ComboboxComponent({label, items, initialSelectedItem, on
           </Combobox.Options>
         )}
       </div>
-    </Combobox>
+      </Combobox>
+    </div>
   )
-}
+})
+
+export default ComboboxComponent

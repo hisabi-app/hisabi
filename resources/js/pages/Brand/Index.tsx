@@ -67,21 +67,19 @@ export default function Index({auth}) {
 
     const onUpdate = (updatedItem) => {
         setBrands(brands.map(brand => {
-            if(brand.id === updatedItem.id) {
-                return updatedItem
+            if (brand.id === updatedItem.id) {
+                return updatedItem;
             }
-
-            return brand
+            return brand;
         }));
-
-        animateRowItem(updatedItem.id)
-    }
+        animateRowItem(updatedItem.id);
+    };
 
     const onDelete = (deletedItem) => {
         animateRowItem(deletedItem.id, 'deleted', () => {
             setBrands(brands.filter(item => item.id != deletedItem.id));
-        })
-    }
+        });
+    };
 
     const performSearchHandler = (e) => {
         setBrands([]);
@@ -109,14 +107,12 @@ export default function Index({auth}) {
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit brand={editItem}
+            <Edit 
+                brand={editItem}
                 categories={allCategories}
-                onClose={() => setEditItem(null)}
-                onUpdate={item => {
-                    onUpdate(item)
-                    setEditItem(null)
-                }}
+                onUpdate={onUpdate}
                 onDelete={onDelete}
+                onClose={() => setEditItem(null)}
             />
 
             <div className="p-4">
