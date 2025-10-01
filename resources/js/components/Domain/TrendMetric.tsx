@@ -172,6 +172,12 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
         }
 
         const ctx = document.getElementById(graphql_query).getContext('2d');
+        
+        // Create vertical gradient: blue at top, white at bottom
+        const gradient = ctx.createLinearGradient(0, 0, 0, 150);
+        gradient.addColorStop(0, 'rgba(14, 165, 233, 0.4)'); // Blue at top
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)'); // White at bottom
+        
         setChartRef(new Chart(ctx, {
             type: 'line',
             data: {
@@ -180,7 +186,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
                     {
                         data: data.map(item => item.value),
                         borderColor: '#0ea5e9',
-                        backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                        backgroundColor: gradient,
                         pointHoverRadius: 8,
                         pointRadius: 6,
                         pointBackgroundColor: '#0ea5e9',
