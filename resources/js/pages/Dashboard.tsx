@@ -2,13 +2,12 @@ import { Head } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
 import NoContent from '@/components/Global/NoContent';
-import Budgets from '@/components/Domain/Budgets';
 import ValueMetric from '@/components/Domain/ValueMetric';
 import TrendMetric from '@/components/Domain/TrendMetric';
 import PartitionMetric from '@/components/Domain/PartitionMetric';
 import SectionDivider from '@/components/Global/SectionDivider';
 
-export default function Dashboard({ auth, budgets, hasData }: any) {
+export default function Dashboard({ auth, hasData }: any) {
     const header = <h2>Dashboard</h2>
 
     const allRages = [
@@ -136,8 +135,6 @@ export default function Dashboard({ auth, budgets, hasData }: any) {
                             </div>
                         </div>
                     )}
-
-                    <Budgets budgets={budgets} />
                 </div>
             </div>
         </Authenticated>

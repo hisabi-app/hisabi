@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { Brain, Notebook as NotebookIcon, ChatCircleText } from '@phosphor-icons/react';
+import { Brain, ChatCircleText } from '@phosphor-icons/react';
 import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
 import HisabiGPT from './Global/HisabiGPT';
-import Notebook from './Global/Notebook';
 import SmsParser from './Global/SmsParser';
 
 export default function RightSidebar() {
@@ -55,23 +54,6 @@ export default function RightSidebar() {
                 style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
               >
                 SMS Parser
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => togglePanel('notebook')}
-              isActive={activePanel === 'notebook'}
-              size="sm"
-              className="flex flex-col items-center gap-1 h-auto py-3"
-            >
-              <NotebookIcon size={18} />
-              <span 
-                className="font-medium whitespace-nowrap"
-                style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
-              >
-                Notebook
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
