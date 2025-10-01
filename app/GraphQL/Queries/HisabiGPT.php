@@ -104,6 +104,6 @@ class HisabiGPT
 
         // return $result['choices'][0]['message']['content'];
 
-        return 'Error calling GPT';
+        return 'Calling GPT..';
     }
 }

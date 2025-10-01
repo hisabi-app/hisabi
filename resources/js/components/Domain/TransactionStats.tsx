@@ -40,6 +40,7 @@ function TransactionStats() {
                         <SelectItem value="last-month">Last Month</SelectItem>
                         <SelectItem value="current-year">Current Year</SelectItem>
                         <SelectItem value="last-year">Last Year</SelectItem>
+                        <SelectItem value="all-time">All Time</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

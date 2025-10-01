@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createCategory } from "../../Api";
 import {
     Dialog,
@@ -66,18 +67,14 @@ export default function Create({ showCreate, onClose, onCreate }) {
                         <Label htmlFor="type">
                             Type
                         </Label>
-                        <select
-                            id="type"
-                            name="type"
-                            value={type}
-                            onChange={(e) => setType(e.target.value)}
-                            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        >
-                            <option value="EXPENSES">EXPENSES</option>
-                            <option value="INCOME">INCOME</option>
-                            <option value="SAVINGS">SAVINGS</option>
-                            <option value="INVESTMENT">INVESTMENT</option>
-                        </select>
+                        <Tabs value={type} onValueChange={setType} className="mt-1">
+                            <TabsList className="grid w-full grid-cols-4">
+                                <TabsTrigger value="EXPENSES">Expenses</TabsTrigger>
+                                <TabsTrigger value="INCOME">Income</TabsTrigger>
+                                <TabsTrigger value="SAVINGS">Savings</TabsTrigger>
+                                <TabsTrigger value="INVESTMENT">Investment</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
                     </div>
 
                     <div className="space-y-2">
