@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function SectionDivider({title}: {title: string}) {
     return ( 
         <div className="flex items-center w-full py-3">
