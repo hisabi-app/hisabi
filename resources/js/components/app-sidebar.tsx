@@ -4,7 +4,6 @@ import {
   Receipt,
   Tag,
   FolderOpen,
-  ChatCircleText,
   SignOut,
 } from "@phosphor-icons/react"
 
@@ -42,11 +41,6 @@ const items = [
     title: "Categories",
     url: "categories",
     icon: FolderOpen,
-  },
-  {
-    title: "SMS Parser",
-    url: "sms",
-    icon: ChatCircleText,
   },
 ]
 
