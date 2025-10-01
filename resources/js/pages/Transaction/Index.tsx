@@ -7,14 +7,14 @@ import Edit from './Edit';
 import Create from './Create';
 import LoadMore from '@/components/Global/LoadMore';
 import { Button } from '@/components/ui/button';
-import { getTransactions, getAllBrands, getTransactionStats } from '@/Api';
+import { getTransactions, getAllBrands } from '@/Api';
 import { animateRowItem, formatNumber } from '@/Utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { getAppCurrency } from '@/Utils';
+import TransactionStats from '@/components/Domain/TransactionStats';
 
 
 export default function Index({ auth }) {
@@ -26,27 +26,6 @@ export default function Index({ auth }) {
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
-    const [stats, setStats] = useState({ totalIncome: 0, totalExpenses: 0, totalTransactions: 0 });
-    const [statsLoading, setStatsLoading] = useState(true);
-
-    const fetchStats = () => {
-        setStatsLoading(true);
-        getTransactionStats()
-            .then(({ data }) => {
-                const income = JSON.parse(data.totalIncome);
-                const expenses = JSON.parse(data.totalExpenses);
-                const transactionCounts = JSON.parse(data.numberOfTransactions);
-                const totalCount = transactionCounts.reduce((sum, item) => sum + item.value, 0);
-                
-                setStats({
-                    totalIncome: income.value,
-                    totalExpenses: expenses.value,
-                    totalTransactions: totalCount
-                });
-            })
-            .catch(console.error)
-            .finally(() => setStatsLoading(false));
-    };
 
     useEffect(() => {
         getAllBrands()
@@ -54,10 +33,6 @@ export default function Index({ auth }) {
                 setAllBrands(data.allBrands)
             })
             .catch(console.error);
-    }, []);
-
-    useEffect(() => {
-        fetchStats();
     }, []);
 
     useEffect(() => {
@@ -149,35 +124,7 @@ export default function Index({ auth }) {
             <div className="p-4">
                 <div className="max-w-7xl mx-auto grid gap-4">
                     
-                    {/* Stats Cards */}
-                    <Card className="overflow-hidden p-0">
-                        <div className="grid grid-cols-3 divide-y md:divide-y-0 md:divide-x">
-                            <CardContent className="px-6 py-4">
-                                <div className="text-sm text-muted-foreground mb-2">Total transactions</div>
-                                {statsLoading ? (
-                                    <div className="h-6 w-16 bg-muted animate-pulse rounded"></div>
-                                ) : (
-                                    <div className="font-semibold">{formatNumber(stats.totalTransactions)}</div>
-                                )}
-                            </CardContent>
-                            <CardContent className="px-6 py-4">
-                                <div className="text-sm text-muted-foreground mb-2">Income</div>
-                                {statsLoading ? (
-                                    <div className="h-6 w-24 bg-muted animate-pulse rounded"></div>
-                                ) : (
-                                    <div className="font-semibold">{getAppCurrency()}{formatNumber(stats.totalIncome)}</div>
-                                )}
-                            </CardContent>
-                            <CardContent className="px-6 py-4">
-                                <div className="text-sm text-muted-foreground mb-2">Expenses</div>
-                                {statsLoading ? (
-                                    <div className="h-6 w-24 bg-muted animate-pulse rounded"></div>
-                                ) : (
-                                    <div className="font-semibold">{getAppCurrency()}{formatNumber(stats.totalExpenses)}</div>
-                                )}
-                            </CardContent>
-                        </div>
-                    </Card>
+                    <TransactionStats />
                     
                     {transactions.length > 0 && <div>
                         <Input
