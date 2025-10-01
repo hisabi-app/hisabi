@@ -13,7 +13,7 @@ export default function Dashboard({ auth, metrics, budgets, hasData }) {
             <Head title="Hisabi Dashboard" />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto flex flex-wrap md:px-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="max-w-7xl mx-auto flex flex-wrap md:px-6 ">
 
                     {/* BETA Stuff */}
                     <div className={'w-full flex flex-wrap'}>
