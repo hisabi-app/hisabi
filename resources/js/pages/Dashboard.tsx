@@ -1,55 +1,143 @@
 import { Head } from '@inertiajs/react';
 
-import Wrapper from '@/components/Global/Wrapper';
-import { renderComponent } from '@/components';
 import Authenticated from '@/Layouts/Authenticated';
 import NoContent from '@/components/Global/NoContent';
+import Budgets from '@/components/Domain/Budgets';
+import ValueMetric from '@/components/Domain/ValueMetric';
+import TrendMetric from '@/components/Domain/TrendMetric';
+import PartitionMetric from '@/components/Domain/PartitionMetric';
+import SectionDivider from '@/components/Global/SectionDivider';
 
-export default function Dashboard({ auth, metrics, budgets, hasData }) {
+export default function Dashboard({ auth, budgets, hasData }: any) {
     const header = <h2>Dashboard</h2>
+
+    const allRages = [
+        { key: 'current-month', name: 'Current Month' },
+        { key: 'last-month', name: 'Last Month' },
+        { key: 'last-twelve-months', name: 'Last 12 Months' },
+        { key: 'current-year', name: 'Current Year' },
+        { key: 'last-year', name: 'Last Year' },
+        { key: 'all-time', name: 'All Time' },
+    ];
+
+    const categoryRelation = {
+        graphql_query: 'allCategories',
+        display_using: 'name',
+        foreign_key: 'id'
+    };
 
     return (
         <Authenticated auth={auth} header={header}>
             <Head title="Hisabi Dashboard" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto flex flex-wrap md:px-6 ">
+            <div className="py-4">
+                <div className="max-w-7xl overflow-hidden mx-auto px-4 grid grid-cols-1 gap-4">
 
-                    {/* BETA Stuff */}
-                    <div className={'w-full flex flex-wrap'}>
-                        {budgets.length > 0 && budgets.map((budget, index) => {
-                            return <Wrapper key={index} width={'1/3'}>
-                                <div className={'bg-white shadow rounded-lg w-full min-h-[170]'}>
-                                    <div className="p-4 h-full">
-                                        <h3 className="mr-3 text-base text-gray-600">{budget.name}</h3>
-                                        <div className="mt-2">
-                                            <div className="w-full flex items-center h-6 bg-blue-50 rounded-full relative">
-                                                <div className="h-full text-center font-bold flex items-center justify-center text-white bg-blue-400 rounded-full" style={{ width: budget.total_spent_percentage + '%' }}></div>
-                                                <div className="w-full h-full text-center absolute m-auto font-bold flex items-center justify-center text-white drop-shadow">{budget.total_spent_percentage}%</div>
-                                            </div>
-                                            <div className="flex justify-between mt-2">
-                                                <p className="text-xs text-gray-500">{budget.start_at_date}</p>
-                                                <p className="text-xs text-gray-500">{budget.end_at_date}</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-center"><span className={'font-bold'}>AED {budget.remaining_to_spend}</span> left of AED {budget.amount}</p>
+                    {!hasData && <NoContent body="No enough data to show reports" />}
 
-                                        <p className="text-xs text-gray-500 text-center mt-1">You can spend AED {budget.total_margin_per_day} per day for {budget.remaining_days} more days</p>
-                                    </div>
-                                </div>
-                            </Wrapper>
-                        })}
-                    </div>
+                    {hasData && (
+                        <div className="grid grid-cols-1 gap-4">
+                            {/* Net Worth - Full Width Trend */}
+                            <div className="w-full">
+                                <TrendMetric
+                                    name="Net Worth Over Time"
+                                    graphql_query="netWorthTrend"
+                                    ranges={allRages.slice().reverse()}
+                                    relation={undefined}
+                                    show_standard_deviation={undefined}
+                                />
+                            </div>
 
-                    {!hasData && <NoContent body="No enough data to show reports 🧐" />}
+                            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4"
+                            >
+                                <ValueMetric
+                                    name="Total Cash"
+                                    graphql_query="totalCash"
+                                    ranges={null}
+                                    helpText="The available cash = income - (expenses + savings + investments)"
+                                />
+                                <ValueMetric
+                                    name="Total Savings"
+                                    graphql_query="totalSavings"
+                                    ranges={null}
+                                    helpText={undefined}
+                                />
+                                <ValueMetric
+                                    name="Total Investment"
+                                    graphql_query="totalInvestment"
+                                    ranges={null}
+                                    helpText={undefined}
+                                />
+                            </div>
 
-                    {hasData && metrics.map((metric, index) => {
-                        return <Wrapper
-                            key={index}
-                            width={metric.width}
-                            children={renderComponent(metric.component, metric)}
-                        />
-                    })}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <ValueMetric
+                                    name="Total Income"
+                                    graphql_query="totalIncome"
+                                    ranges={allRages}
+                                    helpText={undefined}
+                                />
+                                <ValueMetric
+                                    name="Total Expenses"
+                                    graphql_query="totalExpenses"
+                                    ranges={allRages}
+                                    helpText={undefined}
+                                />
+
+                                <TrendMetric
+                                    name="Income Over Time"
+                                    graphql_query="totalIncomeTrend"
+                                    ranges={allRages}
+                                    relation={undefined}
+                                    show_standard_deviation={undefined}
+                                />
+                                <TrendMetric
+                                    name="Spending Over Time"
+                                    graphql_query="totalExpensesTrend"
+                                    ranges={allRages}
+                                    relation={undefined}
+                                    show_standard_deviation={undefined}
+                                />
+                            </div>
+
+
+                            <SectionDivider title="Categories Analytics" />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <PartitionMetric
+                                    name="Income Sources"
+                                    graphql_query="incomePerCategory"
+                                    ranges={allRages}
+                                    relation={undefined}
+                                    show_currency={true}
+                                />
+                                <PartitionMetric
+                                    name="Spending by Category"
+                                    graphql_query="expensesPerCategory"
+                                    ranges={allRages}
+                                    relation={undefined}
+                                    show_currency={true}
+                                />
+
+                                <TrendMetric
+                                    name="Overall Trend by Category"
+                                    graphql_query="totalPerCategoryTrend"
+                                    ranges={allRages}
+                                    relation={categoryRelation}
+                                    show_standard_deviation={undefined}
+                                />
+                                <TrendMetric
+                                    name="Daily Trend by Category"
+                                    graphql_query="totalPerCategoryDailyTrend"
+                                    ranges={allRages}
+                                    relation={categoryRelation}
+                                    show_standard_deviation={undefined}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    <Budgets budgets={budgets} />
                 </div>
             </div>
         </Authenticated>

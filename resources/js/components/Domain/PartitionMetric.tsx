@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Chart, ArcElement, DoughnutController } from 'chart.js';
 import { sumBy } from 'lodash';
 
@@ -88,8 +88,8 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
     let total = sumBy(data, 'value');
 
     return ( 
-        <Card className="relative" height='h-[160px]'>
-            <div className="px-6 py-4 flex flex-col h-full">
+        <Card className="relative h-48 overflow-hidden">
+            <div className="px-6 flex flex-col h-full">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
                         <h3 className="mr-3 text-base text-gray-600">{ name }</h3>

@@ -249,8 +249,8 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
     }
     
     return ( 
-        <Card className="relative overflow-hidden">
-            <div className="px-6 py-4">
+        <Card className="relative h-48 overflow-hidden">
+            <div className="px-6">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
                         <h3 className="mr-2 text-base text-gray-600">{ name }</h3>
@@ -272,7 +272,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
                 </div>
             </div>
 
-            <div className="absolute w-full left-0 right-0 bottom-0 h-20">
+            <div className="absolute w-full left-0 right-0 bottom-0 h-24">
                 <canvas id={graphql_query}></canvas>
             </div>
         </Card>

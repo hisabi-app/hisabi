@@ -60,7 +60,7 @@ export default function ValueMetric({name, helpText, graphql_query, ranges}) {
 
     return (
         <Card className='relative'>
-            <div className="px-6 py-4 flex flex-col h-full gap-y-2">
+            <div className="px-6 flex flex-col h-full gap-y-2">
                 <div className="flex grow-0 justify-between items-center">
                     <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
 
