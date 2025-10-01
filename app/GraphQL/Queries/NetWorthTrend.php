@@ -32,11 +32,17 @@ class NetWorthTrend extends TrendMetric
     {
         $rangeData = app('findRangeByKey', ["key" => $args['range']]);
 
+        // Use database-agnostic date formatting
+        $driver = DB::connection()->getDriverName();
+        $dateFormat = $driver === 'sqlite' 
+            ? "strftime('%Y-%m', created_at)" 
+            : "date_format(created_at, '%Y-%m')";
+
         // Query all income and expenses without range filter
         // Net worth is cumulative and needs all historical data
         $income = Transaction::query()
             ->income()
-            ->select(DB::raw("date_format(created_at, '%Y-%m') as label, SUM(transactions.amount) as value"))
+            ->select(DB::raw("{$dateFormat} as label, SUM(transactions.amount) as value"))
             ->groupBy(DB::raw("label"))
             ->orderBy("label")
             ->get()
@@ -44,7 +50,7 @@ class NetWorthTrend extends TrendMetric
 
         $expenses = Transaction::query()
             ->expenses()
-            ->select(DB::raw("date_format(created_at, '%Y-%m') as label, SUM(transactions.amount) as value"))
+            ->select(DB::raw("{$dateFormat} as label, SUM(transactions.amount) as value"))
             ->groupBy(DB::raw("label"))
             ->orderBy("label")
             ->get()
