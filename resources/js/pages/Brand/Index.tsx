@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
+import BrandStats from '@/components/Domain/BrandStats';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
@@ -117,6 +118,10 @@ export default function Index({auth}) {
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto">
+                    <div className='mb-4'>
+                        <BrandStats />
+                    </div>
+
                     {(brands.length > 0 || searchQuery) && (<div className='mb-4'>
                         <Input
                             name="search"

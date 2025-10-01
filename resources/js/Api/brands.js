@@ -1,5 +1,6 @@
 import { gql } from '@urql/core';
 import client from './client.js';
+import { customQuery } from './common.js';
 
 export const getAllBrands = () => {
     return client
@@ -75,4 +76,8 @@ export const updateBrand = ({id, name, categoryId}) => {
             }
         `)
         .toPromise();
+}
+
+export const getBrandStats = (range = 'current-month') => {
+    return customQuery(`brandStats(range: "${range}")`);
 }

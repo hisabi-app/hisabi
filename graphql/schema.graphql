@@ -106,6 +106,7 @@ type Query {
     averageValueTransaction(range: String!): Json
     transactionsStandardDeviation(range: String! id: ID!): Json
     financeVisualizationCirclePackMetric(range: String!): Json
+    brandStats(range: String!): Json
 
     hisabiGPT(messages: [Message]): Json
     notebook: Notebook
