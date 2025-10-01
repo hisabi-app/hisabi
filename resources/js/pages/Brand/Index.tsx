@@ -117,14 +117,14 @@ export default function Index({auth}) {
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto">
-                    {brands.length > 0 && <div className='mb-4'>
+                    {(brands.length > 0 || searchQuery) && (<div className='mb-4'>
                         <Input
                             name="search"
                             placeholder='Search..'
                             className='bg-white max-w-56'
                             onChange={performSearch}
                         />
-                    </div>}
+                    </div>)}
 
                     <div className="grid gap-2">
                         {brands.length > 0 && brands.map((brand) => (

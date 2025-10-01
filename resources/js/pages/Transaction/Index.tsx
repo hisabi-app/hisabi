@@ -123,14 +123,16 @@ export default function Index({ auth }) {
                     
                     <TransactionStats />
                     
-                    {transactions.length > 0 && <div>
-                        <Input
-                            name="search"
-                            placeholder='Search..'
-                            className='bg-white max-w-56'
-                            onChange={performSearch}
-                        />
-                    </div>}
+                    {(transactions.length > 0 || searchQuery) && (
+                        <div>
+                            <Input
+                                name="search"
+                                placeholder='Search..'
+                                className='bg-white max-w-56'
+                                onChange={performSearch}
+                            />
+                        </div>
+                    )}
 
                     <div className="grid gap-2">
                         {transactions.length > 0 && transactions.map((transaction) => (

@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { debounce } from 'lodash';
 
@@ -12,7 +12,7 @@ import { animateRowItem } from '@/Utils';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function Index({auth}) {
+export default function Index({ auth }) {
     const [categories, setCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
@@ -22,11 +22,11 @@ export default function Index({auth}) {
     const [showCreate, setShowCreate] = useState(false);
 
     useEffect(() => {
-        if(! hasMorePages) return;
+        if (!hasMorePages) return;
         setLoading(true);
 
         getCategories(currentPage, searchQuery)
-            .then(({data}) => {
+            .then(({ data }) => {
                 setCategories([...categories, ...data.categories.data])
                 setHasMorePages(data.categories.paginatorInfo.hasMorePages)
                 setLoading(false);
@@ -38,7 +38,7 @@ export default function Index({auth}) {
         setLoading(true);
 
         getCategories(currentPage, searchQuery)
-            .then(({data}) => {
+            .then(({ data }) => {
                 setCategories([...categories, ...data.categories.data])
                 setHasMorePages(data.categories.paginatorInfo.hasMorePages)
                 setLoading(false);
@@ -94,7 +94,7 @@ export default function Index({auth}) {
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit 
+            <Edit
                 category={editCategory}
                 onUpdate={onUpdate}
                 onDelete={onDelete}
@@ -103,14 +103,14 @@ export default function Index({auth}) {
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto">
-                    {categories.length > 0 && <div className='mb-4'>
+                    {(categories.length > 0 || searchQuery) && (<div className='mb-4'>
                         <Input
                             name="search"
                             placeholder='Search..'
                             className='bg-white max-w-56'
                             onChange={performSearch}
                         />
-                    </div>}
+                    </div>)}
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         {categories.length > 0 && categories.map((category) => (
