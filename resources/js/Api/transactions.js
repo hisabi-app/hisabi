@@ -77,10 +77,10 @@ export const updateTransaction = ({id, amount, brandId, createdAt, note}) => {
         .toPromise();
 }
 
-export const getTransactionStats = () => {
+export const getTransactionStats = (range = 'current-month') => {
     return customQuery(`
-        totalIncome(range: "all-time")
-        totalExpenses(range: "all-time")
-        numberOfTransactions(range: "all-time")
+        totalIncome(range: "${range}")
+        totalExpenses(range: "${range}")
+        numberOfTransactions(range: "${range}")
     `);
 }
