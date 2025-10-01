@@ -58,9 +58,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="flex aspect-square items-center justify-center rounded-lg">
-                  <ApplicationLogo />
-                </div>
+                <ApplicationLogo />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
