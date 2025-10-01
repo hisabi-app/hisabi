@@ -1,60 +1,56 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
-import LoadMore from '@/components/Global/LoadMore';
 import Edit from './Edit';
 import Create from './Create';
 import { Button } from '@/components/ui/button';
-import { getCategories } from '@/Api';
+import { getAllCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CategoryStats from '@/components/Domain/CategoryStats';
 
-export default function Index({ auth }) {
-    const [categories, setCategories] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [hasMorePages, setHasMorePages] = useState(true);
+interface Category {
+    id: number;
+    name: string;
+    type: string;
+    color: string;
+    transactionsCount: number;
+}
+
+interface GroupedCategories {
+    INCOME: Category[];
+    EXPENSES: Category[];
+    SAVINGS: Category[];
+    INVESTMENT: Category[];
+}
+
+export default function Index({ auth }: { auth: any }) {
+    const [categories, setCategories] = useState<Category[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [editCategory, setEditCategory] = useState(null);
+    const [editCategory, setEditCategory] = useState<Category | null>(null);
     const [showCreate, setShowCreate] = useState(false);
 
     useEffect(() => {
-        if (!hasMorePages) return;
-        setLoading(true);
-
-        getCategories(currentPage, searchQuery)
+        getAllCategories()
             .then(({ data }) => {
-                setCategories([...categories, ...data.categories.data])
-                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
-                setLoading(false);
+                setCategories(data.allCategories)
             })
             .catch(console.error);
-    }, [currentPage]);
+    }, []);
 
-    useEffect(() => {
-        setLoading(true);
-
-        getCategories(currentPage, searchQuery)
-            .then(({ data }) => {
-                setCategories([...categories, ...data.categories.data])
-                setHasMorePages(data.categories.paginatorInfo.hasMorePages)
-                setLoading(false);
-            })
-            .catch(console.error);
-    }, [searchQuery]);
-
-    const onCreate = (createdItem) => {
+    const onCreate = (createdItem: Category) => {
         setShowCreate(false)
         setCategories([createdItem, ...categories])
 
         animateRowItem(createdItem.id);
     }
 
-    const onUpdate = (updatedItem) => {
+    const onUpdate = (updatedItem: Category) => {
         setCategories(categories.map(category => {
             if (category.id === updatedItem.id) {
                 return updatedItem;
@@ -64,21 +60,46 @@ export default function Index({ auth }) {
         animateRowItem(updatedItem.id);
     };
 
-    const onDelete = (deletedItem) => {
+    const onDelete = (deletedItem: Category) => {
+        // @ts-ignore
         animateRowItem(deletedItem.id, 'deleted', () => {
             setCategories(categories.filter(item => item.id != deletedItem.id));
         });
     };
 
-    const performSearchHandler = (e) => {
-        setCategories([]);
+    const performSearchHandler = (e: any) => {
         setSearchQuery(e.target.value ?? '');
-        setCurrentPage(1);
     }
 
     const performSearch = useMemo(
         () => debounce(performSearchHandler, 300)
         , []);
+
+    // Filter categories based on search query
+    const filteredCategories = useMemo(() => {
+        if (!searchQuery) return categories;
+        return categories.filter(category => 
+            category.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [categories, searchQuery]);
+
+    // Group categories by type
+    const groupedCategories = useMemo<GroupedCategories>(() => {
+        const grouped: GroupedCategories = {
+            INCOME: [],
+            EXPENSES: [],
+            SAVINGS: [],
+            INVESTMENT: []
+        };
+        
+        filteredCategories.forEach(category => {
+            if (grouped[category.type as keyof GroupedCategories]) {
+                grouped[category.type as keyof GroupedCategories].push(category);
+            }
+        });
+        
+        return grouped;
+    }, [filteredCategories]);
 
     const header = (
         <div className="flex items-center justify-between w-full">
@@ -108,35 +129,176 @@ export default function Index({ auth }) {
                         <CategoryStats />
                     </div>
 
-                    {(categories.length > 0 || searchQuery) && (<div className='mb-4'>
-                        <Input
-                            name="search"
-                            placeholder='Search..'
-                            className='bg-white max-w-56'
-                            onChange={performSearch}
-                        />
-                    </div>)}
+                    {categories.length > 0 && (
+                        <Tabs defaultValue="all" className="w-full">
+                            <div className="flex justify-between items-center mb-4">
+                                <Input
+                                    name="search"
+                                    placeholder='Search..'
+                                    className='bg-white max-w-56'
+                                    onChange={performSearch}
+                                />
+                                <TabsList>
+                                <TabsTrigger value="all">
+                                    All ({filteredCategories.length})
+                                </TabsTrigger>
+                                {groupedCategories.INCOME.length > 0 && (
+                                    <TabsTrigger value="INCOME">
+                                        Income ({groupedCategories.INCOME.length})
+                                    </TabsTrigger>
+                                )}
+                                {groupedCategories.EXPENSES.length > 0 && (
+                                    <TabsTrigger value="EXPENSES">
+                                        Expenses ({groupedCategories.EXPENSES.length})
+                                    </TabsTrigger>
+                                )}
+                                {groupedCategories.SAVINGS.length > 0 && (
+                                    <TabsTrigger value="SAVINGS">
+                                        Savings ({groupedCategories.SAVINGS.length})
+                                    </TabsTrigger>
+                                )}
+                                {groupedCategories.INVESTMENT.length > 0 && (
+                                    <TabsTrigger value="INVESTMENT">
+                                        Investment ({groupedCategories.INVESTMENT.length})
+                                    </TabsTrigger>
+                                )}
+                            </TabsList>
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        {categories.length > 0 && categories.map((category) => (
-                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                <CardContent className='flex justify-between items-center p-4'>
-                                    <div className='flex gap-2 items-center'>
-                                        <button onClick={() => setEditCategory(category)} className='font-medium hover:underline'>
-                                            <p>{category.name}</p>
-                                        </button>
-                                    </div>
-                                    <div className='flex gap-2 items-center'>
-                                        <p className={`text-sm ${category.type === 'INCOME' ? 'text-green-500' : 'text-gray-900'}`}>
-                                            {category.type}
-                                        </p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+                            <TabsContent value="all">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                    {filteredCategories.map((category) => (
+                                        <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                            <CardContent className='flex justify-between items-center p-4'>
+                                                <div className='flex gap-3 items-center'>
+                                                    <Badge 
+                                                        className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
+                                                        variant="outline"
+                                                    />
+                                                    <div>
+                                                        <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                            <p>{category.name}</p>
+                                                        </button>
+                                                        <p className='text-muted-foreground text-xs'>
+                                                            {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </TabsContent>
 
-                    <LoadMore hasContent={categories.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage + 1)} />
+                            {groupedCategories.INCOME.length > 0 && (
+                                <TabsContent value="INCOME">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        {groupedCategories.INCOME.map((category) => (
+                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                <CardContent className='flex justify-between items-center p-4'>
+                                                    <div className='flex gap-3 items-center'>
+                                                        <Badge 
+                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
+                                                            variant="outline"
+                                                        />
+                                                        <div>
+                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                <p>{category.name}</p>
+                                                            </button>
+                                                            <p className='text-muted-foreground text-xs'>
+                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                </TabsContent>
+                            )}
+
+                            {groupedCategories.EXPENSES.length > 0 && (
+                                <TabsContent value="EXPENSES">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        {groupedCategories.EXPENSES.map((category) => (
+                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                <CardContent className='flex justify-between items-center p-4'>
+                                                    <div className='flex gap-3 items-center'>
+                                                        <Badge 
+                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
+                                                            variant="outline"
+                                                        />
+                                                        <div>
+                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                <p>{category.name}</p>
+                                                            </button>
+                                                            <p className='text-muted-foreground text-xs'>
+                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                </TabsContent>
+                            )}
+
+                            {groupedCategories.SAVINGS.length > 0 && (
+                                <TabsContent value="SAVINGS">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        {groupedCategories.SAVINGS.map((category) => (
+                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                <CardContent className='flex justify-between items-center p-4'>
+                                                    <div className='flex gap-3 items-center'>
+                                                        <Badge 
+                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
+                                                            variant="outline"
+                                                        />
+                                                        <div>
+                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                <p>{category.name}</p>
+                                                            </button>
+                                                            <p className='text-muted-foreground text-xs'>
+                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                </TabsContent>
+                            )}
+
+                            {groupedCategories.INVESTMENT.length > 0 && (
+                                <TabsContent value="INVESTMENT">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        {groupedCategories.INVESTMENT.map((category) => (
+                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                <CardContent className='flex justify-between items-center p-4'>
+                                                    <div className='flex gap-3 items-center'>
+                                                        <Badge 
+                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
+                                                            variant="outline"
+                                                        />
+                                                        <div>
+                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                <p>{category.name}</p>
+                                                            </button>
+                                                            <p className='text-muted-foreground text-xs'>
+                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                </TabsContent>
+                            )}
+                        </Tabs>
+                    )}
                 </div>
             </div>
         </Authenticated>

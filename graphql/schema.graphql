@@ -12,6 +12,7 @@ type Category {
     name: String!
     type: String!
     color: String
+    transactionsCount: Int! @count(relation: "transactions")
 }
 
 type Budget {

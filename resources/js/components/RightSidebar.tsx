@@ -41,24 +41,7 @@ export default function RightSidebar() {
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => togglePanel('notebook')}
-              isActive={activePanel === 'notebook'}
-              size="sm"
-              className="flex flex-col items-center gap-1 h-auto py-3"
-            >
-              <NotebookIcon size={18} />
-              <span 
-                className="font-medium whitespace-nowrap"
-                style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
-              >
-                Notebook
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          
+                    
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => togglePanel('sms')}
@@ -72,6 +55,23 @@ export default function RightSidebar() {
                 style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
               >
                 SMS Parser
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => togglePanel('notebook')}
+              isActive={activePanel === 'notebook'}
+              size="sm"
+              className="flex flex-col items-center gap-1 h-auto py-3"
+            >
+              <NotebookIcon size={18} />
+              <span 
+                className="font-medium whitespace-nowrap"
+                style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
+              >
+                Notebook
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>

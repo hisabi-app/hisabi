@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ArrowRightIcon } from '@heroicons/react/outline';
 import { customQuery } from '../../Api';
 import { AtSymbolIcon, XIcon } from '@heroicons/react/solid';
+import { Input } from '@/components/ui/input';
 
 interface HisabiGPTProps {
   onClose: () => void;
@@ -58,8 +59,8 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden">
-      <div className="border-r p-4">
-        <div className='flex justify-between items-center mb-2'>
+      <div className="border-b p-4">
+        <div className='flex justify-between items-center'>
           <h2 className='text-lg font-semibold'>Hisabi AI</h2>
           <button
             onClick={onClose}
@@ -68,9 +69,6 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
             <XIcon className='w-5 h-5' />
           </button>
         </div>
-        <p className='text-xs text-muted-foreground'>
-          Ask questions about your finances and get AI-powered insights.
-        </p>
       </div>
       
       <div className="flex-1 flex flex-col p-4 overflow-hidden border-r">
@@ -130,12 +128,12 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="flex gap-2">
-            <input
+            <Input
               type="text"
               value={message}
               onChange={handleChange}
               disabled={loading}
-              className="flex-grow border bg-background rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
+              className="flex-grow bg-white"
               placeholder="Type your message..."
             />
             <button

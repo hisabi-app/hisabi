@@ -8,7 +8,6 @@ function LoadMore({ hasContent, hasMorePages, loading, onClick }) {
         <div className="py-4 flex justify-center">
             {!hasContent && !loading && <NoContent />}
             {hasContent && !hasMorePages && !loading && <div>
-                <p className='text-gray-400'>All data loaded</p>
             </div>}
             {hasMorePages && !loading && <button className='text-blue-500 hover:underline' onClick={onClick}>Load more</button>}
             {hasMorePages && loading && <Loader />}
