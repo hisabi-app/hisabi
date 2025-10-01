@@ -1,73 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import Combobox from "@/components/Global/Combobox";
-import SidePanel from '@/components/Global/SidePanel';
 import { createBrand } from '../../Api';
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
-export default function Edit({categories, showCreate, onClose, onCreate}) {
-    const [name, setName] = useState('')
-    const [categoryId, setCategoryId] = useState(0)
-    const [isReady, setIsReady] = useState(false)
+export default function Create({ categories, showCreate, onClose, onCreate }) {
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState(null);
+    const [isReady, setIsReady] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        setIsReady(name != '' && categoryId != 0 ? true : false);
-    }, [name, categoryId])
+        setIsReady(name !== '' && category !== null);
+    }, [name, category]);
 
-    const create = () => {
-        if(loading || ! isReady) { return; }
+    const handleCreate = () => {
+        if (loading || !isReady || !category) return;
+        
         setLoading(true);
 
         createBrand({
             name,
-            categoryId
+            categoryId: category.id
         })
-        .then(({data}) => {
-            onCreate(data.createBrand)
-            setCategoryId(0)
-            setName('')
+        .then(({ data }) => {
+            onCreate(data.createBrand);
+            // Reset form
+            setCategory(null);
+            setName('');
             setLoading(false);
+            onClose();
         })
         .catch(console.error);
-    }
+    };
 
     return (
-        <SidePanel toggleOpen={showCreate}
-                    onClose={onClose}
-                    title={"Create Brand"}>
-            <div>
-                <div>
-                    <Label htmlFor="name">
-                        Name
-                    </Label>
-
-                    <Input
-                        type="text"
-                        name="name"
-                        value={name}
-                        className="mt-1 block w-full"
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
-
-
-                <div className="col-span-6 sm:col-span-3 mt-4">
-                    <Combobox
-                        label="Category"
-                        items={categories}
-                        onChange={(item) => setCategoryId(item.id)}
+        <Dialog open={showCreate} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogTitle className="sr-only">Create Brand</DialogTitle>
+                <div className="space-y-4">
+                    <div>
+                        <Label htmlFor="name">
+                            Name
+                        </Label>
+                        <Input
+                            type="text"
+                            name="name"
+                            value={name}
+                            className="mt-1"
+                            onChange={(e) => setName(e.target.value)}
                         />
-                </div>
+                    </div>
 
-                <div className="flex items-center justify-end mt-4">
-                    <Button disabled={! isReady} onClick={create} className={`${isReady ? '' : 'disabled opacity-25'}`}>
-                        Create
-                    </Button>
+                    <div>
+                        <Combobox
+                            label="Category"
+                            items={categories}
+                            initialSelectedItem={category}
+                            onChange={(item) => setCategory(item)}
+                            displayInputValue={(item) => item?.name ?? ''}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-end pt-2">
+                        <Button 
+                            disabled={!isReady || loading} 
+                            onClick={handleCreate}
+                        >
+                            Create
+                        </Button>
+                    </div>
                 </div>
-            </div>
-        </SidePanel>
-    )
-  }
+            </DialogContent>
+        </Dialog>
+    );
+}

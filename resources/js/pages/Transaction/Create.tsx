@@ -3,10 +3,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createTransaction } from "../../Api";
 import Combobox from "@/components/Global/Combobox";
-import SidePanel from '@/components/Global/SidePanel';
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
-export default function Create({brands, showCreate, onClose, onCreate}) {
+export default function Create({ brands, showCreate, onClose, onCreate }) {
     const [amount, setAmount] = useState(0);
     const [brand, setBrand] = useState(null);
     const [createdAt, setCreatedAt] = useState('');
@@ -16,10 +20,11 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
 
     useEffect(() => {
         setIsReady(amount != 0 && brand != null && createdAt != '' ? true : false);
-    }, [amount, brand, createdAt])
+    }, [amount, brand, createdAt]);
 
-    const create = () => {
-        if(loading || ! isReady) { return; }
+    const handleCreate = () => {
+        if (loading || !isReady || !brand) return;
+        
         setLoading(true);
 
         createTransaction({
@@ -28,80 +33,84 @@ export default function Create({brands, showCreate, onClose, onCreate}) {
             createdAt,
             note
         })
-        .then(({data}) => {
-            onCreate(data.createTransaction)
-            setBrand(null)
-            setAmount(0)
-            setCreatedAt('')
-            setNote('')
+        .then(({ data }) => {
+            onCreate(data.createTransaction);
+            // Reset form
+            setBrand(null);
+            setAmount(0);
+            setCreatedAt('');
+            setNote('');
             setLoading(false);
+            onClose();
         })
         .catch(console.error);
-    }
+    };
 
     return (
-        <SidePanel toggleOpen={showCreate}
-                    onClose={onClose}
-                    title={"Create Transaction"}>
-            <div>
-                <div>
-                    <Label htmlFor="amount">
-                        {`Amount (${AppCurrency})`}
-                    </Label>
+        <Dialog open={showCreate} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogTitle className="sr-only">Create Transaction</DialogTitle>
+                <div className="space-y-4">
+                    <div>
+                        <Label htmlFor="amount">
+                            {`Amount (${AppCurrency})`}
+                        </Label>
+                        <Input
+                            type="number"
+                            name="amount"
+                            value={amount}
+                            className="mt-1"
+                            onChange={(e) => setAmount(e.target.value > 0 ? e.target.value : 0)}
+                        />
+                    </div>
 
-                    <Input
-                        type="number"
-                        name="amount"
-                        value={amount}
-                        className="mt-1 block w-full"
-                        onChange={(e) => setAmount(e.target.value > 0 ? e.target.value : 0)}
-                    />
-                </div>
+                    <div>
+                        <Label htmlFor="date">
+                            Date
+                        </Label>
+                        <Input
+                            type="date"
+                            name="date"
+                            value={createdAt}
+                            className="mt-1"
+                            onChange={(e) => setCreatedAt(e.target.value)}
+                        />
+                    </div>
 
-                <div className="mt-4">
-                    <Label htmlFor="date">
-                        Date
-                    </Label>
-
-                    <Input
-                        type="date"
-                        name="date"
-                        value={createdAt}
-                        className="mt-1 block w-full"
-                        onChange={(e) => setCreatedAt(e.target.value)}
-                    />
-                </div>
-
-                <div className="col-span-6 sm:col-span-3 mt-4">
+                    <div>
                         <Combobox
                             label="Brand"
                             items={brands}
+                            initialSelectedItem={brand}
                             onChange={(item) => setBrand(item)}
                             displayInputValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
                             displayOptionValue={(item) => item ? `${item.name} (${item.category?.name ?? 'N/A'})` : ''}
-                            />
-                </div>
+                        />
+                    </div>
 
-                <div className="mt-4">
-                    <Label htmlFor="note">
-                        Note (optional)
-                    </Label>
+                    <div>
+                        <Label htmlFor="note">
+                            Note (optional)
+                        </Label>
+                        <Input
+                            type="text"
+                            name="note"
+                            value={note}
+                            className="mt-1"
+                            onChange={(e) => setNote(e.target.value)}
+                        />
+                    </div>
 
-                    <Input
-                        type="text"
-                        name="note"
-                        value={note}
-                        className="mt-1 block w-full"
-                        onChange={(e) => setNote(e.target.value)}
-                    />
+                    <div className="flex items-center justify-end pt-2">
+                        <Button 
+                            disabled={!isReady || loading} 
+                            onClick={handleCreate}
+                        >
+                            Create
+                        </Button>
+                    </div>
                 </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <Button disabled={! isReady} onClick={create} className={`${isReady ? '' : 'disabled opacity-25'}`}>         
-                        Create
-                    </Button>
-                </div>
-            </div>
-        </SidePanel>
-    )
-  }
+            </DialogContent>
+        </Dialog>
+    );
+}
