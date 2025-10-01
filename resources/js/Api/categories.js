@@ -1,5 +1,6 @@
 import { gql } from '@urql/core';
 import client from './client.js';
+import { customQuery } from './common.js';
 
 export const getAllCategories = () => {
     return client
@@ -63,4 +64,8 @@ export const updateCategory = ({id, name, type, color}) => {
             }
         `)
         .toPromise();
+}
+
+export const getCategoryStats = (range = 'current-month') => {
+    return customQuery(`categoryStats(range: "${range}")`);
 }

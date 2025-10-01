@@ -11,6 +11,7 @@ import { getCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import CategoryStats from '@/components/Domain/CategoryStats';
 
 export default function Index({ auth }) {
     const [categories, setCategories] = useState([]);
@@ -103,6 +104,10 @@ export default function Index({ auth }) {
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto">
+                    <div className='mb-4'>
+                        <CategoryStats />
+                    </div>
+
                     {(categories.length > 0 || searchQuery) && (<div className='mb-4'>
                         <Input
                             name="search"
