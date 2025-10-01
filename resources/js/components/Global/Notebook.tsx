@@ -1,10 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { XIcon } from '@heroicons/react/solid';
-import { Plate, usePlateEditor } from 'platejs/react';
 import type { Value } from 'platejs';
 import { customQuery } from '../../Api';
-import { BasicNodesKit } from '@/components/editor/plugins/basic-nodes-kit';
-import { Editor, EditorContainer } from '@/components/ui/editor';
 
 interface NotebookProps {
   onClose: () => void;
@@ -19,11 +16,6 @@ export default function Notebook({ onClose }: NotebookProps) {
   const [initialContent, setInitialContent] = useState<Value>(initialValue);
   const [editorValue, setEditorValue] = useState<Value>(initialValue);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const editor = usePlateEditor({
-    plugins: BasicNodesKit,
-    value: initialContent,
-  });
 
   // Load notebook content on mount
   useEffect(() => {
@@ -65,7 +57,7 @@ export default function Notebook({ onClose }: NotebookProps) {
           setEditorValue(parsedContent);
           // Use the editor API to set value after a brief delay
           setTimeout(() => {
-            editor.tf.setValue(parsedContent);
+            setEditorValue(parsedContent);
           }, 100);
         } catch (e) {
           // If content is not valid JSON, use initial value
@@ -125,20 +117,6 @@ export default function Notebook({ onClose }: NotebookProps) {
         </div>
       </div>
 
-      
-      <Plate
-          editor={editor}
-          onChange={({ value }) => {
-            setEditorValue(value);
-          }}
-        >
-          <EditorContainer variant="default">
-          <Editor
-              variant="default"
-              placeholder="Start writing your notes here..."
-            />
-          </EditorContainer>
-        </Plate>
     </div>
   );
 }
