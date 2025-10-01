@@ -10,12 +10,7 @@ interface NotebookProps {
   onClose: () => void;
 }
 
-const initialValue: Value = [
-  {
-    type: 'p',
-    children: [{ text: 'Start writing your notes here...' }],
-  },
-];
+const initialValue: Value = [];
 
 export default function Notebook({ onClose }: NotebookProps) {
   const [loading, setLoading] = useState(false);
@@ -130,28 +125,20 @@ export default function Notebook({ onClose }: NotebookProps) {
         </div>
       </div>
 
-      {/* Editor Content */}
-      <div className="flex-1 overflow-hidden border-r">
-        {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <Plate 
-            editor={editor}
-            onChange={({ value }) => {
-              setEditorValue(value);
-            }}
-          >
-            <EditorContainer variant="default">
-              <Editor 
-                variant="default"
-                placeholder="Start writing your notes here..."
-              />
-            </EditorContainer>
-          </Plate>
-        )}
-      </div>
+      
+      <Plate
+          editor={editor}
+          onChange={({ value }) => {
+            setEditorValue(value);
+          }}
+        >
+          <EditorContainer variant="default">
+          <Editor
+              variant="default"
+              placeholder="Start writing your notes here..."
+            />
+          </EditorContainer>
+        </Plate>
     </div>
   );
 }
