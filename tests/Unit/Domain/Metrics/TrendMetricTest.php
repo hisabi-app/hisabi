@@ -7,16 +7,14 @@ use Tests\TestCase;
 
 class TrendMetricTest extends TestCase
 {
-    /** @test */
-    public function it_has_correct_component()
+    public function test_it_has_correct_component()
     {
         $sut = new FakeTrendMetric;
 
         $this->assertEquals('trend-metric', $sut->component());
     }
 
-    /** @test */
-    public function it_has_show_standard_deviation_flag()
+    public function test_it_has_show_standard_deviation_flag()
     {
         $sut = new FakeTrendMetric;
 

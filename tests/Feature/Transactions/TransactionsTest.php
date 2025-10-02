@@ -10,8 +10,7 @@ class TransactionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_returns_correct_data()
+    public function test_it_returns_correct_data()
     {
         $transaction1 = Transaction::factory()->create();
         $transaction2 = Transaction::factory()->create();

@@ -8,8 +8,7 @@ use Tests\TestCase;
 
 class SmsTemplateDetectorTest extends TestCase
 {
-    /** @test */
-    public function it_returns_null_if_no_template_match()
+    public function test_it_returns_null_if_no_template_match()
     {
         $sut = new SmsTemplateDetector;
 
@@ -18,8 +17,7 @@ class SmsTemplateDetectorTest extends TestCase
         );
     }
 
-    /** @test */
-    public function it_returns_correct_matched_template_with_extracted_data()
+    public function test_it_returns_correct_matched_template_with_extracted_data()
     {
         $templates = [
             'Purchase of AED {amount} with {card} at {brand},' => [

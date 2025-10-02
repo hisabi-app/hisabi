@@ -10,8 +10,7 @@ class DeleteTransactionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_delete_a_model()
+    public function test_it_delete_a_model()
     {
         $transaction = Transaction::factory()->create();
 

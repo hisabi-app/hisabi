@@ -10,16 +10,14 @@ class SmsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_has_body()
+    public function test_it_has_body()
     {
         $sut = Sms::factory()->create(['body' => 'someName']);
 
         $this->assertEquals("someName", $sut->body);
     }
 
-    /** @test */
-    public function it_has_meta()
+    public function test_it_has_meta()
     {
         $meta = ['key' => 'value'];
 
@@ -28,8 +26,7 @@ class SmsTest extends TestCase
         $this->assertEquals($meta, $sut->meta);
     }
 
-    /** @test */
-    public function it_may_not_belongs_to_transaction()
+    public function test_it_may_not_belongs_to_transaction()
     {
         $sut = Sms::factory()
                     ->create();
@@ -37,8 +34,7 @@ class SmsTest extends TestCase
         $this->assertNull($sut->transaction);
     }
 
-    /** @test */
-    public function it_can_belongs_to_transaction()
+    public function test_it_can_belongs_to_transaction()
     {
         $sut = Sms::factory()
                     ->forTransaction(['amount' => 1001])
@@ -47,8 +43,7 @@ class SmsTest extends TestCase
         $this->assertEquals(1001, $sut->transaction->amount);
     }
 
-    /** @test */
-    public function is_does_search_about_amount_brand_or_note()
+    public function test_is_does_search_about_amount_brand_or_note()
     {
         Sms::factory()->create(['body' => 'body of the sms']);
 

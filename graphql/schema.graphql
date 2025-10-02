@@ -12,6 +12,7 @@ type Category {
     name: String!
     type: String!
     color: String
+    transactionsCount: Int! @count(relation: "transactions")
 }
 
 type Budget {
@@ -81,6 +82,7 @@ type Query {
     totalInvestment: Json
     totalCash: Json
     netWorth: Json
+    netWorthTrend(range: String!): Json
 
     expensesPerCategory(range: String!): Json
     incomePerCategory(range: String!): Json
@@ -101,6 +103,8 @@ type Query {
     averageValueTransaction(range: String!): Json
     transactionsStandardDeviation(range: String! id: ID!): Json
     financeVisualizationCirclePackMetric(range: String!): Json
+    brandStats(range: String!): Json
+    categoryStats(range: String!): Json
 
     hisabiGPT(messages: [Message]): Json
 }

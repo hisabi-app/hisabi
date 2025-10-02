@@ -7,8 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class RelationTrendMetricTest extends TestCase
 {
-    /** @test */
-    public function it_returns_relation_data()
+    public function test_it_returns_relation_data()
     {
         $sut = new FakeRelationTrendMetric;
 

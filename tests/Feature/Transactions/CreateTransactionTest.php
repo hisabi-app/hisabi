@@ -11,8 +11,7 @@ class CreateTransactionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_create_a_model()
+    public function test_it_create_a_model()
     {
         $brand = Brand::factory()->create();
 

@@ -18,7 +18,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
     Route::get('/brands', [BrandController::class, 'index'])->name('brands');
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
-    Route::get('/sms', [SmsController::class, 'index'])->name('sms');
     Route::get('/report', function(Request $request) {
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');

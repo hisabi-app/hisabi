@@ -8,8 +8,7 @@ use Tests\TestCase;
 
 class LastMonthTest extends TestCase
 {
-    /** @test */
-    public function it_has_correct_json_serializeable()
+    public function test_it_has_correct_json_serializeable()
     {
         // mock app date
         Carbon::setTestNow(Carbon::create(2021, 1, 18));

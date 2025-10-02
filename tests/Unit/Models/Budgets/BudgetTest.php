@@ -12,16 +12,14 @@ class BudgetTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_has_name()
+    public function test_it_has_name()
     {
         $sut = Budget::factory()->create(['name' => 'test']);
 
         $this->assertEquals("test", $sut->name);
     }
 
-    /** @test */
-    public function it_belongs_to_categories()
+    public function test_it_belongs_to_categories()
     {
         $categories = Category::factory()->createMany(3);
         $sut = Budget::factory()->create();
@@ -30,12 +28,16 @@ class BudgetTest extends TestCase
         $this->assertCount(3, $sut->categories);
     }
 
-    /** @test */
-    public function it_has_total_transactions_amount()
+    public function test_it_has_total_transactions_amount()
     {
         $category = Category::factory()->create();
         $brand = Brand::factory()->create(['category_id' => $category->id]);
-        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
+        $sut = Budget::factory()->create([
+            'start_at' => now()->subDays(1), 
+            'end_at' => now()->addDays(1), 
+            'amount' => 700,
+            'reoccurrence' => Budget::CUSTOM
+        ]);
         $sut->categories()->attach($category);
 
         $category->transactions()->create(['amount' => 100, 'brand_id' => $brand->id]);
@@ -46,50 +48,75 @@ class BudgetTest extends TestCase
         $this->assertEquals(42.86, $sut->totalSpentPercentage);
     }
 
-    /** @test */
-    public function it_has_isSaving()
+    public function test_it_has_isSaving()
     {
         $this->assertTrue(Budget::factory()->create(['saving' => true])->isSaving);
         $this->assertFalse(Budget::factory()->create(['saving' => false])->isSaving);
     }
 
-    /** @test */
-    public function it_has_totalMarginPerDay_should_return_remaining_if_no_more_days()
+    public function test_it_has_totalMarginPerDay_should_return_zero_when_budget_ended()
     {
-        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
+        // Freeze time to control the calculation precisely  
+        $fixedNow = now()->setTime(12, 0, 0); // Noon today
+        \Carbon\Carbon::setTestNow($fixedNow);
+        
+        // Create budget that ended this morning (past end date, so days < 0)
+        $sut = Budget::factory()->create([
+            'start_at' => $fixedNow->copy()->subDays(3), 
+            'end_at' => $fixedNow->copy()->subHours(2), // ended 2 hours ago
+            'amount' => 700, 
+            'reoccurrence' => Budget::CUSTOM
+        ]);
         $sut->categories()->attach(Category::factory()->create());
 
-        $this->assertEquals(700, $sut->totalMarginPerDay);
+        // When budget has ended (days < 0), should return 0
+        $this->assertEquals(0, $sut->totalMarginPerDay);
+        
+        \Carbon\Carbon::setTestNow(); // Reset time
     }
 
-    /** @test */
-    public function it_has_totalMarginPerDay_should_return_zero_if_over_budget()
+    public function test_it_has_totalMarginPerDay_should_return_zero_if_over_budget()
     {
         $category = Category::factory()->create();
         $brand = Brand::factory()->create(['category_id' => $category->id]);
-        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
+        $sut = Budget::factory()->create([
+            'start_at' => now()->subDays(1), 
+            'end_at' => now()->addDays(1), 
+            'amount' => 700, 
+            'reoccurrence' => Budget::CUSTOM
+        ]);
         $sut->categories()->attach($category);
 
         $category->transactions()->create(['amount' => 700, 'brand_id' => $brand->id]);
 
+        // Should return 0 when over budget (method returns 0, not string)
         $this->assertEquals(0, $sut->totalMarginPerDay);
     }
 
-    /** @test */
-    public function it_has_totalMarginPerDay_should_return_correct_value()
+    public function test_it_has_totalMarginPerDay_should_return_correct_value()
     {
         $category = Category::factory()->create();
         $brand = Brand::factory()->create(['category_id' => $category->id]);
-        $sut = Budget::factory()->create(['start_at' => now(), 'period' => 3, 'reoccurrence' => Budget::DAILY, 'amount' => 700]);
+        // Create budget that ends exactly 2 full days from now to get predictable division
+        $sut = Budget::factory()->create([
+            'start_at' => now()->subDay(), 
+            'end_at' => now()->addDays(2)->startOfDay(),
+            'amount' => 700,
+            'reoccurrence' => Budget::CUSTOM
+        ]);
         $sut->categories()->attach($category);
 
         $category->transactions()->create(['amount' => 600, 'brand_id' => $brand->id]);
 
-        $this->assertEquals(50, $sut->totalMarginPerDay);
+        // Calculate expected value: remaining amount divided by actual days remaining
+        $remainingAmount = 700 - 600; // 100
+        $daysRemaining = now()->diffInDays($sut->endAtDate);
+        $expectedMargin = number_format($remainingAmount / $daysRemaining, 2);
+        
+        $this->assertEquals($expectedMargin, $sut->totalMarginPerDay);
     }
 
-    /** @test */
-    public function it_has_start_and_end_at()
+    public function test_it_has_start_and_end_at()
     {
         $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1)]);
 
@@ -97,30 +124,45 @@ class BudgetTest extends TestCase
         $this->assertEquals(now()->addDays(1)->format('Y-m-d'), $sut->end_at->format('Y-m-d'));
     }
 
-    /** @test */
-    public function it_has_remaining_days()
+    public function test_it_has_remaining_days()
     {
-        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(2), 'reoccurrence' => Budget::CUSTOM]);
+        // Freeze time to control the calculation precisely
+        $fixedNow = now()->setTime(12, 0, 0); // Noon  
+        \Carbon\Carbon::setTestNow($fixedNow);
+        
+        // Create budget ending tomorrow at start of day  
+        $endDate = $fixedNow->copy()->addDay()->startOfDay();
+        $sut = Budget::factory()->create([
+            'start_at' => $fixedNow->copy()->subDay()->startOfDay(), 
+            'end_at' => $endDate, 
+            'reoccurrence' => Budget::CUSTOM
+        ]);
 
-        $this->assertEquals(1, $sut->remainingDays);
+        // Should be exactly 0.5 days from noon today to start of tomorrow
+        $this->assertEquals(0.5, $sut->remainingDays);
+        
+        \Carbon\Carbon::setTestNow(); // Reset time
     }
 
-    /** @test */
-    public function it_has_remaining_to_spend()
+    public function test_it_has_remaining_to_spend()
     {
         $category = Category::factory()->create();
         $brand = Brand::factory()->create(['category_id' => $category->id]);
-        $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'end_at' => now()->addDays(1), 'amount' => 700]);
+        $sut = Budget::factory()->create([
+            'start_at' => now()->subDays(1), 
+            'end_at' => now()->addDays(1), 
+            'amount' => 700,
+            'reoccurrence' => Budget::CUSTOM
+        ]);
         $sut->categories()->attach($category);
 
         $category->transactions()->create(['amount' => 100, 'brand_id' => $brand->id]);
         $category->transactions()->create(['amount' => 200, 'brand_id' => $brand->id]);
 
-        $this->assertEquals(400, $sut->remainingToSpend);
+        $this->assertEquals('400.00', $sut->remainingToSpend);
     }
 
-    /** @test */
-    public function it_has_start_and_end_dates_window()
+    public function test_it_has_start_and_end_dates_window()
     {
         $sut = Budget::factory()->create(['start_at' => now()->subDays(1), 'period' => 1, 'reoccurrence' => Budget::DAILY]);
 

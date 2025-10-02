@@ -7,8 +7,7 @@ use App\Domain\Metrics\CirclePackMetric;
 
 class CirclePackMetricTest extends TestCase
 {
-    /** @test */
-    public function it_has_correct_component()
+    public function test_it_has_correct_component()
     {
         $sut = new FakeCirclePackMetric;
 

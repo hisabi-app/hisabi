@@ -7,24 +7,21 @@ use Tests\TestCase;
 
 class RangeTest extends TestCase
 {
-    /** @test */
-    public function it_has_default_name()
+    public function test_it_has_default_name()
     {
         $sut = new FakeRange;
 
         $this->assertEquals('Fake Range', $sut->name());
     }
 
-    /** @test */
-    public function it_has_default_key()
+    public function test_it_has_default_key()
     {
         $sut = new FakeRange;
 
         $this->assertEquals('fake-range', $sut->key());
     }
 
-    /** @test */
-    public function it_is_json_serializeable()
+    public function test_it_is_json_serializeable()
     {
         $sut = new FakeRange;
 

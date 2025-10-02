@@ -10,16 +10,14 @@ class BrandTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_has_name()
+    public function test_it_has_name()
     {
         $sut = Brand::factory()->create(['name' => 'test']);
 
         $this->assertEquals("test", $sut->name);
     }
 
-    /** @test */
-    public function it_belongs_to_category()
+    public function test_it_belongs_to_category()
     {
         $sut = Brand::factory()
                     ->forCategory(['name' => 'categoryTest'])
@@ -28,8 +26,7 @@ class BrandTest extends TestCase
         $this->assertEquals('categoryTest', $sut->category->name);
     }
 
-    /** @test */
-    public function it_has_transactions()
+    public function test_it_has_transactions()
     {
         $sut = Brand::factory()->create();
 
@@ -38,8 +35,7 @@ class BrandTest extends TestCase
         $this->assertCount(1, $sut->transactions);
     }
 
-    /** @test */
-    public function is_does_search_about_amount_brand_or_note()
+    public function test_it_does_search_about_amount_brand_or_note()
     {
         Brand::factory()->forCategory(['name' => 'internet'])->create(['name' => 'google']);
         Brand::factory()->forCategory(['name' => 'shopping'])->create(['name' => 'ikea']);

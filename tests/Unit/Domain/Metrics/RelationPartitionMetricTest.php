@@ -7,8 +7,7 @@ use Tests\TestCase;
 
 class RelationPartitionMetricTest extends TestCase
 {
-    /** @test */
-    public function it_returns_relation_data()
+    public function test_it_returns_relation_data()
     {
         $sut = new FakeRelationPartitionMetric;
 

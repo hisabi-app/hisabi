@@ -92,16 +92,18 @@ class HisabiGPT
      */
     public function getGptResponse($transactionsSummary, $messages)
     {
-        $result = OpenAI::chat()->create([
-            'model' => config('hisabi.gpt.model'),
-            'messages' => [
-                ['role' => 'system', 'content' => 'You are a helpful personal finance assistant called HisabiGPT developed by Saleem Hadad (Software Engineer). The user might ask you questions about their finance and the transactionsSummary history of the user will be shared with you in the next message. You only reply in the finance context and based on the user data and history, you can suggest advices on savings or investment based on the user transaction data if requested but remind the user to seek for professional consultant.'],
-                ['role' => 'system', 'content' => 'The transactions json summary of the user for the last 3 months: ' . $transactionsSummary],
-                ['role' => 'system', 'content' => 'IMPORTANT: Do NOT answer anything other than finance and personal finance.'],
-                ...$messages,
-            ],
-        ]);
+        // $result = OpenAI::chat()->create([
+        //     'model' => config('hisabi.gpt.model'),
+        //     'messages' => [
+        //         ['role' => 'system', 'content' => 'You are a helpful personal finance assistant called HisabiGPT developed by Saleem Hadad (Software Engineer). The user might ask you questions about their finance and the transactionsSummary history of the user will be shared with you in the next message. You only reply in the finance context and based on the user data and history, you can suggest advices on savings or investment based on the user transaction data if requested but remind the user to seek for professional consultant.'],
+        //         ['role' => 'system', 'content' => 'The transactions json summary of the user for the last 3 months: ' . $transactionsSummary],
+        //         ['role' => 'system', 'content' => 'IMPORTANT: Do NOT answer anything other than finance and personal finance.'],
+        //         ...$messages,
+        //     ],
+        // ]);
 
-        return $result['choices'][0]['message']['content'];
+        // return $result['choices'][0]['message']['content'];
+
+        return 'Calling GPT..';
     }
 }
