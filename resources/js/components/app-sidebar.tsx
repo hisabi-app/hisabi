@@ -1,10 +1,10 @@
 import { Link } from '@inertiajs/react';
 import {
-  SquaresFour,
   Receipt,
-  Tag,
-  FolderOpen,
-  SignOut,
+  StorefrontIcon,
+  SignOutIcon,
+  CirclesThreeIcon,
+  ChartDonutIcon
 } from "@phosphor-icons/react"
 
 import {
@@ -25,7 +25,7 @@ const items = [
   {
     title: "Dashboard",
     url: "dashboard",
-    icon: SquaresFour,
+    icon: ChartDonutIcon,
   },
   {
     title: "Transactions",
@@ -35,12 +35,12 @@ const items = [
   {
     title: "Brands",
     url: "brands",
-    icon: Tag,
+    icon: StorefrontIcon,
   },
   {
     title: "Categories",
     url: "categories",
-    icon: FolderOpen,
+    icon: CirclesThreeIcon,
   },
 ]
 
@@ -81,7 +81,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href={route('logout')} method="post" as="button">
-                <SignOut />
+                <SignOutIcon />
                 <span>Log Out</span>
               </Link>
             </SidebarMenuButton>

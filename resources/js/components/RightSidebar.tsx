@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Brain, ChatCircleText } from '@phosphor-icons/react';
+import { SparkleIcon, ChatCircleTextIcon } from '@phosphor-icons/react';
 import {
   SidebarMenu,
   SidebarMenuItem,
@@ -31,7 +31,7 @@ export default function RightSidebar() {
               size="sm"
               className="flex flex-col items-center gap-1 h-auto py-3"
             >
-              <Brain size={18} />
+              <SparkleIcon size={18} />
               <span 
                 className="font-medium whitespace-nowrap"
                 style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
@@ -48,7 +48,7 @@ export default function RightSidebar() {
               size="sm"
               className="flex flex-col items-center gap-1 h-auto py-3"
             >
-              <ChatCircleText size={18} />
+              <ChatCircleTextIcon size={18} />
               <span 
                 className="font-medium whitespace-nowrap"
                 style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
