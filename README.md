@@ -111,15 +111,6 @@ Thank you, JetBrains for sponsoring the license ❤️
 
 [![DigitalOcean Referral Badge](https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg)](https://www.digitalocean.com/?refcode=64aee93d49da&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
 
-
-## 🪚 Built with
-
-1. Laravel
-2. Inertia & ReactJs
-3. GraphQL
-4. MySQL
-5. Docker
-
 ## 🔖 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/hisabi-app/hisabi/blob/main/LICENSE) file for details.
