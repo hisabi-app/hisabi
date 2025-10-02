@@ -30,6 +30,7 @@ export const getBrands = (page, searchQuery) => {
                                 id
                                 name
                                 color
+                                icon
                             }
                             transactionsCount
                         }

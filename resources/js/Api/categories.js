@@ -11,6 +11,7 @@ export const getAllCategories = () => {
                         name
                         type
                         color
+                        icon
                         transactionsCount
                     }
                 }
@@ -28,6 +29,7 @@ export const getCategories = (page, searchQuery) => {
                         name
                         type
                         color
+                        icon
                         transactionsCount
                     }
                     paginatorInfo {
@@ -39,15 +41,16 @@ export const getCategories = (page, searchQuery) => {
         .toPromise();
 }
 
-export const createCategory = ({name, type, color}) => {
+export const createCategory = ({name, type, color, icon}) => {
     return client
         .mutation(gql`
             mutation {
-                createCategory(name: """${name}""" type: """${type}""" color: """${color}""") {
+                createCategory(name: """${name}""" type: """${type}""" color: """${color}""" icon: """${icon}""") {
                     id
                     name
                     type
                     color
+                    icon
                     transactionsCount
                 }
             }
@@ -55,15 +58,16 @@ export const createCategory = ({name, type, color}) => {
         .toPromise();
 }
 
-export const updateCategory = ({id, name, type, color}) => {
+export const updateCategory = ({id, name, type, color, icon}) => {
     return client
         .mutation(gql`
             mutation {
-                updateCategory(id: ${id} name: """${name}""" type: """${type}""" color: """${color}""") {
+                updateCategory(id: ${id} name: """${name}""" type: """${type}""" color: """${color}""" icon: """${icon}""") {
                     id
                     name
                     type
                     color
+                    icon
                     transactionsCount
                 }
             }

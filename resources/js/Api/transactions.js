@@ -19,6 +19,7 @@ export const getTransactions = (page, searchQuery) => {
                                     name
                                     type
                                     color
+                                    icon
                                 }
                             }
                         }

@@ -13,12 +13,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CategoryStats from '@/components/Domain/CategoryStats';
+import { getCategoryIcon } from '@/Utils/categoryIcons';
 
 interface Category {
     id: number;
     name: string;
     type: string;
     color: string;
+    icon: string;
     transactionsCount: number;
 }
 
@@ -78,7 +80,7 @@ export default function Index({ auth }: { auth: any }) {
     // Filter categories based on search query
     const filteredCategories = useMemo(() => {
         if (!searchQuery) return categories;
-        return categories.filter(category => 
+        return categories.filter(category =>
             category.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [categories, searchQuery]);
@@ -91,13 +93,13 @@ export default function Index({ auth }: { auth: any }) {
             SAVINGS: [],
             INVESTMENT: []
         };
-        
+
         filteredCategories.forEach(category => {
             if (grouped[category.type as keyof GroupedCategories]) {
                 grouped[category.type as keyof GroupedCategories].push(category);
             }
         });
-        
+
         return grouped;
     }, [filteredCategories]);
 
@@ -124,14 +126,12 @@ export default function Index({ auth }: { auth: any }) {
             />
 
             <div className="p-4">
-                <div className="max-w-7xl mx-auto">
-                    <div className='mb-4'>
-                        <CategoryStats />
-                    </div>
+                <div className="max-w-7xl mx-auto grid gap-4">
+                    <CategoryStats />
 
                     {categories.length > 0 && (
                         <Tabs defaultValue="all" className="w-full">
-                            <div className="flex justify-between items-center mb-4">
+                            <div className="flex justify-between items-center mb-2">
                                 <Input
                                     name="search"
                                     placeholder='Search..'
@@ -139,68 +139,50 @@ export default function Index({ auth }: { auth: any }) {
                                     onChange={performSearch}
                                 />
                                 <TabsList>
-                                <TabsTrigger value="all">
-                                    All ({filteredCategories.length})
-                                </TabsTrigger>
-                                {groupedCategories.INCOME.length > 0 && (
-                                    <TabsTrigger value="INCOME">
-                                        Income ({groupedCategories.INCOME.length})
+                                    <TabsTrigger value="all">
+                                        All ({filteredCategories.length})
                                     </TabsTrigger>
-                                )}
-                                {groupedCategories.EXPENSES.length > 0 && (
-                                    <TabsTrigger value="EXPENSES">
-                                        Expenses ({groupedCategories.EXPENSES.length})
-                                    </TabsTrigger>
-                                )}
-                                {groupedCategories.SAVINGS.length > 0 && (
-                                    <TabsTrigger value="SAVINGS">
-                                        Savings ({groupedCategories.SAVINGS.length})
-                                    </TabsTrigger>
-                                )}
-                                {groupedCategories.INVESTMENT.length > 0 && (
-                                    <TabsTrigger value="INVESTMENT">
-                                        Investment ({groupedCategories.INVESTMENT.length})
-                                    </TabsTrigger>
-                                )}
-                            </TabsList>
+                                    {groupedCategories.INCOME.length > 0 && (
+                                        <TabsTrigger value="INCOME">
+                                            Income ({groupedCategories.INCOME.length})
+                                        </TabsTrigger>
+                                    )}
+                                    {groupedCategories.EXPENSES.length > 0 && (
+                                        <TabsTrigger value="EXPENSES">
+                                            Expenses ({groupedCategories.EXPENSES.length})
+                                        </TabsTrigger>
+                                    )}
+                                    {groupedCategories.SAVINGS.length > 0 && (
+                                        <TabsTrigger value="SAVINGS">
+                                            Savings ({groupedCategories.SAVINGS.length})
+                                        </TabsTrigger>
+                                    )}
+                                    {groupedCategories.INVESTMENT.length > 0 && (
+                                        <TabsTrigger value="INVESTMENT">
+                                            Investment ({groupedCategories.INVESTMENT.length})
+                                        </TabsTrigger>
+                                    )}
+                                </TabsList>
                             </div>
 
                             <TabsContent value="all">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                    {filteredCategories.map((category) => (
-                                        <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                            <CardContent className='flex justify-between items-center p-4'>
-                                                <div className='flex gap-3 items-center'>
-                                                    <Badge 
-                                                        className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
-                                                        variant="outline"
-                                                    />
-                                                    <div>
-                                                        <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                            <p>{category.name}</p>
-                                                        </button>
-                                                        <p className='text-muted-foreground text-xs'>
-                                                            {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
-                            </TabsContent>
-
-                            {groupedCategories.INCOME.length > 0 && (
-                                <TabsContent value="INCOME">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.INCOME.map((category) => (
+                                    {filteredCategories.map((category) => {
+                                        const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
+                                        return (
                                             <Card key={category.id} className='py-0' id={'item-' + category.id}>
                                                 <CardContent className='flex justify-between items-center p-4'>
                                                     <div className='flex gap-3 items-center'>
-                                                        <Badge 
-                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
-                                                            variant="outline"
-                                                        />
+                                                        {CategoryIcon ? (
+                                                            <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
+                                                                <CategoryIcon size={20} weight="regular" className="text-current" />
+                                                            </div>
+                                                        ) : (
+                                                            <Badge
+                                                                className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
+                                                                variant="outline"
+                                                            />
+                                                        )}
                                                         <div>
                                                             <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                 <p>{category.name}</p>
@@ -212,7 +194,43 @@ export default function Index({ auth }: { auth: any }) {
                                                     </div>
                                                 </CardContent>
                                             </Card>
-                                        ))}
+                                        );
+                                    })}
+                                </div>
+                            </TabsContent>
+
+                            {groupedCategories.INCOME.length > 0 && (
+                                <TabsContent value="INCOME">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        {groupedCategories.INCOME.map((category) => {
+                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
+                                            return (
+                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                    <CardContent className='flex justify-between items-center p-4'>
+                                                        <div className='flex gap-3 items-center'>
+                                                            {CategoryIcon ? (
+                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
+                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
+                                                                </div>
+                                                            ) : (
+                                                                <Badge
+                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
+                                                                    variant="outline"
+                                                                />
+                                                            )}
+                                                            <div>
+                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                    <p>{category.name}</p>
+                                                                </button>
+                                                                <p className='text-muted-foreground text-xs'>
+                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            );
+                                        })}
                                     </div>
                                 </TabsContent>
                             )}
@@ -220,26 +238,35 @@ export default function Index({ auth }: { auth: any }) {
                             {groupedCategories.EXPENSES.length > 0 && (
                                 <TabsContent value="EXPENSES">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.EXPENSES.map((category) => (
-                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                <CardContent className='flex justify-between items-center p-4'>
-                                                    <div className='flex gap-3 items-center'>
-                                                        <Badge 
-                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
-                                                            variant="outline"
-                                                        />
-                                                        <div>
-                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                <p>{category.name}</p>
-                                                            </button>
-                                                            <p className='text-muted-foreground text-xs'>
-                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                            </p>
+                                        {groupedCategories.EXPENSES.map((category) => {
+                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
+                                            return (
+                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                    <CardContent className='flex justify-between items-center p-4'>
+                                                        <div className='flex gap-3 items-center'>
+                                                            {CategoryIcon ? (
+                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
+                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
+                                                                </div>
+                                                            ) : (
+                                                                <Badge
+                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
+                                                                    variant="outline"
+                                                                />
+                                                            )}
+                                                            <div>
+                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                    <p>{category.name}</p>
+                                                                </button>
+                                                                <p className='text-muted-foreground text-xs'>
+                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
+                                                    </CardContent>
+                                                </Card>
+                                            );
+                                        })}
                                     </div>
                                 </TabsContent>
                             )}
@@ -247,26 +274,35 @@ export default function Index({ auth }: { auth: any }) {
                             {groupedCategories.SAVINGS.length > 0 && (
                                 <TabsContent value="SAVINGS">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.SAVINGS.map((category) => (
-                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                <CardContent className='flex justify-between items-center p-4'>
-                                                    <div className='flex gap-3 items-center'>
-                                                        <Badge 
-                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
-                                                            variant="outline"
-                                                        />
-                                                        <div>
-                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                <p>{category.name}</p>
-                                                            </button>
-                                                            <p className='text-muted-foreground text-xs'>
-                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                            </p>
+                                        {groupedCategories.SAVINGS.map((category) => {
+                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
+                                            return (
+                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                    <CardContent className='flex justify-between items-center p-4'>
+                                                        <div className='flex gap-3 items-center'>
+                                                            {CategoryIcon ? (
+                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
+                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
+                                                                </div>
+                                                            ) : (
+                                                                <Badge
+                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
+                                                                    variant="outline"
+                                                                />
+                                                            )}
+                                                            <div>
+                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                    <p>{category.name}</p>
+                                                                </button>
+                                                                <p className='text-muted-foreground text-xs'>
+                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
+                                                    </CardContent>
+                                                </Card>
+                                            );
+                                        })}
                                     </div>
                                 </TabsContent>
                             )}
@@ -274,26 +310,35 @@ export default function Index({ auth }: { auth: any }) {
                             {groupedCategories.INVESTMENT.length > 0 && (
                                 <TabsContent value="INVESTMENT">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.INVESTMENT.map((category) => (
-                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                <CardContent className='flex justify-between items-center p-4'>
-                                                    <div className='flex gap-3 items-center'>
-                                                        <Badge 
-                                                            className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`} 
-                                                            variant="outline"
-                                                        />
-                                                        <div>
-                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                <p>{category.name}</p>
-                                                            </button>
-                                                            <p className='text-muted-foreground text-xs'>
-                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                            </p>
+                                        {groupedCategories.INVESTMENT.map((category) => {
+                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
+                                            return (
+                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
+                                                    <CardContent className='flex justify-between items-center p-4'>
+                                                        <div className='flex gap-3 items-center'>
+                                                            {CategoryIcon ? (
+                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
+                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
+                                                                </div>
+                                                            ) : (
+                                                                <Badge
+                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
+                                                                    variant="outline"
+                                                                />
+                                                            )}
+                                                            <div>
+                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
+                                                                    <p>{category.name}</p>
+                                                                </button>
+                                                                <p className='text-muted-foreground text-xs'>
+                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
+                                                    </CardContent>
+                                                </Card>
+                                            );
+                                        })}
                                     </div>
                                 </TabsContent>
                             )}

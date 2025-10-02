@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import BrandStats from '@/components/Domain/BrandStats';
+import { getCategoryIcon } from '@/Utils/categoryIcons';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
@@ -132,29 +133,40 @@ export default function Index({auth}) {
                     </div>)}
 
                     <div className="grid gap-2">
-                        {brands.length > 0 && brands.map((brand) => (
-                            <Card key={brand.id} className='py-0' id={'item-' + brand.id}>
-                                <CardContent className='flex justify-between items-center px-4 py-3'>
-                                    <div className='flex gap-2 items-center'>
-                                        <Avatar className='size-10'>
-                                            <AvatarImage src={brand.image} />
-                                            <AvatarFallback>{brand.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <button onClick={() => setEditItem(brand)} className='font-medium hover:underline'>{brand.name}</button>
-                                            <div className='flex gap-1 text-muted-foreground items-center'>
-                                                <ArrowElbowDownRightIcon size={10} weight="bold" />
-                                                <p className='text-xs'>{brand.category ? <span>{brand.category.name}</span> : '-'}</p>
+                        {brands.length > 0 && brands.map((brand) => {
+                            const CategoryIcon = brand.category?.icon 
+                                ? getCategoryIcon(brand.category.icon) 
+                                : null;
+                            
+                            return (
+                                <Card key={brand.id} className='py-0' id={'item-' + brand.id}>
+                                    <CardContent className='flex justify-between items-center px-4 py-3'>
+                                        <div className='flex gap-2 items-center'>
+                                            {CategoryIcon ? (
+                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${brand.category.color}`}>
+                                                    <CategoryIcon size={24} weight="regular" className="text-current" />
+                                                </div>
+                                            ) : (
+                                                <Avatar className='size-10'>
+                                                    <AvatarImage src={brand.image} />
+                                                    <AvatarFallback>{brand.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                            )}
+                                            <div>
+                                                <button onClick={() => setEditItem(brand)} className='font-medium hover:underline'>{brand.name}</button>
+                                                <div className='flex gap-1 text-muted-foreground items-center'>
+                                                    <ArrowElbowDownRightIcon size={10} weight="bold" />
+                                                    <p className='text-xs'>{brand.category ? <span>{brand.category.name}</span> : '-'}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className='flex gap-2 items-center'>
-                                        {brand.category && <Badge className={"badge badge-" + brand.category.color} variant="outline">{brand.category.name}</Badge>}
-                                        <p className='text-muted-foreground text-sm min-w-26 text-right'>{brand.transactionsCount} {brand.transactionsCount === 1 ? 'transaction' : 'transactions'}</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                        <div className='flex gap-2 items-center'>
+                                            <p className='text-muted-foreground text-sm min-w-26 text-right'>{brand.transactionsCount} {brand.transactionsCount === 1 ? 'transaction' : 'transactions'}</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
 
                         <LoadMore hasContent={brands.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage + 1)} />
                     </div>

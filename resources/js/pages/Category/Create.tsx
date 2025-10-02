@@ -11,11 +11,13 @@ import {
     DialogContent,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { availableIcons, getCategoryIcon } from '@/Utils/categoryIcons';
 
 export default function Create({ showCreate, onClose, onCreate }) {
     const [name, setName] = useState('');
     const [type, setType] = useState('EXPENSES');
     const [color, setColor] = useState('gray');
+    const [icon, setIcon] = useState('wallet');
     const [isReady, setIsReady] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -31,7 +33,8 @@ export default function Create({ showCreate, onClose, onCreate }) {
         createCategory({
             name,
             type,
-            color
+            color,
+            icon
         })
         .then(({ data }) => {
             onCreate(data.createCategory);
@@ -39,6 +42,7 @@ export default function Create({ showCreate, onClose, onCreate }) {
             setName('');
             setType('EXPENSES');
             setColor('gray');
+            setIcon('wallet');
             setLoading(false);
             onClose();
         })
@@ -75,6 +79,30 @@ export default function Create({ showCreate, onClose, onCreate }) {
                                 <TabsTrigger value="INVESTMENT">Investment</TabsTrigger>
                             </TabsList>
                         </Tabs>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label className="text-sm leading-none font-medium">
+                            Icon
+                        </Label>
+                        <div className="grid grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 border rounded-lg">
+                            {availableIcons.map((iconOption) => {
+                                const IconComponent = iconOption.component;
+                                return (
+                                    <button
+                                        key={iconOption.name}
+                                        type="button"
+                                        onClick={() => setIcon(iconOption.name)}
+                                        className={`p-2 rounded-md hover:bg-accent transition-colors ${
+                                            icon === iconOption.name ? 'bg-accent ring-2 ring-primary' : ''
+                                        }`}
+                                        title={iconOption.label}
+                                    >
+                                        <IconComponent size={24} weight={icon === iconOption.name ? 'fill' : 'regular'} />
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
 
                     <div className="space-y-2">

@@ -15,6 +15,7 @@ import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import TransactionStats from '@/components/Domain/TransactionStats';
+import { getCategoryIcon } from '@/Utils/categoryIcons';
 
 
 export default function Index({ auth }) {
@@ -135,32 +136,42 @@ export default function Index({ auth }) {
                     )}
 
                     <div className="grid gap-2">
-                        {transactions.length > 0 && transactions.map((transaction) => (
-                            <Card key={transaction.id} className='py-0' id={'item-' + transaction.id}>
-                                <CardContent className='flex justify-between items-center px-4 py-3'>
-                                    <div className='flex gap-2 items-center'>
-                                        <Avatar className='size-10'>
-                                            <AvatarImage src={transaction.brand.image} />
-                                            <AvatarFallback>{transaction.brand.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>{transaction.brand.name} </button>
-                                            <div className='flex gap-1 text-muted-foreground items-center'>
-                                                <ArrowElbowDownRightIcon size={10} weight="bold" />
-                                                <p className=' text-xs'>{transaction.brand.category ? <span>{transaction.brand.category.name}</span> : '-'} - {transaction.created_at}</p>
+                        {transactions.length > 0 && transactions.map((transaction) => {
+                            const CategoryIcon = transaction.brand.category?.icon 
+                                ? getCategoryIcon(transaction.brand.category.icon) 
+                                : null;
+                            
+                            return (
+                                <Card key={transaction.id} className='py-0' id={'item-' + transaction.id}>
+                                    <CardContent className='flex justify-between items-center px-4 py-3'>
+                                        <div className='flex gap-2 items-center'>
+                                            {CategoryIcon ? (
+                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${transaction.brand.category.color}`}>
+                                                    <CategoryIcon size={24} weight="regular" className="text-current" />
+                                                </div>
+                                            ) : (
+                                                <Avatar className='size-10'>
+                                                    <AvatarImage src={transaction.brand.image} />
+                                                    <AvatarFallback>{transaction.brand.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                            )}
+                                            <div>
+                                                <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>{transaction.brand.name} </button>
+                                                <div className='flex gap-1 text-muted-foreground items-center'>
+                                                    <ArrowElbowDownRightIcon size={10} weight="bold" />
+                                                    <p className=' text-xs'>{transaction.brand.category ? <span>{transaction.brand.category.name}</span> : '-'} - {transaction.created_at}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className='flex gap-2 items-center'>
-                                        {transaction.note && <Badge variant="secondary">{transaction.note}</Badge>
-                                        }
-                                        {transaction.brand.category && <Badge className={"badge badge-" + transaction.brand.category.color} variant="outline">{transaction.brand.category.name}</Badge>
-                                        }
-                                        <p className={`${transaction.brand.category.type == "INCOME" ? 'text-green-500' : ''} min-w-26 text-right`}> {transaction.brand.category.type == "INCOME" ? '' : '-'}{AppCurrency} {formatNumber(transaction.amount, null)}</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                        <div className='flex gap-2 items-center'>
+                                            {transaction.note && <Badge variant="secondary">{transaction.note}</Badge>
+                                            }
+                                            <p className={`${transaction.brand.category.type == "INCOME" ? 'text-green-500' : ''} min-w-26 text-right`}> {transaction.brand.category.type == "INCOME" ? '' : '-'}{AppCurrency} {formatNumber(transaction.amount, null)}</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
 
                         <LoadMore hasContent={transactions.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage + 1)} />
                     </div>

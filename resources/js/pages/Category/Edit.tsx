@@ -12,11 +12,13 @@ import {
     DialogContent,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { availableIcons, getCategoryIcon } from '@/Utils/categoryIcons';
 
 export default function Edit({ category, onUpdate, onDelete, onClose }) {
     const [name, setName] = useState('');
     const [type, setType] = useState('');
     const [color, setColor] = useState('gray');
+    const [icon, setIcon] = useState('wallet');
 
     useEffect(() => {
         if (!category) return;
@@ -24,6 +26,7 @@ export default function Edit({ category, onUpdate, onDelete, onClose }) {
         setName(category.name);
         setType(category.type);
         setColor(category.color);
+        setIcon(category.icon || 'wallet');
     }, [category]);
 
     const handleUpdate = () => {
@@ -34,13 +37,14 @@ export default function Edit({ category, onUpdate, onDelete, onClose }) {
             id: categoryId,
             name,
             type,
-            color
+            color,
+            icon
         })
-        .then(({ data }) => {
-            onUpdate(data.updateCategory);
-            onClose();
-        })
-        .catch(console.error);
+            .then(({ data }) => {
+                onUpdate(data.updateCategory);
+                onClose();
+            })
+            .catch(console.error);
     };
 
     const handleDelete = () => {
@@ -86,6 +90,30 @@ export default function Edit({ category, onUpdate, onDelete, onClose }) {
                                     <TabsTrigger value="INVESTMENT">Investment</TabsTrigger>
                                 </TabsList>
                             </Tabs>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="text-sm leading-none font-medium">
+                                Icon
+                            </Label>
+                            <div className="grid grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 border rounded-lg">
+                                {availableIcons.map((iconOption) => {
+                                    const IconComponent = iconOption.component;
+                                    return (
+                                        <Button
+                                            key={iconOption.name}
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => setIcon(iconOption.name)}
+                                            className={`px-0 ${icon === iconOption.name ? 'ring-1' : ''
+                                                }`}
+                                            title={iconOption.label}
+                                        >
+                                            <IconComponent />
+                                        </Button>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         <div className="space-y-2">

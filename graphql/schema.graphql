@@ -12,6 +12,7 @@ type Category {
     name: String!
     type: String!
     color: String
+    icon: String
     transactionsCount: Int! @count(relation: "transactions")
 }
 
@@ -170,13 +171,14 @@ type Mutation {
     updateBrand(id: ID! name: String! category_id: Int!): Brand @update
     deleteBrand(id: ID! @whereKey): Brand @delete
 
-    createCategory(name: String! type: String! color: String!): Category
+    createCategory(name: String! type: String! color: String! icon: String!): Category
         @create
     updateCategory(
         id: ID!
         name: String!
         type: String!
         color: String!
+        icon: String!
     ): Category @update
     deleteCategory(id: ID! @whereKey): Category @delete
 
