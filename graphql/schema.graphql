@@ -54,6 +54,39 @@ input Message {
     content: String!
 }
 
+type AIChart {
+    type: String!
+    title: String!
+    data: Json!
+    config: Json
+}
+
+type AIComponent {
+    type: String!
+    data: Json!
+}
+
+type AIResponse {
+    role: String!
+    content: String!
+    charts: [AIChart!]
+    components: [AIComponent!]
+    suggestions: [String!]
+}
+
+type McpServerInfo {
+    name: String!
+    version: String!
+    endpoint: String!
+    toolsCount: Int!
+}
+
+type McpTool {
+    name: String!
+    description: String!
+    inputSchema: Json!
+}
+
 type Query {
     transactions(search: String @search): [Transaction!]!
         @paginate(defaultCount: 50)
@@ -106,7 +139,15 @@ type Query {
     brandStats(range: String!): Json
     categoryStats(range: String!): Json
 
+    # Legacy AI endpoint (deprecated, use hisabiAIChat)
     hisabiGPT(messages: [Message]): Json
+    
+    # New AI endpoints with Prism
+    hisabiAIChat(messages: [Message!]!): AIResponse!
+    
+    # MCP Server Info
+    mcpServerInfo: McpServerInfo!
+    mcpAvailableTools: [McpTool!]!
 }
 
 type Mutation {

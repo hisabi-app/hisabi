@@ -7,8 +7,10 @@ import { Conversation, ConversationContent } from '@/components/ui/shadcn-io/ai/
 import { PromptInput, PromptInputTextarea, PromptInputToolbar, PromptInputSubmit } from '@/components/ui/shadcn-io/ai/prompt-input';
 import { Suggestions, Suggestion } from '@/components/ui/shadcn-io/ai/suggestion';
 import { Loader } from '@/components/ui/shadcn-io/ai/loader';
+import AIChartRenderer from './AIChartRenderer';
+import AIFinancialWidget from './AIFinancialWidget';
 
-interface HisabiGPTProps {
+interface HisabiAIChatProps {
   onClose: () => void;
 }
 
@@ -16,9 +18,12 @@ interface ChatMessage {
   id: number;
   content: string;
   role: 'user' | 'assistant';
+  charts?: any[];
+  components?: any[];
+  suggestions?: string[];
 }
 
-export default function HisabiGPT({ onClose }: HisabiGPTProps) {
+export default function HisabiAIChat({ onClose }: HisabiAIChatProps) {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -51,26 +56,76 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
   const submit = async (newChat: ChatMessage[]) => {
     setLoading(true);
 
-    let messages = newChat.map((message) => `{role: "${message.role}" content: """${message.content.replace(/"/g, '\\"')}"""}`);
-    let graphql_query = `hisabiGPT(messages: [${messages}])`;
+    try {
+      // Format messages for the new API
+      let messages = newChat.map((msg) => 
+        `{role: "${msg.role}" content: """${msg.content.replace(/"/g, '\\"')}"""}`
+      );
+      let graphql_query = `hisabiAIChat(messages: [${messages}]) {
+        role
+        content
+        charts {
+          type
+          title
+          data
+          config
+        }
+        components {
+          type
+          data
+        }
+        suggestions
+      }`;
 
-    let { data } = await customQuery(graphql_query);
-    let parsedData = JSON.parse(data['hisabiGPT']);
+      let { data } = await customQuery(graphql_query);
+      let aiResponse = data['hisabiAIChat'];
 
-    setChatHistory([...chatHistory, parsedData]);
-    setLoading(false);
+      const assistantMessage: ChatMessage = {
+        id: chatHistory.length + 1,
+        role: 'assistant',
+        content: aiResponse.content,
+        charts: aiResponse.charts || [],
+        components: aiResponse.components || [],
+        suggestions: aiResponse.suggestions || []
+      };
+
+      setChatHistory([...chatHistory, assistantMessage]);
+    } catch (error) {
+      console.error('AI Chat Error:', error);
+      const errorMessage: ChatMessage = {
+        id: chatHistory.length + 1,
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error. Please try again.',
+        charts: [],
+        components: [],
+        suggestions: []
+      };
+      setChatHistory([...chatHistory, errorMessage]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSuggestionClick = (suggestionText: string) => {
     setMessage(suggestionText);
   };
 
+  // Get suggestions from the last assistant message
+  const lastAssistantMessage = [...chatHistory].reverse().find(msg => msg.role === 'assistant');
+  const currentSuggestions = lastAssistantMessage?.suggestions || [
+    'Show me my spending summary for this month',
+    'What are my top expenses?',
+    'How much can I save this month?'
+  ];
+
   return (
     <div className="h-full w-full flex flex-col overflow-hidden">
       {/* Header */}
       <div className="border-b p-4">
         <div className='flex justify-between items-center'>
-          <h2 className='text-lg font-semibold'>Hisabi AI</h2>
+          <div>
+            <h2 className='text-lg font-semibold'>Hisabi AI</h2>
+          </div>
           <button
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -85,7 +140,10 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
         <ConversationContent>
           {chatHistory.length === 0 && (
             <div className="flex items-center justify-center h-full">
-              <p className="text-muted-foreground text-sm">Start a conversation...</p>
+              <div className="text-center space-y-2">
+                <p className="text-muted-foreground text-sm">Start a conversation...</p>
+                <p className="text-xs text-muted-foreground">Ask me anything about your finances!</p>
+              </div>
             </div>
           )}
           
@@ -93,6 +151,24 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
             <Message key={msg.id} from={msg.role}>
               <MessageContent>
                 <Response>{msg.content}</Response>
+                
+                {/* Render charts if present */}
+                {msg.charts && msg.charts.length > 0 && (
+                  <div className="mt-4 space-y-4">
+                    {msg.charts.map((chart, index) => (
+                      <AIChartRenderer key={index} chart={chart} />
+                    ))}
+                  </div>
+                )}
+                
+                {/* Render components if present */}
+                {msg.components && msg.components.length > 0 && (
+                  <div className="mt-4 space-y-4">
+                    {msg.components.map((component, index) => (
+                      <AIFinancialWidget key={index} widget={component} />
+                    ))}
+                  </div>
+                )}
               </MessageContent>
             </Message>
           ))}
@@ -100,7 +176,7 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
           {loading && (
             <div className="flex items-center gap-2 py-4">
               <Loader size={20} />
-              <span className="text-sm text-muted-foreground">Thinking...</span>
+              <span className="text-sm text-muted-foreground">Analyzing your finances...</span>
             </div>
           )}
         </ConversationContent>
@@ -109,14 +185,13 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
       {/* Input Area */}
       <div className="p-4 space-y-3">
         <Suggestions>
-          <Suggestion
-            suggestion="how much can I save money approximately?"
-            onClick={handleSuggestionClick}
-          />
-          <Suggestion
-            suggestion="what is my top expense last month?"
-            onClick={handleSuggestionClick}
-          />
+          {currentSuggestions.slice(0, 3).map((suggestion, index) => (
+            <Suggestion
+              key={index}
+              suggestion={suggestion}
+              onClick={handleSuggestionClick}
+            />
+          ))}
         </Suggestions>
 
         <PromptInput onSubmit={handleSubmit}>
@@ -138,3 +213,4 @@ export default function HisabiGPT({ onClose }: HisabiGPTProps) {
     </div>
   )
 }
+
