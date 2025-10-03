@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { createTransaction } from "../../Api";
 import Combobox from "@/components/Global/Combobox";
 import { Button } from "@/components/ui/button";
+import { getAppCurrency } from '@/Utils';
 import {
     Dialog,
     DialogContent,
@@ -53,7 +54,7 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
                 <div className="space-y-4">
                     <div>
                         <Label htmlFor="amount">
-                            {`Amount (${AppCurrency})`}
+                            {`Amount (${getAppCurrency()})`}
                         </Label>
                         <Input
                             type="number"

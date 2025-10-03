@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { LongPressButton } from '@/components/ui/long-press-button';
 import Combobox from "@/components/Global/Combobox";
+import { getAppCurrency } from '@/Utils';
 import {
     Dialog,
     DialogContent,
@@ -65,7 +66,7 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
                     <div className="space-y-4">
                         <div>
                             <Label htmlFor="amount">
-                                {`Amount (${AppCurrency})`}
+                                {`Amount (${getAppCurrency()})`}
                             </Label>
                             <Input
                                 type="number"
