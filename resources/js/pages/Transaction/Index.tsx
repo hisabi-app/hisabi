@@ -8,7 +8,7 @@ import Create from './Create';
 import LoadMore from '@/components/Global/LoadMore';
 import { Button } from '@/components/ui/button';
 import { getTransactions, getAllBrands } from '@/Api';
-import { animateRowItem, formatNumber } from '@/Utils';
+import { animateRowItem, formatNumber, getAppCurrency } from '@/Utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
@@ -140,12 +140,16 @@ export default function Index({ auth }) {
                             const CategoryIcon = transaction.brand.category?.icon 
                                 ? getCategoryIcon(transaction.brand.category.icon) 
                                 : null;
+                            const hasCategory = transaction.brand.category !== null;
+                            const isUncategorized = !hasCategory;
+                            const categoryType = hasCategory ? transaction.brand.category.type : null;
+                            const isIncomeTransaction = categoryType === "INCOME";
                             
                             return (
-                                <Card key={transaction.id} className='py-0' id={'item-' + transaction.id}>
+                                <Card key={transaction.id} className={`py-0 ${isUncategorized ? 'bg-red-50' : ''}`} id={'item-' + transaction.id}>
                                     <CardContent className='flex justify-between items-center px-4 py-3'>
                                         <div className='flex gap-2 items-center'>
-                                            {CategoryIcon ? (
+                                            {CategoryIcon && hasCategory ? (
                                                 <div className={`size-10 rounded-full flex items-center justify-center badge badge-${transaction.brand.category.color}`}>
                                                     <CategoryIcon size={24} weight="regular" className="text-current" />
                                                 </div>
@@ -159,14 +163,14 @@ export default function Index({ auth }) {
                                                 <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>{transaction.brand.name} </button>
                                                 <div className='flex gap-1 text-muted-foreground items-center'>
                                                     <ArrowElbowDownRightIcon size={10} weight="bold" />
-                                                    <p className=' text-xs'>{transaction.brand.category ? <span>{transaction.brand.category.name}</span> : '-'} - {transaction.created_at}</p>
+                                                    <p className=' text-xs'>{hasCategory ? <span>{transaction.brand.category.name}</span> : '-'} - {transaction.created_at}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className='flex gap-2 items-center'>
                                             {transaction.note && <Badge variant="secondary">{transaction.note}</Badge>
                                             }
-                                            <p className={`${transaction.brand.category.type == "INCOME" ? 'text-green-500' : ''} min-w-26 text-right`}> {transaction.brand.category.type == "INCOME" ? '' : '-'}{AppCurrency} {formatNumber(transaction.amount, null)}</p>
+                                            <p className={`${isIncomeTransaction ? 'text-green-500' : ''} min-w-26 text-right`}> {isIncomeTransaction ? '' : '-'}{getAppCurrency()} {formatNumber(transaction.amount, null)}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
