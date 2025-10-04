@@ -2,6 +2,7 @@
 
 namespace App\Http\Queries\Transaction\GetTransactionsQuery;
 
+use App\Http\Resources\TransactionResource;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 
@@ -14,7 +15,7 @@ readonly class GetTransactionsQueryResponse
     public function toResponse(): JsonResponse
     {
         return response()->json([
-            'data' => $this->transactions->items(),
+            'data' => TransactionResource::collection($this->transactions->items()),
             'paginatorInfo' => [
                 'hasMorePages' => $this->transactions->hasMorePages(),
                 'currentPage' => $this->transactions->currentPage(),
