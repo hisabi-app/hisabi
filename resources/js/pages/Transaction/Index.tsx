@@ -278,7 +278,7 @@ export default function Index({ auth }: { auth: any }) {
                                         <div className='flex gap-2 items-center'>
                                             {transaction.note && <Badge variant="secondary">{transaction.note}</Badge>
                                             }
-                                            <p className={`${isIncomeTransaction ? 'text-green-500' : ''} min-w-26 text-right`}> {isIncomeTransaction ? '' : '-'}{getAppCurrency()} {formatNumber(transaction.amount)}</p>
+                                            <p className={`${isIncomeTransaction ? 'text-green-500' : ''} min-w-26 text-right`}> {isIncomeTransaction ? '' : '-'}{getAppCurrency()} {formatNumber(transaction.amount, null)}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
