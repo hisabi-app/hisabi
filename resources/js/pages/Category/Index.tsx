@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
@@ -187,9 +187,12 @@ export default function Index({ auth }: { auth: any }) {
                                                             <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                 <p>{category.name}</p>
                                                             </button>
-                                                            <p className='text-muted-foreground text-xs'>
+                                                            <Link 
+                                                                href={`/transactions?category=${category.id}`}
+                                                                className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                            >
                                                                 {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                            </p>
+                                                            </Link>
                                                         </div>
                                                     </div>
                                                 </CardContent>
@@ -222,9 +225,12 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <p className='text-muted-foreground text-xs'>
+                                                                <Link 
+                                                                    href={`/transactions?category=${category.id}`}
+                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </p>
+                                                                </Link>
                                                             </div>
                                                         </div>
                                                     </CardContent>
@@ -258,9 +264,12 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <p className='text-muted-foreground text-xs'>
+                                                                <Link 
+                                                                    href={`/transactions?category=${category.id}`}
+                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </p>
+                                                                </Link>
                                                             </div>
                                                         </div>
                                                     </CardContent>
@@ -294,9 +303,12 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <p className='text-muted-foreground text-xs'>
+                                                                <Link 
+                                                                    href={`/transactions?category=${category.id}`}
+                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </p>
+                                                                </Link>
                                                             </div>
                                                         </div>
                                                     </CardContent>
@@ -330,9 +342,12 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <p className='text-muted-foreground text-xs'>
+                                                                <Link 
+                                                                    href={`/transactions?category=${category.id}`}
+                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </p>
+                                                                </Link>
                                                             </div>
                                                         </div>
                                                     </CardContent>
