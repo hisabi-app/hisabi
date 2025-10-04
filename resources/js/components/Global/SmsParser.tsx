@@ -57,7 +57,6 @@ export default function SmsParser({ onClose }: SmsParserProps) {
     setLoading(true);
     updateSms({ id: editingSms.id, body: editBody })
       .then(({ data }) => {
-        // Refresh the list to see if it's now valid
         fetchInvalidSms();
         setEditingSms(null);
         setEditBody('');
@@ -84,7 +83,6 @@ export default function SmsParser({ onClose }: SmsParserProps) {
     setLoading(true);
     createSms({ sms: newSmsBody, createdAt })
       .then(({ data }) => {
-        // Refresh the list
         fetchInvalidSms();
         setNewSmsBody('');
         setCreatedAt('');
@@ -186,7 +184,7 @@ export default function SmsParser({ onClose }: SmsParserProps) {
               name="newSms"
               value={newSmsBody}
               onChange={(e) => setNewSmsBody(e.target.value)}
-              className="w-full bg-white min-h-36"
+              className="w-full bg-white min-h-36 max-h-60"
               placeholder="Paste SMS messages here (one per line)..."
             />
           </div>
