@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createCategory } from "../../Api";
 import {
@@ -11,7 +10,9 @@ import {
     DialogContent,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { availableIcons, getCategoryIcon } from '@/Utils/categoryIcons';
+import { getCategoryIcon } from '@/Utils/categoryIcons';
+import { IconColorSelector } from '@/components/ui/icon-color-selector';
+import { PencilSimple } from '@phosphor-icons/react';
 
 export default function Create({ showCreate, onClose, onCreate }) {
     const [name, setName] = useState('');
@@ -20,6 +21,7 @@ export default function Create({ showCreate, onClose, onCreate }) {
     const [icon, setIcon] = useState('wallet');
     const [isReady, setIsReady] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showIconColorSelector, setShowIconColorSelector] = useState(false);
 
     useEffect(() => {
         setIsReady(name !== '');
@@ -27,7 +29,7 @@ export default function Create({ showCreate, onClose, onCreate }) {
 
     const handleCreate = () => {
         if (loading || !isReady) return;
-        
+
         setLoading(true);
 
         createCategory({
@@ -36,133 +38,90 @@ export default function Create({ showCreate, onClose, onCreate }) {
             color,
             icon
         })
-        .then(({ data }) => {
-            onCreate(data.createCategory);
-            // Reset form
-            setName('');
-            setType('EXPENSES');
-            setColor('gray');
-            setIcon('wallet');
-            setLoading(false);
-            onClose();
-        })
-        .catch(console.error);
+            .then(({ data }) => {
+                onCreate(data.createCategory);
+                // Reset form
+                setName('');
+                setType('EXPENSES');
+                setColor('gray');
+                setIcon('wallet');
+                setLoading(false);
+                onClose();
+            })
+            .catch(console.error);
     };
 
     return (
-        <Dialog open={showCreate} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent>
-                <DialogTitle className="sr-only">Create Category</DialogTitle>
-                <div className="space-y-4">
-                    <div>
-                        <Label htmlFor="name">
-                            Name
-                        </Label>
-                        <Input
-                            type="text"
-                            name="name"
-                            value={name}
-                            className="mt-1"
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
+        <>
+            <Dialog open={showCreate} onOpenChange={(open) => !open && onClose()}>
+                <DialogContent>
+                    <DialogTitle className="sr-only">Create Category</DialogTitle>
+                    <div className="space-y-4">
 
-                    <div>
-                        <Label htmlFor="type">
-                            Type
-                        </Label>
-                        <Tabs value={type} onValueChange={setType} className="mt-1">
-                            <TabsList className="grid w-full grid-cols-4">
-                                <TabsTrigger value="EXPENSES">Expenses</TabsTrigger>
-                                <TabsTrigger value="INCOME">Income</TabsTrigger>
-                                <TabsTrigger value="SAVINGS">Savings</TabsTrigger>
-                                <TabsTrigger value="INVESTMENT">Investment</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
+                    <div className="flex justify-center">
+                                <div
+                                    className={`relative group size-14 rounded-full flex items-center justify-center badge badge-${color} cursor-pointer transition-all hover:ring-2 hover:ring-primary/50`}
+                                    onClick={() => setShowIconColorSelector(true)}
+                                >
+                                    {(() => {
+                                        const IconComponent = getCategoryIcon(icon);
+                                        return <IconComponent size={32} weight="regular" className="text-current" />;
+                                    })()}
+                                    <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-primary-foreground rounded-full p-1">
+                                        <PencilSimple size={10} weight="bold" />
+                                    </div>
+                                </div>
+                            </div>
+                        <div>
+                            <Label htmlFor="name">
+                                Name
+                            </Label>
+                            <div className="relative mt-1">
+                                <Input
+                                    type="text"
+                                    name="name"
+                                    value={name}
+                                    placeholder="Category name"
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+                        </div>
 
-                    <div className="space-y-2">
-                        <Label className="text-sm leading-none font-medium">
-                            Icon
-                        </Label>
-                        <div className="grid grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 border rounded-lg">
-                            {availableIcons.map((iconOption) => {
-                                const IconComponent = iconOption.component;
-                                return (
-                                    <button
-                                        key={iconOption.name}
-                                        type="button"
-                                        onClick={() => setIcon(iconOption.name)}
-                                        className={`p-2 rounded-md hover:bg-accent transition-colors ${
-                                            icon === iconOption.name ? 'bg-accent ring-2 ring-primary' : ''
-                                        }`}
-                                        title={iconOption.label}
-                                    >
-                                        <IconComponent size={24} weight={icon === iconOption.name ? 'fill' : 'regular'} />
-                                    </button>
-                                );
-                            })}
+                        <div>
+                            <Label htmlFor="type">
+                                Type
+                            </Label>
+                            <Tabs value={type} onValueChange={setType} className="mt-1">
+                                <TabsList className="grid w-full grid-cols-4">
+                                    <TabsTrigger value="EXPENSES">Expenses</TabsTrigger>
+                                    <TabsTrigger value="INCOME">Income</TabsTrigger>
+                                    <TabsTrigger value="SAVINGS">Savings</TabsTrigger>
+                                    <TabsTrigger value="INVESTMENT">Investment</TabsTrigger>
+                                </TabsList>
+                            </Tabs>
+                        </div>
+
+                        <div className="flex items-center justify-end pt-2">
+                            <Button
+                                disabled={!isReady || loading}
+                                onClick={handleCreate}
+                            >
+                                Create
+                            </Button>
                         </div>
                     </div>
+                </DialogContent>
+            </Dialog>
 
-                    <div className="space-y-2">
-                        <Label className="text-sm leading-none font-medium">
-                            Color
-                        </Label>
-                        <RadioGroup value={color} onValueChange={setColor} className="flex gap-1.5">
-                            <RadioGroupItem
-                                value="red"
-                                aria-label="Red"
-                                className="size-6 border-red-500 bg-red-500 shadow-none data-[state=checked]:border-red-500 data-[state=checked]:bg-red-500"
-                            />
-                            <RadioGroupItem
-                                value="blue"
-                                aria-label="Blue"
-                                className="size-6 border-blue-500 bg-blue-500 shadow-none data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
-                            />
-                            <RadioGroupItem
-                                value="green"
-                                aria-label="Green"
-                                className="size-6 border-green-500 bg-green-500 shadow-none data-[state=checked]:border-green-500 data-[state=checked]:bg-green-500"
-                            />
-                            <RadioGroupItem
-                                value="orange"
-                                aria-label="Orange"
-                                className="size-6 border-orange-500 bg-orange-500 shadow-none data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-500"
-                            />
-                            <RadioGroupItem
-                                value="purple"
-                                aria-label="Purple"
-                                className="size-6 border-purple-500 bg-purple-500 shadow-none data-[state=checked]:border-purple-500 data-[state=checked]:bg-purple-500"
-                            />
-                            <RadioGroupItem
-                                value="pink"
-                                aria-label="Pink"
-                                className="size-6 border-pink-500 bg-pink-500 shadow-none data-[state=checked]:border-pink-500 data-[state=checked]:bg-pink-500"
-                            />
-                            <RadioGroupItem
-                                value="indigo"
-                                aria-label="Indigo"
-                                className="size-6 border-indigo-500 bg-indigo-500 shadow-none data-[state=checked]:border-indigo-500 data-[state=checked]:bg-indigo-500"
-                            />
-                            <RadioGroupItem
-                                value="gray"
-                                aria-label="Gray"
-                                className="size-6 border-gray-500 bg-gray-500 shadow-none data-[state=checked]:border-gray-500 data-[state=checked]:bg-gray-500"
-                            />
-                        </RadioGroup>
-                    </div>
-
-                    <div className="flex items-center justify-end pt-2">
-                        <Button 
-                            disabled={!isReady || loading} 
-                            onClick={handleCreate}
-                        >
-                            Create
-                        </Button>
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
+            <IconColorSelector
+                open={showIconColorSelector}
+                onOpenChange={setShowIconColorSelector}
+                selectedIcon={icon}
+                selectedColor={color}
+                onIconChange={setIcon}
+                onColorChange={setColor}
+                onSave={() => { }}
+            />
+        </>
     );
 }
