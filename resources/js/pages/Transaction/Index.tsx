@@ -5,36 +5,54 @@ import { debounce } from 'lodash';
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
 import Create from './Create';
+import Filters from './Filters';
 import LoadMore from '@/components/Global/LoadMore';
 import { Button } from '@/components/ui/button';
 import { getTransactions, getAllBrands } from '@/Api';
+import { getAllCategories } from '@/Api/categories';
 import { animateRowItem, formatNumber, getAppCurrency } from '@/Utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
+import { ArrowElbowDownRightIcon, X } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import TransactionStats from '@/components/Domain/TransactionStats';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
 
 
-export default function Index({ auth }) {
+export default function Index({ auth }: { auth: any }) {
     const urlParams = new URLSearchParams(window.location.search);
     const initialSearch = urlParams.get('search') || '';
     
-    const [transactions, setTransactions] = useState([]);
-    const [allBrands, setAllBrands] = useState([]);
+    // Initialize filters from URL
+    const initialFilters = {
+        brandId: urlParams.get('brand') || '',
+        categoryId: urlParams.get('category') || '',
+        dateFrom: urlParams.get('dateFrom') || '',
+        dateTo: urlParams.get('dateTo') || '',
+    };
+    
+    const [transactions, setTransactions] = useState<any[]>([]);
+    const [allBrands, setAllBrands] = useState<any[]>([]);
+    const [allCategories, setAllCategories] = useState<any[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
+    const [filters, setFilters] = useState(initialFilters);
 
     useEffect(() => {
         getAllBrands()
             .then(({ data }) => {
                 setAllBrands(data.allBrands)
+            })
+            .catch(console.error);
+        
+        getAllCategories()
+            .then(({ data }) => {
+                setAllCategories(data.allCategories)
             })
             .catch(console.error);
     }, []);
@@ -44,7 +62,7 @@ export default function Index({ auth }) {
         
         setLoading(true);
 
-        getTransactions(currentPage, searchQuery)
+        getTransactions(currentPage, searchQuery, filters)
             .then(({ data }) => {
                 const newTransactions = currentPage === 1 
                     ? data.transactions.data 
@@ -55,15 +73,15 @@ export default function Index({ auth }) {
                 setLoading(false);
             })
             .catch(console.error);
-    }, [currentPage, searchQuery]);
+    }, [currentPage, searchQuery, filters]);
 
-    const onCreate = (createdItem) => {
+    const onCreate = (createdItem: any) => {
         setShowCreate(false);
         setTransactions([createdItem, ...transactions]);
         animateRowItem(createdItem.id);
     };
 
-    const onUpdate = (updatedItem) => {
+    const onUpdate = (updatedItem: any) => {
         setTransactions(transactions.map(transaction => {
             if (transaction.id === updatedItem.id) {
                 return updatedItem;
@@ -73,13 +91,13 @@ export default function Index({ auth }) {
         animateRowItem(updatedItem.id);
     };
 
-    const onDelete = (deletedItem) => {
-        animateRowItem(deletedItem.id, 'deleted', () => {
+    const onDelete = (deletedItem: any) => {
+        (animateRowItem as any)(deletedItem.id, 'deleted', () => {
             setTransactions(transactions.filter(item => item.id != deletedItem.id));
         });
     };
 
-    const performSearchHandler = (e) => {
+    const performSearchHandler = (e: any) => {
         const value = e.target.value ?? '';
         
         const url = new URL(window.location.href);
@@ -97,6 +115,55 @@ export default function Index({ auth }) {
     const performSearch = useMemo(
         () => debounce(performSearchHandler, 300)
         , []);
+
+    const handleFiltersApply = (newFilters: any) => {
+        const url = new URL(window.location.href);
+        
+        // Update URL params for filters
+        if (newFilters.brandId) {
+            url.searchParams.set('brand', newFilters.brandId);
+        } else {
+            url.searchParams.delete('brand');
+        }
+        
+        if (newFilters.categoryId) {
+            url.searchParams.set('category', newFilters.categoryId);
+        } else {
+            url.searchParams.delete('category');
+        }
+        
+        if (newFilters.dateFrom && newFilters.dateTo) {
+            url.searchParams.set('dateFrom', newFilters.dateFrom);
+            url.searchParams.set('dateTo', newFilters.dateTo);
+        } else {
+            url.searchParams.delete('dateFrom');
+            url.searchParams.delete('dateTo');
+        }
+        
+        window.history.pushState({}, '', url);
+        
+        setCurrentPage(1);
+        setFilters(newFilters);
+    };
+
+    const clearFilter = (filterKey: string) => {
+        const updatedFilters = { ...filters };
+        
+        switch (filterKey) {
+            case 'brand':
+                updatedFilters.brandId = '';
+                break;
+            case 'category':
+                updatedFilters.categoryId = '';
+                break;
+            case 'date':
+                updatedFilters.dateFrom = '';
+                updatedFilters.dateTo = '';
+                break;
+        }
+        
+        handleFiltersApply(updatedFilters);
+    };
 
     const header = (
         <div className="flex items-center justify-between w-full">
@@ -127,17 +194,54 @@ export default function Index({ auth }) {
                     
                     <TransactionStats />
                     
-                    {(transactions.length > 0 || searchQuery) && (
-                        <div>
-                            <Input
-                                name="search"
-                                placeholder='Search..'
-                                className='bg-white max-w-56'
-                                defaultValue={searchQuery}
-                                onChange={performSearch}
+                    <div className="flex justify-between gap-2">
+                        <Input
+                            name="search"
+                            placeholder='Search..'
+                            className='bg-white max-w-56'
+                            defaultValue={searchQuery}
+                            onChange={performSearch}
+                        />
+                        <div className="flex gap-2">
+                            {/* Active filter badges */}
+                            {filters.brandId && (
+                                <Badge 
+                                    variant="secondary" 
+                                    className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
+                                    onClick={() => clearFilter('brand')}
+                                >
+                                    {allBrands.find((b: any) => b.id == filters.brandId)?.name}
+                                    <X size={14} weight="bold" />
+                                </Badge>
+                            )}
+                            {filters.categoryId && (
+                                <Badge 
+                                    variant="secondary" 
+                                    className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
+                                    onClick={() => clearFilter('category')}
+                                >
+                                    {allCategories.find((c: any) => c.id == filters.categoryId)?.name}
+                                    <X size={14} weight="bold" />
+                                </Badge>
+                            )}
+                            {filters.dateFrom && filters.dateTo && (
+                                <Badge 
+                                    variant="secondary" 
+                                    className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
+                                    onClick={() => clearFilter('date')}
+                                >
+                                    {filters.dateFrom} - {filters.dateTo}
+                                    <X size={14} weight="bold" />
+                                </Badge>
+                            )}
+                            <Filters 
+                                brands={allBrands}
+                                categories={allCategories}
+                                onApply={handleFiltersApply}
+                                activeFilters={filters}
                             />
                         </div>
-                    )}
+                    </div>
 
                     <div className="grid gap-2">
                         {transactions.length > 0 && transactions.map((transaction) => {
@@ -174,7 +278,7 @@ export default function Index({ auth }) {
                                         <div className='flex gap-2 items-center'>
                                             {transaction.note && <Badge variant="secondary">{transaction.note}</Badge>
                                             }
-                                            <p className={`${isIncomeTransaction ? 'text-green-500' : ''} min-w-26 text-right`}> {isIncomeTransaction ? '' : '-'}{getAppCurrency()} {formatNumber(transaction.amount, null)}</p>
+                                            <p className={`${isIncomeTransaction ? 'text-green-500' : ''} min-w-26 text-right`}> {isIncomeTransaction ? '' : '-'}{getAppCurrency()} {formatNumber(transaction.amount)}</p>
                                         </div>
                                     </CardContent>
                                 </Card>

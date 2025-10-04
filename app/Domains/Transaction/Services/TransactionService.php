@@ -22,6 +22,18 @@ class TransactionService
                             });
                     });
                 }),
+                AllowedFilter::exact('brand_id'),
+                AllowedFilter::callback('category_id', function ($query, $value) {
+                    $query->whereHas('brand', function($builder) use($value) {
+                        $builder->where('category_id', $value);
+                    });
+                }),
+                AllowedFilter::callback('date_from', function ($query, $value) {
+                    $query->whereDate('created_at', '>=', $value);
+                }),
+                AllowedFilter::callback('date_to', function ($query, $value) {
+                    $query->whereDate('created_at', '<=', $value);
+                }),
             ])
             ->allowedIncludes(['brand.category'])
             ->allowedSorts(['id', 'amount', 'created_at'])

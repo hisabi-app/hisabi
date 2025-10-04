@@ -2,7 +2,7 @@ import { gql } from '@urql/core';
 import client from './client.js';
 import { customQuery } from './common.js';
 
-export const getTransactions = async (page, searchQuery) => {
+export const getTransactions = async (page, searchQuery, filters = {}) => {
     const params = new URLSearchParams({
         page: page.toString(),
         perPage: '100'
@@ -10,6 +10,19 @@ export const getTransactions = async (page, searchQuery) => {
     
     if (searchQuery) {
         params.append('filter[search]', searchQuery);
+    }
+
+    if (filters.brandId) {
+        params.append('filter[brand_id]', filters.brandId);
+    }
+    if (filters.categoryId) {
+        params.append('filter[category_id]', filters.categoryId);
+    }
+    if (filters.dateFrom) {
+        params.append('filter[date_from]', filters.dateFrom);
+    }
+    if (filters.dateTo) {
+        params.append('filter[date_to]', filters.dateTo);
     }
 
     const response = await fetch(`/api/v1/transactions?${params.toString()}`, {
