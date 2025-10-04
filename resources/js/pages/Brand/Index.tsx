@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
@@ -163,7 +163,12 @@ export default function Index({auth}) {
                                             </div>
                                         </div>
                                         <div className='flex gap-2 items-center'>
-                                            <p className='text-muted-foreground text-sm min-w-26 text-right'>{brand.transactionsCount} {brand.transactionsCount === 1 ? 'transaction' : 'transactions'}</p>
+                                            <Link 
+                                                href={`/transactions?brand=${brand.id}`}
+                                                className='text-muted-foreground hover:text-foreground text-sm min-w-26 text-right hover:underline transition-colors'
+                                            >
+                                                {brand.transactionsCount} {brand.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                            </Link>
                                         </div>
                                     </CardContent>
                                 </Card>
