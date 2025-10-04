@@ -32,7 +32,6 @@ export function IconColorSelector({
     const [tempIcon, setTempIcon] = useState(selectedIcon);
     const [tempColor, setTempColor] = useState(selectedColor);
 
-    // Update temp values when props change or dialog opens
     useEffect(() => {
         if (open) {
             setTempIcon(selectedIcon);
@@ -56,11 +55,7 @@ export function IconColorSelector({
     return (
         <Dialog open={open} onOpenChange={(open) => !open && handleCancel()}>
             <DialogContent className="max-w-md">
-                <DialogHeader>
-                    <DialogTitle>Select Icon & Color</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-6">
-                    {/* Icon Preview */}
+                <div className="space-y-3">
                     <div className="flex justify-center">
                         <div className={`size-16 rounded-full flex items-center justify-center badge badge-${tempColor}`}>
                             {(() => {
@@ -70,26 +65,22 @@ export function IconColorSelector({
                         </div>
                     </div>
 
-                    {/* Icon Selection */}
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium">
-                            Icon
-                        </Label>
                         <div className="grid grid-cols-8 gap-2 max-h-48 overflow-y-auto p-3 border rounded-lg">
                             {availableIcons.map((iconOption) => {
                                 const IconComponent = iconOption.component;
                                 return (
-                                    <button
+                                    <Button
                                         key={iconOption.name}
-                                        type="button"
+                                        variant="ghost"
                                         onClick={() => setTempIcon(iconOption.name)}
                                         className={`p-2 rounded-md hover:bg-accent transition-colors ${
                                             tempIcon === iconOption.name ? 'bg-accent ring-2 ring-primary' : ''
                                         }`}
                                         title={iconOption.label}
                                     >
-                                        <IconComponent size={20} weight={tempIcon === iconOption.name ? 'fill' : 'regular'} />
-                                    </button>
+                                        <IconComponent size={20} />
+                                    </Button>
                                 );
                             })}
                         </div>
@@ -97,9 +88,6 @@ export function IconColorSelector({
 
                     {/* Color Selection */}
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium">
-                            Color
-                        </Label>
                         <RadioGroup value={tempColor} onValueChange={setTempColor} className="flex gap-2 justify-center flex-wrap">
                             <RadioGroupItem
                                 value="red"

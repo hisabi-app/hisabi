@@ -29,7 +29,7 @@ export default function Create({ showCreate, onClose, onCreate }) {
 
     const handleCreate = () => {
         if (loading || !isReady) return;
-        
+
         setLoading(true);
 
         createCategory({
@@ -38,17 +38,17 @@ export default function Create({ showCreate, onClose, onCreate }) {
             color,
             icon
         })
-        .then(({ data }) => {
-            onCreate(data.createCategory);
-            // Reset form
-            setName('');
-            setType('EXPENSES');
-            setColor('gray');
-            setIcon('wallet');
-            setLoading(false);
-            onClose();
-        })
-        .catch(console.error);
+            .then(({ data }) => {
+                onCreate(data.createCategory);
+                // Reset form
+                setName('');
+                setType('EXPENSES');
+                setColor('gray');
+                setIcon('wallet');
+                setLoading(false);
+                onClose();
+            })
+            .catch(console.error);
     };
 
     return (
@@ -57,30 +57,30 @@ export default function Create({ showCreate, onClose, onCreate }) {
                 <DialogContent>
                     <DialogTitle className="sr-only">Create Category</DialogTitle>
                     <div className="space-y-4">
+
+                    <div className="flex justify-center">
+                                <div
+                                    className={`relative group size-14 rounded-full flex items-center justify-center badge badge-${color} cursor-pointer transition-all hover:ring-2 hover:ring-primary/50`}
+                                    onClick={() => setShowIconColorSelector(true)}
+                                >
+                                    {(() => {
+                                        const IconComponent = getCategoryIcon(icon);
+                                        return <IconComponent size={32} weight="regular" className="text-current" />;
+                                    })()}
+                                    <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-primary-foreground rounded-full p-1">
+                                        <PencilSimple size={10} weight="bold" />
+                                    </div>
+                                </div>
+                            </div>
                         <div>
                             <Label htmlFor="name">
                                 Name
                             </Label>
                             <div className="relative mt-1">
-                                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
-                                    <div 
-                                        className={`group size-8 rounded-full flex items-center justify-center badge badge-${color} cursor-pointer transition-all hover:ring-2 hover:ring-primary/50`}
-                                        onClick={() => setShowIconColorSelector(true)}
-                                    >
-                                        {(() => {
-                                            const IconComponent = getCategoryIcon(icon);
-                                            return <IconComponent size={16} weight="regular" className="text-current" />;
-                                        })()}
-                                        <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-primary-foreground rounded-full p-1">
-                                            <PencilSimple size={10} weight="bold" />
-                                        </div>
-                                    </div>
-                                </div>
                                 <Input
                                     type="text"
                                     name="name"
                                     value={name}
-                                    className="pl-14"
                                     placeholder="Category name"
                                     onChange={(e) => setName(e.target.value)}
                                 />
@@ -102,8 +102,8 @@ export default function Create({ showCreate, onClose, onCreate }) {
                         </div>
 
                         <div className="flex items-center justify-end pt-2">
-                            <Button 
-                                disabled={!isReady || loading} 
+                            <Button
+                                disabled={!isReady || loading}
                                 onClick={handleCreate}
                             >
                                 Create
@@ -120,7 +120,7 @@ export default function Create({ showCreate, onClose, onCreate }) {
                 selectedColor={color}
                 onIconChange={setIcon}
                 onColorChange={setColor}
-                onSave={() => {}}
+                onSave={() => { }}
             />
         </>
     );
