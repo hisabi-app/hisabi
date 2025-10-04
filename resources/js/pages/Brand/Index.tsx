@@ -134,12 +134,14 @@ export default function Index({auth}) {
 
                     <div className="grid gap-2">
                         {brands.length > 0 && brands.map((brand) => {
+                            const hasCategory = brand.category !== null;
+                            const isUncategorized = !hasCategory;
                             const CategoryIcon = brand.category?.icon 
                                 ? getCategoryIcon(brand.category.icon) 
                                 : null;
                             
                             return (
-                                <Card key={brand.id} className='py-0' id={'item-' + brand.id}>
+                                <Card key={brand.id} className={`py-0 ${isUncategorized ? 'bg-red-50 border-red-100' : ''}`} id={'item-' + brand.id}>
                                     <CardContent className='flex justify-between items-center px-4 py-3'>
                                         <div className='flex gap-2 items-center'>
                                             {CategoryIcon ? (

@@ -146,7 +146,7 @@ export default function Index({ auth }) {
                             const isIncomeTransaction = categoryType === "INCOME";
                             
                             return (
-                                <Card key={transaction.id} className={`py-0 ${isUncategorized ? 'bg-red-50' : ''}`} id={'item-' + transaction.id}>
+                                <Card key={transaction.id} className={`py-0 ${isUncategorized ? 'bg-red-50 border-red-100' : ''}`} id={'item-' + transaction.id}>
                                     <CardContent className='flex justify-between items-center px-4 py-3'>
                                         <div className='flex gap-2 items-center'>
                                             {CategoryIcon && hasCategory ? (
@@ -163,7 +163,7 @@ export default function Index({ auth }) {
                                                 <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>{transaction.brand.name} </button>
                                                 <div className='flex gap-1 text-muted-foreground items-center'>
                                                     <ArrowElbowDownRightIcon size={10} weight="bold" />
-                                                    <p className=' text-xs'>{hasCategory ? <span>{transaction.brand.category.name}</span> : '-'} - {transaction.created_at}</p>
+                                                    <p className=' text-xs'>{hasCategory ? <span>{transaction.brand.category.name} -</span> : ''} {transaction.created_at}</p>
                                                 </div>
                                             </div>
                                         </div>
