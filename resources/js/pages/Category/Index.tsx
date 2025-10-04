@@ -189,7 +189,7 @@ export default function Index({ auth }: { auth: any }) {
                                                             </button>
                                                             <Link 
                                                                 href={`/transactions?category=${category.id}`}
-                                                                className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                             >
                                                                 {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
                                                             </Link>
@@ -227,7 +227,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 </button>
                                                                 <Link 
                                                                     href={`/transactions?category=${category.id}`}
-                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
                                                                 </Link>
@@ -266,7 +266,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 </button>
                                                                 <Link 
                                                                     href={`/transactions?category=${category.id}`}
-                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
                                                                 </Link>
@@ -305,7 +305,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 </button>
                                                                 <Link 
                                                                     href={`/transactions?category=${category.id}`}
-                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
                                                                 </Link>
@@ -344,7 +344,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 </button>
                                                                 <Link 
                                                                     href={`/transactions?category=${category.id}`}
-                                                                    className='text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
+                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >
                                                                     {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
                                                                 </Link>
