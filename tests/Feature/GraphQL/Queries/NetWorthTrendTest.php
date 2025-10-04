@@ -4,7 +4,7 @@ namespace Tests\Feature\GraphQL\Queries;
 
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

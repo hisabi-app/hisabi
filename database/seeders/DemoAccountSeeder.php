@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 

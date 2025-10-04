@@ -80,7 +80,7 @@ To write a custom report, you need to create a class that extends one of the ava
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Domain\Metrics\ValueMetric;
 
 class TotalIncome extends ValueMetric // <-- Required

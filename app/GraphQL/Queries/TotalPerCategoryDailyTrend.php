@@ -3,7 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use Carbon\Carbon;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Domain\Ranges\LastMonth;
 use Illuminate\Support\Facades\DB;
 use App\Domain\Ranges\CurrentMonth;

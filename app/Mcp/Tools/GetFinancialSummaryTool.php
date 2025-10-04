@@ -2,7 +2,7 @@
 
 namespace App\Mcp\Tools;
 
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Models\Category;
 use Laravel\Mcp\Tool;
 use Laravel\Mcp\ToolResponse;

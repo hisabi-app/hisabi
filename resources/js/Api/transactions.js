@@ -2,34 +2,31 @@ import { gql } from '@urql/core';
 import client from './client.js';
 import { customQuery } from './common.js';
 
-export const getTransactions = (page, searchQuery) => {
-    return client
-            .query(gql`
-                query {
-                    transactions(search: """${searchQuery}""" page: ${page}) {
-                        data {
-                            id
-                            amount
-                            created_at
-                            note
-                            brand {
-                                id
-                                name
-                                category {
-                                    name
-                                    type
-                                    color
-                                    icon
-                                }
-                            }
-                        }
-                        paginatorInfo {
-                            hasMorePages
-                        }
-                    }
-                }
-            `)
-            .toPromise();
+export const getTransactions = async (page, searchQuery) => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        perPage: '100'
+    });
+    
+    if (searchQuery) {
+        params.append('filter[search]', searchQuery);
+    }
+
+    const response = await fetch(`/api/v1/transactions?${params.toString()}`, {
+        method: 'GET',
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    return {
+        data: {
+            transactions: data
+        }
+    };
 }
 
 export const createTransaction = ({amount, brandId, createdAt, note}) => {

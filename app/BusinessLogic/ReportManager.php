@@ -5,7 +5,7 @@ namespace App\BusinessLogic;
 use Carbon\Carbon;
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Contracts\ReportManager as ReportManagerContract;
 
 class ReportManager implements ReportManagerContract

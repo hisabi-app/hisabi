@@ -3,7 +3,7 @@
 namespace Tests\Feature\Transactions;
 
 use App\Models\Brand;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

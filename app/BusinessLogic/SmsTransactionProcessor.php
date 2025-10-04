@@ -3,7 +3,7 @@
 namespace App\BusinessLogic;
 
 use App\Models\Sms;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Contracts\SmsParser;
 use Illuminate\Support\Collection;
 use App\Contracts\SmsTemplateDetector;

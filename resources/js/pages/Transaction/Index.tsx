@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
@@ -19,11 +19,14 @@ import { getCategoryIcon } from '@/Utils/categoryIcons';
 
 
 export default function Index({ auth }) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialSearch = urlParams.get('search') || '';
+    
     const [transactions, setTransactions] = useState([]);
     const [allBrands, setAllBrands] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
@@ -37,31 +40,22 @@ export default function Index({ auth }) {
     }, []);
 
     useEffect(() => {
-        if (!hasMorePages) return;
+        if (currentPage > 1 && !hasMorePages) return;
+        
         setLoading(true);
 
         getTransactions(currentPage, searchQuery)
             .then(({ data }) => {
-                const newTransactions = [...transactions, ...data.transactions.data];
+                const newTransactions = currentPage === 1 
+                    ? data.transactions.data 
+                    : [...transactions, ...data.transactions.data];
+                    
                 setTransactions(newTransactions)
                 setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
                 setLoading(false);
             })
             .catch(console.error);
-    }, [currentPage]);
-
-    useEffect(() => {
-        setLoading(true);
-
-        getTransactions(currentPage, searchQuery)
-            .then(({ data }) => {
-                const newTransactions = [...transactions, ...data.transactions.data];
-                setTransactions(newTransactions)
-                setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
-                setLoading(false);
-            })
-            .catch(console.error);
-    }, [searchQuery]);
+    }, [currentPage, searchQuery]);
 
     const onCreate = (createdItem) => {
         setShowCreate(false);
@@ -86,9 +80,18 @@ export default function Index({ auth }) {
     };
 
     const performSearchHandler = (e) => {
-        setTransactions([]);
-        setSearchQuery(e.target.value ?? '');
+        const value = e.target.value ?? '';
+        
+        const url = new URL(window.location.href);
+        if (value) {
+            url.searchParams.set('search', value);
+        } else {
+            url.searchParams.delete('search');
+        }
+        window.history.pushState({}, '', url);
+        
         setCurrentPage(1);
+        setSearchQuery(value);
     }
 
     const performSearch = useMemo(
@@ -130,6 +133,7 @@ export default function Index({ auth }) {
                                 name="search"
                                 placeholder='Search..'
                                 className='bg-white max-w-56'
+                                defaultValue={searchQuery}
                                 onChange={performSearch}
                             />
                         </div>

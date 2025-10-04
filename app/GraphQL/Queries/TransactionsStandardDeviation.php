@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use App\Domain\Metrics\RelationTrendMetric;
 

@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use App\Contracts\ReportManager;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SmsController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
@@ -29,6 +28,10 @@ Route::middleware(['auth'])->group(function () {
         ];
 
         return view('report', $data);
+    });
+
+    Route::prefix('api/v1')->group(function () {
+        Route::get('/transactions', [\App\Http\Controllers\Api\V1\TransactionController::class, 'index']);
     });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

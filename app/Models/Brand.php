@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Brand extends Model implements Searchable

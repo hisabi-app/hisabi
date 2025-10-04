@@ -1,18 +1,28 @@
 <?php
 
-namespace App\Models;
+namespace App\Domains\Transaction\Models;
 
-use Carbon\Carbon;
-use App\Contracts\Searchable;
+use App\Models\Brand;
+use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Category;
+use Carbon\Carbon;
 
-class Transaction extends Model implements Searchable
+class Transaction extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): Factory
+    {
+        return TransactionFactory::new();
+    }
 
     protected $casts = [
         'meta' => 'array',
@@ -72,18 +82,5 @@ class Transaction extends Model implements Searchable
             'created_at' => $transactionDatetime
         ]);
     }
-
-    /**
-     * @param $query
-     * @return Builder
-     */
-    public static function search($query): Builder
-    {
-        return (new static())->newQuery()
-            ->where('amount', 'LIKE', "%$query%")
-            ->orWhere('note', 'LIKE', "%$query%")
-            ->orWhereHas('brand', function($builder) use($query) {
-                return $builder->where('name', 'LIKE', "%$query%");
-            });
-    }
 }
+

@@ -16,11 +16,12 @@ class CreateCategoryTest extends TestCase
             /** @lang GraphQL */
             '
             mutation {
-                createCategory(name: """someName""" type: """someType""" color: """someColor""") {
+                createCategory(name: """someName""" type: """someType""" color: """someColor""" icon: """someIcon""") {
                     id
                     name
                     type
                     color
+                    icon
                 }
             }
             '
@@ -30,7 +31,8 @@ class CreateCategoryTest extends TestCase
                     "id" => 1,
                     "name" => "someName",
                     "type" => "someType",
-                    "color" => "someColor"
+                    "color" => "someColor",
+                    "icon" => "someIcon"
                 ],
             ],
         ]);

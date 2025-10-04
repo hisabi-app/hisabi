@@ -4,9 +4,11 @@ namespace Database\Factories;
 
 use App\Models\Brand;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Domains\Transaction\Models\Transaction;
 
 class TransactionFactory extends Factory
 {
+    protected $model = Transaction::class;
     /**
      * Define the model's default state.
      *

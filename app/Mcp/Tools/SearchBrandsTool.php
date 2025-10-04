@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Models\Brand;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Laravel\Mcp\Tool;
 use Laravel\Mcp\ToolResponse;

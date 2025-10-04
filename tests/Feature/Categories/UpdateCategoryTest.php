@@ -18,11 +18,12 @@ class UpdateCategoryTest extends TestCase
             /** @lang GraphQL */
             '
             mutation {
-                updateCategory(id: 1 name: """someNewName""" type: """newType""" color: """newColor""") {
+                updateCategory(id: 1 name: """someNewName""" type: """newType""" color: """newColor""" icon: """newIcon""") {
                     id
                     name
                     type
                     color
+                    icon
                 }
             }
             '
@@ -32,7 +33,8 @@ class UpdateCategoryTest extends TestCase
                     "id" => 1,
                     "name" => "someNewName",
                     "type" => "newType",
-                    "color" => "newColor"
+                    "color" => "newColor",
+                    "icon" => "newIcon"
                 ],
             ],
         ]);

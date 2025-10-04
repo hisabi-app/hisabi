@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Domain\Metrics\ValueMetric;
 
 class TotalSavings extends ValueMetric

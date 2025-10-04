@@ -3,7 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Contracts\HasPreviousRange;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Domain\Metrics\ValueMetric;
 
 class TotalIncome extends ValueMetric

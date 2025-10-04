@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 
 class DashboardController extends Controller
 {

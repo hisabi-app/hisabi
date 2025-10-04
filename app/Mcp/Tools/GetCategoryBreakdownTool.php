@@ -2,7 +2,7 @@
 
 namespace App\Mcp\Tools;
 
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Laravel\Mcp\Server\Tool;

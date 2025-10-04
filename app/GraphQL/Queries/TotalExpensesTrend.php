@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Transaction;
+use App\Domains\Transaction\Models\Transaction;
 use App\Domain\Ranges\AllTime;
 use App\Domain\Ranges\LastYear;
 use Illuminate\Support\Facades\DB;
