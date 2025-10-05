@@ -37,7 +37,9 @@ export default function Budgets({ budgets }: BudgetsProps) {
                             </div>
                             <div>
                                 <p className="font-medium">{budget.name}</p>
-                                <p className='text-xs'><span>AED {formatNumber(budget.remaining_to_spend, null)}</span> left of AED {formatNumber(budget.amount, null)}</p>
+                                {budget.remaining_to_spend > 0 && <p className='text-xs'><span>AED {formatNumber(budget.remaining_to_spend, null)}</span> left of AED {formatNumber(budget.amount, null)}</p>}
+                                {budget.remaining_to_spend == 0 && <p className='text-xs'>You have used all your budget</p>}
+                                {budget.remaining_to_spend < 0 && <p className='text-xs text-red-500'><span>AED {formatNumber(-budget.remaining_to_spend, null)}</span> over AED {formatNumber(budget.amount, null)}</p>}
                             </div>
                         </div>
 
@@ -57,7 +59,7 @@ export default function Budgets({ budgets }: BudgetsProps) {
 
                             <div className="w-full flex items-center h-4 bg-gray-200 rounded-full relative">
                                 <div
-                                    className="h-full text-center text-xs font-bold flex items-center justify-center text-blue-500 bg-blue-200 rounded-full"
+                                    className='h-full text-center text-xs font-bold flex items-center justify-center rounded-full bg-blue-200 text-blue-500'
                                     style={{ width: budget.total_spent_percentage + '%' }}
                                 >
                                     <span className={budget.total_spent_percentage < 7 ? 'ml-6' : ''}>{budget.total_spent_percentage}%</span>

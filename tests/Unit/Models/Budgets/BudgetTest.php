@@ -159,7 +159,7 @@ class BudgetTest extends TestCase
         $category->transactions()->create(['amount' => 100, 'brand_id' => $brand->id]);
         $category->transactions()->create(['amount' => 200, 'brand_id' => $brand->id]);
 
-        $this->assertEquals('400.00', $sut->remainingToSpend);
+        $this->assertEquals('400', $sut->remainingToSpend);
     }
 
     public function test_it_has_start_and_end_dates_window()

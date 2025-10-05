@@ -88,7 +88,7 @@ class Budget extends Model
      */
     public function getRemainingToSpendAttribute(): string
     {
-        return number_format($this->amount - $this->totalTransactionsAmount, 2);
+        return $this->amount - $this->totalTransactionsAmount;
     }
 
     /**
