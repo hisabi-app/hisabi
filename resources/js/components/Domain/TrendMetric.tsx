@@ -5,6 +5,7 @@ import AnnotationPlugin from 'chartjs-plugin-annotation';
 import { query } from '../../Api';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
+import { formatNumber } from '@/Utils';
 
 Chart.register(LineElement, Tooltip, LineController, CategoryScale, LinearScale, PointElement, Filler, AnnotationPlugin);
 
@@ -276,7 +277,15 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
                         {ranges.map(range => <option key={range.key} value={range.key}>{range.name}</option>)}
                     </select>
                 </div>
+
+                <div className="text-2xl font-semibold text-gray-800">
+                    {data[data.length - 1] && data[data.length - 1].value > 0 
+                        ? formatNumber(data[data.length - 1].value)
+                        : '-'
+                    }
+                </div>
             </div>
+
 
             <div className="absolute w-full left-0 right-0 bottom-0 h-24">
                 <canvas id={graphql_query}></canvas>
