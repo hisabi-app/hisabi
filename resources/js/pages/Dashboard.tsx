@@ -6,8 +6,9 @@ import ValueMetric from '@/components/Domain/ValueMetric';
 import TrendMetric from '@/components/Domain/TrendMetric';
 import PartitionMetric from '@/components/Domain/PartitionMetric';
 import SectionDivider from '@/components/Global/SectionDivider';
+import Budgets from '@/components/Domain/Budgets';
 
-export default function Dashboard({ auth, hasData }: any) {
+export default function Dashboard({ auth, hasData, budgets }: any) {
     const header = <h2>Dashboard</h2>
 
     const allRages = [
@@ -31,6 +32,8 @@ export default function Dashboard({ auth, hasData }: any) {
 
             <div className="py-4">
                 <div className="max-w-7xl overflow-hidden mx-auto px-4 grid grid-cols-1 gap-4">
+
+                    <Budgets budgets={budgets} />
 
                     {!hasData && <NoContent body="No enough data to show reports" />}
 

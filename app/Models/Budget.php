@@ -28,6 +28,7 @@ class Budget extends Model
         'total_transactions_amount',
         'remaining_days',
         'remaining_to_spend',
+        'elapsed_days_percentage',
     ];
 
     protected $casts = [
@@ -56,7 +57,7 @@ class Budget extends Model
      */
     public function getTotalSpentPercentageAttribute(): string
     {
-        return number_format($this->totalTransactionsAmount / $this->amount * 100, 2);
+        return (int) number_format($this->totalTransactionsAmount / $this->amount * 100, 2);
     }
 
     /**
@@ -88,6 +89,25 @@ class Budget extends Model
     public function getRemainingToSpendAttribute(): string
     {
         return number_format($this->amount - $this->totalTransactionsAmount, 2);
+    }
+
+    /**
+     * @return int
+     */
+    public function getElapsedDaysPercentageAttribute(): int
+    {
+        [$startAt, $endAt] = $this->getCurrentWindowStartAndEndDates();
+        $totalDays = $startAt->diffInDays($endAt);
+        
+        if ($totalDays == 0) {
+            return 0;
+        }
+        
+        $elapsedDays = $startAt->diffInDays(now());
+        $percentage = ($elapsedDays / $totalDays) * 100;
+        
+        // Clamp between 0 and 100
+        return (int) max(0, min(100, $percentage));
     }
 
     /**

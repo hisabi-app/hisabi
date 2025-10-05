@@ -45,7 +45,7 @@ class BudgetTest extends TestCase
         $category->transactions()->create(['amount' => 200, 'brand_id' => $brand->id, 'created_at' => now()->addDays(2)]);
 
         $this->assertEquals(300, $sut->totalTransactionsAmount);
-        $this->assertEquals(42.86, $sut->totalSpentPercentage);
+        $this->assertEquals(42, $sut->totalSpentPercentage);
     }
 
     public function test_it_has_isSaving()
