@@ -2,7 +2,7 @@
 
 namespace App\BusinessLogic;
 
-use App\Models\Sms;
+use App\Domains\Sms\Models\Sms;
 use App\Domains\Transaction\Models\Transaction;
 use App\Contracts\SmsParser;
 use Illuminate\Support\Collection;

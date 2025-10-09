@@ -54,7 +54,7 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 
 ### 5. SMS Domain
 - ⬜ `GET /api/v1/sms` (index) - GetSmsQuery
-- ⬜ `POST /api/v1/sms` (create) - CreateSmsCommand
+- ✅ `POST /api/v1/sms` (create) - CreateSmsCommand
 - ⬜ `PUT /api/v1/sms/{id}` (update) - UpdateSmsCommand
 - ⬜ `DELETE /api/v1/sms/{id}` (delete) - DeleteSmsCommand
 
@@ -82,6 +82,9 @@ app/Http/Controllers/Api/V1/
 
 app/Http/Requests/Api/V1/
 └── {ActionName}{DomainName}Request.php # Form validation
+
+tests/Feature/Api/V1/
+└── {DomainName}ControllerTest.php      # REST API tests
 ```
 
 ### Example: Create Transaction Command
@@ -128,7 +131,6 @@ readonly class CreateTransactionCommandResponse
     public function toResponse(): JsonResponse
     {
         return response()->json([
-            'message' => 'Transaction created successfully',
             'transaction' => $this->transaction->load('brand.category'),
         ], 201);
     }
@@ -173,21 +175,20 @@ class CreateTransactionRequest extends FormRequest
 Update each API file in `resources/js/Api/` to use REST endpoints:
 
 ```javascript
-const getCookieValue = (name) => {
-    let match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'))
-    return match ? decodeURIComponent(match[3]) : null
-}
+const getCsrfToken = () => {
+    const token = document.querySelector('meta[name="csrf-token"]');
+    return token ? token.getAttribute('content') : '';
+};
 
 export const createResource = async (data) => {
-    const response = await fetch(`${location.origin}/api/v1/resources`, {
+    const response = await fetch(`/api/v1/resources`, {
         method: 'POST',
-        credentials: 'include',
         headers: {
-            'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
             'X-Requested-With': 'XMLHttpRequest',
-            'X-Xsrf-Token': getCookieValue('XSRF-TOKEN')
         },
+        credentials: 'same-origin',
         body: JSON.stringify(data)
     });
 
@@ -196,6 +197,62 @@ export const createResource = async (data) => {
     }
 
     return await response.json();
+}
+```
+
+### Testing Pattern
+
+Create REST API tests in `tests/Feature/Api/V1/{DomainName}ControllerTest.php`:
+
+```php
+<?php
+
+namespace Tests\Feature\Api\V1;
+
+use App\Domains\{DomainName}\Models\{ModelName};
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class {DomainName}ControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private User $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+    }
+
+    public function test_it_requires_authentication(): void
+    {
+        $response = $this->postJson('/api/v1/resources', []);
+        $response->assertStatus(401);
+    }
+
+    public function test_it_creates_a_resource(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/resources', [
+                'field' => 'value'
+            ]);
+
+        $response->assertStatus(201)
+            ->assertJson([
+                'data' => ['field' => 'value']
+            ]);
+    }
+
+    public function test_it_validates_required_fields(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/resources', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['field']);
+    }
 }
 ```
 
@@ -210,7 +267,8 @@ export const createResource = async (data) => {
 7. **Domain Services** should use query builder, not Eloquent directly
 8. **All routes** follow RESTful conventions: `/api/v1/{resource}` pattern
 9. **Frontend updates** - Update ALL corresponding files in `resources/js/Api/`
-10. **Test end-to-end** - Make sure frontend pages work after migration
+10. **Test updates** - Create/update tests in `tests/Feature/Api/V1/` using REST API patterns
+11. **Test end-to-end** - Make sure frontend pages work after migration
 
 ## Reference Files to Check
 
@@ -242,5 +300,7 @@ For each domain:
 5. Create Form Requests for validation
 6. Add routes to routes/web.php
 7. Update frontend API file
-8. Test end-to-end in browser
+8. Create/update REST API tests in tests/Feature/Api/V1/
+9. Test end-to-end in browser
+10. Remove the graphql query/command from schema.graphql
 
