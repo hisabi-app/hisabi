@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace App\Domains\Sms\Models;
 
 use App\Contracts\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Database\Factories\SmsFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class Sms extends Model implements Searchable
 {
@@ -18,15 +20,16 @@ class Sms extends Model implements Searchable
         'meta' => 'array',
     ];
 
+    protected static function newFactory(): Factory
+    {
+        return SmsFactory::new();
+    }
+
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);
     }
 
-    /**
-     * @param $query
-     * @return Builder
-     */
     public static function search($query): Builder
     {
         return (new static())->newQuery()
@@ -44,3 +47,4 @@ class Sms extends Model implements Searchable
         }
     }
 }
+

@@ -3,7 +3,7 @@
 namespace Tests\Unit\Models\Sms;
 
 use App\BusinessLogic\SmsParser;
-use App\Models\Sms;
+use App\Domains\Sms\Models\Sms;
 use App\Models\SmsTemplate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

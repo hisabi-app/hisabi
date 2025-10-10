@@ -2,7 +2,7 @@
 
 namespace App\BusinessLogic;
 
-use App\Models\Sms;
+use App\Domains\Sms\Models\Sms;
 use App\Contracts\SmsParser as SmsParserContract;
 
 class SmsParser implements SmsParserContract

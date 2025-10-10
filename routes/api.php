@@ -22,3 +22,5 @@ Route::post('/login', function (Request $request) {
 
     return $user->createToken($request->device_name)->plainTextToken;
 });
+
+Route::post('/sms-test', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);

@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-use App\Models\Sms;
+use App\Domains\Sms\Models\Sms;
 
 interface SmsParser 
 {

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Models\Sms;
 
-use App\Models\Sms;
+use App\Domains\Sms\Models\Sms;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Sms;
+use App\Domains\Sms\Models\Sms;
 use App\Contracts\SmsTransactionProcessor;
 
 class UpdateSms

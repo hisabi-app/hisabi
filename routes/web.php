@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('api/v1')->group(function () {
         Route::get('/transactions', [\App\Http\Controllers\Api\V1\TransactionController::class, 'index']);
+        Route::post('/sms', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);
     });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
