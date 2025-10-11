@@ -27,6 +27,18 @@ export default function Dashboard({ auth, hasData, budgets }: any) {
         foreign_key: 'id'
     };
 
+    const categoryRelationForBrands = {
+        graphql_query: 'allCategories',
+        display_using: 'name',
+        foreign_key: 'category_id'
+    };
+
+    const brandRelation = {
+        graphql_query: 'allBrands',
+        display_using: 'name',
+        foreign_key: 'id'
+    };
+
     return (
         <Authenticated auth={auth} header={header}>
             <Head title="Hisabi Dashboard" />
@@ -134,6 +146,25 @@ export default function Dashboard({ auth, hasData, budgets }: any) {
                                     graphql_query="totalPerCategoryDailyTrend"
                                     ranges={allRages}
                                     relation={categoryRelation}
+                                    show_standard_deviation={undefined}
+                                />
+                            </div>
+
+                            <SectionDivider title="Brands Analytics" />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <PartitionMetric
+                                    name="Spending by Brand"
+                                    graphql_query="totalPerBrand"
+                                    ranges={allRages}
+                                    relation={categoryRelationForBrands}
+                                    show_currency={true}
+                                />
+                                <TrendMetric
+                                    name="Overall Trend by Brand"
+                                    graphql_query="totalPerBrandTrend"
+                                    ranges={allRages}
+                                    relation={brandRelation}
                                     show_standard_deviation={undefined}
                                 />
                             </div>

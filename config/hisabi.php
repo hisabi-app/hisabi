@@ -14,16 +14,9 @@ return [
         '{brand} PAYMENT for {card} via MOBAPP of AED {amount} was debited from {date} {time}.',
         'Your Cr.Card {card} was used for AED{amount} on {date} {time} at {brand},{ignore}. {ignore}',
     ],
+    // new ChangeRatePerBrandTrend,
+    // transaaction value distribution 
     'reports' => [
-        // new IncomePerCategory,
-        // new ExpensesPerCategory,
-        // new TotalPerCategoryTrend,
-        // new TotalPerCategoryDailyTrend,
-        // new ChangeRatePerBrandTrend,
-
-        // new TotalPerBrand,
-        // new TotalPerBrandTrend,
-
         // new NumberOfTransactions,
         // new NumberOfTransactionsPerCategory,
         // new NumberOfTransactionsPerBrand,

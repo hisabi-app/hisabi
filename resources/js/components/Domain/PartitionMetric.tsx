@@ -5,7 +5,7 @@ import { sumBy } from 'lodash';
 import { query } from '../../Api';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
-import { colors, formatNumber, getTailwindColor } from '../../Utils';
+import { colors, formatNumber, getTailwindColor, getAppCurrency } from '../../Utils';
 
 Chart.register(ArcElement, DoughnutController);
 
@@ -114,7 +114,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
                     <ul className="list-reset">
                         {data.map((item, index) => <li key={index} className="text-xs text-gray-700 leading-normal">
                             <span className={`inline-block rounded-full w-2 h-2 mr-2 ${getTailwindColor(index)}`} />
-                            {item.label} ({show_currency && <>{AppCurrency} </>}{formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
+                            {item.label} ({show_currency && <>{getAppCurrency()} </>}{formatNumber(item.value)} - {total > 0 && formatNumber(item.value * 100 / total) + "%"})
                         </li>)}
                     </ul>
 
