@@ -15,24 +15,21 @@ return [
         'Your Cr.Card {card} was used for AED{amount} on {date} {time} at {brand},{ignore}. {ignore}',
     ],
     'reports' => [
-        // (new SectionDivider)->withTitle("📊 Categories Analytics"),
         // new IncomePerCategory,
         // new ExpensesPerCategory,
         // new TotalPerCategoryTrend,
         // new TotalPerCategoryDailyTrend,
-//        new ChangeRatePerBrandTrend,
+        // new ChangeRatePerBrandTrend,
 
-        // (new SectionDivider)->withTitle("📊 Brands Analytics"),
         // new TotalPerBrand,
         // new TotalPerBrandTrend,
 
-        // (new SectionDivider)->withTitle("💰 Facts"),
-        // (new NumberOfTransactions)->setWidth('1/2'),
-        // (new NumberOfTransactionsPerCategory)->setWidth('1/2'),
-        // (new NumberOfTransactionsPerBrand)->setWidth('1/2'),
-        // (new HighestValueTransaction)->setWidth('1/2'),
-        // (new LowestValueTransaction)->setWidth('1/2'),
-        // (new AverageValueTransaction)->setWidth('1/2'),
-        // (new TransactionsStandardDeviation)->setWidth('full'),
+        // new NumberOfTransactions,
+        // new NumberOfTransactionsPerCategory,
+        // new NumberOfTransactionsPerBrand,
+        // new HighestValueTransaction,
+        // new LowestValueTransaction,
+        // new AverageValueTransaction,
+        // new TransactionsStandardDeviation
     ]
 ];
