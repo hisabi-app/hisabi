@@ -5,6 +5,7 @@ import NoContent from '@/components/Global/NoContent';
 import ValueMetric from '@/components/Domain/ValueMetric';
 import TrendMetric from '@/components/Domain/TrendMetric';
 import PartitionMetric from '@/components/Domain/PartitionMetric';
+import CirclePackMetric from '@/components/Domain/CirclePackMetric';
 import SectionDivider from '@/components/Global/SectionDivider';
 import Budgets from '@/components/Domain/Budgets';
 
@@ -136,6 +137,17 @@ export default function Dashboard({ auth, hasData, budgets }: any) {
                                     show_standard_deviation={undefined}
                                 />
                             </div>
+
+                            <SectionDivider title="Finance Visualization" />
+
+                            <div className="w-full">
+                                <CirclePackMetric
+                                    name="Finance Visualization"
+                                    graphql_query="financeVisualizationCirclePackMetric"
+                                    ranges={allRages}
+                                />
+                            </div>
+                            
                         </div>
                     )}
                 </div>

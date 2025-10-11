@@ -55,7 +55,7 @@ class FinanceVisualizationCirclePackMetric extends CirclePackMetric
                             "value" => $item->value,
                             "color" => $this->colors[$item->color] ?? 'white'
                         ];
-                    })
+                    })->toArray()
                 ];
             }
             $rootLevel["children"][] = [
