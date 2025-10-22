@@ -71,9 +71,7 @@ export const createTransaction = async ({amount, brandId, createdAt, note}) => {
     const data = await response.json();
 
     return {
-        data: {
-            createTransaction: data.transaction
-        }
+        data: data
     };
 }
 
