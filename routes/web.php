@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('api/v1')->group(function () {
         Route::get('/transactions', [\App\Http\Controllers\Api\V1\TransactionController::class, 'index']);
+        Route::post('/transactions', [\App\Http\Controllers\Api\V1\TransactionController::class, 'store']);
         Route::post('/sms', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);
     });
 

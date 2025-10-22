@@ -35,7 +35,7 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
             note
         })
         .then(({ data }) => {
-            onCreate(data.createTransaction);
+            onCreate(data.transaction);
             // Reset form
             setBrand(null);
             setAmount(0);

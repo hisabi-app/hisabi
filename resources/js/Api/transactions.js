@@ -42,27 +42,37 @@ export const getTransactions = async (page, searchQuery, filters = {}) => {
     };
 }
 
-export const createTransaction = ({amount, brandId, createdAt, note}) => {
-    return client
-        .mutation(gql`
-            mutation {
-                createTransaction(amount: ${amount} brand_id: ${brandId} created_at: """${createdAt}""" note: """${note}""") {
-                    id
-                    amount
-                    created_at
-                    note
-                    brand {
-                        id
-                        name
-                        category {
-                            name
-                            type
-                        }
-                    }
-                }
-            }
-        `)
-        .toPromise();
+const getCsrfToken = () => {
+    const token = document.querySelector('meta[name="csrf-token"]');
+    return token ? token.getAttribute('content') : '';
+};
+
+export const createTransaction = async ({amount, brandId, createdAt, note}) => {
+    const response = await fetch('/api/v1/transactions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            amount,
+            brand_id: brandId,
+            created_at: createdAt,
+            note
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+        data: data
+    };
 }
 
 export const updateTransaction = ({id, amount, brandId, createdAt, note}) => {
