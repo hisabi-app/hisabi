@@ -41,5 +41,10 @@ class TransactionService
             ->with(['brand.category'])
             ->paginate($perPage);
     }
+
+    public function create(array $data): Transaction
+    {
+        return Transaction::query()->create($data);
+    }
 }
 
