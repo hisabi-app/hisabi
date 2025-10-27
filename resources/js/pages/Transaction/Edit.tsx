@@ -40,7 +40,7 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
             note
         })
         .then(({ data }) => {
-            onUpdate(data.updateTransaction);
+            onUpdate(data.transaction);
             onClose();
         })
         .catch(console.error);
