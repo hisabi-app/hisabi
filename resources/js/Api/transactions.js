@@ -75,27 +75,32 @@ export const createTransaction = async ({amount, brandId, createdAt, note}) => {
     };
 }
 
-export const updateTransaction = ({id, amount, brandId, createdAt, note}) => {
-    return client
-        .mutation(gql`
-            mutation {
-                updateTransaction(id: ${id} amount: ${amount} brand_id: ${brandId} created_at: """${createdAt}""" note: """${note}""") {
-                    id
-                    amount
-                    created_at
-                    note
-                    brand {
-                        id
-                        name
-                        category {
-                            name
-                            type
-                        }
-                    }
-                }
-            }
-        `)
-        .toPromise();
+export const updateTransaction = async ({id, amount, brandId, createdAt, note}) => {
+    const response = await fetch(`/api/v1/transactions/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            amount,
+            brand_id: brandId,
+            created_at: createdAt,
+            note
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+        data: data
+    };
 }
 
 export const getTransactionStats = (range = 'current-month') => {

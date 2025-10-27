@@ -564,5 +564,249 @@ class TransactionControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['created_at']);
     }
+
+    public function test_update_requires_authentication(): void
+    {
+        $transaction = Transaction::factory()->create();
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->putJson("/api/v1/transactions/{$transaction->id}", [
+            'amount' => 200.75,
+            'brand_id' => $brand->id,
+            'created_at' => now()->format('Y-m-d'),
+            'note' => 'Updated transaction'
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_it_updates_a_transaction(): void
+    {
+        $category = Category::factory()->create(['name' => 'Test Category']);
+        $brand = Brand::factory()->create([
+            'name' => 'Test Brand',
+            'category_id' => $category->id
+        ]);
+        $transaction = Transaction::factory()->create([
+            'amount' => 100.50,
+            'brand_id' => $brand->id,
+            'note' => 'Original note'
+        ]);
+
+        $newCategory = Category::factory()->create(['name' => 'New Category']);
+        $newBrand = Brand::factory()->create([
+            'name' => 'New Brand',
+            'category_id' => $newCategory->id
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 200.75,
+                'brand_id' => $newBrand->id,
+                'created_at' => now()->format('Y-m-d'),
+                'note' => 'Updated note'
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'transaction' => [
+                    'id',
+                    'amount',
+                    'created_at',
+                    'note',
+                    'brand' => [
+                        'id',
+                        'name',
+                        'category' => [
+                            'id',
+                            'name',
+                            'type'
+                        ]
+                    ]
+                ]
+            ])
+            ->assertJsonPath('transaction.id', $transaction->id)
+            ->assertJsonPath('transaction.amount', 200.75)
+            ->assertJsonPath('transaction.brand.name', 'New Brand')
+            ->assertJsonPath('transaction.brand.category.name', 'New Category')
+            ->assertJsonPath('transaction.note', 'Updated note');
+
+        $this->assertDatabaseHas('transactions', [
+            'id' => $transaction->id,
+            'amount' => 200.75,
+            'brand_id' => $newBrand->id,
+            'note' => 'Updated note'
+        ]);
+    }
+
+    public function test_update_validates_required_amount(): void
+    {
+        $transaction = Transaction::factory()->create();
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'brand_id' => $brand->id,
+                'created_at' => now()->format('Y-m-d')
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['amount']);
+    }
+
+    public function test_update_validates_required_brand_id(): void
+    {
+        $transaction = Transaction::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 200.75,
+                'created_at' => now()->format('Y-m-d')
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['brand_id']);
+    }
+
+    public function test_update_validates_required_created_at(): void
+    {
+        $transaction = Transaction::factory()->create();
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 200.75,
+                'brand_id' => $brand->id
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['created_at']);
+    }
+
+    public function test_update_validates_brand_exists(): void
+    {
+        $transaction = Transaction::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 200.75,
+                'brand_id' => 99999,
+                'created_at' => now()->format('Y-m-d')
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['brand_id']);
+    }
+
+    public function test_update_validates_amount_is_numeric(): void
+    {
+        $transaction = Transaction::factory()->create();
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 'not-a-number',
+                'brand_id' => $brand->id,
+                'created_at' => now()->format('Y-m-d')
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['amount']);
+    }
+
+    public function test_update_validates_amount_is_positive(): void
+    {
+        $transaction = Transaction::factory()->create();
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => -100,
+                'brand_id' => $brand->id,
+                'created_at' => now()->format('Y-m-d')
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['amount']);
+    }
+
+    public function test_update_accepts_transaction_without_note(): void
+    {
+        $transaction = Transaction::factory()->create(['note' => 'Old note']);
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 200.75,
+                'brand_id' => $brand->id,
+                'created_at' => now()->format('Y-m-d'),
+                'note' => null
+            ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('transactions', [
+            'id' => $transaction->id,
+            'amount' => 200.75,
+            'brand_id' => $brand->id,
+            'note' => null
+        ]);
+    }
+
+    public function test_update_validates_note_max_length(): void
+    {
+        $transaction = Transaction::factory()->create();
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 200.75,
+                'brand_id' => $brand->id,
+                'created_at' => now()->format('Y-m-d'),
+                'note' => str_repeat('a', 1001)
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['note']);
+    }
+
+    public function test_update_validates_created_at_is_valid_date(): void
+    {
+        $transaction = Transaction::factory()->create();
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/transactions/{$transaction->id}", [
+                'amount' => 200.75,
+                'brand_id' => $brand->id,
+                'created_at' => 'not-a-date'
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['created_at']);
+    }
+
+    public function test_update_returns_404_for_nonexistent_transaction(): void
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson('/api/v1/transactions/99999', [
+                'amount' => 200.75,
+                'brand_id' => $brand->id,
+                'created_at' => now()->format('Y-m-d')
+            ]);
+
+        $response->assertStatus(404);
+    }
 }
 
