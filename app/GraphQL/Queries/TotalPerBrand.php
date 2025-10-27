@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use Illuminate\Support\Facades\DB;
 use App\Domain\Metrics\RelationPartitionMetric;
 

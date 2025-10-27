@@ -3,7 +3,7 @@
 namespace Tests\Feature\Sms;
 
 use App\Contracts\SmsTransactionProcessor;
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Domains\Sms\Models\Sms;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

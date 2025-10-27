@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Models\Category;
 use App\Domains\Transaction\Models\Transaction;
 use Carbon\Carbon;

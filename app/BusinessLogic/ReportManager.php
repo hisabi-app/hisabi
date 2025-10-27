@@ -3,7 +3,7 @@
 namespace App\BusinessLogic;
 
 use Carbon\Carbon;
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Models\Category;
 use App\Domains\Transaction\Models\Transaction;
 use App\Contracts\ReportManager as ReportManagerContract;
