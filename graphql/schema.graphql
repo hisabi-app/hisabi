@@ -147,13 +147,6 @@ type Query {
 }
 
 type Mutation {
-    updateTransaction(
-        id: ID!
-        amount: Float!
-        brand_id: Int!
-        created_at: String!
-        note: String
-    ): Transaction @update
     deleteTransaction(id: ID! @whereKey): Transaction @delete
 
     createBrand(name: String! category_id: Int!): Brand @create

@@ -31,8 +31,8 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 
 ### 1. Transactions (Complete the CRUD)
 - ✅ `GET /api/v1/transactions` (index) - DONE
-- ✅ `POST /api/v1/transactions` (create) - CreateTransactionCommand
-- ⬜ `PUT /api/v1/transactions/{id}` (update) - UpdateTransactionCommand
+- ✅ `POST /api/v1/transactions` (create) - CreateTransactionCommand - DONE
+- ✅ `PUT /api/v1/transactions/{id}` (update) - UpdateTransactionCommand - DONE
 - ⬜ `DELETE /api/v1/transactions/{id}` (delete) - DeleteTransactionCommand
 
 ### 2. Brands Domain

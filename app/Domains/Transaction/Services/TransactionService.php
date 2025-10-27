@@ -46,5 +46,12 @@ class TransactionService
     {
         return Transaction::query()->create($data);
     }
+
+    public function update(int $id, array $data): Transaction
+    {
+        $transaction = Transaction::query()->findOrFail($id);
+        $transaction->update($data);
+        return $transaction->fresh();
+    }
 }
 
