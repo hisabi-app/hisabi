@@ -102,7 +102,7 @@
         "typescript": "^5.7.2",
         "urql": "^2.2.0",
         "use-stick-to-bottom": "^1.1.1",
-        "vite": "^7.0.4",
+        "vite": "^7.1.12",
         "zod": "^4.1.11"
     },
     "jest": {
