@@ -30,23 +30,4 @@ class BrandService
             ->withCount('transactions')
             ->paginate($perPage);
     }
-
-    public function create(array $data): Brand
-    {
-        return Brand::query()->create($data);
-    }
-
-    public function update(int $id, array $data): Brand
-    {
-        $brand = Brand::query()->findOrFail($id);
-        $brand->update($data);
-        return $brand->fresh();
-    }
-
-    public function delete(int $id): Brand
-    {
-        $brand = Brand::query()->findOrFail($id);
-        $brand->delete();
-        return $brand;
-    }
 }
