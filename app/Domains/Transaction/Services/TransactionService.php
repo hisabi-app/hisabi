@@ -53,5 +53,12 @@ class TransactionService
         $transaction->update($data);
         return $transaction->fresh();
     }
+
+    public function delete(int $id): Transaction
+    {
+        $transaction = Transaction::query()->findOrFail($id);
+        $transaction->delete();
+        return $transaction;
+    }
 }
 

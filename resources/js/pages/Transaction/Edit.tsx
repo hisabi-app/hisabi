@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { updateTransaction, deleteResource } from "../../Api";
+import { updateTransaction, deleteTransaction } from "../../Api";
 import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
         if (!transaction) return;
 
         const transactionToDelete = transaction;
-        deleteResource({ id: transactionToDelete.id, resource: 'Transaction' })
+        deleteTransaction(transactionToDelete.id)
             .then(() => {
                 onDelete(transactionToDelete);
                 onClose();
