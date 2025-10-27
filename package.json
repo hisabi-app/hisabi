@@ -41,7 +41,7 @@
         "typescript": "^5.0.0"
     },
     "dependencies": {
-        "@babel/runtime": "^7.17.9",
+        "@babel/runtime": "^7.28.4",
         "@heroicons/react": "^1.0.5",
         "@hookform/resolvers": "^5.2.2",
         "@icons-pack/react-simple-icons": "^13.8.0",
