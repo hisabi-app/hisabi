@@ -103,6 +103,28 @@ export const updateTransaction = async ({id, amount, brandId, createdAt, note}) 
     };
 }
 
+export const deleteTransaction = async (id) => {
+    const response = await fetch(`/api/v1/transactions/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin'
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+        data: data
+    };
+}
+
 export const getTransactionStats = (range = 'current-month') => {
     return customQuery(`
         totalIncome(range: "${range}")

@@ -9,6 +9,8 @@ use App\Http\Commands\Transaction\CreateTransactionCommand\CreateTransactionComm
 use App\Http\Commands\Transaction\CreateTransactionCommand\CreateTransactionCommandHandler;
 use App\Http\Commands\Transaction\UpdateTransactionCommand\UpdateTransactionCommand;
 use App\Http\Commands\Transaction\UpdateTransactionCommand\UpdateTransactionCommandHandler;
+use App\Http\Commands\Transaction\DeleteTransactionCommand\DeleteTransactionCommand;
+use App\Http\Commands\Transaction\DeleteTransactionCommand\DeleteTransactionCommandHandler;
 use App\Http\Requests\Api\V1\CreateTransactionRequest;
 use App\Http\Requests\Api\V1\UpdateTransactionRequest;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +21,8 @@ class TransactionController extends Controller
     public function __construct(
         private readonly GetTransactionsQueryHandler $getTransactionsQueryHandler,
         private readonly CreateTransactionCommandHandler $createTransactionCommandHandler,
-        private readonly UpdateTransactionCommandHandler $updateTransactionCommandHandler
+        private readonly UpdateTransactionCommandHandler $updateTransactionCommandHandler,
+        private readonly DeleteTransactionCommandHandler $deleteTransactionCommandHandler
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -48,6 +51,15 @@ class TransactionController extends Controller
         );
 
         return $this->updateTransactionCommandHandler->handle($command)->toResponse();
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $command = new DeleteTransactionCommand(
+            id: $id
+        );
+
+        return $this->deleteTransactionCommandHandler->handle($command)->toResponse();
     }
 }
 

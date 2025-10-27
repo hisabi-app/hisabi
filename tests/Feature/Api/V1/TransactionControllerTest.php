@@ -808,5 +808,67 @@ class TransactionControllerTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    public function test_delete_requires_authentication(): void
+    {
+        $transaction = Transaction::factory()->create();
+
+        $response = $this->deleteJson("/api/v1/transactions/{$transaction->id}");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_it_deletes_a_transaction(): void
+    {
+        $category = Category::factory()->create(['name' => 'Test Category']);
+        $brand = Brand::factory()->create([
+            'name' => 'Test Brand',
+            'category_id' => $category->id
+        ]);
+        $transaction = Transaction::factory()->create([
+            'amount' => 100.50,
+            'brand_id' => $brand->id,
+            'note' => 'Test transaction'
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->deleteJson("/api/v1/transactions/{$transaction->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'transaction' => [
+                    'id',
+                    'amount',
+                    'created_at',
+                    'note',
+                    'brand' => [
+                        'id',
+                        'name',
+                        'category' => [
+                            'id',
+                            'name',
+                            'type'
+                        ]
+                    ]
+                ]
+            ])
+            ->assertJsonPath('transaction.id', $transaction->id)
+            ->assertJsonPath('transaction.amount', 100.50)
+            ->assertJsonPath('transaction.brand.name', 'Test Brand')
+            ->assertJsonPath('transaction.brand.category.name', 'Test Category')
+            ->assertJsonPath('transaction.note', 'Test transaction');
+
+        $this->assertDatabaseMissing('transactions', [
+            'id' => $transaction->id
+        ]);
+    }
+
+    public function test_delete_returns_404_for_nonexistent_transaction(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->deleteJson('/api/v1/transactions/99999');
+
+        $response->assertStatus(404);
+    }
 }
 
