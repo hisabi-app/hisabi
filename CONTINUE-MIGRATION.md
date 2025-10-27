@@ -266,9 +266,10 @@ class {DomainName}ControllerTest extends TestCase
 6. **Response format** should match what frontend expects (check existing components)
 7. **Domain Services** should use query builder, not Eloquent directly
 8. **All routes** follow RESTful conventions: `/api/v1/{resource}` pattern
-9. **Frontend updates** - Update ALL corresponding files in `resources/js/Api/`
+9. **Frontend updates** - Update ALL corresponding files in `resources/js/Api/` and make sure the calls to the api from fronend are updated as well
 10. **Test updates** - Create/update tests in `tests/Feature/Api/V1/` using REST API patterns
 11. **Test end-to-end** - Make sure frontend pages work after migration
+12. **Remove the query/mutation** from graphql and the tests in the tests folder if any
 
 ## Reference Files to Check
 
@@ -287,6 +288,7 @@ class {DomainName}ControllerTest extends TestCase
 - ✅ Uses laravel-query-builder for filtering/sorting
 - ✅ Proper authentication with session (not tokens)
 - ✅ No linter errors
+- ✅ Removed from graphql schema and its graphql tests
 
 ## Start With
 
