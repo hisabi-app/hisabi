@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Brands;
 
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

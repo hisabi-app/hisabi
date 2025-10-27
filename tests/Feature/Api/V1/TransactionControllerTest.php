@@ -3,7 +3,7 @@
 namespace Tests\Feature\Api\V1;
 
 use App\Domains\Transaction\Models\Transaction;
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -4,7 +4,7 @@ namespace Tests\Unit\Domains\Transaction\Services;
 
 use App\Domains\Transaction\Models\Transaction;
 use App\Domains\Transaction\Services\TransactionService;
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

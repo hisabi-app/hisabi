@@ -18,29 +18,31 @@ export const getAllBrands = () => {
             .toPromise();
 }
 
-export const getBrands = (page, searchQuery) => {
-    return client
-            .query(gql`
-                query {
-                    brands(search: """${searchQuery}""" page: ${page}) {
-                        data {
-                            id
-                            name
-                            category {
-                                id
-                                name
-                                color
-                                icon
-                            }
-                            transactionsCount
-                        }
-                        paginatorInfo {
-                            hasMorePages
-                        }
-                    }
-                }
-            `)
-            .toPromise();
+export const getBrands = async (page, searchQuery) => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        perPage: '50'
+    });
+
+    if (searchQuery) {
+        params.append('filter[search]', searchQuery);
+    }
+
+    const response = await fetch(`/api/v1/brands?${params.toString()}`, {
+        method: 'GET',
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+        data: {
+            brands: data
+        }
+    };
 }
 
 export const createBrand = ({name, categoryId}) => {

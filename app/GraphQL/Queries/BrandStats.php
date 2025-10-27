@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Queries;
 
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 

@@ -3,7 +3,7 @@
 namespace Tests\Unit\Models\Budgets;
 
 use Tests\TestCase;
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use App\Models\Budget;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Domains\Transaction\Models\Transaction;
 

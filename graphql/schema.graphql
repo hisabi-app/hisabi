@@ -91,10 +91,6 @@ type McpTool {
 type Query {
     allBrands: [Brand!]! @all
     budgets: [Budget!]! @all
-    brands(search: String @search): [Brand!]!
-        @paginate(defaultCount: 50)
-        @lazyLoad(relations: ["category"])
-        @orderBy(column: id direction: DESC)
 
     allCategories: [Category!]! @all
     categories(search: String @search): [Category!]!

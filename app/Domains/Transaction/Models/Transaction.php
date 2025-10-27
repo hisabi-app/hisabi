@@ -2,7 +2,7 @@
 
 namespace App\Domains\Transaction\Models;
 
-use App\Models\Brand;
+use App\Domains\Brand\Models\Brand;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
