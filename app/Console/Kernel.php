@@ -15,11 +15,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('hisabi:report')->onOneServer()->lastDayOfMonth('23:00');
+        // $schedule->command('hisabi:report')->onOneServer()->lastDayOfMonth('23:00');
 
         $schedule->command('cache:prune-stale-tags')->hourly();
 
-        // Refresh demo data every hour (only runs if demo mode is enabled)
         $schedule->command('hisabi:refresh-demo')
             ->hourly()
             ->onOneServer()
