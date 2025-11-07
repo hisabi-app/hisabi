@@ -2,20 +2,22 @@ import { gql } from '@urql/core';
 import client from './client.js';
 import { customQuery } from './common.js';
 
-export const getAllBrands = () => {
-    return client
-            .query(gql`
-                query {
-                    allBrands {
-                        id
-                        name
-                        category {
-                            name
-                        }
-                    }
-                }
-            `)
-            .toPromise();
+export const getAllBrands = async () => {
+    const response = await fetch('/api/v1/brands/all', {
+        method: 'GET',
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return {
+        data: {
+            allBrands: result.data
+        }
+    };
 }
 
 export const getBrands = async (page, searchQuery) => {
