@@ -17,8 +17,6 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('hisabi:report')->onOneServer()->lastDayOfMonth('23:00');
 
-        $schedule->command('cache:prune-stale-tags')->hourly();
-
         $schedule->command('hisabi:refresh-demo')
             ->hourly()
             ->onOneServer()
