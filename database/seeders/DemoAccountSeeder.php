@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use App\Domains\Brand\Models\Brand;
 use App\Models\Category;
+use App\Models\User;
 use App\Domains\Transaction\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DemoAccountSeeder extends Seeder
 {
@@ -15,6 +17,19 @@ class DemoAccountSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create demo user
+        $user = User::firstOrCreate(
+            ['email' => config('hisabi.demo.email')],
+            [
+                'name' => 'Demo User',
+                'email' => config('hisabi.demo.email'),
+                'password' => Hash::make(config('hisabi.demo.password')),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $this->command->info('Demo user created: ' . $user->email);
+
         // Create categories with brands
         $income = $this->createIncome();
         $housing = $this->createHousing();

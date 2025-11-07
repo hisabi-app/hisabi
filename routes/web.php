@@ -30,7 +30,7 @@ Route::middleware(['auth'])->group(function () {
         return view('report', $data);
     });
 
-    Route::prefix('api/v1')->group(function () {
+    Route::prefix('api/v1')->middleware(['block.demo'])->group(function () {
         Route::get('/transactions', [\App\Http\Controllers\Api\V1\TransactionController::class, 'index']);
         Route::post('/transactions', [\App\Http\Controllers\Api\V1\TransactionController::class, 'store']);
         Route::put('/transactions/{id}', [\App\Http\Controllers\Api\V1\TransactionController::class, 'update']);

@@ -19,6 +19,12 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('cache:prune-stale-tags')->hourly();
 
+        // Refresh demo data every hour (only runs if demo mode is enabled)
+        $schedule->command('hisabi:refresh-demo')
+            ->hourly()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**
