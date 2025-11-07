@@ -2,6 +2,11 @@
 
 return [
     'currency' => 'AED',
+    'demo' => [
+        'enabled' => env('DEMO_MODE', false),
+        'email' => 'demo@hisabi.app',
+        'password' => 'demo123',
+    ],
     'sms_templates' => [
         'Purchase of AED {amount} with {card} at {brand},',
         'Payment of AED {amount} to {brand} with {card}.',
@@ -15,7 +20,7 @@ return [
         'Your Cr.Card {card} was used for AED{amount} on {date} {time} at {brand},{ignore}. {ignore}',
     ],
     // new ChangeRatePerBrandTrend,
-    // transaaction value distribution 
+    // transaaction value distribution
     'reports' => [
         // new NumberOfTransactions,
         // new NumberOfTransactionsPerCategory,
