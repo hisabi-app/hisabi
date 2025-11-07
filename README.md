@@ -22,7 +22,7 @@ Follow me on [LinkedIn](https://www.linkedin.com/in/saleem-hadad/) for updates a
 
 ## 🎮 Demo
 
-Try the app with [live demo](https://hisabi.saleem.dev/).
+Try the app with [live demo](https://hisabi.on-forge.com/).
 
 ## ▶️ Installation 
 
