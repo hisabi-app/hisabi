@@ -18,7 +18,7 @@ class BlockDemoActions
         // Check if the authenticated user is a demo user
         if ($request->user() && $this->isDemoUser($request->user())) {
             // Block DELETE, POST, PUT, PATCH requests for demo users
-            if (in_array($request->method(), ['DELETE', 'POST', 'PUT', 'PATCH'])) {
+            if (in_array($request->method(), ['DELETE'])) {
                 return response()->json([
                     'success' => false,
                     'message' => 'This action is not allowed in demo mode. Data is read-only and will be refreshed every hour.',

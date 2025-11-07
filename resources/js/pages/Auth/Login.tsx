@@ -31,10 +31,10 @@ export default function Login() {
         <Guest>
             <Head title="Log in" />
 
-            <Alert className="mb-4 border-blue-500 bg-blue-50 dark:bg-blue-950 dark:border-blue-800">
-                <AlertDescription className="text-blue-800 dark:text-blue-200">
+            <Alert className="mb-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950 dark:border-yellow-800">
+                <AlertDescription>
                     <strong className="font-semibold">Demo Account:</strong> This is a demonstration account with sample data.
-                    All data is read-only and will be automatically refreshed every hour. You cannot create, edit, or delete transactions in demo mode.
+                    Data will be automatically refreshed every hour. You cannot transactions in demo mode. Please be respectful to other users.
                 </AlertDescription>
             </Alert>
 
