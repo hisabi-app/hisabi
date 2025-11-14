@@ -89,7 +89,6 @@ type McpTool {
 }
 
 type Query {
-    allBrands: [Brand!]! @all
     budgets: [Budget!]! @all
 
     allCategories: [Category!]! @all
