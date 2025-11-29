@@ -264,4 +264,50 @@ class BrandControllerTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    public function test_it_requires_authentication_for_destroy(): void
+    {
+        $brand = Brand::factory()->create();
+
+        $response = $this->deleteJson("/api/v1/brands/{$brand->id}");
+        $response->assertStatus(401);
+    }
+
+    public function test_it_deletes_a_brand(): void
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create([
+            'name' => 'Brand to Delete',
+            'category_id' => $category->id,
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->deleteJson("/api/v1/brands/{$brand->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'brand' => [
+                    'id',
+                    'name',
+                    'category' => [
+                        'id',
+                        'name',
+                    ],
+                ],
+            ])
+            ->assertJsonPath('brand.id', $brand->id)
+            ->assertJsonPath('brand.name', 'Brand to Delete');
+
+        $this->assertDatabaseMissing('brands', [
+            'id' => $brand->id,
+        ]);
+    }
+
+    public function test_it_returns_404_for_non_existent_brand_on_delete(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->deleteJson('/api/v1/brands/999');
+
+        $response->assertStatus(404);
+    }
 }

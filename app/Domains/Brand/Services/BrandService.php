@@ -64,4 +64,11 @@ class BrandService
         $brand->update($data);
         return $brand;
     }
+
+    public function delete(int $id): Brand
+    {
+        $brand = Brand::findOrFail($id);
+        $brand->delete();
+        return $brand;
+    }
 }

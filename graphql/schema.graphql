@@ -142,8 +142,6 @@ type Query {
 }
 
 type Mutation {
-    deleteBrand(id: ID! @whereKey): Brand @delete
-
     createCategory(name: String! type: String! color: String! icon: String!): Category
         @create
     updateCategory(

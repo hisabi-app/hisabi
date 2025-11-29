@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/brands/all', [\App\Http\Controllers\Api\V1\BrandController::class, 'all']);
         Route::post('/brands', [\App\Http\Controllers\Api\V1\BrandController::class, 'store']);
         Route::put('/brands/{id}', [\App\Http\Controllers\Api\V1\BrandController::class, 'update']);
+        Route::delete('/brands/{id}', [\App\Http\Controllers\Api\V1\BrandController::class, 'destroy']);
         Route::post('/sms', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);
     });
 

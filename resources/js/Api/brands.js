@@ -103,6 +103,31 @@ export const updateBrand = async ({id, name, categoryId}) => {
     };
 }
 
+export const deleteBrand = async (id) => {
+    const response = await fetch(`/api/v1/brands/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return {
+        data: {
+            deleteBrand: result.brand
+        }
+    };
+}
+
 export const getBrandStats = (range = 'current-month') => {
     return customQuery(`brandStats(range: "${range}")`);
 }

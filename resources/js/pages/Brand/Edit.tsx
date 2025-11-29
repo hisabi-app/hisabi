@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { updateBrand, deleteResource } from "../../Api";
+import { updateBrand, deleteBrand } from "../../Api";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -45,7 +45,7 @@ export default function Edit({ categories, brand, onUpdate, onDelete, onClose })
         if (!brand) return;
 
         const brandToDelete = brand;
-        deleteResource({ id: brandToDelete.id, resource: 'Brand' })
+        deleteBrand(brandToDelete.id)
             .then(() => {
                 onDelete(brandToDelete);
                 onClose();

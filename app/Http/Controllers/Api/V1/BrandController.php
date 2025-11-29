@@ -7,6 +7,8 @@ use App\Http\Commands\Brand\CreateBrandCommand\CreateBrandCommand;
 use App\Http\Commands\Brand\CreateBrandCommand\CreateBrandCommandHandler;
 use App\Http\Commands\Brand\UpdateBrandCommand\UpdateBrandCommand;
 use App\Http\Commands\Brand\UpdateBrandCommand\UpdateBrandCommandHandler;
+use App\Http\Commands\Brand\DeleteBrandCommand\DeleteBrandCommand;
+use App\Http\Commands\Brand\DeleteBrandCommand\DeleteBrandCommandHandler;
 use App\Http\Queries\Brand\GetBrandsQuery\GetBrandsQuery;
 use App\Http\Queries\Brand\GetBrandsQuery\GetBrandsQueryHandler;
 use App\Http\Queries\Brand\GetAllBrandsQuery\GetAllBrandsQuery;
@@ -22,7 +24,8 @@ class BrandController extends Controller
         private readonly GetBrandsQueryHandler $getBrandsQueryHandler,
         private readonly GetAllBrandsQueryHandler $getAllBrandsQueryHandler,
         private readonly CreateBrandCommandHandler $createBrandCommandHandler,
-        private readonly UpdateBrandCommandHandler $updateBrandCommandHandler
+        private readonly UpdateBrandCommandHandler $updateBrandCommandHandler,
+        private readonly DeleteBrandCommandHandler $deleteBrandCommandHandler
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -58,5 +61,14 @@ class BrandController extends Controller
         );
 
         return $this->updateBrandCommandHandler->handle($command)->toResponse();
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $command = new DeleteBrandCommand(
+            id: $id
+        );
+
+        return $this->deleteBrandCommandHandler->handle($command)->toResponse();
     }
 }

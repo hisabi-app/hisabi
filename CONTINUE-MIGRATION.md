@@ -40,7 +40,7 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 - ✅ `GET /api/v1/brands/all` (all without pagination) - GetAllBrandsQuery - DONE
 - ✅ `POST /api/v1/brands` (create) - CreateBrandCommand - DONE
 - ✅ `PUT /api/v1/brands/{id}` (update) - UpdateBrandCommand - DONE
-- ⬜ `DELETE /api/v1/brands/{id}` (delete) - DeleteBrandCommand
+- ✅ `DELETE /api/v1/brands/{id}` (delete) - DeleteBrandCommand - DONE
 
 ### 3. Categories Domain
 - ⬜ `GET /api/v1/categories` (index) - GetCategoriesQuery
