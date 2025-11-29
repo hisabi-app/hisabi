@@ -33,7 +33,7 @@ export default function SmsParser({ onClose }: SmsParserProps) {
 
   const fetchInvalidSms = () => {
     setLoading(true);
-    getSms(1, '')
+    getSms(1)
       .then(({ data }) => {
         // Filter to show only invalid SMS (those without transaction_id)
         const invalid = data.sms.data.filter((sms: Sms) => !sms.transaction_id);

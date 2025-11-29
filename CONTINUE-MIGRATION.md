@@ -52,7 +52,7 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 - ⬜ `GET /api/v1/budgets` (all) - GetBudgetsQuery
 
 ### 5. SMS Domain
-- ⬜ `GET /api/v1/sms` (index) - GetSmsQuery
+- ✅ `GET /api/v1/sms` (index) - GetSmsQuery - DONE
 - ✅ `POST /api/v1/sms` (create) - CreateSmsCommand
 - ⬜ `PUT /api/v1/sms/{id}` (update) - UpdateSmsCommand
 - ⬜ `DELETE /api/v1/sms/{id}` (delete) - DeleteSmsCommand

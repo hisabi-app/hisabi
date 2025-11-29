@@ -91,10 +91,6 @@ type McpTool {
 type Query {
     budgets: [Budget!]! @all
 
-    sms(search: String @search): [Sms!]!
-        @paginate(defaultCount: 100)
-        @orderBy(column: transaction_id direction: ASC)
-
     totalIncome(range: String!): Json
     totalExpenses(range: String!): Json
     totalSavings: Json

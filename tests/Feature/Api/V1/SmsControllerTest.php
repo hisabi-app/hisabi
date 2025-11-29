@@ -19,7 +19,50 @@ class SmsControllerTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    public function test_it_requires_authentication(): void
+    public function test_index_requires_authentication(): void
+    {
+        $response = $this->getJson('/api/v1/sms');
+
+        $response->assertStatus(401);
+    }
+
+    public function test_index_returns_sms_list(): void
+    {
+        $sms = Sms::factory()->count(3)->create();
+
+        $response = $this->actingAs($this->user)
+            ->getJson('/api/v1/sms');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => ['id', 'body', 'transaction_id']
+                ],
+                'paginatorInfo' => [
+                    'hasMorePages',
+                    'currentPage',
+                    'lastPage',
+                    'perPage',
+                    'total',
+                ],
+            ]);
+
+        $this->assertCount(3, $response->json('data'));
+    }
+
+    public function test_index_paginates_results(): void
+    {
+        Sms::factory()->count(150)->create();
+
+        $response = $this->actingAs($this->user)
+            ->getJson('/api/v1/sms');
+
+        $response->assertStatus(200);
+        $this->assertCount(100, $response->json('data'));
+        $this->assertTrue($response->json('paginatorInfo.hasMorePages'));
+    }
+
+    public function test_store_requires_authentication(): void
     {
         $response = $this->postJson('/api/v1/sms', [
             'body' => 'someBody'

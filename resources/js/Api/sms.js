@@ -1,24 +1,22 @@
-import { gql } from '@urql/core';
-import client from './client.js';
 import { getCsrfToken } from './common.js';
 
-export const getSms = (page, searchQuery) => {
-    return client
-            .query(gql`
-                query {
-                    sms(search: """${searchQuery}""" page: ${page}) {
-                        data {
-                            id
-                            body
-                            transaction_id
-                        }
-                        paginatorInfo {
-                            hasMorePages
-                        }
-                    }
-                }
-            `)
-            .toPromise();
+export const getSms = async (page) => {
+    const response = await fetch(`/api/v1/sms?page=${page}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return { data: { sms: result } };
 }
 
 export const createSms = async ({sms, createdAt}) => {
