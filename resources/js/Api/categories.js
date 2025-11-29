@@ -2,43 +2,22 @@ import { gql } from '@urql/core';
 import client from './client.js';
 import { customQuery } from './common.js';
 
-export const getAllCategories = () => {
-    return client
-            .query(gql`
-                query {
-                    allCategories {
-                        id
-                        name
-                        type
-                        color
-                        icon
-                        transactionsCount
-                    }
-                }
-            `)
-            .toPromise();
-}
+export const getAllCategories = async () => {
+    const response = await fetch('/api/v1/categories/all', {
+        method: 'GET',
+    });
 
-export const getCategories = (page, searchQuery) => {
-    return client
-        .query(gql`
-            query {
-                categories(search: """${searchQuery}""" page: ${page}) {
-                    data {
-                        id
-                        name
-                        type
-                        color
-                        icon
-                        transactionsCount
-                    }
-                    paginatorInfo {
-                        hasMorePages
-                    }
-                }
-            }
-        `)
-        .toPromise();
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return {
+        data: {
+            allCategories: result.data
+        }
+    };
 }
 
 export const createCategory = ({name, type, color, icon}) => {

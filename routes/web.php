@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/brands/{id}', [\App\Http\Controllers\Api\V1\BrandController::class, 'update']);
         Route::delete('/brands/{id}', [\App\Http\Controllers\Api\V1\BrandController::class, 'destroy']);
         Route::post('/sms', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);
+        Route::get('/categories/all', [\App\Http\Controllers\Api\V1\CategoryController::class, 'all']);
     });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

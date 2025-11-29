@@ -13,16 +13,5 @@ return [
         'An ATM cash {brand} of AED{amount} has been debited from your {account} on {date} {time}.',
         '{brand} PAYMENT for {card} via MOBAPP of AED {amount} was debited from {date} {time}.',
         'Your Cr.Card {card} was used for AED{amount} on {date} {time} at {brand},{ignore}. {ignore}',
-    ],
-    // new ChangeRatePerBrandTrend,
-    // transaaction value distribution 
-    'reports' => [
-        // new NumberOfTransactions,
-        // new NumberOfTransactionsPerCategory,
-        // new NumberOfTransactionsPerBrand,
-        // new HighestValueTransaction,
-        // new LowestValueTransaction,
-        // new AverageValueTransaction,
-        // new TransactionsStandardDeviation
     ]
 ];
