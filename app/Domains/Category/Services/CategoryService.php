@@ -35,4 +35,11 @@ class CategoryService
         $category->update($data);
         return $category;
     }
+
+    public function delete(int $id): Category
+    {
+        $category = Category::findOrFail($id);
+        $category->delete();
+        return $category;
+    }
 }

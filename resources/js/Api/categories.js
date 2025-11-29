@@ -74,6 +74,30 @@ export const updateCategory = async ({id, name, type, color, icon}) => {
     };
 }
 
+export const deleteCategory = async (id) => {
+    const response = await fetch(`/api/v1/categories/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return {
+        data: {
+            deleteCategory: result.category
+        }
+    };
+}
+
 export const getCategoryStats = (range = 'current-month') => {
     return customQuery(`categoryStats(range: "${range}")`);
 }

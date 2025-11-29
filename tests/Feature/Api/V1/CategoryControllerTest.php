@@ -231,4 +231,50 @@ class CategoryControllerTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    public function test_it_requires_authentication_for_destroy(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->deleteJson("/api/v1/categories/{$category->id}");
+        $response->assertStatus(401);
+    }
+
+    public function test_it_deletes_a_category(): void
+    {
+        $category = Category::factory()->create([
+            'name' => 'Category to Delete',
+            'type' => 'EXPENSES',
+            'color' => 'red',
+            'icon' => 'wallet',
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->deleteJson("/api/v1/categories/{$category->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'category' => [
+                    'id',
+                    'name',
+                    'type',
+                    'color',
+                    'icon',
+                ],
+            ])
+            ->assertJsonPath('category.id', $category->id)
+            ->assertJsonPath('category.name', 'Category to Delete');
+
+        $this->assertDatabaseMissing('categories', [
+            'id' => $category->id,
+        ]);
+    }
+
+    public function test_it_returns_404_for_non_existent_category_on_delete(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->deleteJson('/api/v1/categories/999');
+
+        $response->assertStatus(404);
+    }
 }

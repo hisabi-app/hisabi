@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { LongPressButton } from '@/components/ui/long-press-button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { updateCategory, deleteResource } from "../../Api";
+import { updateCategory, deleteCategory } from "../../Api";
 import {
     Dialog,
     DialogContent,
@@ -53,7 +53,7 @@ export default function Edit({ category, onUpdate, onDelete, onClose }) {
         if (!category) return;
 
         const categoryToDelete = category;
-        deleteResource({ id: categoryToDelete.id, resource: 'Category' })
+        deleteCategory(categoryToDelete.id)
             .then(() => {
                 onDelete(categoryToDelete);
                 onClose();

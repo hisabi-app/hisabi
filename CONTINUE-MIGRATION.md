@@ -46,7 +46,7 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 - ✅ `GET /api/v1/categories/all` (all without pagination) - GetAllCategoriesQuery - DONE
 - ✅ `POST /api/v1/categories` (create) - CreateCategoryCommand - DONE
 - ✅ `PUT /api/v1/categories/{id}` (update) - UpdateCategoryCommand - DONE
-- ⬜ `DELETE /api/v1/categories/{id}` (delete) - DeleteCategoryCommand
+- ✅ `DELETE /api/v1/categories/{id}` (delete) - DeleteCategoryCommand - DONE
 
 ### 4. Budgets Domain
 - ⬜ `GET /api/v1/budgets` (all) - GetBudgetsQuery

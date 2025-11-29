@@ -7,6 +7,8 @@ use App\Http\Commands\Category\CreateCategoryCommand\CreateCategoryCommand;
 use App\Http\Commands\Category\CreateCategoryCommand\CreateCategoryCommandHandler;
 use App\Http\Commands\Category\UpdateCategoryCommand\UpdateCategoryCommand;
 use App\Http\Commands\Category\UpdateCategoryCommand\UpdateCategoryCommandHandler;
+use App\Http\Commands\Category\DeleteCategoryCommand\DeleteCategoryCommand;
+use App\Http\Commands\Category\DeleteCategoryCommand\DeleteCategoryCommandHandler;
 use App\Http\Queries\Category\GetAllCategoriesQuery\GetAllCategoriesQuery;
 use App\Http\Queries\Category\GetAllCategoriesQuery\GetAllCategoriesQueryHandler;
 use App\Http\Requests\Api\V1\CreateCategoryRequest;
@@ -18,7 +20,8 @@ class CategoryController extends Controller
     public function __construct(
         private readonly GetAllCategoriesQueryHandler $getAllCategoriesQueryHandler,
         private readonly CreateCategoryCommandHandler $createCategoryCommandHandler,
-        private readonly UpdateCategoryCommandHandler $updateCategoryCommandHandler
+        private readonly UpdateCategoryCommandHandler $updateCategoryCommandHandler,
+        private readonly DeleteCategoryCommandHandler $deleteCategoryCommandHandler
     ) {}
 
     public function all(): JsonResponse
@@ -45,5 +48,12 @@ class CategoryController extends Controller
         );
 
         return $this->updateCategoryCommandHandler->handle($command)->toResponse();
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $command = new DeleteCategoryCommand(id: $id);
+
+        return $this->deleteCategoryCommandHandler->handle($command)->toResponse();
     }
 }
