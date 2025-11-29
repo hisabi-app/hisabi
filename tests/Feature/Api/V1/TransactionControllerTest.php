@@ -336,14 +336,14 @@ class TransactionControllerTest extends TestCase
 
     public function test_it_handles_search_with_special_characters(): void
     {
-        Transaction::factory()->create(['note' => 'Test with discount']);
-        $matchingTransaction = Transaction::factory()->create(['note' => 'Purchase at 50% off']);
+        Transaction::factory()->create(['note' => 'Test with discount', 'amount' => 99.99]);
+        $matchingTransaction = Transaction::factory()->create(['note' => 'Purchase at 50% off', 'amount' => 10.00]);
 
         $response = $this->actingAs($this->user)
             ->getJson('/api/v1/transactions?filter[search]=50');
 
         $response->assertStatus(200);
-        
+
         $data = $response->json('data');
         $this->assertCount(1, $data);
         $this->assertEquals($matchingTransaction->id, $data[0]['id']);
