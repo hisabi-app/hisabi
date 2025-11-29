@@ -141,4 +141,94 @@ class CategoryControllerTest extends TestCase
 
         $this->assertDatabaseCount('categories', 4);
     }
+
+    public function test_it_requires_authentication_for_update(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->putJson("/api/v1/categories/{$category->id}", []);
+        $response->assertStatus(401);
+    }
+
+    public function test_it_updates_a_category(): void
+    {
+        $category = Category::factory()->create([
+            'name' => 'Old Name',
+            'type' => 'EXPENSES',
+            'color' => 'red',
+            'icon' => 'wallet',
+        ]);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/categories/{$category->id}", [
+                'name' => 'New Name',
+                'type' => 'INCOME',
+                'color' => 'blue',
+                'icon' => 'money',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'category' => [
+                    'id',
+                    'name',
+                    'type',
+                    'color',
+                    'icon',
+                    'transactions_count',
+                ],
+            ])
+            ->assertJsonPath('category.name', 'New Name')
+            ->assertJsonPath('category.type', 'INCOME')
+            ->assertJsonPath('category.color', 'blue')
+            ->assertJsonPath('category.icon', 'money');
+
+        $this->assertDatabaseHas('categories', [
+            'id' => $category->id,
+            'name' => 'New Name',
+            'type' => 'INCOME',
+            'color' => 'blue',
+            'icon' => 'money',
+        ]);
+    }
+
+    public function test_it_validates_required_fields_for_update(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/categories/{$category->id}", []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'type', 'color', 'icon']);
+    }
+
+    public function test_it_validates_type_is_valid_for_update(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/categories/{$category->id}", [
+                'name' => 'Test Category',
+                'type' => 'INVALID_TYPE',
+                'color' => 'red',
+                'icon' => 'wallet',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['type']);
+    }
+
+    public function test_it_returns_404_for_non_existent_category(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->putJson('/api/v1/categories/999', [
+                'name' => 'Test Category',
+                'type' => 'EXPENSES',
+                'color' => 'red',
+                'icon' => 'wallet',
+            ]);
+
+        $response->assertStatus(404);
+    }
 }

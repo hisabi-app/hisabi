@@ -137,13 +137,6 @@ type Query {
 }
 
 type Mutation {
-    updateCategory(
-        id: ID!
-        name: String!
-        type: String!
-        color: String!
-        icon: String!
-    ): Category @update
     deleteCategory(id: ID! @whereKey): Category @delete
     updateSms(id: ID! body: String!): Sms
     deleteSms(id: ID! @whereKey): Sms @delete
