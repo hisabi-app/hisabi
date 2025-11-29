@@ -38,44 +38,6 @@ type Sms {
     meta: Json
 }
 
-input Message {
-    role: String!
-    content: String!
-}
-
-type AIChart {
-    type: String!
-    title: String!
-    data: Json!
-    config: Json
-}
-
-type AIComponent {
-    type: String!
-    data: Json!
-}
-
-type AIResponse {
-    role: String!
-    content: String!
-    charts: [AIChart!]
-    components: [AIComponent!]
-    suggestions: [String!]
-}
-
-type McpServerInfo {
-    name: String!
-    version: String!
-    endpoint: String!
-    toolsCount: Int!
-}
-
-type McpTool {
-    name: String!
-    description: String!
-    inputSchema: Json!
-}
-
 type Query {
     totalIncome(range: String!): Json
     totalExpenses(range: String!): Json
@@ -106,11 +68,4 @@ type Query {
     financeVisualizationCirclePackMetric(range: String!): Json
     brandStats(range: String!): Json
     categoryStats(range: String!): Json
-    
-    # New AI endpoints with Prism
-    hisabiAIChat(messages: [Message!]!): AIResponse!
-    
-    # MCP Server Info
-    mcpServerInfo: McpServerInfo!
-    mcpAvailableTools: [McpTool!]!
 }

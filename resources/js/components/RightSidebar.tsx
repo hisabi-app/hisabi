@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SparkleIcon, ChatCircleTextIcon, CubeIcon } from '@phosphor-icons/react';
+import { SparkleIcon, ChatCircleTextIcon } from '@phosphor-icons/react';
 import {
   SidebarMenu,
   SidebarMenuItem,
@@ -7,12 +7,11 @@ import {
 } from '@/components/ui/sidebar';
 import HisabiAIChat from './Global/HisabiAIChat';
 import SmsParser from './Global/SmsParser';
-import McpConnection from './Global/McpConnection';
 
 export default function RightSidebar() {
-  const [activePanel, setActivePanel] = useState<'ai' | 'sms' | 'mcp' | null>(null);
+  const [activePanel, setActivePanel] = useState<'ai' | 'sms' | null>(null);
 
-  const togglePanel = (panel: 'ai' | 'sms' | 'mcp') => {
+  const togglePanel = (panel: 'ai' | 'sms') => {
     if (activePanel === panel) {
       setActivePanel(null);
     } else {
@@ -50,7 +49,7 @@ export default function RightSidebar() {
               className="flex flex-col items-center gap-1 h-auto py-3"
             >
               <ChatCircleTextIcon size={18} />
-              <span 
+              <span
                 className="font-medium whitespace-nowrap"
                 style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
               >
@@ -58,23 +57,6 @@ export default function RightSidebar() {
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
-
-          {/* <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => togglePanel('mcp')}
-              isActive={activePanel === 'mcp'}
-              size="sm"
-              className="flex flex-col items-center gap-1 h-auto py-3"
-            >
-              <CubeIcon className="w-[18px] h-[18px]" />
-              <span 
-                className="font-medium whitespace-nowrap"
-                style={{ writingMode: 'vertical-lr', transform: 'rotate(0deg)' }}
-              >
-                MCP
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem> */}
         </SidebarMenu>
       </div>
 
@@ -83,7 +65,6 @@ export default function RightSidebar() {
         activePanel ? 'w-[400px]' : 'w-0'
       }`}>
         {activePanel === 'ai' && <HisabiAIChat onClose={() => setActivePanel(null)} />}
-        {activePanel === 'mcp' && <McpConnection onClose={() => setActivePanel(null)} />}
         {activePanel === 'sms' && <SmsParser onClose={() => setActivePanel(null)} />}
       </div>
     </div>

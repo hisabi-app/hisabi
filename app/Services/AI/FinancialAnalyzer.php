@@ -3,7 +3,7 @@
 namespace App\Services\AI;
 
 use App\Domains\Transaction\Models\Transaction;
-use App\Models\Category;
+use App\Domains\Category\Models\Category;
 use Illuminate\Support\Facades\DB;
 
 class FinancialAnalyzer

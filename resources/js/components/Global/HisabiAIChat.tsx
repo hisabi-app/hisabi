@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { customQuery } from '../../Api';
+import { chat } from '@/Api/ai';
 import { XIcon } from '@heroicons/react/solid';
 import { Message, MessageContent } from '@/components/ui/shadcn-io/ai/message';
 import { Response } from '@/components/ui/shadcn-io/ai/response';
@@ -57,28 +57,12 @@ export default function HisabiAIChat({ onClose }: HisabiAIChatProps) {
     setLoading(true);
 
     try {
-      // Format messages for the new API
-      let messages = newChat.map((msg) => 
-        `{role: "${msg.role}" content: """${msg.content.replace(/"/g, '\\"')}"""}`
-      );
-      let graphql_query = `hisabiAIChat(messages: [${messages}]) {
-        role
-        content
-        charts {
-          type
-          title
-          data
-          config
-        }
-        components {
-          type
-          data
-        }
-        suggestions
-      }`;
+      const messages = newChat.map((msg) => ({
+        role: msg.role,
+        content: msg.content
+      }));
 
-      let { data } = await customQuery(graphql_query);
-      let aiResponse = data['hisabiAIChat'];
+      const aiResponse = await chat(messages);
 
       const assistantMessage: ChatMessage = {
         id: chatHistory.length + 1,
