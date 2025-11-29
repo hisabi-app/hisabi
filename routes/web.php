@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/brands/{id}', [\App\Http\Controllers\Api\V1\BrandController::class, 'destroy']);
         Route::post('/sms', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);
         Route::get('/categories/all', [\App\Http\Controllers\Api\V1\CategoryController::class, 'all']);
+        Route::post('/categories', [\App\Http\Controllers\Api\V1\CategoryController::class, 'store']);
     });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

@@ -23,4 +23,9 @@ class CategoryService
             ->withCount('transactions')
             ->get();
     }
+
+    public function create(array $data): Category
+    {
+        return Category::create($data);
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Api\V1;
 
-use App\Models\Category;
+use App\Domains\Category\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -58,5 +58,87 @@ class CategoryControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('data.0.transactionsCount', 0);
+    }
+
+    public function test_it_requires_authentication_for_store(): void
+    {
+        $response = $this->postJson('/api/v1/categories', []);
+        $response->assertStatus(401);
+    }
+
+    public function test_it_creates_a_category(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/categories', [
+                'name' => 'Test Category',
+                'type' => 'EXPENSES',
+                'color' => 'red',
+                'icon' => 'wallet',
+            ]);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'category' => [
+                    'id',
+                    'name',
+                    'type',
+                    'color',
+                    'icon',
+                    'transactions_count',
+                ],
+            ])
+            ->assertJsonPath('category.name', 'Test Category')
+            ->assertJsonPath('category.type', 'EXPENSES')
+            ->assertJsonPath('category.color', 'red')
+            ->assertJsonPath('category.icon', 'wallet');
+
+        $this->assertDatabaseHas('categories', [
+            'name' => 'Test Category',
+            'type' => 'EXPENSES',
+            'color' => 'red',
+            'icon' => 'wallet',
+        ]);
+    }
+
+    public function test_it_validates_required_fields_for_store(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/categories', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'type', 'color', 'icon']);
+    }
+
+    public function test_it_validates_type_is_valid(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/categories', [
+                'name' => 'Test Category',
+                'type' => 'INVALID_TYPE',
+                'color' => 'red',
+                'icon' => 'wallet',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['type']);
+    }
+
+    public function test_it_accepts_all_valid_category_types(): void
+    {
+        $types = ['INCOME', 'EXPENSES', 'SAVINGS', 'INVESTMENT'];
+
+        foreach ($types as $type) {
+            $response = $this->actingAs($this->user)
+                ->postJson('/api/v1/categories', [
+                    'name' => "Test Category {$type}",
+                    'type' => $type,
+                    'color' => 'blue',
+                    'icon' => 'wallet',
+                ]);
+
+            $response->assertStatus(201);
+        }
+
+        $this->assertDatabaseCount('categories', 4);
     }
 }

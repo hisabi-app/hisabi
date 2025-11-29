@@ -1,6 +1,6 @@
 import { gql } from '@urql/core';
 import client from './client.js';
-import { customQuery } from './common.js';
+import { customQuery, getCsrfToken } from './common.js';
 
 export const getAllCategories = async () => {
     const response = await fetch('/api/v1/categories/all', {
@@ -20,21 +20,32 @@ export const getAllCategories = async () => {
     };
 }
 
-export const createCategory = ({name, type, color, icon}) => {
-    return client
-        .mutation(gql`
-            mutation {
-                createCategory(name: """${name}""" type: """${type}""" color: """${color}""" icon: """${icon}""") {
-                    id
-                    name
-                    type
-                    color
-                    icon
-                    transactionsCount
-                }
+export const createCategory = async ({name, type, color, icon}) => {
+    const response = await fetch('/api/v1/categories', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ name, type, color, icon })
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return {
+        data: {
+            createCategory: {
+                ...result.category,
+                transactionsCount: result.category.transactions_count
             }
-        `)
-        .toPromise();
+        }
+    };
 }
 
 export const updateCategory = ({id, name, type, color, icon}) => {
