@@ -53,8 +53,8 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 
 ### 5. SMS Domain
 - ✅ `GET /api/v1/sms` (index) - GetSmsQuery - DONE
-- ✅ `POST /api/v1/sms` (create) - CreateSmsCommand
-- ⬜ `PUT /api/v1/sms/{id}` (update) - UpdateSmsCommand
+- ✅ `POST /api/v1/sms` (create) - CreateSmsCommand - DONE
+- ✅ `PUT /api/v1/sms/{id}` (update) - UpdateSmsCommand - DONE
 - ⬜ `DELETE /api/v1/sms/{id}` (delete) - DeleteSmsCommand
 
 ## Architecture Pattern to Follow

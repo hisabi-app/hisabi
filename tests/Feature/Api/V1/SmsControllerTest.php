@@ -168,5 +168,70 @@ class SmsControllerTest extends TestCase
 
         $this->assertCount(3, Sms::all());
     }
+
+    public function test_update_requires_authentication(): void
+    {
+        $sms = Sms::factory()->create();
+
+        $response = $this->putJson("/api/v1/sms/{$sms->id}", [
+            'body' => 'updatedBody'
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_it_updates_a_model(): void
+    {
+        $sms = Sms::factory()->create(['body' => 'oldBody']);
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/sms/{$sms->id}", [
+                'body' => 'newBody'
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'sms' => [
+                    'id' => $sms->id,
+                    'body' => 'newBody',
+                ],
+            ]);
+
+        $this->assertEquals('newBody', $sms->fresh()->body);
+    }
+
+    public function test_update_validates_required_body(): void
+    {
+        $sms = Sms::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/sms/{$sms->id}", []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['body']);
+    }
+
+    public function test_update_validates_body_must_be_string(): void
+    {
+        $sms = Sms::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/v1/sms/{$sms->id}", [
+                'body' => 12345
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['body']);
+    }
+
+    public function test_update_returns_404_for_non_existent_sms(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->putJson('/api/v1/sms/999', [
+                'body' => 'newBody'
+            ]);
+
+        $response->assertStatus(404);
+    }
 }
 

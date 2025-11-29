@@ -25,5 +25,12 @@ class SmsService
             $data['created_at'] ?? null
         );
     }
+
+    public function update(int $id, array $data): Sms
+    {
+        $sms = Sms::findOrFail($id);
+        $sms->update($data);
+        return $sms->fresh();
+    }
 }
 

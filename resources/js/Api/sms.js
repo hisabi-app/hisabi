@@ -42,16 +42,22 @@ export const createSms = async ({sms, createdAt}) => {
     return { data: { createSms: result.data } };
 }
 
-export const updateSms = ({id, body}) => {
-    return client
-        .mutation(gql`
-            mutation {
-                updateSms(id: ${id} body: """${body}""") {
-                    id
-                    body
-                    transaction_id
-                }
-            }
-        `)
-        .toPromise();
+export const updateSms = async ({id, body}) => {
+    const response = await fetch(`/api/v1/sms/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ body })
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return { data: { updateSms: result.sms } };
 }
