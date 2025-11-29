@@ -19,6 +19,7 @@ Follow me on [LinkedIn](https://www.linkedin.com/in/saleem-hadad/) for updates a
 - [x] 📩 SMS Parser — Auto-detect bank transactions
 - [x] 📊 Reports & Visualization — Clear finance insights
 - [x] 🤖 HisabAI — AI-powered finance assistance
+- [ ] Multiple Accounts (Coming Soon)
 - [ ] API Support (Coming Soon)
 - [x] 🆓 MIT Licensed — Fully open-source
 
