@@ -1,5 +1,3 @@
-import { gql } from '@urql/core';
-import client from './client.js';
 import { customQuery, getCsrfToken } from './common.js';
 
 export const getAllBrands = async () => {
@@ -76,22 +74,33 @@ export const createBrand = async ({name, categoryId}) => {
     };
 }
 
-export const updateBrand = ({id, name, categoryId}) => {
-    return client
-        .mutation(gql`
-            mutation {
-                updateBrand(id: ${id} name: "${name}" category_id: ${categoryId}) {
-                    id
-                    name
-                    category {
-                        id
-                        name
-                    }
-                    transactionsCount
-                }
-            }
-        `)
-        .toPromise();
+export const updateBrand = async ({id, name, categoryId}) => {
+    const response = await fetch(`/api/v1/brands/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            name: name,
+            category_id: categoryId
+        })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return {
+        data: {
+            updateBrand: result.brand
+        }
+    };
 }
 
 export const getBrandStats = (range = 'current-month') => {

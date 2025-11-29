@@ -36,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/brands', [\App\Http\Controllers\Api\V1\BrandController::class, 'index']);
         Route::get('/brands/all', [\App\Http\Controllers\Api\V1\BrandController::class, 'all']);
         Route::post('/brands', [\App\Http\Controllers\Api\V1\BrandController::class, 'store']);
+        Route::put('/brands/{id}', [\App\Http\Controllers\Api\V1\BrandController::class, 'update']);
         Route::post('/sms', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);
     });
 

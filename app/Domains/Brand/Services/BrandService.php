@@ -57,4 +57,11 @@ class BrandService
     {
         return Brand::create($data);
     }
+
+    public function update(int $id, array $data): Brand
+    {
+        $brand = Brand::findOrFail($id);
+        $brand->update($data);
+        return $brand;
+    }
 }
