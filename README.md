@@ -101,8 +101,6 @@ docker-compose run app php artisan hisabi:install
 
 Once done, visit the app on `http://localhost`
 
-Read [full documentation](https://hisabi.saleem.dev/docs)
-
 ## JetBrains Sponsorship
 Thank you, JetBrains for sponsoring the license ❤️
 
