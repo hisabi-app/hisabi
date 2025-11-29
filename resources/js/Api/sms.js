@@ -61,3 +61,22 @@ export const updateSms = async ({id, body}) => {
     const result = await response.json();
     return { data: { updateSms: result.sms } };
 }
+
+export const deleteSms = async (id) => {
+    const response = await fetch(`/api/v1/sms/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return { data: { deleteSms: result.sms } };
+}

@@ -6,18 +6,6 @@ export const getCsrfToken = () => {
     return token ? token.getAttribute('content') : '';
 };
 
-export const deleteResource = ({id, resource}) => {
-    return client
-        .mutation(gql`
-            mutation DeleteResource {
-                delete${resource}(id: ${id}) {
-                    id
-                }
-            }
-        `)
-        .toPromise();
-}
-
 export const query = (query, range = null, queryName = null) => {
     const queryCustomName = queryName ? queryName : query;
 

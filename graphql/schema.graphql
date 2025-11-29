@@ -131,7 +131,3 @@ type Query {
     mcpServerInfo: McpServerInfo!
     mcpAvailableTools: [McpTool!]!
 }
-
-type Mutation {
-    deleteSms(id: ID! @whereKey): Sms @delete
-}

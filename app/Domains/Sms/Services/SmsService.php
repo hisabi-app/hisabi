@@ -32,5 +32,12 @@ class SmsService
         $sms->update($data);
         return $sms->fresh();
     }
+
+    public function delete(int $id): Sms
+    {
+        $sms = Sms::findOrFail($id);
+        $sms->delete();
+        return $sms;
+    }
 }
 

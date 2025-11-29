@@ -55,7 +55,7 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 - ✅ `GET /api/v1/sms` (index) - GetSmsQuery - DONE
 - ✅ `POST /api/v1/sms` (create) - CreateSmsCommand - DONE
 - ✅ `PUT /api/v1/sms/{id}` (update) - UpdateSmsCommand - DONE
-- ⬜ `DELETE /api/v1/sms/{id}` (delete) - DeleteSmsCommand
+- ✅ `DELETE /api/v1/sms/{id}` (delete) - DeleteSmsCommand - DONE
 
 ## Architecture Pattern to Follow
 

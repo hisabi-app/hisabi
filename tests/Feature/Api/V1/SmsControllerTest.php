@@ -233,5 +233,39 @@ class SmsControllerTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    public function test_destroy_requires_authentication(): void
+    {
+        $sms = Sms::factory()->create();
+
+        $response = $this->deleteJson("/api/v1/sms/{$sms->id}");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_it_deletes_a_model(): void
+    {
+        $sms = Sms::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->deleteJson("/api/v1/sms/{$sms->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'sms' => [
+                    'id' => $sms->id,
+                ],
+            ]);
+
+        $this->assertNull($sms->fresh());
+    }
+
+    public function test_destroy_returns_404_for_non_existent_sms(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->deleteJson('/api/v1/sms/999');
+
+        $response->assertStatus(404);
+    }
 }
 

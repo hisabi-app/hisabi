@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { XIcon } from '@heroicons/react/solid';
-import { getSms, updateSms, deleteResource, createSms } from '../../Api';
+import { getSms, updateSms, deleteSms, createSms } from '../../Api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -69,7 +69,7 @@ export default function SmsParser({ onClose }: SmsParserProps) {
   };
 
   const handleDelete = (sms: Sms) => {
-    deleteResource({ id: sms.id, resource: 'Sms' })
+    deleteSms(sms.id)
       .then(() => {
         setInvalidSms(invalidSms.filter((item) => item.id !== sms.id));
         setEditingSms(null);
