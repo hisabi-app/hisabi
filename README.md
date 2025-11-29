@@ -15,9 +15,12 @@ Follow me on [LinkedIn](https://www.linkedin.com/in/saleem-hadad/) for updates a
 
 ## 🛠 Features
 
-|<picture><img width="100%" alt="Self hosted" src="./public/images/features/privacy.png"></picture>|<picture><img width="100%" alt="SMS parser" src="./public/images/features/sms.png"></picture>|<picture><img width="100%" alt="HisabiGPT" src="./public/images/features/gpt.png"></picture>|
-|:---:|:---:|:---:|
-|<picture><img width="100%" alt="Reporting" src="./public/images/features/reporting.png"></picture>|<picture><img width="100%" alt="API" src="./public/images/features/api.png"></picture>|<picture><img width="100%" alt="Mobile app" src="./public/images/features/mobie.png"></picture>|
+- [x] 🔐 Self-hosted — Full control over your data
+- [x] 📩 SMS Parser — Auto-detect bank transactions
+- [x] 📊 Reports & Visualization — Clear finance insights
+- [x] 🤖 HisabAI — AI-powered finance assistance
+- [ ] API Support (Coming Soon)
+- [x] 🆓 MIT Licensed — Fully open-source
 
 
 ## 🎮 Demo
