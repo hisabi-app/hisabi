@@ -2,7 +2,7 @@
 
 namespace App\Mcp\Tools;
 
-use App\Models\Budget;
+use App\Domains\Budget\Models\Budget;
 use Laravel\Mcp\Tool;
 use Laravel\Mcp\ToolResponse;
 

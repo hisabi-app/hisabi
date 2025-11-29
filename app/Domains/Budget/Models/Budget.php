@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Domains\Budget\Models;
 
+use App\Domains\Category\Models\Category;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,33 +37,21 @@ class Budget extends Model
         'end_at' => 'datetime',
     ];
 
-    /**
-     * @return BelongsToMany
-     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
     }
 
-    /**
-     * @return bool
-     */
     public function getIsSavingAttribute(): bool
     {
         return $this->saving;
     }
 
-    /**
-     * @return string
-     */
     public function getTotalSpentPercentageAttribute(): string
     {
         return (int) number_format($this->totalTransactionsAmount / $this->amount * 100, 2);
     }
 
-    /**
-     * @return string
-     */
     public function getTotalMarginPerDayAttribute(): string
     {
         $days = now()->diffInDays($this->end_at_date);
@@ -75,60 +64,41 @@ class Budget extends Model
         return $days == 0 ? number_format($remainingAmount, 2) : number_format($remainingAmount / $days, 2);
     }
 
-    /**
-     * @return float
-     */
     public function getRemainingDaysAttribute(): float
     {
         return now()->diffInDays($this->end_at_date);
     }
 
-    /**
-     * @return string
-     */
     public function getRemainingToSpendAttribute(): string
     {
         return $this->amount - $this->totalTransactionsAmount;
     }
 
-    /**
-     * @return int
-     */
     public function getElapsedDaysPercentageAttribute(): int
     {
         [$startAt, $endAt] = $this->getCurrentWindowStartAndEndDates();
         $totalDays = $startAt->diffInDays($endAt);
-        
+
         if ($totalDays == 0) {
             return 0;
         }
-        
+
         $elapsedDays = $startAt->diffInDays(now());
         $percentage = ($elapsedDays / $totalDays) * 100;
-        
-        // Clamp between 0 and 100
+
         return (int) max(0, min(100, $percentage));
     }
 
-    /**
-     * @return string
-     */
     public function getStartAtDateAttribute(): string
     {
         return $this->getCurrentWindowStartAndEndDates()[0]->format('Y-m-d');
     }
 
-    /**
-     * @return string
-     */
     public function getEndAtDateAttribute(): string
     {
         return $this->getCurrentWindowStartAndEndDates()[1]->format('Y-m-d');
     }
 
-    /**
-     * @return mixed
-     */
     public function getTotalTransactionsAmountAttribute()
     {
         $categories = $this->categories()->with('transactions')->get();
@@ -141,9 +111,6 @@ class Budget extends Model
         });
     }
 
-    /**
-     * @return array|void
-     */
     private function getCurrentWindowStartAndEndDates()
     {
         if($this->reoccurrence === self::CUSTOM) {
@@ -161,9 +128,6 @@ class Budget extends Model
         }
     }
 
-    /**
-     * @return string
-     */
     private function getUnitMapping(): string
     {
         return [
@@ -172,5 +136,10 @@ class Budget extends Model
             self::MONTHLY => 'month',
             self::YEARLY => 'year',
         ][$this->reoccurrence];
+    }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\BudgetFactory::new();
     }
 }

@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatNumber } from '@/Utils';
 import { ChartLineIcon } from '@phosphor-icons/react';
+import { getBudgets } from '@/Api/budgets';
 
 interface Budget {
     id: number;
@@ -15,12 +17,21 @@ interface Budget {
     elapsed_days_percentage: number;
 }
 
-interface BudgetsProps {
-    budgets: Budget[];
-}
+export default function Budgets() {
+    const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [loading, setLoading] = useState(true);
 
-export default function Budgets({ budgets }: BudgetsProps) {
-    if (budgets.length === 0) return null;
+    useEffect(() => {
+        getBudgets()
+            .then((response) => {
+                setBudgets(response.data.budgets);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading || budgets.length === 0) return null;
 
     return (
         <div className="flex overflow-x-auto gap-4"  style={{

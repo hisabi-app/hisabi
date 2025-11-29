@@ -46,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/categories', [\App\Http\Controllers\Api\V1\CategoryController::class, 'store']);
         Route::put('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'destroy']);
+        Route::get('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'index']);
     });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

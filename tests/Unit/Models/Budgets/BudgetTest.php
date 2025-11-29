@@ -4,8 +4,8 @@ namespace Tests\Unit\Models\Budgets;
 
 use Tests\TestCase;
 use App\Domains\Brand\Models\Brand;
-use App\Models\Budget;
-use App\Models\Category;
+use App\Domains\Budget\Models\Budget;
+use App\Domains\Category\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class BudgetTest extends TestCase

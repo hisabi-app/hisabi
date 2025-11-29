@@ -11,7 +11,7 @@ import Budgets from '@/components/Domain/Budgets';
 import { getAllCategories } from '@/Api/categories';
 import { getAllBrands } from '@/Api/brands';
 
-export default function Dashboard({ auth, hasData, budgets }: any) {
+export default function Dashboard({ auth, hasData }: any) {
     const header = <h2>Dashboard</h2>
 
     const allRages = [
@@ -51,7 +51,7 @@ export default function Dashboard({ auth, hasData, budgets }: any) {
             <div className="py-4">
                 <div className="max-w-7xl overflow-hidden mx-auto px-4 grid grid-cols-1 gap-4">
 
-                    <Budgets budgets={budgets} />
+                    <Budgets />
 
                     {!hasData && <NoContent body="No enough data to show reports" />}
 

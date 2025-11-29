@@ -16,18 +16,6 @@ type Category {
     transactionsCount: Int! @count(relation: "transactions")
 }
 
-type Budget {
-    id: ID!
-    name: String!
-    amount: Float!
-    totalTransactionsAmount: Float!
-    totalSpentPercentage: Float!
-    TotalMarginPerDay: Float!
-    isSaving: Boolean!
-    startAtDate: String!
-    endAtDate: String!
-}
-
 type Brand {
     id: ID!
     name: String!
@@ -89,8 +77,6 @@ type McpTool {
 }
 
 type Query {
-    budgets: [Budget!]! @all
-
     totalIncome(range: String!): Json
     totalExpenses(range: String!): Json
     totalSavings: Json
@@ -120,9 +106,6 @@ type Query {
     financeVisualizationCirclePackMetric(range: String!): Json
     brandStats(range: String!): Json
     categoryStats(range: String!): Json
-
-    # Legacy AI endpoint (deprecated, use hisabiAIChat)
-    hisabiGPT(messages: [Message]): Json
     
     # New AI endpoints with Prism
     hisabiAIChat(messages: [Message!]!): AIResponse!

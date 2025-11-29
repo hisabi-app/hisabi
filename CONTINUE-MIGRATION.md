@@ -49,7 +49,7 @@ Migrate ALL remaining GraphQL queries and mutations to REST API following the sa
 - ✅ `DELETE /api/v1/categories/{id}` (delete) - DeleteCategoryCommand - DONE
 
 ### 4. Budgets Domain
-- ⬜ `GET /api/v1/budgets` (all) - GetBudgetsQuery
+- ✅ `GET /api/v1/budgets` (all) - GetBudgetsQuery - DONE
 
 ### 5. SMS Domain
 - ✅ `GET /api/v1/sms` (index) - GetSmsQuery - DONE
