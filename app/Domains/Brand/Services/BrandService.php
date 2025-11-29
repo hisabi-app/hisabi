@@ -52,4 +52,9 @@ class BrandService
             ->with(['category'])
             ->get();
     }
+
+    public function create(array $data): Brand
+    {
+        return Brand::create($data);
+    }
 }

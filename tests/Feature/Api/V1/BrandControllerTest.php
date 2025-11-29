@@ -123,4 +123,62 @@ class BrandControllerTest extends TestCase
         $this->assertEquals(10, $response->json('paginatorInfo.perPage'));
         $this->assertEquals(10, count($response->json('data')));
     }
+
+    public function test_it_requires_authentication_for_store(): void
+    {
+        $response = $this->postJson('/api/v1/brands', []);
+        $response->assertStatus(401);
+    }
+
+    public function test_it_creates_a_brand(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/brands', [
+                'name' => 'Test Brand',
+                'category_id' => $category->id,
+            ]);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'brand' => [
+                    'id',
+                    'name',
+                    'category' => [
+                        'id',
+                        'name',
+                    ],
+                    'transactions_count',
+                ],
+            ])
+            ->assertJsonPath('brand.name', 'Test Brand')
+            ->assertJsonPath('brand.category.id', $category->id);
+
+        $this->assertDatabaseHas('brands', [
+            'name' => 'Test Brand',
+            'category_id' => $category->id,
+        ]);
+    }
+
+    public function test_it_validates_required_fields_for_store(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/brands', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'category_id']);
+    }
+
+    public function test_it_validates_category_exists_for_store(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/v1/brands', [
+                'name' => 'Test Brand',
+                'category_id' => 999,
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['category_id']);
+    }
 }

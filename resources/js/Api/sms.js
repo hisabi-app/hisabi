@@ -1,5 +1,6 @@
 import { gql } from '@urql/core';
 import client from './client.js';
+import { getCsrfToken } from './common.js';
 
 export const getSms = (page, searchQuery) => {
     return client
@@ -19,11 +20,6 @@ export const getSms = (page, searchQuery) => {
             `)
             .toPromise();
 }
-
-const getCsrfToken = () => {
-    const token = document.querySelector('meta[name="csrf-token"]');
-    return token ? token.getAttribute('content') : '';
-};
 
 export const createSms = async ({sms, createdAt}) => {
     const response = await fetch(`/api/v1/sms`, {

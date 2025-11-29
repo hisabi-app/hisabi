@@ -35,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
             ->except(['show']);
         Route::get('/brands', [\App\Http\Controllers\Api\V1\BrandController::class, 'index']);
         Route::get('/brands/all', [\App\Http\Controllers\Api\V1\BrandController::class, 'all']);
+        Route::post('/brands', [\App\Http\Controllers\Api\V1\BrandController::class, 'store']);
         Route::post('/sms', [\App\Http\Controllers\Api\V1\SmsController::class, 'store']);
     });
 

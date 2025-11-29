@@ -22,16 +22,17 @@
         "tightenco/ziggy": "^1.6"
     },
     "require-dev": {
-        "spatie/laravel-ignition": "^2.0",
+        "barryvdh/laravel-debugbar": "^3.16",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^2.2",
-        "laravel/sail": "^1.30",
         "laravel/pail": "^1.2.2",
+        "laravel/sail": "^1.30",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.8",
-        "phpunit/phpunit": "^12.0",
         "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0"
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpunit/phpunit": "^12.0",
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "psr-4": {

@@ -1,6 +1,6 @@
 import { gql } from '@urql/core';
 import client from './client.js';
-import { customQuery } from './common.js';
+import { customQuery, getCsrfToken } from './common.js';
 
 export const getTransactions = async (page, searchQuery, filters = {}) => {
     const params = new URLSearchParams({
@@ -41,11 +41,6 @@ export const getTransactions = async (page, searchQuery, filters = {}) => {
         }
     };
 }
-
-const getCsrfToken = () => {
-    const token = document.querySelector('meta[name="csrf-token"]');
-    return token ? token.getAttribute('content') : '';
-};
 
 export const createTransaction = async ({amount, brandId, createdAt, note}) => {
     const response = await fetch('/api/v1/transactions', {

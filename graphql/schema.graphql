@@ -142,7 +142,6 @@ type Query {
 }
 
 type Mutation {
-    createBrand(name: String! category_id: Int!): Brand @create
     updateBrand(id: ID! name: String! category_id: Int!): Brand @update
     deleteBrand(id: ID! @whereKey): Brand @delete
 

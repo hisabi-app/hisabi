@@ -1,6 +1,11 @@
 import { gql } from '@urql/core';
 import client from './client.js';
 
+export const getCsrfToken = () => {
+    const token = document.querySelector('meta[name="csrf-token"]');
+    return token ? token.getAttribute('content') : '';
+};
+
 export const deleteResource = ({id, resource}) => {
     return client
         .mutation(gql`
