@@ -7,37 +7,6 @@ scalar DateTime
 
 scalar Json @scalar(class: "MLL\\GraphQLScalars\\JSON")
 
-type Category {
-    id: ID!
-    name: String!
-    type: String!
-    color: String
-    icon: String
-    transactionsCount: Int! @count(relation: "transactions")
-}
-
-type Brand {
-    id: ID!
-    name: String!
-    category: Category @belongsTo
-    transactionsCount: Int! @count(relation: "transactions")
-}
-
-type Transaction {
-    id: ID!
-    amount: Float!
-    brand: Brand! @belongsTo
-    created_at: Date!
-    note: String
-}
-
-type Sms {
-    id: ID!
-    body: String!
-    transaction_id: Int
-    meta: Json
-}
-
 type Query {
     totalIncome(range: String!): Json
     totalExpenses(range: String!): Json
