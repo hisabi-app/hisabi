@@ -8,6 +8,8 @@ import PartitionMetric from '@/components/Domain/PartitionMetric';
 import CirclePackMetric from '@/components/Domain/CirclePackMetric';
 import SectionDivider from '@/components/Global/SectionDivider';
 import Budgets from '@/components/Domain/Budgets';
+import { getAllCategories } from '@/Api/categories';
+import { getAllBrands } from '@/Api/brands';
 
 export default function Dashboard({ auth, hasData, budgets }: any) {
     const header = <h2>Dashboard</h2>
@@ -22,19 +24,22 @@ export default function Dashboard({ auth, hasData, budgets }: any) {
     ];
 
     const categoryRelation = {
-        graphql_query: 'allCategories',
+        fetcher: getAllCategories,
+        data_key: 'allCategories',
         display_using: 'name',
         foreign_key: 'id'
     };
 
     const categoryRelationForBrands = {
-        graphql_query: 'allCategories',
+        fetcher: getAllCategories,
+        data_key: 'allCategories',
         display_using: 'name',
         foreign_key: 'category_id'
     };
 
     const brandRelation = {
-        graphql_query: 'allBrands',
+        fetcher: getAllBrands,
+        data_key: 'allBrands',
         display_using: 'name',
         foreign_key: 'id'
     };

@@ -19,10 +19,10 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
     useEffect(() => {
         if(! relation) { return; }
 
-        query(relation.graphql_query + `{ id ${relation.display_using} }`, null, 'CustomQuery')
+        relation.fetcher()
             .then(({data}) => {
-                setRelationData(data[relation.graphql_query])
-                setSelectedRelationId(data[relation.graphql_query][0].id)
+                setRelationData(data[relation.data_key])
+                setSelectedRelationId(data[relation.data_key][0].id)
             })
             .catch(console.error)
     }, [])
