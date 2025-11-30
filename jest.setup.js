@@ -1,3 +1,4 @@
+import 'whatwg-fetch';
 import { server } from './resources/js/mocks/server.js'
 
 // Mock location object for API client

@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import ValueMetric from '../ValueMetric';
 
 it('it fetches data once loaded and stop loader once data is fetched', async () => {
-    render(<ValueMetric name="Some Metric" metric="total-income" />);
+    render(<ValueMetric name="Some Metric" metric="totalIncome" />);
 
     expect(screen.getByTestId('loading-view')).toBeVisible()
 
@@ -21,7 +21,7 @@ it('ranges provided and select first by default', async () => {
         {name: "Last Month", key: "last-month", start: "2022-03-01", end: "2022-03-31"}
     ];
 
-    render(<ValueMetric name="Some Metric" metric="total-income" ranges={ranges} />);
+    render(<ValueMetric name="Some Metric" metric="totalIncome" ranges={ranges} />);
 
     await waitFor(() => {
         expect(screen.getByRole('option', {name: 'Current Month'}).selected).toBe(true)
@@ -35,7 +35,7 @@ it('it allows to select a range if ranges provides', async () => {
         {name: "Last Month", key: "last-month", start: "2022-03-01", end: "2022-03-31"}
     ];
 
-    render(<ValueMetric name="Some Metric" metric="total-income" ranges={ranges} />);
+    render(<ValueMetric name="Some Metric" metric="totalIncome" ranges={ranges} />);
 
     await waitFor(async () => {
         await userEvent.selectOptions(
@@ -56,7 +56,7 @@ it('it fetches data if a range is selected', async () => {
         {name: "Last Month", key: "last-month", start: "2022-03-01", end: "2022-03-31"}
     ];
 
-    render(<ValueMetric name="Some Metric" metric="total-income" ranges={ranges} />);
+    render(<ValueMetric name="Some Metric" metric="totalIncome" ranges={ranges} />);
 
     await waitFor(() => expect(screen.getByText(/3k/i)).toBeVisible())
 
@@ -71,13 +71,43 @@ it('it fetches data if a range is selected', async () => {
 })
 
 it('it displays decrease if previous value is higher than current', async () => {
-    render(<ValueMetric name="Some Metric" metric="total-income-with-previous-higher"/>);
+    // Add test-specific handler for previous higher case
+    const { server } = require('../../../mocks/server');
+    const { rest } = require('msw');
+
+    server.use(
+        rest.get('http://localhost:3000/api/v1/metrics/total-income', (req, res, ctx) => {
+            return res(ctx.json({
+                data: {
+                    value: 3000,
+                    previous: 4000
+                }
+            }))
+        })
+    );
+
+    render(<ValueMetric name="Some Metric" metric="totalIncome"/>);
 
     await waitFor(() => expect(screen.getByText(/25% Decrease/i)).toBeVisible())
 })
 
 it('it displays increase if previous value is lower than current', async () => {
-    render(<ValueMetric name="Some Metric" metric="total-income-with-previous-lower"/>);
+    // Add test-specific handler for previous lower case
+    const { server } = require('../../../mocks/server');
+    const { rest } = require('msw');
+
+    server.use(
+        rest.get('http://localhost:3000/api/v1/metrics/total-income', (req, res, ctx) => {
+            return res(ctx.json({
+                data: {
+                    value: 3000,
+                    previous: 2000
+                }
+            }))
+        })
+    );
+
+    render(<ValueMetric name="Some Metric" metric="totalIncome"/>);
 
     await waitFor(() => expect(screen.getByText(/50% Increase/i)).toBeVisible())
 })
