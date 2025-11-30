@@ -2,11 +2,12 @@ import React, {useEffect, useRef, useState} from 'react';
 import { metricEndpoints } from '@/Api/metrics';
 import LoadingView from "../Global/LoadingView";
 import { Card } from '@/components/ui/card';
+import { useRange } from '@/contexts/RangeContext';
 
-export default function CirclePackMetric({name, metric, ranges}) {
+export default function CirclePackMetric({name, metric}) {
+    const { selectedRange } = useRange();
     const [value, setValue] = useState(null);
     const refContainer = useRef<HTMLDivElement>(null);
-    const [selectedRange, setSelectedRange] = useState(ranges ? ranges[0].key : null);
 
     useEffect(() => {
         let isCancelled = false;
@@ -101,13 +102,6 @@ export default function CirclePackMetric({name, metric, ranges}) {
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
-
-                    {ranges && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
-                                       name="range"
-                                       value={selectedRange}
-                                       onChange={(e) => {setSelectedRange(e.target.value)}}>
-                        {ranges.map(range => <option key={range.key} value={range.key}>{range.name}</option>)}
-                    </select>}
                 </div>
 
                 <div className="w-full flex justify-center items-center overflow-hidden">

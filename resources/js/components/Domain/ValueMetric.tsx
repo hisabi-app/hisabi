@@ -5,11 +5,12 @@ import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber, getAppCurrency } from '../../Utils';
+import { useRange } from '@/contexts/RangeContext';
 
-export default function ValueMetric({name, helpText, metric, ranges}) {
+export default function ValueMetric({name, helpText, metric}) {
+    const { selectedRange } = useRange();
     const [value, setValue] = useState(null);
     const [previous, setPrevious] = useState(null);
-    const [selectedRange, setSelectedRange] = useState(ranges ? ranges[0].key : null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,13 +68,6 @@ export default function ValueMetric({name, helpText, metric, ranges}) {
             <div className="px-6 flex flex-col h-full gap-y-2">
                 <div className="flex grow-0 justify-between items-center">
                     <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
-
-                    {ranges && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
-                        name="range"
-                        value={selectedRange}
-                        onChange={(e) => {setSelectedRange(e.target.value)}}>
-                        {ranges.map(range => <option key={range.key} value={range.key}>{range.name}</option>)}
-                    </select>}
                 </div>
 
                 <p className="flex grow-1 items-center text-3xl">

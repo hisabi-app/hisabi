@@ -8,20 +8,18 @@ import PartitionMetric from '@/components/Domain/PartitionMetric';
 import CirclePackMetric from '@/components/Domain/CirclePackMetric';
 import SectionDivider from '@/components/Global/SectionDivider';
 import Budgets from '@/components/Domain/Budgets';
+import RangeSelector from '@/components/Global/RangeSelector';
+import { RangeProvider } from '@/contexts/RangeContext';
 import { getAllCategories } from '@/Api/categories';
 import { getAllBrands } from '@/Api/brands';
 
 export default function Dashboard({ auth, hasData }: any) {
-    const header = <h2>Dashboard</h2>
-
-    const allRages = [
-        { key: 'current-month', name: 'Current Month' },
-        { key: 'last-month', name: 'Last Month' },
-        { key: 'last-twelve-months', name: 'Last 12 Months' },
-        { key: 'current-year', name: 'Current Year' },
-        { key: 'last-year', name: 'Last Year' },
-        { key: 'all-time', name: 'All Time' },
-    ];
+    const header = (
+        <div className="flex items-center justify-between w-full">
+            <h2>Dashboard</h2>
+            <RangeSelector />
+        </div>
+    );
 
     const categoryRelation = {
         fetcher: getAllCategories,
@@ -45,149 +43,136 @@ export default function Dashboard({ auth, hasData }: any) {
     };
 
     return (
-        <Authenticated auth={auth} header={header}>
-            <Head title="Hisabi Dashboard" />
+        <RangeProvider>
+            <Authenticated auth={auth} header={header}>
+                <Head title="Hisabi Dashboard" />
 
-            <div className="py-4">
-                <div className="max-w-7xl overflow-hidden mx-auto px-4 grid grid-cols-1 gap-4">
+                <div className="py-4">
+                    <div className="max-w-7xl overflow-hidden mx-auto px-4 grid grid-cols-1 gap-4">
 
-                    <Budgets />
+                        <Budgets />
 
-                    {!hasData && <NoContent body="No enough data to show reports" />}
+                        {!hasData && <NoContent body="No enough data to show reports" />}
 
-                    {hasData && (
-                        <div className="grid grid-cols-1 gap-4">
-                            {/* Net Worth - Full Width Trend */}
-                            <div className="w-full">
-                                <TrendMetric
-                                    name="Net Worth Over Time"
-                                    metric="netWorthTrend"
-                                    ranges={allRages.slice().reverse()}
-                                    relation={undefined}
-                                    show_standard_deviation={undefined}
-                                />
+                        {hasData && (
+                            <div className="grid grid-cols-1 gap-4">
+                                {/* Net Worth - Full Width Trend */}
+                                <div className="w-full">
+                                    <TrendMetric
+                                        name="Net Worth Over Time"
+                                        metric="netWorthTrend"
+                                        relation={undefined}
+                                        show_standard_deviation={undefined}
+                                    />
+                                </div>
+
+                                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4"
+                                >
+                                    <ValueMetric
+                                        name="Total Cash"
+                                        metric="totalCash"
+                                        helpText="The available cash = income - (expenses + savings + investments)"
+                                    />
+                                    <ValueMetric
+                                        name="Total Savings"
+                                        metric="totalSavings"
+                                        helpText={undefined}
+                                    />
+                                    <ValueMetric
+                                        name="Total Investment"
+                                        metric="totalInvestment"
+                                        helpText={undefined}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <ValueMetric
+                                        name="Total Income"
+                                        metric="totalIncome"
+                                        helpText={undefined}
+                                    />
+                                    <ValueMetric
+                                        name="Total Expenses"
+                                        metric="totalExpenses"
+                                        helpText={undefined}
+                                    />
+
+                                    <TrendMetric
+                                        name="Income Over Time"
+                                        metric="totalIncomeTrend"
+                                        relation={undefined}
+                                        show_standard_deviation={undefined}
+                                    />
+                                    <TrendMetric
+                                        name="Spending Over Time"
+                                        metric="totalExpensesTrend"
+                                        relation={undefined}
+                                        show_standard_deviation={undefined}
+                                    />
+                                </div>
+
+
+                                <SectionDivider title="Categories Analytics" />
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <PartitionMetric
+                                        name="Income Sources"
+                                        metric="incomePerCategory"
+                                        relation={undefined}
+                                        show_currency={true}
+                                    />
+                                    <PartitionMetric
+                                        name="Spending by Category"
+                                        metric="expensesPerCategory"
+                                        relation={undefined}
+                                        show_currency={true}
+                                    />
+
+                                    <TrendMetric
+                                        name="Overall Trend by Category"
+                                        metric="totalPerCategoryTrend"
+                                        relation={categoryRelation}
+                                        show_standard_deviation={undefined}
+                                    />
+                                    <TrendMetric
+                                        name="Daily Trend by Category"
+                                        metric="totalPerCategoryDailyTrend"
+                                        relation={categoryRelation}
+                                        show_standard_deviation={undefined}
+                                    />
+                                </div>
+
+                                <SectionDivider title="Brands Analytics" />
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <PartitionMetric
+                                        name="Spending by Brand"
+                                        metric="totalPerBrand"
+                                        relation={categoryRelationForBrands}
+                                        show_currency={true}
+                                    />
+                                    <TrendMetric
+                                        name="Overall Trend by Brand"
+                                        metric="totalPerBrandTrend"
+                                        relation={brandRelation}
+                                        show_standard_deviation={undefined}
+                                    />
+                                </div>
+
+                                <SectionDivider title="Finance Visualization" />
+
+                                <div className="w-full">
+                                    <CirclePackMetric
+                                        name="Finance Visualization"
+                                        metric="financeVisualizationCirclePackMetric"
+                                    />
+                                </div>
+
                             </div>
-
-                            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4"
-                            >
-                                <ValueMetric
-                                    name="Total Cash"
-                                    metric="totalCash"
-                                    ranges={null}
-                                    helpText="The available cash = income - (expenses + savings + investments)"
-                                />
-                                <ValueMetric
-                                    name="Total Savings"
-                                    metric="totalSavings"
-                                    ranges={null}
-                                    helpText={undefined}
-                                />
-                                <ValueMetric
-                                    name="Total Investment"
-                                    metric="totalInvestment"
-                                    ranges={null}
-                                    helpText={undefined}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <ValueMetric
-                                    name="Total Income"
-                                    metric="totalIncome"
-                                    ranges={allRages}
-                                    helpText={undefined}
-                                />
-                                <ValueMetric
-                                    name="Total Expenses"
-                                    metric="totalExpenses"
-                                    ranges={allRages}
-                                    helpText={undefined}
-                                />
-
-                                <TrendMetric
-                                    name="Income Over Time"
-                                    metric="totalIncomeTrend"
-                                    ranges={allRages}
-                                    relation={undefined}
-                                    show_standard_deviation={undefined}
-                                />
-                                <TrendMetric
-                                    name="Spending Over Time"
-                                    metric="totalExpensesTrend"
-                                    ranges={allRages}
-                                    relation={undefined}
-                                    show_standard_deviation={undefined}
-                                />
-                            </div>
-
-
-                            <SectionDivider title="Categories Analytics" />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <PartitionMetric
-                                    name="Income Sources"
-                                    metric="incomePerCategory"
-                                    ranges={allRages}
-                                    relation={undefined}
-                                    show_currency={true}
-                                />
-                                <PartitionMetric
-                                    name="Spending by Category"
-                                    metric="expensesPerCategory"
-                                    ranges={allRages}
-                                    relation={undefined}
-                                    show_currency={true}
-                                />
-
-                                <TrendMetric
-                                    name="Overall Trend by Category"
-                                    metric="totalPerCategoryTrend"
-                                    ranges={allRages}
-                                    relation={categoryRelation}
-                                    show_standard_deviation={undefined}
-                                />
-                                <TrendMetric
-                                    name="Daily Trend by Category"
-                                    metric="totalPerCategoryDailyTrend"
-                                    ranges={allRages}
-                                    relation={categoryRelation}
-                                    show_standard_deviation={undefined}
-                                />
-                            </div>
-
-                            <SectionDivider title="Brands Analytics" />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <PartitionMetric
-                                    name="Spending by Brand"
-                                    metric="totalPerBrand"
-                                    ranges={allRages}
-                                    relation={categoryRelationForBrands}
-                                    show_currency={true}
-                                />
-                                <TrendMetric
-                                    name="Overall Trend by Brand"
-                                    metric="totalPerBrandTrend"
-                                    ranges={allRages}
-                                    relation={brandRelation}
-                                    show_standard_deviation={undefined}
-                                />
-                            </div>
-
-                            <SectionDivider title="Finance Visualization" />
-
-                            <div className="w-full">
-                                <CirclePackMetric
-                                    name="Finance Visualization"
-                                    metric="financeVisualizationCirclePackMetric"
-                                    ranges={allRages}
-                                />
-                            </div>
-                            
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
-        </Authenticated>
+            </Authenticated>
+        </RangeProvider>
     );
 }

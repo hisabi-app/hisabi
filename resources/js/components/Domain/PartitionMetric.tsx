@@ -6,12 +6,13 @@ import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { colors, formatNumber, getTailwindColor, getAppCurrency } from '../../Utils';
+import { useRange } from '@/contexts/RangeContext';
 
 Chart.register(ArcElement, DoughnutController);
 
-export default function PartitionMetric({ name, metric, ranges, relation, show_currency }) {
+export default function PartitionMetric({ name, metric, relation, show_currency }) {
+    const { selectedRange } = useRange();
     const [data, setData] = useState(null);
-    const [selectedRange, setSelectedRange] = useState(ranges[0].key);
     const [chartRef, setChartRef] = useState(null);
     const [relationData, setRelationData] = useState([]);
     const [selectedRelationId, setSelectedRelationId] = useState(0);
@@ -106,13 +107,6 @@ export default function PartitionMetric({ name, metric, ranges, relation, show_c
                             {relationData.map(relationItem => <option key={relationItem.id} value={relationItem.id}>{relationItem[relation.display_using]}</option>)}
                         </select>}
                     </div>
-
-                    <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
-                        name="range"
-                        value={selectedRange}
-                        onChange={(e) => {setSelectedRange(e.target.value)}}>
-                        {ranges.map(range => <option key={range.key} value={range.key}>{range.name}</option>)}
-                    </select>
                 </div>
 
                 <div className={`${data.length == 0 ? '' : 'pl-[100px]'} grow overflow-y-auto`}>

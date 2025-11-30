@@ -6,12 +6,13 @@ import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber } from '@/Utils';
+import { useRange } from '@/contexts/RangeContext';
 
 Chart.register(LineElement, Tooltip, LineController, CategoryScale, LinearScale, PointElement, Filler, AnnotationPlugin);
 
-export default function TrendMetric({ name, metric, ranges, relation, show_standard_deviation }) {
+export default function TrendMetric({ name, metric, relation, show_standard_deviation }) {
+    const { selectedRange } = useRange();
     const [data, setData] = useState(null);
-    const [selectedRange, setSelectedRange] = useState(ranges[0].key);
     const [chartRef, setChartRef] = useState(null);
     const [relationData, setRelationData] = useState([]);
     const [selectedRelationId, setSelectedRelationId] = useState(0);
@@ -272,13 +273,6 @@ export default function TrendMetric({ name, metric, ranges, relation, show_stand
                             {relationData.map(relationItem => <option key={relationItem.id} value={relationItem.id}>{relationItem[relation.display_using]}</option>)}
                         </select>}
                     </div>
-
-                    <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none bg-gray-100 pl-2 pr-6 rounded active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
-                        name="range"
-                        value={selectedRange}
-                        onChange={(e) => {setSelectedRange(e.target.value)}}>
-                        {ranges.map(range => <option key={range.key} value={range.key}>{range.name}</option>)}
-                    </select>
                 </div>
 
                 <div className="text-2xl font-semibold text-gray-800">

@@ -9,7 +9,7 @@ export default function Authenticated({ header, children }: { auth?: any; header
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 sticky top-0 bg-background z-10 md:rounded-t-xl">
                     <SidebarTrigger className="-ml-1" />
                     {header && (
                         <div className="flex flex-1 items-center gap-2">
