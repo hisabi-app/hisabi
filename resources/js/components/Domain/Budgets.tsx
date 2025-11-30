@@ -3,6 +3,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { formatNumber } from '@/Utils';
 import { ChartLineIcon } from '@phosphor-icons/react';
 import { getBudgets } from '@/Api/budgets';
+import { useInView } from '@/hooks/useInView';
+import LoadingView from '../Global/LoadingView';
 
 interface Budget {
     id: number;
@@ -20,8 +22,11 @@ interface Budget {
 export default function Budgets() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
     const [loading, setLoading] = useState(true);
+    const [ref, isInView] = useInView();
 
     useEffect(() => {
+        if (!isInView) return;
+
         getBudgets()
             .then((response) => {
                 setBudgets(response.data.budgets);
@@ -29,9 +34,19 @@ export default function Budgets() {
             .finally(() => {
                 setLoading(false);
             });
-    }, []);
+    }, [isInView]);
 
-    if (loading || budgets.length === 0) return null;
+    if (loading) {
+        return (
+            <div ref={ref}>
+                <Card className="h-[158px] w-84">
+                    <LoadingView />
+                </Card>
+            </div>
+        );
+    }
+
+    if (budgets.length === 0) return null;
 
     return (
         <div className="flex overflow-x-auto gap-4"  style={{

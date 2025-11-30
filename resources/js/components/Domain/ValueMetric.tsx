@@ -6,16 +6,18 @@ import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber, getAppCurrency } from '../../Utils';
 import { useRange } from '@/contexts/RangeContext';
+import { useInView } from '@/hooks/useInView';
 
 export default function ValueMetric({name, helpText, metric}) {
     const { selectedRange } = useRange();
     const [value, setValue] = useState(null);
     const [previous, setPrevious] = useState(null);
+    const [ref, isInView] = useInView();
 
     useEffect(() => {
-        const fetchData = async () => {
-            setValue(null);
+        if (!isInView) return;
 
+        const fetchData = async () => {
             const fetcher = metricEndpoints[metric];
             if (!fetcher) {
                 console.error(`Unknown metric: ${metric}`);
@@ -28,13 +30,15 @@ export default function ValueMetric({name, helpText, metric}) {
         };
 
         fetchData();
-    }, [selectedRange, metric])
+    }, [selectedRange, metric, isInView])
 
     if(value == null) {
         return (
-            <Card className="relative">
-                <LoadingView  />
-            </Card>
+            <div ref={ref}>
+                <Card className="relative h-[118px]">
+                    <LoadingView  />
+                </Card>
+            </div>
         )
     }
 

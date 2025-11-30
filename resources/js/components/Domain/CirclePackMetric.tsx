@@ -3,18 +3,20 @@ import { metricEndpoints } from '@/Api/metrics';
 import LoadingView from "../Global/LoadingView";
 import { Card } from '@/components/ui/card';
 import { useRange } from '@/contexts/RangeContext';
+import { useInView } from '@/hooks/useInView';
 
 export default function CirclePackMetric({name, metric}) {
     const { selectedRange } = useRange();
     const [value, setValue] = useState(null);
     const refContainer = useRef<HTMLDivElement>(null);
+    const [ref, isInView] = useInView();
 
     useEffect(() => {
+        if (!isInView) return;
+
         let isCancelled = false;
 
         const fetchData = async () => {
-            setValue(null);
-
             const fetcher = metricEndpoints[metric];
             if (!fetcher) {
                 console.error(`Unknown metric: ${metric}`);
@@ -42,7 +44,7 @@ export default function CirclePackMetric({name, metric}) {
         return () => {
             isCancelled = true;
         };
-    }, [selectedRange, metric])
+    }, [selectedRange, metric, isInView])
 
     // Chart initialization effect - only runs on client side
     useEffect(() => {
@@ -91,9 +93,11 @@ export default function CirclePackMetric({name, metric}) {
 
     if(value == null) {
         return (
-            <Card className="relative">
-                <LoadingView  />
-            </Card>
+            <div ref={ref}>
+                <Card className="relative h-[550px]">
+                    <LoadingView  />
+                </Card>
+            </div>
         )
     }
 

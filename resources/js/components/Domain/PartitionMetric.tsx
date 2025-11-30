@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { colors, formatNumber, getTailwindColor, getAppCurrency } from '../../Utils';
 import { useRange } from '@/contexts/RangeContext';
+import { useInView } from '@/hooks/useInView';
 
 Chart.register(ArcElement, DoughnutController);
 
@@ -16,8 +17,10 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
     const [chartRef, setChartRef] = useState(null);
     const [relationData, setRelationData] = useState([]);
     const [selectedRelationId, setSelectedRelationId] = useState(0);
+    const [ref, isInView] = useInView();
 
     useEffect(() => {
+        if (!isInView) return;
         if (!relation) { return; }
 
         if (relation.data) {
@@ -34,10 +37,10 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
                 setSelectedRelationId(data[relation.data_key][0].id)
             })
             .catch(console.error)
-    }, [relation])
+    }, [relation, isInView])
 
     useEffect(() => {
-        setData(null);
+        if (!isInView) return;
 
         const fetcher = metricEndpoints[metric];
         if (!fetcher) {
@@ -57,7 +60,7 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
         fetcher(selectedRange)
             .then((response) => setData(response.data))
             .catch(console.error)
-    }, [selectedRelationId, selectedRange, metric])
+    }, [selectedRelationId, selectedRange, metric, isInView])
 
     useEffect(() => {
         if (data == null) { return; }
@@ -93,9 +96,11 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
 
     if (data == null) {
         return (
-            <Card className="relative">
-                <LoadingView />
-            </Card>
+            <div ref={ref}>
+                <Card className="relative h-48">
+                    <LoadingView />
+                </Card>
+            </div>
         )
     }
 
