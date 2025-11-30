@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createTransaction } from "../../Api";
+import { createTransaction } from "@/Api";
 import Combobox from "@/components/Global/Combobox";
 import { Button } from "@/components/ui/button";
 import { getAppCurrency } from '@/Utils';
@@ -25,7 +25,7 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
 
     const handleCreate = () => {
         if (loading || !isReady || !brand) return;
-        
+
         setLoading(true);
 
         createTransaction({
@@ -34,17 +34,17 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
             createdAt,
             note
         })
-        .then(({ data }) => {
-            onCreate(data.transaction);
-            // Reset form
-            setBrand(null);
-            setAmount(0);
-            setCreatedAt('');
-            setNote('');
-            setLoading(false);
-            onClose();
-        })
-        .catch(console.error);
+            .then(({ data }) => {
+                onCreate(data.transaction);
+                // Reset form
+                setBrand(null);
+                setAmount(0);
+                setCreatedAt('');
+                setNote('');
+                setLoading(false);
+                onClose();
+            })
+            .catch(console.error);
     };
 
     return (
@@ -103,8 +103,8 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
                     </div>
 
                     <div className="flex items-center justify-end pt-2">
-                        <Button 
-                            disabled={!isReady || loading} 
+                        <Button
+                            disabled={!isReady || loading}
                             onClick={handleCreate}
                         >
                             Create

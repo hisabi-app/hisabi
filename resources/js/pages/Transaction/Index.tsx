@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
-import Create from './Create';
+import RecordTransactionButton from '@/components/Domain/RecordTransactionButton';
 import Filters from './Filters';
 import LoadMore from '@/components/Global/LoadMore';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ import { getCategoryIcon } from '@/Utils/categoryIcons';
 export default function Index({ auth }: { auth: any }) {
     const urlParams = new URLSearchParams(window.location.search);
     const initialSearch = urlParams.get('search') || '';
-    
+
     // Initialize filters from URL
     const initialFilters = {
         brandId: urlParams.get('brand') || '',
@@ -31,7 +31,7 @@ export default function Index({ auth }: { auth: any }) {
         dateFrom: urlParams.get('dateFrom') || '',
         dateTo: urlParams.get('dateTo') || '',
     };
-    
+
     const [transactions, setTransactions] = useState<any[]>([]);
     const [allBrands, setAllBrands] = useState<any[]>([]);
     const [allCategories, setAllCategories] = useState<any[]>([]);
@@ -40,7 +40,6 @@ export default function Index({ auth }: { auth: any }) {
     const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
-    const [showCreate, setShowCreate] = useState(false);
     const [filters, setFilters] = useState(initialFilters);
 
     useEffect(() => {
@@ -49,7 +48,7 @@ export default function Index({ auth }: { auth: any }) {
                 setAllBrands(data.allBrands)
             })
             .catch(console.error);
-        
+
         getAllCategories()
             .then(({ data }) => {
                 setAllCategories(data.allCategories)
@@ -59,15 +58,15 @@ export default function Index({ auth }: { auth: any }) {
 
     useEffect(() => {
         if (currentPage > 1 && !hasMorePages) return;
-        
+
         setLoading(true);
 
         getTransactions(currentPage, searchQuery, filters)
             .then(({ data }) => {
-                const newTransactions = currentPage === 1 
-                    ? data.transactions.data 
+                const newTransactions = currentPage === 1
+                    ? data.transactions.data
                     : [...transactions, ...data.transactions.data];
-                    
+
                 setTransactions(newTransactions)
                 setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
                 setLoading(false);
@@ -76,7 +75,6 @@ export default function Index({ auth }: { auth: any }) {
     }, [currentPage, searchQuery, filters]);
 
     const onCreate = (createdItem: any) => {
-        setShowCreate(false);
         setTransactions([createdItem, ...transactions]);
         animateRowItem(createdItem.id);
     };
@@ -99,7 +97,7 @@ export default function Index({ auth }: { auth: any }) {
 
     const performSearchHandler = (e: any) => {
         const value = e.target.value ?? '';
-        
+
         const url = new URL(window.location.href);
         if (value) {
             url.searchParams.set('search', value);
@@ -107,7 +105,7 @@ export default function Index({ auth }: { auth: any }) {
             url.searchParams.delete('search');
         }
         window.history.pushState({}, '', url);
-        
+
         setCurrentPage(1);
         setSearchQuery(value);
     }
@@ -118,20 +116,20 @@ export default function Index({ auth }: { auth: any }) {
 
     const handleFiltersApply = (newFilters: any) => {
         const url = new URL(window.location.href);
-        
+
         // Update URL params for filters
         if (newFilters.brandId) {
             url.searchParams.set('brand', newFilters.brandId);
         } else {
             url.searchParams.delete('brand');
         }
-        
+
         if (newFilters.categoryId) {
             url.searchParams.set('category', newFilters.categoryId);
         } else {
             url.searchParams.delete('category');
         }
-        
+
         if (newFilters.dateFrom && newFilters.dateTo) {
             url.searchParams.set('dateFrom', newFilters.dateFrom);
             url.searchParams.set('dateTo', newFilters.dateTo);
@@ -139,16 +137,16 @@ export default function Index({ auth }: { auth: any }) {
             url.searchParams.delete('dateFrom');
             url.searchParams.delete('dateTo');
         }
-        
+
         window.history.pushState({}, '', url);
-        
+
         setCurrentPage(1);
         setFilters(newFilters);
     };
 
     const clearFilter = (filterKey: string) => {
         const updatedFilters = { ...filters };
-        
+
         switch (filterKey) {
             case 'brand':
                 updatedFilters.brandId = '';
@@ -161,14 +159,17 @@ export default function Index({ auth }: { auth: any }) {
                 updatedFilters.dateTo = '';
                 break;
         }
-        
+
         handleFiltersApply(updatedFilters);
     };
 
     const header = (
         <div className="flex items-center justify-between w-full">
             <h2>Transactions</h2>
-            <Button onClick={() => setShowCreate(true)}>New transaction</Button>
+            <RecordTransactionButton
+                brands={allBrands}
+                onSuccess={onCreate}
+            />
         </div>
     )
 
@@ -176,12 +177,7 @@ export default function Index({ auth }: { auth: any }) {
         <Authenticated auth={auth} header={header}>
             <Head title="Transactions" />
 
-            <Create showCreate={showCreate}
-                brands={allBrands}
-                onCreate={onCreate}
-                onClose={() => setShowCreate(false)} />
-
-            <Edit 
+            <Edit
                 transaction={editItem}
                 brands={allBrands}
                 onUpdate={onUpdate}
@@ -191,9 +187,9 @@ export default function Index({ auth }: { auth: any }) {
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto grid gap-4">
-                    
+
                     <TransactionStats />
-                    
+
                     <div className="flex justify-between gap-2">
                         <Input
                             name="search"
@@ -205,8 +201,8 @@ export default function Index({ auth }: { auth: any }) {
                         <div className="flex gap-2">
                             {/* Active filter badges */}
                             {filters.brandId && (
-                                <Badge 
-                                    variant="secondary" 
+                                <Badge
+                                    variant="secondary"
                                     className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
                                     onClick={() => clearFilter('brand')}
                                 >
@@ -215,8 +211,8 @@ export default function Index({ auth }: { auth: any }) {
                                 </Badge>
                             )}
                             {filters.categoryId && (
-                                <Badge 
-                                    variant="secondary" 
+                                <Badge
+                                    variant="secondary"
                                     className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
                                     onClick={() => clearFilter('category')}
                                 >
@@ -225,8 +221,8 @@ export default function Index({ auth }: { auth: any }) {
                                 </Badge>
                             )}
                             {filters.dateFrom && filters.dateTo && (
-                                <Badge 
-                                    variant="secondary" 
+                                <Badge
+                                    variant="secondary"
                                     className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
                                     onClick={() => clearFilter('date')}
                                 >
@@ -234,7 +230,7 @@ export default function Index({ auth }: { auth: any }) {
                                     <X size={14} weight="bold" />
                                 </Badge>
                             )}
-                            <Filters 
+                            <Filters
                                 brands={allBrands}
                                 categories={allCategories}
                                 onApply={handleFiltersApply}
@@ -245,14 +241,14 @@ export default function Index({ auth }: { auth: any }) {
 
                     <div className="grid gap-2">
                         {transactions.length > 0 && transactions.map((transaction) => {
-                            const CategoryIcon = transaction.brand.category?.icon 
-                                ? getCategoryIcon(transaction.brand.category.icon) 
+                            const CategoryIcon = transaction.brand.category?.icon
+                                ? getCategoryIcon(transaction.brand.category.icon)
                                 : null;
                             const hasCategory = transaction.brand.category !== null;
                             const isUncategorized = !hasCategory;
                             const categoryType = hasCategory ? transaction.brand.category.type : null;
                             const isIncomeTransaction = categoryType === "INCOME";
-                            
+
                             return (
                                 <Card key={transaction.id} className={`py-0 ${isUncategorized ? 'bg-red-50 border-red-100' : ''}`} id={'item-' + transaction.id}>
                                     <CardContent className='flex justify-between items-center px-4 py-3'>
