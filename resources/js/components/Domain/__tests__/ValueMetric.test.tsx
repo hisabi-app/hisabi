@@ -6,10 +6,10 @@ import '@testing-library/jest-dom';
 import ValueMetric from '../ValueMetric';
 
 it('it fetches data once loaded and stop loader once data is fetched', async () => {
-    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQuery" />);
-    
+    render(<ValueMetric name="Some Metric" metric="total-income" />);
+
     expect(screen.getByTestId('loading-view')).toBeVisible()
-    
+
     await waitForElementToBeRemoved(() => screen.queryByTestId('loading-view'))
     await waitFor(() => expect(screen.getByText(/some metric/i)).toBeVisible())
 });
@@ -17,11 +17,11 @@ it('it fetches data once loaded and stop loader once data is fetched', async () 
 
 it('ranges provided and select first by default', async () => {
     const ranges = [
-        {name: "Current Month", key: "current-month", start: "2022-04-01", end: "2022-04-30"}, 
+        {name: "Current Month", key: "current-month", start: "2022-04-01", end: "2022-04-30"},
         {name: "Last Month", key: "last-month", start: "2022-03-01", end: "2022-03-31"}
     ];
 
-    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQuery" ranges={ranges} />);
+    render(<ValueMetric name="Some Metric" metric="total-income" ranges={ranges} />);
 
     await waitFor(() => {
         expect(screen.getByRole('option', {name: 'Current Month'}).selected).toBe(true)
@@ -31,11 +31,11 @@ it('ranges provided and select first by default', async () => {
 
 it('it allows to select a range if ranges provides', async () => {
     const ranges = [
-        {name: "Current Month", key: "current-month", start: "2022-04-01", end: "2022-04-30"}, 
+        {name: "Current Month", key: "current-month", start: "2022-04-01", end: "2022-04-30"},
         {name: "Last Month", key: "last-month", start: "2022-03-01", end: "2022-03-31"}
     ];
 
-    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQuery" ranges={ranges} />);
+    render(<ValueMetric name="Some Metric" metric="total-income" ranges={ranges} />);
 
     await waitFor(async () => {
         await userEvent.selectOptions(
@@ -52,11 +52,11 @@ it('it allows to select a range if ranges provides', async () => {
 
 it('it fetches data if a range is selected', async () => {
     const ranges = [
-        {name: "Current Month", key: "current-month", start: "2022-04-01", end: "2022-04-30"}, 
+        {name: "Current Month", key: "current-month", start: "2022-04-01", end: "2022-04-30"},
         {name: "Last Month", key: "last-month", start: "2022-03-01", end: "2022-03-31"}
     ];
 
-    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQuery" ranges={ranges} />);
+    render(<ValueMetric name="Some Metric" metric="total-income" ranges={ranges} />);
 
     await waitFor(() => expect(screen.getByText(/3k/i)).toBeVisible())
 
@@ -71,13 +71,13 @@ it('it fetches data if a range is selected', async () => {
 })
 
 it('it displays decrease if previous value is higher than current', async () => {
-    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQueryWithPreviousHigher"/>);
+    render(<ValueMetric name="Some Metric" metric="total-income-with-previous-higher"/>);
 
     await waitFor(() => expect(screen.getByText(/25% Decrease/i)).toBeVisible())
 })
 
 it('it displays increase if previous value is lower than current', async () => {
-    render(<ValueMetric name="Some Metric" graphql_query="valueMetricSampleQueryWithPreviousLower"/>);
+    render(<ValueMetric name="Some Metric" metric="total-income-with-previous-lower"/>);
 
     await waitFor(() => expect(screen.getByText(/50% Increase/i)).toBeVisible())
 })

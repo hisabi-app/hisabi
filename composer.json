@@ -14,9 +14,6 @@
         "laravel/mcp": "^0.2.1",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10",
-        "mll-lab/graphql-php-scalars": "^6.2",
-        "mll-lab/laravel-graphiql": "^3.1",
-        "nuwave/lighthouse": "^6.31",
         "prism-php/prism": "^0.90.0",
         "spatie/laravel-query-builder": "^6.3",
         "tightenco/ziggy": "^1.6"

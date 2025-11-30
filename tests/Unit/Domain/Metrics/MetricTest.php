@@ -45,11 +45,11 @@ class MetricTest extends TestCase
         }
     }
 
-    public function test_it_has_default_graphql_query()
+    public function test_it_has_default_api_endpoint()
     {
         $sut = new FakeMetric;
 
-        $this->assertEquals('fakeMetric', $sut->graphqlQuery());
+        $this->assertEquals('fake-metric', $sut->apiEndpoint());
     }
 
     public function test_it_is_json_serializeable()
@@ -60,7 +60,7 @@ class MetricTest extends TestCase
         $this->assertArrayHasKey('name', $sut->jsonSerialize());
         $this->assertArrayHasKey('width', $sut->jsonSerialize());
         $this->assertArrayHasKey('ranges', $sut->jsonSerialize());
-        $this->assertArrayHasKey('graphql_query', $sut->jsonSerialize());
+        $this->assertArrayHasKey('api_endpoint', $sut->jsonSerialize());
     }
 }
 

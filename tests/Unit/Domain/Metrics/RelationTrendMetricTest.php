@@ -13,7 +13,7 @@ class RelationTrendMetricTest extends TestCase
 
         $relation = $sut->jsonSerialize()['relation'];
 
-        $this->assertEquals('some-query', $relation['graphql_query']);
+        $this->assertEquals('some-endpoint', $relation['api_endpoint']);
         $this->assertEquals('some-name', $relation['display_using']);
         $this->assertEquals('some-key', $relation['foreign_key']);
     }
@@ -21,7 +21,7 @@ class RelationTrendMetricTest extends TestCase
 
 class FakeRelationTrendMetric extends RelationTrendMetric
 {
-    protected $relationGraphqlQuery = 'some-query';
+    protected $relationApiEndpoint = 'some-endpoint';
     protected $relationDisplayUsing = 'some-name';
     protected $relationForeignKey = 'some-key';
 }

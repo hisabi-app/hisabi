@@ -1,44 +1,32 @@
-import { graphql } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 export const handlers = [
-    graphql.mutation('DeleteResource', (req, res, ctx) => {
-        return res(
-            ctx.data({id: 1}),
-        )
+    http.delete('/api/v1/resource/:id', () => {
+        return HttpResponse.json({ id: 1 })
     }),
-    graphql.query('valueMetricSampleQuery', (req, res, ctx) => {
-        let data = {
-            'valueMetricSampleQuery': JSON.stringify({
-                'value': req.body.variables.range === 'current-month' ? 3000 : 2000
-            })
-        };
-
-        return res(
-            ctx.data(data),
-        )
+    http.get('/api/v1/metrics/total-income', ({ request }) => {
+        const url = new URL(request.url)
+        const range = url.searchParams.get('range')
+        return HttpResponse.json({
+            data: {
+                value: range === 'current-month' ? 3000 : 2000
+            }
+        })
     }),
-    graphql.query('valueMetricSampleQueryWithPreviousHigher', (req, res, ctx) => {
-        let data = {
-            'valueMetricSampleQueryWithPreviousHigher': JSON.stringify({
-                'value': 3000,
-                'previous': 4000
-            })
-        };
-
-        return res(
-            ctx.data(data),
-        )
+    http.get('/api/v1/metrics/total-income-with-previous-higher', () => {
+        return HttpResponse.json({
+            data: {
+                value: 3000,
+                previous: 4000
+            }
+        })
     }),
-    graphql.query('valueMetricSampleQueryWithPreviousLower', (req, res, ctx) => {
-        let data = {
-            'valueMetricSampleQueryWithPreviousLower': JSON.stringify({
-                'value': 3000,
-                'previous': 2000
-            })
-        };
-
-        return res(
-            ctx.data(data),
-        )
+    http.get('/api/v1/metrics/total-income-with-previous-lower', () => {
+        return HttpResponse.json({
+            data: {
+                value: 3000,
+                previous: 2000
+            }
+        })
     }),
 ];

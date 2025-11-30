@@ -4,7 +4,7 @@ namespace App\Domain\Metrics;
 
 abstract class RelationTrendMetric extends TrendMetric
 {
-    protected $relationGraphqlQuery;
+    protected $relationApiEndpoint;
     protected $relationDisplayUsing;
     protected $relationForeignKey;
 
@@ -12,7 +12,7 @@ abstract class RelationTrendMetric extends TrendMetric
     {
         return array_merge(parent::jsonSerialize(), [
             'relation' => [
-                'graphql_query' => $this->relationGraphqlQuery,
+                'api_endpoint' => $this->relationApiEndpoint,
                 'display_using' => $this->relationDisplayUsing,
                 'foreign_key' => $this->relationForeignKey,
             ]

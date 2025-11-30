@@ -16,7 +16,7 @@ abstract class Metric extends Element
     protected $width = '1/2';
     protected $helpText;
     protected $ranges = [];
-    protected $graphqlQuery;
+    protected $apiEndpoint;
     protected $showCurrency = true;
 
     public function component()
@@ -54,9 +54,9 @@ abstract class Metric extends Element
         ];
     }
 
-    public function graphqlQuery()
+    public function apiEndpoint()
     {
-        return $this->graphqlQuery ?: Str::camel(class_basename(get_class($this)));
+        return $this->apiEndpoint ?: Str::kebab(class_basename(get_class($this)));
     }
 
     public function jsonSerialize(): mixed
@@ -66,7 +66,7 @@ abstract class Metric extends Element
             'width' => $this->width(),
             'helpText' => $this->helpText,
             'ranges' => $this->ranges(),
-            'graphql_query' => $this->graphqlQuery(),
+            'api_endpoint' => $this->apiEndpoint(),
             'show_currency' => $this->showCurrency,
         ]);
     }
