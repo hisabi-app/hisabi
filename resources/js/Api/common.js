@@ -1,38 +1,4 @@
-import { gql } from '@urql/core';
-import client from './client.js';
-
 export const getCsrfToken = () => {
     const token = document.querySelector('meta[name="csrf-token"]');
     return token ? token.getAttribute('content') : '';
 };
-
-export const query = (query, range = null, queryName = null) => {
-    const queryCustomName = queryName ? queryName : query;
-
-    if(range == null) {
-        return client
-            .query(gql`
-                query ${queryCustomName} {
-                    ${query}
-                }
-            `)
-            .toPromise();
-    }
-    
-    return client
-            .query(gql`
-                query ${queryCustomName} {
-                    ${query}(range: """${range}""") 
-                }
-            `, {range})
-            .toPromise();
-}
-
-
-export const customQuery = (query) => {
-    return client
-            .query(gql`
-                query { ${query} }
-            `)
-            .toPromise();
-}

@@ -17,11 +17,10 @@ function CategoryStats() {
         setLoading(true);
         getCategoryStats(range)
             .then(({ data }) => {
-                const categoryStatsData = JSON.parse(data.categoryStats);
                 setStats({
-                    mostUsedCategory: categoryStatsData.mostUsedCategory,
-                    highestSpendingCategory: categoryStatsData.highestSpendingCategory,
-                    highestIncomeCategory: categoryStatsData.highestIncomeCategory
+                    mostUsedCategory: data.mostUsedCategory,
+                    highestSpendingCategory: data.highestSpendingCategory,
+                    highestIncomeCategory: data.highestIncomeCategory
                 });
             })
             .catch(console.error)

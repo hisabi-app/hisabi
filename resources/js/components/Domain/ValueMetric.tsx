@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { TrendingUpIcon, TrendingDownIcon, InformationCircleIcon } from '@heroicons/react/solid';
 
-import { query } from '../../Api';
+import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber, getAppCurrency } from '../../Utils';
 
-export default function ValueMetric({name, helpText, graphql_query, ranges}) {
+export default function ValueMetric({name, helpText, metric, ranges}) {
     const [value, setValue] = useState(null);
     const [previous, setPrevious] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges ? ranges[0].key : null);
@@ -15,15 +15,19 @@ export default function ValueMetric({name, helpText, graphql_query, ranges}) {
         const fetchData = async () => {
             setValue(null);
 
-            let { data } = await query(graphql_query, selectedRange);
-            let parsedData = JSON.parse(data[graphql_query]);
+            const fetcher = metricEndpoints[metric];
+            if (!fetcher) {
+                console.error(`Unknown metric: ${metric}`);
+                return;
+            }
 
-            setValue(parsedData.value)
-            setPrevious(parsedData.previous)
+            const response = await fetcher(selectedRange);
+            setValue(response.data.value);
+            setPrevious(response.data.previous);
         };
 
         fetchData();
-    }, [selectedRange])
+    }, [selectedRange, metric])
 
     if(value == null) {
         return (

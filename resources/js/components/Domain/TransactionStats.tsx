@@ -13,14 +13,11 @@ function TransactionStats() {
         setLoading(true);
         getTransactionStats(range)
             .then(({ data }) => {
-                const income = JSON.parse(data.totalIncome);
-                const expenses = JSON.parse(data.totalExpenses);
-                const transactionCounts = JSON.parse(data.numberOfTransactions);
-                const totalCount = transactionCounts.reduce((sum: number, item: any) => sum + item.value, 0);
-                
+                const totalCount = data.numberOfTransactions.reduce((sum: number, item: any) => sum + item.value, 0);
+
                 setStats({
-                    totalIncome: income.value,
-                    totalExpenses: expenses.value,
+                    totalIncome: data.totalIncome.value,
+                    totalExpenses: data.totalExpenses.value,
                     totalTransactions: totalCount
                 });
             })

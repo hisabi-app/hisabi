@@ -1,6 +1,5 @@
-import { gql } from '@urql/core';
-import client from './client.js';
-import { customQuery, getCsrfToken } from './common.js';
+import { getCsrfToken } from './common.js';
+import { getTotalIncome, getTotalExpenses, getTransactionsCount } from './metrics.js';
 
 export const getTransactions = async (page, searchQuery, filters = {}) => {
     const params = new URLSearchParams({
@@ -120,10 +119,18 @@ export const deleteTransaction = async (id) => {
     };
 }
 
-export const getTransactionStats = (range = 'current-month') => {
-    return customQuery(`
-        totalIncome(range: "${range}")
-        totalExpenses(range: "${range}")
-        numberOfTransactions(range: "${range}")
-    `);
+export const getTransactionStats = async (range = 'current-month') => {
+    const [incomeRes, expensesRes, countRes] = await Promise.all([
+        getTotalIncome(range),
+        getTotalExpenses(range),
+        getTransactionsCount(range)
+    ]);
+
+    return {
+        data: {
+            totalIncome: incomeRes.data,
+            totalExpenses: expensesRes.data,
+            numberOfTransactions: countRes.data
+        }
+    };
 }

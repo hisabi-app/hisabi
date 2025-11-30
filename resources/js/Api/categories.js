@@ -1,4 +1,5 @@
-import { customQuery, getCsrfToken } from './common.js';
+import { getCsrfToken } from './common.js';
+import { getCategoryStats as getCategoryStatsMetric } from './metrics.js';
 
 export const getAllCategories = async () => {
     const response = await fetch('/api/v1/categories/all', {
@@ -98,6 +99,9 @@ export const deleteCategory = async (id) => {
     };
 }
 
-export const getCategoryStats = (range = 'current-month') => {
-    return customQuery(`categoryStats(range: "${range}")`);
+export const getCategoryStats = async (range = 'current-month') => {
+    const response = await getCategoryStatsMetric(range);
+    return {
+        data: response.data
+    };
 }

@@ -202,7 +202,7 @@ As a user, I want to know if my income is stable month-to-month, so I can adjust
 **Status:** ❌
 
 **Description:**
-Display transaction statistics using existing unused GraphQL queries.
+Display transaction statistics.
 
 **User Story:**
 As a user, I want to see interesting patterns in my transactions, so I can better understand my spending behavior.

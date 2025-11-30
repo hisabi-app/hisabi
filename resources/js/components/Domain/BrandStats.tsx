@@ -17,11 +17,10 @@ function BrandStats() {
         setLoading(true);
         getBrandStats(range)
             .then(({ data }) => {
-                const brandStatsData = JSON.parse(data.brandStats);
                 setStats({
-                    mostUsedBrand: brandStatsData.mostUsedBrand,
-                    highestSpendingBrand: brandStatsData.highestSpendingBrand,
-                    highestIncomeBrand: brandStatsData.highestIncomeBrand
+                    mostUsedBrand: data.mostUsedBrand,
+                    highestSpendingBrand: data.highestSpendingBrand,
+                    highestIncomeBrand: data.highestIncomeBrand
                 });
             })
             .catch(console.error)

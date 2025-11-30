@@ -1,4 +1,5 @@
-import { customQuery, getCsrfToken } from './common.js';
+import { getCsrfToken } from './common.js';
+import { getBrandStats as getBrandStatsMetric } from './metrics.js';
 
 export const getAllBrands = async () => {
     const response = await fetch('/api/v1/brands/all', {
@@ -128,6 +129,9 @@ export const deleteBrand = async (id) => {
     };
 }
 
-export const getBrandStats = (range = 'current-month') => {
-    return customQuery(`brandStats(range: "${range}")`);
+export const getBrandStats = async (range = 'current-month') => {
+    const response = await getBrandStatsMetric(range);
+    return {
+        data: response.data
+    };
 }

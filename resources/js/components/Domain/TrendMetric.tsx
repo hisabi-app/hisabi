@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Chart, LineElement, Tooltip, LineController, CategoryScale, LinearScale, PointElement, Filler } from 'chart.js';
 import AnnotationPlugin from 'chartjs-plugin-annotation';
 
-import { query } from '../../Api';
+import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber } from '@/Utils';
 
 Chart.register(LineElement, Tooltip, LineController, CategoryScale, LinearScale, PointElement, Filler, AnnotationPlugin);
 
-export default function TrendMetric({ name, graphql_query, ranges, relation, show_standard_deviation }) {
+export default function TrendMetric({ name, metric, ranges, relation, show_standard_deviation }) {
     const [data, setData] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges[0].key);
     const [chartRef, setChartRef] = useState(null);
@@ -30,24 +30,29 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
     useEffect(() => {
         setData(null);
 
-        if(relation) {
-            if (selectedRelationId) {
-                query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`, null, 'CustomQuery')
-                    .then(({data}) => setData(JSON.parse(data[graphql_query])))
-                    .catch(console.error)
-            }
-
+        const fetcher = metricEndpoints[metric];
+        if (!fetcher) {
+            console.error(`Unknown metric: ${metric}`);
             return;
         }
-        
-        query(graphql_query, selectedRange)
-            .then(({data}) => setData(JSON.parse(data[graphql_query])))
+
+        if(relation) {
+            if (selectedRelationId) {
+                fetcher(selectedRange, selectedRelationId)
+                    .then((response) => setData(response.data))
+                    .catch(console.error)
+            }
+            return;
+        }
+
+        fetcher(selectedRange)
+            .then((response) => setData(response.data))
             .catch(console.error)
-    }, [selectedRelationId, selectedRange])
+    }, [selectedRelationId, selectedRange, metric])
 
     useEffect(() => {
         if(data == null) { return; }
-        
+
         if(chartRef != null) {
             chartRef.destroy()
         }
@@ -70,7 +75,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
 
         const standardDeviationAnnotations = () => {
             if(! show_standard_deviation) return [];
-            
+
             return [
                 {
                     type: 'line',
@@ -121,16 +126,15 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
             ];
         }
 
-        // TODO: move this out later
         const drawLinearRegressionLine = (data) => {
             let regressor = {};
 
             let x_values = Array.from({ length: data.length }, (_, index) => index + 1);;
             let y_values = data.map(item => item.value);
-            
+
             let x_mean = x_values.reduce((a, b) => a + b, 0)/x_values.length;
             let y_mean = y_values.reduce((a, b) => a + b, 0)/y_values.length;
-            
+
             let slope = 0, slope_numerator = 0, slope_denominator = 0;
             for(let i=0; i<x_values.length; i++){
                 slope_numerator += (x_values[i]-x_mean)*(y_values[i]-y_mean);
@@ -150,16 +154,16 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
             }
 
             regressor['y_hat'] = y_hat;
-            
+
             let residual_sum_of_squares = 0, total_sum_of_squares = 0, r2 = 0;
 
             for(let i=0; i<y_values.length; i++){
                 residual_sum_of_squares+= Math.pow((y_hat[i]-y_values[i]),2);
                 total_sum_of_squares += Math.pow((y_hat[i]-y_mean),2);
             }
-            
+
             r2 = 1- residual_sum_of_squares/total_sum_of_squares;
-            
+
             regressor['r2'] = r2;
 
             return {
@@ -172,13 +176,12 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
             }
         }
 
-        const ctx = document.getElementById(graphql_query).getContext('2d');
-        
-        // Create vertical gradient: blue at top, white at bottom
+        const ctx = document.getElementById(metric).getContext('2d');
+
         const gradient = ctx.createLinearGradient(0, 0, 0, 150);
-        gradient.addColorStop(0, 'rgba(14, 165, 233, 0.4)'); // Blue at top
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)'); // White at bottom
-        
+        gradient.addColorStop(0, 'rgba(14, 165, 233, 0.4)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)');
+
         setChartRef(new Chart(ctx, {
             type: 'line',
             data: {
@@ -254,8 +257,8 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
             </Card>
         )
     }
-    
-    return ( 
+
+    return (
         <Card className="relative h-48 overflow-hidden">
             <div className="px-6">
                 <div className="flex justify-between items-center mb-2">
@@ -279,7 +282,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
                 </div>
 
                 <div className="text-2xl font-semibold text-gray-800">
-                    {data[data.length - 1] && data[data.length - 1].value > 0 
+                    {data[data.length - 1] && data[data.length - 1].value > 0
                         ? formatNumber(data[data.length - 1].value)
                         : '-'
                     }
@@ -288,7 +291,7 @@ export default function TrendMetric({ name, graphql_query, ranges, relation, sho
 
 
             <div className="absolute w-full left-0 right-0 bottom-0 h-24">
-                <canvas id={graphql_query}></canvas>
+                <canvas id={metric}></canvas>
             </div>
         </Card>
     );

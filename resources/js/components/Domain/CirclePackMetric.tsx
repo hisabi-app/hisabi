@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { query } from '../../Api';
+import { metricEndpoints } from '@/Api/metrics';
 import LoadingView from "../Global/LoadingView";
 import { Card } from '@/components/ui/card';
 
-export default function CirclePackMetric({name, graphql_query, ranges}) {
+export default function CirclePackMetric({name, metric, ranges}) {
     const [value, setValue] = useState(null);
     const refContainer = useRef<HTMLDivElement>(null);
     const [selectedRange, setSelectedRange] = useState(ranges ? ranges[0].key : null);
@@ -14,14 +14,18 @@ export default function CirclePackMetric({name, graphql_query, ranges}) {
         const fetchData = async () => {
             setValue(null);
 
+            const fetcher = metricEndpoints[metric];
+            if (!fetcher) {
+                console.error(`Unknown metric: ${metric}`);
+                return;
+            }
+
             try {
-                let { data } = await query(graphql_query, selectedRange);
-                
+                const response = await fetcher(selectedRange);
+
                 // Check if the component is still mounted and this is the latest request
                 if (!isCancelled) {
-                    let parsedData = JSON.parse(data[graphql_query]);
-                    console.log('CirclePack data:', parsedData);
-                    setValue(parsedData);
+                    setValue(response.data);
                 }
             } catch (error) {
                 // Ignore AbortError as it's expected when component unmounts or range changes
@@ -37,7 +41,7 @@ export default function CirclePackMetric({name, graphql_query, ranges}) {
         return () => {
             isCancelled = true;
         };
-    }, [selectedRange])
+    }, [selectedRange, metric])
 
     // Chart initialization effect - only runs on client side
     useEffect(() => {

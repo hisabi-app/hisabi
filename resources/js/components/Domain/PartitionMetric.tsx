@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { Chart, ArcElement, DoughnutController } from 'chart.js';
 import { sumBy } from 'lodash';
 
-import { query } from '../../Api';
+import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { colors, formatNumber, getTailwindColor, getAppCurrency } from '../../Utils';
 
 Chart.register(ArcElement, DoughnutController);
 
-export default function PartitionMetric({ name, graphql_query, ranges, relation, show_currency }) {
+export default function PartitionMetric({ name, metric, ranges, relation, show_currency }) {
     const [data, setData] = useState(null);
     const [selectedRange, setSelectedRange] = useState(ranges[0].key);
     const [chartRef, setChartRef] = useState(null);
@@ -30,29 +30,34 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
     useEffect(() => {
         setData(null);
 
-        if(relation) {
-            if (selectedRelationId) {
-                query(graphql_query + `(range: """${selectedRange}""" ${relation.foreign_key}: ${selectedRelationId})`, null, 'CustomQuery')
-                    .then(({data}) => setData(JSON.parse(data[graphql_query])))
-                    .catch(console.error)
-            }
-
+        const fetcher = metricEndpoints[metric];
+        if (!fetcher) {
+            console.error(`Unknown metric: ${metric}`);
             return;
         }
-        
-        query(graphql_query, selectedRange)
-            .then(({data}) => setData(JSON.parse(data[graphql_query])))
+
+        if(relation) {
+            if (selectedRelationId) {
+                fetcher(selectedRange, selectedRelationId)
+                    .then((response) => setData(response.data))
+                    .catch(console.error)
+            }
+            return;
+        }
+
+        fetcher(selectedRange)
+            .then((response) => setData(response.data))
             .catch(console.error)
-    }, [selectedRelationId, selectedRange])
+    }, [selectedRelationId, selectedRange, metric])
 
     useEffect(() => {
         if(data == null) { return; }
-        
+
         if(chartRef != null) {
             chartRef.destroy()
         }
 
-        const ctx = document.getElementById(graphql_query).getContext('2d');
+        const ctx = document.getElementById(metric).getContext('2d');
         setChartRef(new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -87,7 +92,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
 
     let total = sumBy(data, 'value');
 
-    return ( 
+    return (
         <Card className="relative h-48 overflow-hidden">
             <div className="px-6 flex flex-col h-full">
                 <div className="flex justify-between items-center mb-2">
@@ -124,7 +129,7 @@ export default function PartitionMetric({ name, graphql_query, ranges, relation,
                 </div>
 
                 <div className="absolute w-16 h-16" style={{left: '30px', top: '40%'}}>
-                    <canvas id={graphql_query}></canvas>
+                    <canvas id={metric}></canvas>
                 </div>
             </div>
         </Card>

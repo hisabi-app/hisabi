@@ -61,7 +61,7 @@ export default function Dashboard({ auth, hasData }: any) {
                             <div className="w-full">
                                 <TrendMetric
                                     name="Net Worth Over Time"
-                                    graphql_query="netWorthTrend"
+                                    metric="netWorthTrend"
                                     ranges={allRages.slice().reverse()}
                                     relation={undefined}
                                     show_standard_deviation={undefined}
@@ -72,19 +72,19 @@ export default function Dashboard({ auth, hasData }: any) {
                             >
                                 <ValueMetric
                                     name="Total Cash"
-                                    graphql_query="totalCash"
+                                    metric="totalCash"
                                     ranges={null}
                                     helpText="The available cash = income - (expenses + savings + investments)"
                                 />
                                 <ValueMetric
                                     name="Total Savings"
-                                    graphql_query="totalSavings"
+                                    metric="totalSavings"
                                     ranges={null}
                                     helpText={undefined}
                                 />
                                 <ValueMetric
                                     name="Total Investment"
-                                    graphql_query="totalInvestment"
+                                    metric="totalInvestment"
                                     ranges={null}
                                     helpText={undefined}
                                 />
@@ -93,27 +93,27 @@ export default function Dashboard({ auth, hasData }: any) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <ValueMetric
                                     name="Total Income"
-                                    graphql_query="totalIncome"
+                                    metric="totalIncome"
                                     ranges={allRages}
                                     helpText={undefined}
                                 />
                                 <ValueMetric
                                     name="Total Expenses"
-                                    graphql_query="totalExpenses"
+                                    metric="totalExpenses"
                                     ranges={allRages}
                                     helpText={undefined}
                                 />
 
                                 <TrendMetric
                                     name="Income Over Time"
-                                    graphql_query="totalIncomeTrend"
+                                    metric="totalIncomeTrend"
                                     ranges={allRages}
                                     relation={undefined}
                                     show_standard_deviation={undefined}
                                 />
                                 <TrendMetric
                                     name="Spending Over Time"
-                                    graphql_query="totalExpensesTrend"
+                                    metric="totalExpensesTrend"
                                     ranges={allRages}
                                     relation={undefined}
                                     show_standard_deviation={undefined}
@@ -126,14 +126,14 @@ export default function Dashboard({ auth, hasData }: any) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <PartitionMetric
                                     name="Income Sources"
-                                    graphql_query="incomePerCategory"
+                                    metric="incomePerCategory"
                                     ranges={allRages}
                                     relation={undefined}
                                     show_currency={true}
                                 />
                                 <PartitionMetric
                                     name="Spending by Category"
-                                    graphql_query="expensesPerCategory"
+                                    metric="expensesPerCategory"
                                     ranges={allRages}
                                     relation={undefined}
                                     show_currency={true}
@@ -141,14 +141,14 @@ export default function Dashboard({ auth, hasData }: any) {
 
                                 <TrendMetric
                                     name="Overall Trend by Category"
-                                    graphql_query="totalPerCategoryTrend"
+                                    metric="totalPerCategoryTrend"
                                     ranges={allRages}
                                     relation={categoryRelation}
                                     show_standard_deviation={undefined}
                                 />
                                 <TrendMetric
                                     name="Daily Trend by Category"
-                                    graphql_query="totalPerCategoryDailyTrend"
+                                    metric="totalPerCategoryDailyTrend"
                                     ranges={allRages}
                                     relation={categoryRelation}
                                     show_standard_deviation={undefined}
@@ -160,14 +160,14 @@ export default function Dashboard({ auth, hasData }: any) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <PartitionMetric
                                     name="Spending by Brand"
-                                    graphql_query="totalPerBrand"
+                                    metric="totalPerBrand"
                                     ranges={allRages}
                                     relation={categoryRelationForBrands}
                                     show_currency={true}
                                 />
                                 <TrendMetric
                                     name="Overall Trend by Brand"
-                                    graphql_query="totalPerBrandTrend"
+                                    metric="totalPerBrandTrend"
                                     ranges={allRages}
                                     relation={brandRelation}
                                     show_standard_deviation={undefined}
@@ -179,7 +179,7 @@ export default function Dashboard({ auth, hasData }: any) {
                             <div className="w-full">
                                 <CirclePackMetric
                                     name="Finance Visualization"
-                                    graphql_query="financeVisualizationCirclePackMetric"
+                                    metric="financeVisualizationCirclePackMetric"
                                     ranges={allRages}
                                 />
                             </div>
