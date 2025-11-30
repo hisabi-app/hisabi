@@ -57,7 +57,7 @@ class Budget extends Model
         $days = now()->diffInDays($this->end_at_date);
         $remainingAmount = $this->amount - $this->totalTransactionsAmount;
 
-        if($days < 0 || $remainingAmount <= 0) {
+        if ($days < 0 || $remainingAmount <= 0) {
             return 0;
         }
 
@@ -101,19 +101,18 @@ class Budget extends Model
 
     public function getTotalTransactionsAmountAttribute()
     {
-        $categories = $this->categories()->with('transactions')->get();
         [$startAt, $endAt] = $this->getCurrentWindowStartAndEndDates();
 
-        return $categories->sum(function ($category) use ($startAt, $endAt){
-            return $category->transactions()
-                ->whereBetween('transactions.created_at', [$startAt, $endAt])
-                ->sum('amount');
-        });
+        return $this->categories()
+            ->join('brands', 'categories.id', '=', 'brands.category_id')
+            ->join('transactions', 'brands.id', '=', 'transactions.brand_id')
+            ->whereBetween('transactions.created_at', [$startAt, $endAt])
+            ->sum('transactions.amount');
     }
 
     private function getCurrentWindowStartAndEndDates()
     {
-        if($this->reoccurrence === self::CUSTOM) {
+        if ($this->reoccurrence === self::CUSTOM) {
             return [$this->start_at, $this->end_at];
         }
 
@@ -122,7 +121,7 @@ class Budget extends Model
         $ranges = CarbonPeriod::create($this->start_at->startOfDay(), $intervalString, now()->copy()->add($unit, $this->period))->toArray();
 
         foreach (array_reverse($ranges) as $range) {
-            if(now()->isAfter($range)) {
+            if (now()->isAfter($range)) {
                 return [$range->copy(), $range->copy()->add($unit, $this->period)];
             }
         }
