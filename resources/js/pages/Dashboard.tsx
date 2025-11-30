@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo } from 'react';
 import { Head } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
@@ -14,6 +15,19 @@ import { getAllCategories } from '@/Api/categories';
 import { getAllBrands } from '@/Api/brands';
 
 export default function Dashboard({ auth, hasData }: any) {
+    const [allCategories, setAllCategories] = useState<any[]>([]);
+    const [allBrands, setAllBrands] = useState<any[]>([]);
+
+    useEffect(() => {
+        Promise.all([
+            getAllCategories(),
+            getAllBrands()
+        ]).then(([{ data: categories }, { data: brands }]) => {
+            setAllCategories(categories.allCategories);
+            setAllBrands(brands.allBrands);
+        }).catch(console.error);
+    }, []);
+
     const header = (
         <div className="flex items-center justify-between w-full">
             <h2>Dashboard</h2>
@@ -21,26 +35,23 @@ export default function Dashboard({ auth, hasData }: any) {
         </div>
     );
 
-    const categoryRelation = {
-        fetcher: getAllCategories,
-        data_key: 'allCategories',
+    const categoryRelation = useMemo(() => ({
+        data: allCategories,
         display_using: 'name',
         foreign_key: 'id'
-    };
+    }), [allCategories]);
 
-    const categoryRelationForBrands = {
-        fetcher: getAllCategories,
-        data_key: 'allCategories',
+    const categoryRelationForBrands = useMemo(() => ({
+        data: allCategories,
         display_using: 'name',
         foreign_key: 'category_id'
-    };
+    }), [allCategories]);
 
-    const brandRelation = {
-        fetcher: getAllBrands,
-        data_key: 'allBrands',
+    const brandRelation = useMemo(() => ({
+        data: allBrands,
         display_using: 'name',
         foreign_key: 'id'
-    };
+    }), [allBrands]);
 
     return (
         <RangeProvider>

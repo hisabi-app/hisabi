@@ -18,15 +18,23 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
     const [selectedRelationId, setSelectedRelationId] = useState(0);
 
     useEffect(() => {
-        if(! relation) { return; }
+        if (!relation) { return; }
+
+        if (relation.data) {
+            setRelationData(relation.data);
+            if (relation.data.length > 0) {
+                setSelectedRelationId(relation.data[0].id);
+            }
+            return;
+        }
 
         relation.fetcher()
-            .then(({data}) => {
+            .then(({ data }) => {
                 setRelationData(data[relation.data_key])
                 setSelectedRelationId(data[relation.data_key][0].id)
             })
             .catch(console.error)
-    }, [])
+    }, [relation])
 
     useEffect(() => {
         setData(null);
@@ -37,7 +45,7 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
             return;
         }
 
-        if(relation) {
+        if (relation) {
             if (selectedRelationId) {
                 fetcher(selectedRange, selectedRelationId)
                     .then((response) => setData(response.data))
@@ -52,30 +60,30 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
     }, [selectedRelationId, selectedRange, metric])
 
     useEffect(() => {
-        if(data == null) { return; }
+        if (data == null) { return; }
 
-        if(chartRef != null) {
+        if (chartRef != null) {
             chartRef.destroy()
         }
 
         const average = (ctx) => {
             const values = ctx.chart.data.datasets[0].data;
-            if(values.length == 0) return 0;
+            if (values.length == 0) return 0;
 
             return values.reduce((a, b) => a + b, 0) / values.length;
         }
 
         const standardDeviation = (ctx) => {
             const values = ctx.chart.data.datasets[0].data;
-            if(values.length == 0) return 0;
+            if (values.length == 0) return 0;
 
             const n = values.length;
             const mean = average(ctx);
-            return Math.sqrt(values.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / (n-1)) - mean;
+            return Math.sqrt(values.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / (n - 1)) - mean;
         }
 
         const standardDeviationAnnotations = () => {
-            if(! show_standard_deviation) return [];
+            if (!show_standard_deviation) return [];
 
             return [
                 {
@@ -85,11 +93,11 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                     borderDashOffset: 0,
                     borderWidth: 2,
                     label: {
-                      display: true,
-                      backgroundColor: 'rgba(102, 102, 102, 0.5)',
-                      color: 'black',
-                      content: (ctx) => (average(ctx) + standardDeviation(ctx)).toFixed(2),
-                      position: 'start',
+                        display: true,
+                        backgroundColor: 'rgba(102, 102, 102, 0.5)',
+                        color: 'black',
+                        content: (ctx) => (average(ctx) + standardDeviation(ctx)).toFixed(2),
+                        position: 'start',
                     },
                     scaleID: 'y',
                     value: (ctx) => average(ctx) + standardDeviation(ctx)
@@ -101,11 +109,11 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                     borderDashOffset: 0,
                     borderWidth: 2,
                     label: {
-                      display: true,
-                      backgroundColor: 'rgba(102, 102, 102, 0.5)',
-                      color: 'black',
-                      content: (ctx) => (average(ctx) - standardDeviation(ctx)).toFixed(2),
-                      position: 'end',
+                        display: true,
+                        backgroundColor: 'rgba(102, 102, 102, 0.5)',
+                        color: 'black',
+                        content: (ctx) => (average(ctx) - standardDeviation(ctx)).toFixed(2),
+                        position: 'end',
                     },
                     scaleID: 'y',
                     value: (ctx) => average(ctx) - standardDeviation(ctx)
@@ -117,9 +125,9 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                     borderDashOffset: 0,
                     borderWidth: 2,
                     label: {
-                      display: true,
-                      backgroundColor: '#3b82f6',
-                      content: (ctx) => 'Average: ' + average(ctx).toFixed(2)
+                        display: true,
+                        backgroundColor: '#3b82f6',
+                        content: (ctx) => 'Average: ' + average(ctx).toFixed(2)
                     },
                     scaleID: 'y',
                     value: (ctx) => average(ctx)
@@ -133,43 +141,43 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
             let x_values = Array.from({ length: data.length }, (_, index) => index + 1);;
             let y_values = data.map(item => item.value);
 
-            let x_mean = x_values.reduce((a, b) => a + b, 0)/x_values.length;
-            let y_mean = y_values.reduce((a, b) => a + b, 0)/y_values.length;
+            let x_mean = x_values.reduce((a, b) => a + b, 0) / x_values.length;
+            let y_mean = y_values.reduce((a, b) => a + b, 0) / y_values.length;
 
             let slope = 0, slope_numerator = 0, slope_denominator = 0;
-            for(let i=0; i<x_values.length; i++){
-                slope_numerator += (x_values[i]-x_mean)*(y_values[i]-y_mean);
-                slope_denominator += Math.pow((x_values[i]-x_mean),2);
+            for (let i = 0; i < x_values.length; i++) {
+                slope_numerator += (x_values[i] - x_mean) * (y_values[i] - y_mean);
+                slope_denominator += Math.pow((x_values[i] - x_mean), 2);
             }
 
-            slope = slope_numerator/slope_denominator;
+            slope = slope_numerator / slope_denominator;
 
             regressor['slope'] = slope;
-            let intercept = y_mean - x_mean*slope;
+            let intercept = y_mean - x_mean * slope;
 
             regressor['intercept'] = intercept;
 
             let y_hat = [];
-            for(let i=0; i<x_values.length; i++){
-                y_hat.push(x_values[i]*regressor['slope']+regressor['intercept']);
+            for (let i = 0; i < x_values.length; i++) {
+                y_hat.push(x_values[i] * regressor['slope'] + regressor['intercept']);
             }
 
             regressor['y_hat'] = y_hat;
 
             let residual_sum_of_squares = 0, total_sum_of_squares = 0, r2 = 0;
 
-            for(let i=0; i<y_values.length; i++){
-                residual_sum_of_squares+= Math.pow((y_hat[i]-y_values[i]),2);
-                total_sum_of_squares += Math.pow((y_hat[i]-y_mean),2);
+            for (let i = 0; i < y_values.length; i++) {
+                residual_sum_of_squares += Math.pow((y_hat[i] - y_values[i]), 2);
+                total_sum_of_squares += Math.pow((y_hat[i] - y_mean), 2);
             }
 
-            r2 = 1- residual_sum_of_squares/total_sum_of_squares;
+            r2 = 1 - residual_sum_of_squares / total_sum_of_squares;
 
             regressor['r2'] = r2;
 
             return {
                 type: 'line',
-                label: 'Line of Best Fit (r2: '+String(r2)+')',
+                label: 'Line of Best Fit (r2: ' + String(r2) + ')',
                 data: y_hat,
                 borderColor: '#eaeaea',
                 pointRadius: 0,
@@ -234,16 +242,16 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                 },
                 scales: {
                     y: {
-                      display: false,
-                      beginAtZero: true,
-                      grid: {
                         display: false,
-                      },
+                        beginAtZero: true,
+                        grid: {
+                            display: false,
+                        },
                     },
                     x: {
                         display: false,
                         grid: {
-                          display: false
+                            display: false
                         },
                     }
                 },
@@ -251,10 +259,10 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
         }));
     }, [data]);
 
-    if(data == null) {
+    if (data == null) {
         return (
             <Card className="relative">
-                <LoadingView  />
+                <LoadingView />
             </Card>
         )
     }
@@ -264,12 +272,12 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
             <div className="px-6">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                        <h3 className="mr-2 text-base text-gray-600">{ name }</h3>
+                        <h3 className="mr-2 text-base text-gray-600">{name}</h3>
 
                         {relation && relationData && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                             name="relation"
                             value={selectedRelationId}
-                            onChange={(e) => {setSelectedRelationId(e.target.value)}}>
+                            onChange={(e) => { setSelectedRelationId(e.target.value) }}>
                             {relationData.map(relationItem => <option key={relationItem.id} value={relationItem.id}>{relationItem[relation.display_using]}</option>)}
                         </select>}
                     </div>

@@ -18,15 +18,23 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
     const [selectedRelationId, setSelectedRelationId] = useState(0);
 
     useEffect(() => {
-        if(! relation) { return; }
+        if (!relation) { return; }
+
+        if (relation.data) {
+            setRelationData(relation.data);
+            if (relation.data.length > 0) {
+                setSelectedRelationId(relation.data[0].id);
+            }
+            return;
+        }
 
         relation.fetcher()
-            .then(({data}) => {
+            .then(({ data }) => {
                 setRelationData(data[relation.data_key])
                 setSelectedRelationId(data[relation.data_key][0].id)
             })
             .catch(console.error)
-    }, [])
+    }, [relation])
 
     useEffect(() => {
         setData(null);
@@ -37,7 +45,7 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
             return;
         }
 
-        if(relation) {
+        if (relation) {
             if (selectedRelationId) {
                 fetcher(selectedRange, selectedRelationId)
                     .then((response) => setData(response.data))
@@ -52,9 +60,9 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
     }, [selectedRelationId, selectedRange, metric])
 
     useEffect(() => {
-        if(data == null) { return; }
+        if (data == null) { return; }
 
-        if(chartRef != null) {
+        if (chartRef != null) {
             chartRef.destroy()
         }
 
@@ -64,10 +72,10 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
             data: {
                 labels: data.map(item => item.label),
                 datasets: [{
-                  data: data.map(item => item.value),
-                  backgroundColor: colors().map(color => color.hex),
-                  cutout: '75%',
-                  borderWidth: 0
+                    data: data.map(item => item.value),
+                    backgroundColor: colors().map(color => color.hex),
+                    cutout: '75%',
+                    borderWidth: 0
                 }]
             },
             options: {
@@ -83,10 +91,10 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
         }));
     }, [data]);
 
-    if(data == null) {
+    if (data == null) {
         return (
             <Card className="relative">
-                <LoadingView  />
+                <LoadingView />
             </Card>
         )
     }
@@ -98,12 +106,12 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
             <div className="px-6 flex flex-col h-full">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                        <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
+                        <h3 className="mr-3 text-base text-gray-600">{name}</h3>
 
                         {relation && relationData && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                             name="relation"
                             value={selectedRelationId}
-                            onChange={(e) => {setSelectedRelationId(e.target.value)}}>
+                            onChange={(e) => { setSelectedRelationId(e.target.value) }}>
                             {relationData.map(relationItem => <option key={relationItem.id} value={relationItem.id}>{relationItem[relation.display_using]}</option>)}
                         </select>}
                     </div>
@@ -122,7 +130,7 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
                     </p>}
                 </div>
 
-                <div className="absolute w-16 h-16" style={{left: '30px', top: '40%'}}>
+                <div className="absolute w-16 h-16" style={{ left: '30px', top: '40%' }}>
                     <canvas id={metric}></canvas>
                 </div>
             </div>
