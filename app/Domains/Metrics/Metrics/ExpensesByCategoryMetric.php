@@ -10,8 +10,6 @@ class ExpensesByCategoryMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-
         $query = Category::query()
             ->where('type', Category::EXPENSES)
             ->join('brands', 'brands.category_id', '=', 'categories.id')
@@ -20,8 +18,8 @@ class ExpensesByCategoryMetric extends Metric
             ->groupBy("categories.id")
             ->orderBy('value', 'DESC');
 
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         return $query->get()->toArray();

@@ -10,7 +10,6 @@ class TotalExpensesTrendMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
         $dateFormat = $this->getDateFormat('%Y-%m');
 
         $query = Transaction::query()
@@ -19,8 +18,8 @@ class TotalExpensesTrendMetric extends Metric
             ->groupBy(DB::raw("label"))
             ->orderBy("label");
 
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         return $query->get()->toArray();

@@ -10,8 +10,6 @@ class TransactionsByCategoryMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-
         $query = Transaction::query()
             ->join('brands', 'brands.id', '=', 'transactions.brand_id')
             ->join('categories', 'categories.id', '=', 'brands.category_id')
@@ -19,8 +17,8 @@ class TransactionsByCategoryMetric extends Metric
             ->groupBy("categories.id")
             ->orderBy('value', 'DESC');
 
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         return $query->get()->toArray();

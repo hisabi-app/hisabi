@@ -9,8 +9,6 @@ class CirclePackMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-
         $colors = [
             'red' => '#ef4444',
             'blue' => '#3b82f6',
@@ -27,8 +25,8 @@ class CirclePackMetric extends Metric
             ->select('brands.name as brand_name', 'brands.category_id', DB::raw('sum(amount) as value'))
             ->groupBy(['brand_name', 'brands.category_id']);
 
-        if ($rangeData) {
-            $transactions->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $transactions->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         $categories = DB::table('categories')

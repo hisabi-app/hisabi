@@ -1,6 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Head, router } from '@inertiajs/react';
 import { debounce } from 'lodash';
+import { startOfMonth, endOfMonth } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
@@ -18,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import TransactionStats from '@/components/Domain/TransactionStats';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
+import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 
 
 export default function Index({ auth }: { auth: any }) {
@@ -41,6 +44,10 @@ export default function Index({ auth }: { auth: any }) {
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [filters, setFilters] = useState(initialFilters);
+    const [dateRange, setDateRange] = useState<DateRange>({
+        from: startOfMonth(new Date()),
+        to: endOfMonth(new Date()),
+    });
 
     useEffect(() => {
         getAllBrands()
@@ -163,13 +170,25 @@ export default function Index({ auth }: { auth: any }) {
         handleFiltersApply(updatedFilters);
     };
 
+    const handleDateChange = (newDateRange: DateRange | undefined) => {
+        if (newDateRange?.from && newDateRange?.to) {
+            setDateRange(newDateRange);
+        }
+    };
+
     const header = (
         <div className="flex items-center justify-between w-full">
             <h2>Transactions</h2>
-            <RecordTransactionButton
-                brands={allBrands}
-                onSuccess={onCreate}
-            />
+            <div className="flex items-center gap-2">
+                <DatePickerWithRange
+                    onDateChange={handleDateChange}
+                    initialDate={dateRange}
+                />
+                <RecordTransactionButton
+                    brands={allBrands}
+                    onSuccess={onCreate}
+                />
+            </div>
         </div>
     )
 
@@ -188,7 +207,7 @@ export default function Index({ auth }: { auth: any }) {
             <div className="p-4">
                 <div className="max-w-7xl mx-auto grid gap-4">
 
-                    <TransactionStats />
+                    <TransactionStats dateRange={dateRange} />
 
                     <div className="flex justify-between gap-2">
                         <Input

@@ -119,11 +119,11 @@ export const deleteTransaction = async (id) => {
     };
 }
 
-export const getTransactionStats = async (range = 'current-month') => {
+export const getTransactionStats = async (dateRange) => {
     const [incomeRes, expensesRes, countRes] = await Promise.all([
-        getTotalIncome(range),
-        getTotalExpenses(range),
-        getTransactionsCount(range)
+        getTotalIncome(dateRange),
+        getTotalExpenses(dateRange),
+        getTransactionsCount(dateRange)
     ]);
 
     return {

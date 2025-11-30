@@ -11,14 +11,12 @@ class CategoryStatsMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-
         $query = Transaction::query()
             ->join('brands', 'transactions.brand_id', '=', 'brands.id')
             ->join('categories', 'brands.category_id', '=', 'categories.id');
 
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         $mostUsedCategory = (clone $query)

@@ -24,7 +24,10 @@ class CategoryDailyTrendMetricTest extends MetricsTestCase
             'created_at' => $today
         ]);
 
-        $response = $this->getJson('/api/v1/metrics/category-daily-trend?range=current-month&id=' . $this->expensesCategory->id);
+        $from = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $to = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/category-daily-trend?from={$from}&to={$to}&id=" . $this->expensesCategory->id);
 
         $response->assertOk();
         $data = $response->json('data');
@@ -40,7 +43,10 @@ class CategoryDailyTrendMetricTest extends MetricsTestCase
         $t->created_at = $today;
         $t->save();
 
-        $response = $this->getJson('/api/v1/metrics/category-daily-trend?range=current-month&id=' . $this->expensesCategory->id);
+        $from = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $to = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/category-daily-trend?from={$from}&to={$to}&id=" . $this->expensesCategory->id);
 
         $response->assertOk();
         $data = $response->json('data');
@@ -64,7 +70,10 @@ class CategoryDailyTrendMetricTest extends MetricsTestCase
         $t2->created_at = $today;
         $t2->save();
 
-        $response = $this->getJson('/api/v1/metrics/category-daily-trend?range=current-month&id=' . $this->expensesCategory->id);
+        $from = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $to = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/category-daily-trend?from={$from}&to={$to}&id=" . $this->expensesCategory->id);
 
         $response->assertOk();
         $data = $response->json('data');

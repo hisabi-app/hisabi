@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Chart, LineElement, Tooltip, LineController, CategoryScale, LinearScale, PointElement, Filler } from 'chart.js';
 import AnnotationPlugin from 'chartjs-plugin-annotation';
+import { DateRange } from 'react-day-picker';
 
 import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber } from '@/Utils';
-import { useRange } from '@/contexts/RangeContext';
 import { useInView } from '@/hooks/useInView';
 
 Chart.register(LineElement, Tooltip, LineController, CategoryScale, LinearScale, PointElement, Filler, AnnotationPlugin);
 
-export default function TrendMetric({ name, metric, relation, show_standard_deviation }) {
-    const { selectedRange } = useRange();
+interface TrendMetricProps {
+    name: string;
+    metric: string;
+    relation?: any;
+    show_standard_deviation?: boolean;
+    dateRange: DateRange | undefined;
+}
+
+export default function TrendMetric({ name, metric, relation, show_standard_deviation, dateRange }: TrendMetricProps) {
     const [data, setData] = useState(null);
     const [chartRef, setChartRef] = useState(null);
     const [relationData, setRelationData] = useState([]);
@@ -40,7 +47,7 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
     }, [relation, isInView])
 
     useEffect(() => {
-        if (!isInView) return;
+        if (!isInView || !dateRange?.from || !dateRange?.to) return;
 
         const fetcher = metricEndpoints[metric];
         if (!fetcher) {
@@ -50,17 +57,17 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
 
         if (relation) {
             if (selectedRelationId) {
-                fetcher(selectedRange, selectedRelationId)
+                fetcher(dateRange, selectedRelationId)
                     .then((response) => setData(response.data))
                     .catch(console.error)
             }
             return;
         }
 
-        fetcher(selectedRange)
+        fetcher(dateRange)
             .then((response) => setData(response.data))
             .catch(console.error)
-    }, [selectedRelationId, selectedRange, metric, isInView])
+    }, [selectedRelationId, dateRange, metric, isInView])
 
     useEffect(() => {
         if (data == null) { return; }

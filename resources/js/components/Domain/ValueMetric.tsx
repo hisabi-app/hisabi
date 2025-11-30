@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { TrendingUpIcon, TrendingDownIcon, InformationCircleIcon } from '@heroicons/react/solid';
+import { DateRange } from 'react-day-picker';
 
 import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { formatNumber, getAppCurrency } from '../../Utils';
-import { useRange } from '@/contexts/RangeContext';
 import { useInView } from '@/hooks/useInView';
 
-export default function ValueMetric({name, helpText, metric}) {
-    const { selectedRange } = useRange();
+interface ValueMetricProps {
+    name: string;
+    helpText?: string;
+    metric: string;
+    dateRange: DateRange | undefined;
+}
+
+export default function ValueMetric({ name, helpText, metric, dateRange }: ValueMetricProps) {
     const [value, setValue] = useState(null);
     const [previous, setPrevious] = useState(null);
     const [ref, isInView] = useInView();
 
     useEffect(() => {
-        if (!isInView) return;
+        if (!isInView || !dateRange?.from || !dateRange?.to) return;
 
         const fetchData = async () => {
             const fetcher = metricEndpoints[metric];
@@ -24,13 +30,13 @@ export default function ValueMetric({name, helpText, metric}) {
                 return;
             }
 
-            const response = await fetcher(selectedRange);
+            const response = await fetcher(dateRange);
             setValue(response.data.value);
             setPrevious(response.data.previous);
         };
 
         fetchData();
-    }, [selectedRange, metric, isInView])
+    }, [dateRange, metric, isInView])
 
     if(value == null) {
         return (

@@ -11,31 +11,30 @@ class CategoryDailyTrendMetric extends Metric
 {
     protected int $categoryId;
 
-    public function __construct(?string $range, int $categoryId)
+    public function __construct(?string $from, ?string $to, int $categoryId)
     {
-        parent::__construct($range);
+        parent::__construct($from, $to);
         $this->categoryId = $categoryId;
     }
 
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-        if (!$rangeData) {
+        if (!$this->hasDateRange()) {
             return [];
         }
 
         $dateFormat = $this->getDateFormat('%Y-%m-%d');
 
         $transactions = Transaction::whereHas('brand.category', fn($q) => $q->where('id', $this->categoryId))
-            ->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()])
+            ->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()])
             ->select(DB::raw("{$dateFormat} as label, SUM(transactions.amount) as value"))
             ->groupBy(DB::raw("label"))
             ->orderBy('label')
             ->get()
             ->keyBy('label');
 
-        $startDate = Carbon::parse($rangeData->start());
-        $endDate = Carbon::parse($rangeData->end());
+        $startDate = Carbon::parse($this->getStartDate());
+        $endDate = Carbon::parse($this->getEndDate());
         $currentDate = $startDate->copy();
         $results = [];
 

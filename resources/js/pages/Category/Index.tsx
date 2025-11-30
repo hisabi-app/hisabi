@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { debounce } from 'lodash';
+import { startOfMonth, endOfMonth } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
@@ -14,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CategoryStats from '@/components/Domain/CategoryStats';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
+import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 
 interface Category {
     id: number;
@@ -36,6 +39,10 @@ export default function Index({ auth }: { auth: any }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [editCategory, setEditCategory] = useState<Category | null>(null);
     const [showCreate, setShowCreate] = useState(false);
+    const [dateRange, setDateRange] = useState<DateRange>({
+        from: startOfMonth(new Date()),
+        to: endOfMonth(new Date()),
+    });
 
     useEffect(() => {
         getAllCategories()
@@ -103,10 +110,22 @@ export default function Index({ auth }: { auth: any }) {
         return grouped;
     }, [filteredCategories]);
 
+    const handleDateChange = (newDateRange: DateRange | undefined) => {
+        if (newDateRange?.from && newDateRange?.to) {
+            setDateRange(newDateRange);
+        }
+    };
+
     const header = (
         <div className="flex items-center justify-between w-full">
             <h2>Categories</h2>
-            <Button onClick={() => setShowCreate(true)}>Create Category</Button>
+            <div className="flex items-center gap-2">
+                <DatePickerWithRange
+                    onDateChange={handleDateChange}
+                    initialDate={dateRange}
+                />
+                <Button onClick={() => setShowCreate(true)}>Create Category</Button>
+            </div>
         </div>
     )
 
@@ -127,7 +146,7 @@ export default function Index({ auth }: { auth: any }) {
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto grid gap-4">
-                    <CategoryStats />
+                    <CategoryStats dateRange={dateRange} />
 
                     {categories.length > 0 && (
                         <Tabs defaultValue="all" className="w-full">
@@ -187,7 +206,7 @@ export default function Index({ auth }: { auth: any }) {
                                                             <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                 <p>{category.name}</p>
                                                             </button>
-                                                            <Link 
+                                                            <Link
                                                                 href={`/transactions?category=${category.id}`}
                                                                 className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                             >
@@ -225,7 +244,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <Link 
+                                                                <Link
                                                                     href={`/transactions?category=${category.id}`}
                                                                     className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >
@@ -264,7 +283,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <Link 
+                                                                <Link
                                                                     href={`/transactions?category=${category.id}`}
                                                                     className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >
@@ -303,7 +322,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <Link 
+                                                                <Link
                                                                     href={`/transactions?category=${category.id}`}
                                                                     className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >
@@ -342,7 +361,7 @@ export default function Index({ auth }: { auth: any }) {
                                                                 <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
                                                                     <p>{category.name}</p>
                                                                 </button>
-                                                                <Link 
+                                                                <Link
                                                                     href={`/transactions?category=${category.id}`}
                                                                     className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
                                                                 >

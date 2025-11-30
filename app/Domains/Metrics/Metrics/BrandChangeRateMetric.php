@@ -10,15 +10,14 @@ class BrandChangeRateMetric extends Metric
 {
     protected int $brandId;
 
-    public function __construct(?string $range, int $brandId)
+    public function __construct(?string $from, ?string $to, int $brandId)
     {
-        parent::__construct($range);
+        parent::__construct($from, $to);
         $this->brandId = $brandId;
     }
 
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
         $dateFormat = $this->getDateFormat('%Y-%m');
 
         $query = Transaction::where('brand_id', $this->brandId)
@@ -26,8 +25,8 @@ class BrandChangeRateMetric extends Metric
             ->groupBy(DB::raw("label"))
             ->orderBy('label');
 
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         $data = $query->get();

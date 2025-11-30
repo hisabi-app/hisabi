@@ -10,16 +10,14 @@ class TransactionsByBrandMetric extends Metric
 {
     protected int $categoryId;
 
-    public function __construct(?string $range, int $categoryId)
+    public function __construct(?string $from, ?string $to, int $categoryId)
     {
-        parent::__construct($range);
+        parent::__construct($from, $to);
         $this->categoryId = $categoryId;
     }
 
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-
         $query = Transaction::query()
             ->join('brands', 'brands.id', '=', 'transactions.brand_id')
             ->where('brands.category_id', $this->categoryId)
@@ -27,8 +25,8 @@ class TransactionsByBrandMetric extends Metric
             ->groupBy("brands.id")
             ->orderBy('value', 'DESC');
 
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         return $query->get()->toArray();

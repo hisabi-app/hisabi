@@ -20,7 +20,10 @@ class TotalIncomeMetricTest extends MetricsTestCase
         Transaction::factory()->create(['brand_id' => $this->incomeBrand->id, 'amount' => 5000]);
         Transaction::factory()->create(['brand_id' => $this->incomeBrand->id, 'amount' => 3000]);
 
-        $response = $this->getJson('/api/v1/metrics/total-income?range=current-year');
+        $from = Carbon::now()->startOfYear()->format('Y-m-d');
+        $to = Carbon::now()->endOfYear()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/total-income?from={$from}&to={$to}");
 
         $response->assertOk();
         $this->assertEquals(8000, $response->json('data.value'));
@@ -33,7 +36,10 @@ class TotalIncomeMetricTest extends MetricsTestCase
         Transaction::factory()->create(['brand_id' => $this->incomeBrand->id, 'amount' => 5000]);
         Transaction::factory()->create(['brand_id' => $this->expensesBrand->id, 'amount' => 1000]);
 
-        $response = $this->getJson('/api/v1/metrics/total-income?range=current-year');
+        $from = Carbon::now()->startOfYear()->format('Y-m-d');
+        $to = Carbon::now()->endOfYear()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/total-income?from={$from}&to={$to}");
 
         $response->assertOk();
         $this->assertEquals(5000, $response->json('data.value'));
@@ -60,7 +66,10 @@ class TotalIncomeMetricTest extends MetricsTestCase
         $previousTransaction->created_at = $lastMonthDate;
         $previousTransaction->save();
 
-        $response = $this->getJson('/api/v1/metrics/total-income?range=current-month');
+        $from = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $to = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/total-income?from={$from}&to={$to}");
 
         $response->assertOk();
         $this->assertEquals(5000, $response->json('data.value'));
@@ -71,7 +80,10 @@ class TotalIncomeMetricTest extends MetricsTestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->getJson('/api/v1/metrics/total-income?range=current-year');
+        $from = Carbon::now()->startOfYear()->format('Y-m-d');
+        $to = Carbon::now()->endOfYear()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/total-income?from={$from}&to={$to}");
 
         $response->assertOk();
         $this->assertEquals(0, $response->json('data.value'));
@@ -98,7 +110,10 @@ class TotalIncomeMetricTest extends MetricsTestCase
         $oldTransaction->created_at = $twoMonthsAgoDate;
         $oldTransaction->save();
 
-        $response = $this->getJson('/api/v1/metrics/total-income?range=current-month');
+        $from = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $to = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $response = $this->getJson("/api/v1/metrics/total-income?from={$from}&to={$to}");
 
         $response->assertOk();
         $this->assertEquals(5000, $response->json('data.value'));

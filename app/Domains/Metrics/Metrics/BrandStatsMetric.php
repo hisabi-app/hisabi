@@ -11,11 +11,9 @@ class BrandStatsMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-
         $query = Transaction::query();
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         $mostUsedBrand = (clone $query)

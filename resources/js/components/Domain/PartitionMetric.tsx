@@ -1,18 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Chart, ArcElement, DoughnutController } from 'chart.js';
 import { sumBy } from 'lodash';
+import { DateRange } from 'react-day-picker';
 
 import { metricEndpoints } from '@/Api/metrics';
 import { Card } from '@/components/ui/card';
 import LoadingView from "../Global/LoadingView";
 import { colors, formatNumber, getTailwindColor, getAppCurrency } from '../../Utils';
-import { useRange } from '@/contexts/RangeContext';
 import { useInView } from '@/hooks/useInView';
 
 Chart.register(ArcElement, DoughnutController);
 
-export default function PartitionMetric({ name, metric, relation, show_currency }) {
-    const { selectedRange } = useRange();
+interface PartitionMetricProps {
+    name: string;
+    metric: string;
+    relation?: any;
+    show_currency?: boolean;
+    dateRange: DateRange | undefined;
+}
+
+export default function PartitionMetric({ name, metric, relation, show_currency, dateRange }: PartitionMetricProps) {
     const [data, setData] = useState(null);
     const [chartRef, setChartRef] = useState(null);
     const [relationData, setRelationData] = useState([]);
@@ -40,7 +47,7 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
     }, [relation, isInView])
 
     useEffect(() => {
-        if (!isInView) return;
+        if (!isInView || !dateRange?.from || !dateRange?.to) return;
 
         const fetcher = metricEndpoints[metric];
         if (!fetcher) {
@@ -50,17 +57,17 @@ export default function PartitionMetric({ name, metric, relation, show_currency 
 
         if (relation) {
             if (selectedRelationId) {
-                fetcher(selectedRange, selectedRelationId)
+                fetcher(dateRange, selectedRelationId)
                     .then((response) => setData(response.data))
                     .catch(console.error)
             }
             return;
         }
 
-        fetcher(selectedRange)
+        fetcher(dateRange)
             .then((response) => setData(response.data))
             .catch(console.error)
-    }, [selectedRelationId, selectedRange, metric, isInView])
+    }, [selectedRelationId, dateRange, metric, isInView])
 
     useEffect(() => {
         if (data == null) { return; }

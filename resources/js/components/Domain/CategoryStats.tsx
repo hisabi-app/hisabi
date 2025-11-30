@@ -2,20 +2,25 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { getCategoryStats } from '@/Api';
 import { formatNumber, getAppCurrency } from '@/Utils';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DateRange } from 'react-day-picker';
 
-function CategoryStats() {
+interface CategoryStatsProps {
+    dateRange: DateRange | undefined;
+}
+
+function CategoryStats({ dateRange }: CategoryStatsProps) {
     const [stats, setStats] = useState({
         mostUsedCategory: null,
         highestSpendingCategory: null,
         highestIncomeCategory: null
     });
-    const [range, setRange] = useState('current-month');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (!dateRange?.from || !dateRange?.to) return;
+
         setLoading(true);
-        getCategoryStats(range)
+        getCategoryStats(dateRange)
             .then(({ data }) => {
                 setStats({
                     mostUsedCategory: data.mostUsedCategory,
@@ -25,24 +30,10 @@ function CategoryStats() {
             })
             .catch(console.error)
             .finally(() => setLoading(false));
-    }, [range]);
+    }, [dateRange]);
 
     return (
-        <Card className="overflow-hidden p-0 relative gap-0">
-            <div className='absolute top-2 right-2'>
-                <Select value={range} onValueChange={setRange}>
-                    <SelectTrigger className='w-auto bg-white'>
-                        <SelectValue placeholder="Select period" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="current-month">Current Month</SelectItem>
-                        <SelectItem value="last-month">Last Month</SelectItem>
-                        <SelectItem value="current-year">Current Year</SelectItem>
-                        <SelectItem value="last-year">Last Year</SelectItem>
-                        <SelectItem value="all-time">All Time</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
+        <Card className="overflow-hidden p-0 gap-0">
             <div className="grid grid-cols-3 divide-y md:divide-y-0 md:divide-x">
                 <CardContent className="px-6 py-4">
                     <div className="text-sm text-muted-foreground mb-2">Highest income</div>
@@ -101,4 +92,3 @@ function CategoryStats() {
 }
 
 export default CategoryStats;
-

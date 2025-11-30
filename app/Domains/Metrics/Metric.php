@@ -3,25 +3,51 @@
 namespace App\Domains\Metrics;
 
 use App\Contracts\HasPreviousRange;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 abstract class Metric
 {
-    protected ?string $range = null;
+    protected ?string $from = null;
+    protected ?string $to = null;
 
-    public function __construct(?string $range = null)
+    public function __construct(?string $from = null, ?string $to = null)
     {
-        $this->range = $range;
+        $this->from = $from;
+        $this->to = $to;
     }
 
     abstract public function calculate(): array;
 
-    protected function getRange(): mixed
+    protected function getStartDate(): ?string
     {
-        if (!$this->range) {
+        return $this->from;
+    }
+
+    protected function getEndDate(): ?string
+    {
+        return $this->to;
+    }
+
+    protected function hasDateRange(): bool
+    {
+        return $this->from !== null && $this->to !== null;
+    }
+
+    protected function getPreviousRange(): ?array
+    {
+        if (!$this->hasDateRange()) {
             return null;
         }
-        return app('findRangeByKey', ["key" => $this->range]);
+
+        $from = Carbon::parse($this->from);
+        $to = Carbon::parse($this->to);
+        $daysDiff = $from->diffInDays($to) + 1;
+
+        return [
+            'start' => $from->copy()->subDays($daysDiff)->format('Y-m-d'),
+            'end' => $from->copy()->subDay()->format('Y-m-d'),
+        ];
     }
 
     protected function getDateFormat(string $format): string
@@ -32,10 +58,5 @@ abstract class Metric
             return "strftime('{$sqliteFormat}', created_at)";
         }
         return "date_format(created_at, '{$format}')";
-    }
-
-    protected function hasPreviousRange($rangeData): bool
-    {
-        return is_a($rangeData, HasPreviousRange::class);
     }
 }

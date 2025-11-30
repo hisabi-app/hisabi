@@ -4,18 +4,12 @@ namespace App\Domain\Metrics;
 
 use App\Domain\Element;
 use Illuminate\Support\Str;
-use App\Domain\Ranges\AllTime;
-use \App\Domain\Ranges\LastYear;
-use \App\Domain\Ranges\LastMonth;
-use \App\Domain\Ranges\CurrentYear;
-use \App\Domain\Ranges\CurrentMonth;
 
 abstract class Metric extends Element
 {
     protected $component;
     protected $width = '1/2';
     protected $helpText;
-    protected $ranges = [];
     protected $apiEndpoint;
     protected $showCurrency = true;
 
@@ -32,26 +26,15 @@ abstract class Metric extends Element
     public function setWidth($width)
     {
         $this->width = $width;
-        
+
         return $this;
     }
 
     public function help($helpText)
     {
         $this->helpText = $helpText;
-        
-        return $this;
-    }
 
-    public function ranges()
-    {
-        return [
-            new CurrentMonth,
-            new LastMonth,
-            new CurrentYear,
-            new LastYear,
-            new AllTime,
-        ];
+        return $this;
     }
 
     public function apiEndpoint()
@@ -65,7 +48,6 @@ abstract class Metric extends Element
             'component' => $this->component(),
             'width' => $this->width(),
             'helpText' => $this->helpText,
-            'ranges' => $this->ranges(),
             'api_endpoint' => $this->apiEndpoint(),
             'show_currency' => $this->showCurrency,
         ]);

@@ -36,13 +36,13 @@ class MetricsController extends Controller
 {
     public function totalIncome(Request $request): JsonResponse
     {
-        $metric = new TotalIncomeMetric($request->query('range'));
+        $metric = new TotalIncomeMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function totalExpenses(Request $request): JsonResponse
     {
-        $metric = new TotalExpensesMetric($request->query('range'));
+        $metric = new TotalExpensesMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
@@ -72,26 +72,27 @@ class MetricsController extends Controller
 
     public function netWorthTrend(Request $request): JsonResponse
     {
-        $metric = new NetWorthTrendMetric($request->query('range'));
+        $metric = new NetWorthTrendMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function totalIncomeTrend(Request $request): JsonResponse
     {
-        $metric = new TotalIncomeTrendMetric($request->query('range'));
+        $metric = new TotalIncomeTrendMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function totalExpensesTrend(Request $request): JsonResponse
     {
-        $metric = new TotalExpensesTrendMetric($request->query('range'));
+        $metric = new TotalExpensesTrendMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function categoryTrend(Request $request): JsonResponse
     {
         $metric = new CategoryTrendMetric(
-            $request->query('range'),
+            $request->query('from'),
+            $request->query('to'),
             (int) $request->query('id')
         );
         return response()->json(['data' => $metric->calculate()]);
@@ -100,7 +101,8 @@ class MetricsController extends Controller
     public function categoryDailyTrend(Request $request): JsonResponse
     {
         $metric = new CategoryDailyTrendMetric(
-            $request->query('range'),
+            $request->query('from'),
+            $request->query('to'),
             (int) $request->query('id')
         );
         return response()->json(['data' => $metric->calculate()]);
@@ -109,7 +111,8 @@ class MetricsController extends Controller
     public function brandTrend(Request $request): JsonResponse
     {
         $metric = new BrandTrendMetric(
-            $request->query('range'),
+            $request->query('from'),
+            $request->query('to'),
             (int) $request->query('id')
         );
         return response()->json(['data' => $metric->calculate()]);
@@ -118,7 +121,8 @@ class MetricsController extends Controller
     public function brandChangeRate(Request $request): JsonResponse
     {
         $metric = new BrandChangeRateMetric(
-            $request->query('range'),
+            $request->query('from'),
+            $request->query('to'),
             (int) $request->query('id')
         );
         return response()->json(['data' => $metric->calculate()]);
@@ -126,20 +130,21 @@ class MetricsController extends Controller
 
     public function expensesByCategory(Request $request): JsonResponse
     {
-        $metric = new ExpensesByCategoryMetric($request->query('range'));
+        $metric = new ExpensesByCategoryMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function incomeByCategory(Request $request): JsonResponse
     {
-        $metric = new IncomeByCategoryMetric($request->query('range'));
+        $metric = new IncomeByCategoryMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function spendingByBrand(Request $request): JsonResponse
     {
         $metric = new SpendingByBrandMetric(
-            $request->query('range'),
+            $request->query('from'),
+            $request->query('to'),
             (int) $request->query('category_id')
         );
         return response()->json(['data' => $metric->calculate()]);
@@ -147,20 +152,21 @@ class MetricsController extends Controller
 
     public function transactionsCount(Request $request): JsonResponse
     {
-        $metric = new TransactionsCountMetric($request->query('range'));
+        $metric = new TransactionsCountMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function transactionsByCategory(Request $request): JsonResponse
     {
-        $metric = new TransactionsByCategoryMetric($request->query('range'));
+        $metric = new TransactionsByCategoryMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function transactionsByBrand(Request $request): JsonResponse
     {
         $metric = new TransactionsByBrandMetric(
-            $request->query('range'),
+            $request->query('from'),
+            $request->query('to'),
             (int) $request->query('id')
         );
         return response()->json(['data' => $metric->calculate()]);
@@ -168,26 +174,27 @@ class MetricsController extends Controller
 
     public function highestTransaction(Request $request): JsonResponse
     {
-        $metric = new HighestTransactionMetric($request->query('range'));
+        $metric = new HighestTransactionMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function lowestTransaction(Request $request): JsonResponse
     {
-        $metric = new LowestTransactionMetric($request->query('range'));
+        $metric = new LowestTransactionMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function averageTransaction(Request $request): JsonResponse
     {
-        $metric = new AverageTransactionMetric($request->query('range'));
+        $metric = new AverageTransactionMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function transactionsStdDev(Request $request): JsonResponse
     {
         $metric = new TransactionsStdDevMetric(
-            $request->query('range'),
+            $request->query('from'),
+            $request->query('to'),
             (int) $request->query('id')
         );
         return response()->json(['data' => $metric->calculate()]);
@@ -195,19 +202,19 @@ class MetricsController extends Controller
 
     public function brandStats(Request $request): JsonResponse
     {
-        $metric = new BrandStatsMetric($request->query('range'));
+        $metric = new BrandStatsMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function categoryStats(Request $request): JsonResponse
     {
-        $metric = new CategoryStatsMetric($request->query('range'));
+        $metric = new CategoryStatsMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function circlePack(Request $request): JsonResponse
     {
-        $metric = new CirclePackMetric($request->query('range'));
+        $metric = new CirclePackMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 }

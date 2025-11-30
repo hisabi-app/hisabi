@@ -9,21 +9,19 @@ class TransactionsStdDevMetric extends Metric
 {
     protected int $categoryId;
 
-    public function __construct(?string $range, int $categoryId)
+    public function __construct(?string $from, ?string $to, int $categoryId)
     {
-        parent::__construct($range);
+        parent::__construct($from, $to);
         $this->categoryId = $categoryId;
     }
 
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
-
         $query = Transaction::query()
             ->whereHas('brand.category', fn($q) => $q->where('id', $this->categoryId));
 
-        if ($rangeData) {
-            $query->whereBetween('transactions.created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('transactions.created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         $amounts = $query->pluck('amount')->toArray();

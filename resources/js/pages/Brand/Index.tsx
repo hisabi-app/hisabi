@@ -1,6 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { debounce } from 'lodash';
+import { startOfMonth, endOfMonth } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 
 import Authenticated from '@/Layouts/Authenticated';
 import LoadMore from '@/components/Global/LoadMore';
@@ -16,6 +18,7 @@ import { ArrowElbowDownRightIcon } from '@phosphor-icons/react';
 import { Badge } from '@/components/ui/badge';
 import BrandStats from '@/components/Domain/BrandStats';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
+import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 
 export default function Index({auth}) {
     const [brands, setBrands] = useState([]);
@@ -26,6 +29,10 @@ export default function Index({auth}) {
     const [loading, setLoading] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
+    const [dateRange, setDateRange] = useState<DateRange>({
+        from: startOfMonth(new Date()),
+        to: endOfMonth(new Date()),
+    });
 
     useEffect(() => {
         getAllCategories()
@@ -93,10 +100,22 @@ export default function Index({auth}) {
         () => debounce(performSearchHandler, 300)
         , []);
 
+    const handleDateChange = (newDateRange: DateRange | undefined) => {
+        if (newDateRange?.from && newDateRange?.to) {
+            setDateRange(newDateRange);
+        }
+    };
+
     const header = (
         <div className="flex items-center justify-between w-full">
             <h2>Brands</h2>
-            <Button onClick={() => setShowCreate(true)}>Create Brand</Button>
+            <div className="flex items-center gap-2">
+                <DatePickerWithRange
+                    onDateChange={handleDateChange}
+                    initialDate={dateRange}
+                />
+                <Button onClick={() => setShowCreate(true)}>Create Brand</Button>
+            </div>
         </div>
     )
 
@@ -109,7 +128,7 @@ export default function Index({auth}) {
                 onCreate={onCreate}
                 onClose={() => setShowCreate(false)} />
 
-            <Edit 
+            <Edit
                 brand={editItem}
                 categories={allCategories}
                 onUpdate={onUpdate}
@@ -120,7 +139,7 @@ export default function Index({auth}) {
             <div className="p-4">
                 <div className="max-w-7xl mx-auto">
                     <div className='mb-4'>
-                        <BrandStats />
+                        <BrandStats dateRange={dateRange} />
                     </div>
 
                     {(brands.length > 0 || searchQuery) && (<div className='mb-4'>
@@ -136,10 +155,10 @@ export default function Index({auth}) {
                         {brands.length > 0 && brands.map((brand) => {
                             const hasCategory = brand.category !== null;
                             const isUncategorized = !hasCategory;
-                            const CategoryIcon = brand.category?.icon 
-                                ? getCategoryIcon(brand.category.icon) 
+                            const CategoryIcon = brand.category?.icon
+                                ? getCategoryIcon(brand.category.icon)
                                 : null;
-                            
+
                             return (
                                 <Card key={brand.id} className={`py-0 ${isUncategorized ? 'bg-red-50 border-red-100' : ''}`} id={'item-' + brand.id}>
                                     <CardContent className='flex justify-between items-center px-4 py-3'>
@@ -163,7 +182,7 @@ export default function Index({auth}) {
                                             </div>
                                         </div>
                                         <div className='flex gap-2 items-center'>
-                                            <Link 
+                                            <Link
                                                 href={`/transactions?brand=${brand.id}`}
                                                 className='text-muted-foreground hover:text-foreground text-sm min-w-26 text-right hover:underline transition-colors'
                                             >

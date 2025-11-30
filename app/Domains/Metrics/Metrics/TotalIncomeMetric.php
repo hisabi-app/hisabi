@@ -9,18 +9,18 @@ class TotalIncomeMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
         $query = Transaction::query()->income();
 
-        if ($rangeData) {
-            $query->whereBetween('created_at', [$rangeData->start(), $rangeData->end()]);
+        if ($this->hasDateRange()) {
+            $query->whereBetween('created_at', [$this->getStartDate(), $this->getEndDate()]);
         }
 
         $previous = 0;
-        if ($this->hasPreviousRange($rangeData)) {
+        $previousRange = $this->getPreviousRange();
+        if ($previousRange) {
             $previous = Transaction::query()
                 ->income()
-                ->whereBetween('created_at', [$rangeData->previousRangeStart(), $rangeData->previousRangeEnd()])
+                ->whereBetween('created_at', [$previousRange['start'], $previousRange['end']])
                 ->sum('amount');
         }
 

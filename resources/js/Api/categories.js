@@ -99,8 +99,8 @@ export const deleteCategory = async (id) => {
     };
 }
 
-export const getCategoryStats = async (range = 'current-month') => {
-    const response = await getCategoryStatsMetric(range);
+export const getCategoryStats = async (dateRange) => {
+    const response = await getCategoryStatsMetric(dateRange);
     return {
         data: response.data
     };

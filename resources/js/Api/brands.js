@@ -129,8 +129,8 @@ export const deleteBrand = async (id) => {
     };
 }
 
-export const getBrandStats = async (range = 'current-month') => {
-    const response = await getBrandStatsMetric(range);
+export const getBrandStats = async (dateRange) => {
+    const response = await getBrandStatsMetric(dateRange);
     return {
         data: response.data
     };

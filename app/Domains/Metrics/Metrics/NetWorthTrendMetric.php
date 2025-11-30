@@ -10,7 +10,6 @@ class NetWorthTrendMetric extends Metric
 {
     public function calculate(): array
     {
-        $rangeData = $this->getRange();
         $dateFormat = $this->getDateFormat('%Y-%m');
 
         $income = Transaction::query()
@@ -41,10 +40,10 @@ class NetWorthTrendMetric extends Metric
             $results[] = ['label' => $label, 'value' => $runningNetWorth];
         }
 
-        if ($rangeData) {
-            $results = array_filter($results, function ($item) use ($rangeData) {
+        if ($this->hasDateRange()) {
+            $results = array_filter($results, function ($item) {
                 $itemDate = $item['label'] . '-01';
-                return $itemDate >= $rangeData->start() && $itemDate <= $rangeData->end();
+                return $itemDate >= $this->getStartDate() && $itemDate <= $this->getEndDate();
             });
             $results = array_values($results);
         }

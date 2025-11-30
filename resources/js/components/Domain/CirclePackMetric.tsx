@@ -1,18 +1,23 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { DateRange } from 'react-day-picker';
 import { metricEndpoints } from '@/Api/metrics';
 import LoadingView from "../Global/LoadingView";
 import { Card } from '@/components/ui/card';
-import { useRange } from '@/contexts/RangeContext';
 import { useInView } from '@/hooks/useInView';
 
-export default function CirclePackMetric({name, metric}) {
-    const { selectedRange } = useRange();
+interface CirclePackMetricProps {
+    name: string;
+    metric: string;
+    dateRange: DateRange | undefined;
+}
+
+export default function CirclePackMetric({ name, metric, dateRange }: CirclePackMetricProps) {
     const [value, setValue] = useState(null);
     const refContainer = useRef<HTMLDivElement>(null);
     const [ref, isInView] = useInView();
 
     useEffect(() => {
-        if (!isInView) return;
+        if (!isInView || !dateRange?.from || !dateRange?.to) return;
 
         let isCancelled = false;
 
@@ -24,7 +29,7 @@ export default function CirclePackMetric({name, metric}) {
             }
 
             try {
-                const response = await fetcher(selectedRange);
+                const response = await fetcher(dateRange);
 
                 // Check if the component is still mounted and this is the latest request
                 if (!isCancelled) {
@@ -44,7 +49,7 @@ export default function CirclePackMetric({name, metric}) {
         return () => {
             isCancelled = true;
         };
-    }, [selectedRange, metric, isInView])
+    }, [dateRange, metric, isInView])
 
     // Chart initialization effect - only runs on client side
     useEffect(() => {
@@ -60,7 +65,7 @@ export default function CirclePackMetric({name, metric}) {
             try {
                 // Dynamic import to avoid SSR issues
                 const { default: CirclePack } = await import('circlepack-chart');
-                
+
                 if (refContainer.current && typeof window !== 'undefined') {
                     // Initialize and render the chart
                     const myChart = CirclePack();
@@ -74,7 +79,7 @@ export default function CirclePackMetric({name, metric}) {
 
                     // Render the chart
                     myChart.data(value)(refContainer.current);
-                    
+
                     console.log('Chart rendered successfully');
                 }
             } catch (error) {
