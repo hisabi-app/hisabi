@@ -8,8 +8,24 @@ interface CategoryStatsProps {
     dateRange: DateRange | undefined;
 }
 
+interface CategoryStat {
+    name: string;
+    amount: number;
+}
+
+interface MostUsedCategoryStat {
+    name: string;
+    count: number;
+}
+
+interface StatsState {
+    mostUsedCategory: MostUsedCategoryStat | null;
+    highestSpendingCategory: CategoryStat | null;
+    highestIncomeCategory: CategoryStat | null;
+}
+
 function CategoryStats({ dateRange }: CategoryStatsProps) {
-    const [stats, setStats] = useState({
+    const [stats, setStats] = useState<StatsState>({
         mostUsedCategory: null,
         highestSpendingCategory: null,
         highestIncomeCategory: null
@@ -33,8 +49,8 @@ function CategoryStats({ dateRange }: CategoryStatsProps) {
     }, [dateRange]);
 
     return (
-        <Card className="overflow-hidden p-0 gap-0">
-            <div className="grid grid-cols-3 divide-y md:divide-y-0 md:divide-x">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="py-0">
                 <CardContent className="px-6 py-4">
                     <div className="text-sm text-muted-foreground mb-2">Highest income</div>
                     {loading ? (
@@ -52,6 +68,8 @@ function CategoryStats({ dateRange }: CategoryStatsProps) {
                         </div>
                     )}
                 </CardContent>
+            </Card>
+            <Card className="py-0">
                 <CardContent className="px-6 py-4">
                     <div className="text-sm text-muted-foreground mb-2">Highest spending</div>
                     {loading ? (
@@ -69,6 +87,8 @@ function CategoryStats({ dateRange }: CategoryStatsProps) {
                         </div>
                     )}
                 </CardContent>
+            </Card>
+            <Card className="py-0">
                 <CardContent className="px-6 py-4">
                     <div className="text-sm text-muted-foreground mb-2">Most used category</div>
                     {loading ? (
@@ -86,8 +106,8 @@ function CategoryStats({ dateRange }: CategoryStatsProps) {
                         </div>
                     )}
                 </CardContent>
-            </div>
-        </Card>
+            </Card>
+        </div>
     );
 }
 
