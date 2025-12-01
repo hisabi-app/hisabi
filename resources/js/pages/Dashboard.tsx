@@ -181,6 +181,7 @@ export default function Dashboard({ auth, hasData }: any) {
                                     metric="totalPerCategoryDailyTrend"
                                     relation={categoryRelation}
                                     dateRange={dateRange}
+                                    defaultToCurrentYear={false}
                                 />
                             </div>
 

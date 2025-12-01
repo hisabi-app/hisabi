@@ -17,9 +17,24 @@ interface TrendMetricProps {
     relation?: any;
     show_standard_deviation?: boolean;
     dateRange: DateRange | undefined;
+    defaultToCurrentYear?: boolean;
 }
 
-export default function TrendMetric({ name, metric, relation, show_standard_deviation, dateRange }: TrendMetricProps) {
+const isRangeLessThanOneCompleteMonth = (dateRange: DateRange | undefined): boolean => {
+    if (!dateRange?.from || !dateRange?.to) return false;
+    const diffInDays = Math.ceil((dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24));
+    return diffInDays <= 31;
+};
+
+const getCurrentYearRange = (): DateRange => {
+    const now = new Date();
+    return {
+        from: new Date(now.getFullYear(), 0, 1),
+        to: new Date(now.getFullYear(), 11, 31)
+    };
+};
+
+export default function TrendMetric({ name, metric, relation, show_standard_deviation, dateRange, defaultToCurrentYear = true }: TrendMetricProps) {
     const [data, setData] = useState(null);
     const [chartRef, setChartRef] = useState(null);
     const [relationData, setRelationData] = useState([]);
@@ -55,16 +70,19 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
             return;
         }
 
+        // Use current year range if defaultToCurrentYear is set and selected range is less than a month
+        const effectiveDateRange = defaultToCurrentYear && isRangeLessThanOneCompleteMonth(dateRange) ? getCurrentYearRange() : dateRange;
+
         if (relation) {
             if (selectedRelationId) {
-                fetcher(dateRange, selectedRelationId)
+                fetcher(effectiveDateRange, selectedRelationId)
                     .then((response) => setData(response.data))
                     .catch(console.error)
             }
             return;
         }
 
-        fetcher(dateRange)
+        fetcher(effectiveDateRange)
             .then((response) => setData(response.data))
             .catch(console.error)
     }, [selectedRelationId, dateRange, metric, isInView])
