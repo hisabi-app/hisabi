@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { UserCircleIcon, CaretLeftIcon, CaretDownIcon } from "@phosphor-icons/react";
 
@@ -52,6 +52,28 @@ export default function Index({ auth }: { auth: { user: User } }) {
     const [passwordError, setPasswordError] = useState('');
     const [isProfileOpen, setIsProfileOpen] = useState(true);
     const [isPasswordOpen, setIsPasswordOpen] = useState(false);
+
+    // Auto-dismiss profile messages after 5 seconds
+    useEffect(() => {
+        if (profileMessage || profileError) {
+            const timer = setTimeout(() => {
+                setProfileMessage('');
+                setProfileError('');
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [profileMessage, profileError]);
+
+    // Auto-dismiss password messages after 5 seconds
+    useEffect(() => {
+        if (passwordMessage || passwordError) {
+            const timer = setTimeout(() => {
+                setPasswordMessage('');
+                setPasswordError('');
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [passwordMessage, passwordError]);
 
     const handleSaveProfile = () => {
         setProfileError('');
