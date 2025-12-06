@@ -1,10 +1,9 @@
 import { Link } from '@inertiajs/react';
-import { User, Gear, SignOut, CaretUpDown } from "@phosphor-icons/react";
+import { SignOut, CaretUpDown } from "@phosphor-icons/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -62,13 +61,6 @@ export function UserNav({ user }: UserNavProps) {
             align="end"
             side={state === "collapsed" ? "right" : "top"}
           >
-            <DropdownMenuItem asChild>
-              <Link href={route('profile.edit')} className="cursor-pointer">
-                <Gear className="mr-2 size-4" />
-                <span>Account settings</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link
                 href={route('logout')}
