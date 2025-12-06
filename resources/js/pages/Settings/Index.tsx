@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { UserCircleIcon, ArrowLeftIcon } from "@phosphor-icons/react";
+import { UserCircleIcon, CaretLeftIcon } from "@phosphor-icons/react";
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import ApplicationLogo from "@/components/Global/ApplicationLogo";
 import { updateUserProfile } from '@/Api/user';
 
 interface User {
@@ -103,13 +104,16 @@ export default function Index({ auth }: { auth: { user: User } }) {
         <>
             <Head title="Settings" />
             <SidebarProvider>
-                <Sidebar>
+                <Sidebar variant="inset">
                     <SidebarHeader>
                         <SidebarMenu>
                             <SidebarMenuItem>
-                                <div className="flex items-center gap-2 px-2 py-2">
-                                    <h2 className="text-lg font-semibold">Settings</h2>
-                                </div>
+                                <SidebarMenuButton size="lg" asChild>
+                                    <Link href={route('dashboard')} className="flex items-center gap-2">
+                                        <CaretLeftIcon size={20} />
+                                        <ApplicationLogo />
+                                    </Link>
+                                </SidebarMenuButton>
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarHeader>
@@ -135,14 +139,9 @@ export default function Index({ auth }: { auth: { user: User } }) {
                 </Sidebar>
                 <SidebarInset>
                     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-                        <div className="flex items-center gap-2">
-                            <SidebarTrigger className="-ml-1" />
-                            <Separator orientation="vertical" className="mr-2 h-4" />
-                            <Link href={route('dashboard')} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                                <ArrowLeftIcon size={16} />
-                                Back to Dashboard
-                            </Link>
-                        </div>
+                        <SidebarTrigger className="-ml-1" />
+                        <Separator orientation="vertical" className="mr-2 h-4" />
+                        <h2 className="text-lg font-semibold">Settings</h2>
                     </header>
                     <main className="flex flex-1 flex-col gap-4 p-4">
                         {activeTab === 'account' && (
