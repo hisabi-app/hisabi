@@ -127,9 +127,15 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scroll-behavior: auto !important;
+    scroll-snap-type: none !important;
+  }
+  html {
+    scroll-behavior: auto !important;
   }
   body {
     @apply bg-background text-foreground;
+    scroll-behavior: auto !important;
   }
 }
 
