@@ -4,10 +4,10 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/s
 import { AppSidebar } from '@/components/app-sidebar';
 import RightSidebar from '@/components/RightSidebar';
 
-export default function Authenticated({ header, children }: { auth?: any; header?: React.ReactNode; children: React.ReactNode }) {
+export default function Authenticated({ auth, header, children }: { auth?: any; header?: React.ReactNode; children: React.ReactNode }) {
     return (
         <SidebarProvider>
-            <AppSidebar />
+            <AppSidebar auth={auth} />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 sticky top-0 bg-background z-10 md:rounded-t-xl">
                     <SidebarTrigger className="-ml-1" />
