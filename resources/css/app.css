@@ -132,10 +132,13 @@
   }
   html {
     scroll-behavior: auto !important;
+    overscroll-behavior: none !important;
   }
   body {
     @apply bg-background text-foreground;
     scroll-behavior: auto !important;
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
   }
 }
 
