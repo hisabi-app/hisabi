@@ -2,7 +2,6 @@ import { Link } from '@inertiajs/react';
 import {
   Receipt,
   StorefrontIcon,
-  SignOutIcon,
   CirclesThreeIcon,
   ChartDonutIcon
 } from "@phosphor-icons/react"
@@ -19,6 +18,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import ApplicationLogo from "@/components/Global/ApplicationLogo"
+import { UserNav } from "@/components/user-nav"
 
 // Navigation items
 const items = [
@@ -44,7 +44,16 @@ const items = [
   },
 ]
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  auth?: {
+    user: {
+      name: string;
+      email: string;
+    };
+  };
+}
+
+export function AppSidebar({ auth }: AppSidebarProps) {
   return (
     <Sidebar collapsible="offcanvas" variant="inset">
       <SidebarHeader>
@@ -77,16 +86,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href={route('logout')} method="post" as="button">
-                <SignOutIcon />
-                <span>Log Out</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        {auth?.user && <UserNav user={auth.user} />}
       </SidebarFooter>
     </Sidebar>
   )

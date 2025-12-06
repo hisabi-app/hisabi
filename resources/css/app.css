@@ -127,9 +127,18 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scroll-behavior: auto !important;
+    scroll-snap-type: none !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+    overscroll-behavior: none !important;
   }
   body {
     @apply bg-background text-foreground;
+    scroll-behavior: auto !important;
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
   }
 }
 
