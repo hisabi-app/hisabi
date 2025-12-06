@@ -52,7 +52,7 @@ export function UserNav({ user }: UserNavProps) {
             side={state === "collapsed" ? "right" : "top"}
           >
             <DropdownMenuItem asChild>
-              <Link href={route('profile.edit')} className="cursor-pointer">
+              <Link href={'$'} className="cursor-pointer">
                 <Gear className="mr-2 size-4" />
                 <span>Account settings</span>
               </Link>
