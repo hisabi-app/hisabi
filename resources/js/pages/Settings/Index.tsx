@@ -64,11 +64,6 @@ export default function Index({ auth }: { auth: { user: User } }) {
             .then(({ data }) => {
                 setProfileMessage('Profile updated successfully');
                 setLoadingProfile(false);
-
-                // Update the page after 1 second to reflect the changes
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
             })
             .catch((err) => {
                 setProfileError(err.message || 'Failed to update profile');
