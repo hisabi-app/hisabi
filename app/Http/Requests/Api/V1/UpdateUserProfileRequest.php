@@ -14,8 +14,12 @@ class UpdateUserProfileRequest extends FormRequest
 
     public function rules(): array
     {
+        $userId = $this->user()->id;
+
         return [
             'name' => 'sometimes|required|string|max:255',
+            'email' => "sometimes|required|email|unique:users,email,{$userId}",
+            'currentPassword' => 'sometimes|required_with:password|string',
             'password' => [
                 'sometimes',
                 'nullable',

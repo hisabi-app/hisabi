@@ -3,8 +3,7 @@ import {
   Receipt,
   StorefrontIcon,
   CirclesThreeIcon,
-  ChartDonutIcon,
-  GearIcon
+  ChartDonutIcon
 } from "@phosphor-icons/react"
 
 import {
@@ -42,11 +41,6 @@ const items = [
     title: "Categories",
     url: "categories",
     icon: CirclesThreeIcon,
-  },
-  {
-    title: "Settings",
-    url: "settings",
-    icon: GearIcon,
   },
 ]
 
