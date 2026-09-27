@@ -4,17 +4,20 @@ use Illuminate\Http\Request;
 use App\Contracts\ReportManager;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InsightsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\V1\MetricsController;
 
-Route::redirect('/', '/dashboard');
+Route::redirect('/', '/insights');
+Route::redirect('/dashboard', '/insights');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/insights', [InsightsController::class, 'index'])->name('insights');
+    Route::get('/budgets', [BudgetController::class, 'index'])->name('budgets');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
     Route::get('/brands', [BrandController::class, 'index'])->name('brands');
@@ -50,7 +53,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'destroy']);
         Route::get('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'index']);
-        Route::post('/ai/chat', [\App\Http\Controllers\Api\V1\AIController::class, 'chat']);
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
 
         Route::prefix('metrics')->group(function () {

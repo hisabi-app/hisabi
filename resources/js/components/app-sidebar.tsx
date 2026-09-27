@@ -3,7 +3,8 @@ import {
   Receipt,
   StorefrontIcon,
   CirclesThreeIcon,
-  ChartDonutIcon
+  ChartDonutIcon,
+  WalletIcon
 } from "@phosphor-icons/react"
 
 import {
@@ -23,8 +24,8 @@ import { UserNav } from "@/components/user-nav"
 // Navigation items
 const items = [
   {
-    title: "Dashboard",
-    url: "dashboard",
+    title: "Insights",
+    url: "insights",
     icon: ChartDonutIcon,
   },
   {
@@ -41,6 +42,11 @@ const items = [
     title: "Categories",
     url: "categories",
     icon: CirclesThreeIcon,
+  },
+  {
+    title: "Budgets",
+    url: "budgets",
+    icon: WalletIcon,
   },
 ]
 

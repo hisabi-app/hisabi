@@ -5,6 +5,7 @@ import { ChartLineIcon } from '@phosphor-icons/react';
 import { getBudgets } from '@/Api/budgets';
 import { useInView } from '@/hooks/useInView';
 import LoadingView from '../Global/LoadingView';
+import NoContent from '../Global/NoContent';
 
 interface Budget {
     id: number;
@@ -39,24 +40,20 @@ export default function Budgets() {
     if (loading) {
         return (
             <div ref={ref}>
-                <Card className="h-[158px] w-84">
+                <Card className="h-[158px]">
                     <LoadingView />
                 </Card>
             </div>
         );
     }
 
-    if (budgets.length === 0) return null;
+    if (budgets.length === 0) return <NoContent body="No budgets found" />;
 
     return (
-        <div className="flex overflow-x-auto gap-4"  style={{
-            overflowX: 'scroll',
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'none',
-          }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {budgets.map((budget) => (
                 <Card key={budget.id}>
-                    <CardContent className='w-84 grid gap-8'>
+                    <CardContent className='grid gap-8'>
                         <div className='flex items-center gap-3'>
                             <div className={`size-10 rounded-full flex items-center justify-center badge badge-blue`}>
                                 <ChartLineIcon size={20} weight="regular" className="text-current" />

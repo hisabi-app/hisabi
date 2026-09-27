@@ -40,7 +40,7 @@ import { updateUserProfile } from '@/Api/user';
 // Helper function for route generation
 const route = (name: string) => {
     const routes: Record<string, string> = {
-        'dashboard': '/dashboard',
+        'insights': '/insights',
         'logout': '/logout'
     };
     return routes[name] || '/';
@@ -220,7 +220,7 @@ export default function Index({ auth }: { auth: { user: User } }) {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton size="lg" asChild>
-                                    <Link href={route('dashboard')} className="flex items-center gap-2">
+                                    <Link href={route('insights')} className="flex items-center gap-2">
                                         <CaretLeftIcon size={20} />
                                         <ApplicationLogo />
                                     </Link>

@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <b>Hisabi is a simple yet powerful, self-hosted personal finance tracking web app with the ability to parse SMS transactions, generate very useful insights about your money, and power AI!</b>
+  <b>Hisabi is a simple yet powerful, self-hosted personal finance tracking web app with the ability to parse SMS transactions, and generate very useful insights about your money!</b>
 </p>
 
 <p align="center"><a href="https://www.youtube.com/watch?v=kfwcMdlFn9o&list=PLw5MK6ws-o1_rNobmZCmnH5G11vwCiKKk&ab_channel=ILoveMathAcademy" target="__blank"><img src="https://raw.githubusercontent.com/hisabi-app/hisabi/refs/heads/main/public/images/showcase.png" /></a></p>
@@ -14,7 +14,6 @@
 - [x] 🔐 Self-hosted — Full control over your data
 - [x] 📩 SMS Parser — Auto-detect bank transactions
 - [x] 📊 Reports & Visualization — Clear finance insights
-- [x] 🤖 HisabAI — AI-powered finance assistance
 - [ ] Multiple Accounts (Coming Soon)
 - [ ] API Support (Coming Soon)
 - [x] 🆓 MIT Licensed — Fully open-source

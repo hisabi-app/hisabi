@@ -10,13 +10,12 @@ import TrendMetric from '@/components/Domain/TrendMetric';
 import PartitionMetric from '@/components/Domain/PartitionMetric';
 import CirclePackMetric from '@/components/Domain/CirclePackMetric';
 import SectionDivider from '@/components/Global/SectionDivider';
-import Budgets from '@/components/Domain/Budgets';
 import RecordTransactionButton from '@/components/Domain/RecordTransactionButton';
 import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 import { getAllCategories } from '@/Api/categories';
 import { getAllBrands } from '@/Api/brands';
 
-export default function Dashboard({ auth, hasData }: any) {
+export default function Insights({ auth, hasData }: any) {
     const [allCategories, setAllCategories] = useState<any[]>([]);
     const [allBrands, setAllBrands] = useState<any[]>([]);
     const [refreshKey, setRefreshKey] = useState(0);
@@ -43,7 +42,7 @@ export default function Dashboard({ auth, hasData }: any) {
 
     const header = (
         <div className="flex items-center justify-between w-full">
-            <h2>Dashboard</h2>
+            <h2>Insights</h2>
             <div className="flex items-center gap-2">
                 <DatePickerWithRange
                     onDateChange={handleDateChange}
@@ -77,12 +76,10 @@ export default function Dashboard({ auth, hasData }: any) {
 
     return (
         <Authenticated auth={auth} header={header}>
-            <Head title="Hisabi Dashboard" />
+            <Head title="Insights" />
 
             <div className="py-4">
                 <div className="max-w-7xl overflow-hidden mx-auto px-4 grid grid-cols-1 gap-4">
-
-                    <Budgets key={`budgets-${refreshKey}`} />
 
                     {!hasData && <NoContent body="No enough data to show reports" />}
 

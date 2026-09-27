@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents when working with code in this r
 
 ## Project
 
-Hisabi is a self-hosted, single-user personal finance tracker: Laravel 12 (PHP 8.2+) backend, React 19 + Inertia 2 + TypeScript + Tailwind 4 frontend (shadcn/Radix UI components in `resources/js/components/ui`). It parses bank SMS messages into transactions, shows dashboard metrics, and has an AI chat ("HisabAI") via `prism-php/prism`.
+Hisabi is a self-hosted, single-user personal finance tracker: Laravel 12 (PHP 8.2+) backend, React 19 + Inertia 2 + TypeScript + Tailwind 4 frontend (shadcn/Radix UI components in `resources/js/components/ui`). It parses bank SMS messages into transactions and shows dashboard metrics.
 
 ## Commands
 
@@ -32,7 +32,7 @@ CI (`.github/workflows/run-tests.yml`) runs on PHP 8.4 / Node 22: `npm run build
 ## Architecture
 
 ### Request flow
-- `routes/web.php` holds nearly everything. Inertia page routes (`/dashboard`, `/transactions`, `/brands`, `/categories`, `/settings`) render thin shells; the pages then fetch data from JSON endpoints under `/api/v1/*`, which are **also in `web.php`** behind session `auth` (not Sanctum). `routes/api.php` only has a Sanctum token-login endpoint.
+- `routes/web.php` holds nearly everything. Inertia page routes (`/insights`, `/transactions`, `/brands`, `/categories`, `/budgets`, `/settings`) render thin shells; the pages then fetch data from JSON endpoints under `/api/v1/*`, which are **also in `web.php`** behind session `auth` (not Sanctum). `routes/api.php` only has a Sanctum token-login endpoint.
 - Frontend API clients live in `resources/js/Api/*.js` (fetch + CSRF token from the meta tag). Inertia pages resolve from `resources/js/pages/<Name>.tsx`; domain-specific components are in `resources/js/components/Domain`.
 
 ### Backend layering (CQRS-style)
@@ -52,7 +52,7 @@ Category (type: `INCOME` | `EXPENSES` | `SAVINGS` | `INVESTMENT`) → hasMany Br
 
 ### Namespace quirks (legacy vs. current)
 - `Category` lives at `App\Models\Category` (not under `app/Domains/Category/Models`, which is what the rest of the code imports) — check existing imports before using either.
-- Dashboard metrics: `App\Domains\Metrics\Metrics\*` (extend `App\Domains\Metrics\Metric`, constructed with `from`/`to`, implement `calculate(): array`) are what `MetricsController` uses — one route per metric under `/api/v1/metrics/*`. `App\Domain\Metrics\*` (singular `Domain`) is an older Nova-style metric system still covered by tests in `tests/Unit/Domain`, but not used by the current API.
+- Insights metrics: `App\Domains\Metrics\Metrics\*` (extend `App\Domains\Metrics\Metric`, constructed with `from`/`to`, implement `calculate(): array`) are what `MetricsController` uses — one route per metric under `/api/v1/metrics/*`. `App\Domain\Metrics\*` (singular `Domain`) is an older Nova-style metric system still covered by tests in `tests/Unit/Domain`, but not used by the current API.
 
 ### SMS parsing pipeline
 Bound via contracts in `AppServiceProvider` (`app/Contracts` → `app/BusinessLogic`):
@@ -61,9 +61,6 @@ Bound via contracts in `AppServiceProvider` (`app/Contracts` → `app/BusinessLo
 3. `SmsParser` builds the `Sms` model; `Transaction::tryCreateFromSms()` creates the transaction, auto-creating the brand via `Brand::findOrCreateNew()` (new brands have no category until the user assigns one).
 
 Supporting a new bank SMS format usually means only adding a template to `config/hisabi.php`. Currency is also set there (`hisabi.currency`).
-
-### AI
-`app/Services/AI/HisabiAIService.php` uses Prism (OpenAI for streaming chat, Anthropic in the non-streaming path); keys come from `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` (`config/prism.php`). Exposed through `POST /api/v1/ai/chat` → `ChatCommand`.
 
 ### Other
 - `/report` renders a Blade view built by `ReportManager` (also `app/Console/Commands/ReportCommand.php`).

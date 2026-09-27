@@ -16,7 +16,6 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10",
-        "prism-php/prism": "^0.90.0",
         "spatie/laravel-query-builder": "^6.3",
         "tightenco/ziggy": "^1.6"
     },
