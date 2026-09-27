@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
-import { XIcon } from '@heroicons/react/solid';
 import { getSms, updateSms, deleteSms, createSms } from '../../Api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { LongPressButton } from '@/components/ui/long-press-button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 interface SmsParserProps {
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 interface Sms {
@@ -19,7 +19,7 @@ interface Sms {
   transaction_id: number | null;
 }
 
-export default function SmsParser({ onClose }: SmsParserProps) {
+export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
   const [invalidSms, setInvalidSms] = useState<Sms[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingSms, setEditingSms] = useState<Sms | null>(null);
@@ -28,8 +28,13 @@ export default function SmsParser({ onClose }: SmsParserProps) {
   const [createdAt, setCreatedAt] = useState('');
 
   useEffect(() => {
-    fetchInvalidSms();
-  }, []);
+    if (open) {
+      fetchInvalidSms();
+    } else {
+      setEditingSms(null);
+      setEditBody('');
+    }
+  }, [open]);
 
   const fetchInvalidSms = () => {
     setLoading(true);
@@ -51,16 +56,19 @@ export default function SmsParser({ onClose }: SmsParserProps) {
     setEditBody(sms.body);
   };
 
+  const cancelEdit = () => {
+    setEditingSms(null);
+    setEditBody('');
+  };
+
   const handleUpdate = () => {
     if (!editingSms || loading) return;
 
     setLoading(true);
     updateSms({ id: editingSms.id, body: editBody })
-      .then(({ data }) => {
+      .then(() => {
         fetchInvalidSms();
-        setEditingSms(null);
-        setEditBody('');
-        setLoading(false);
+        cancelEdit();
       })
       .catch((error) => {
         console.error(error);
@@ -72,7 +80,7 @@ export default function SmsParser({ onClose }: SmsParserProps) {
     deleteSms(sms.id)
       .then(() => {
         setInvalidSms(invalidSms.filter((item) => item.id !== sms.id));
-        setEditingSms(null);
+        cancelEdit();
       })
       .catch(console.error);
   };
@@ -82,11 +90,10 @@ export default function SmsParser({ onClose }: SmsParserProps) {
 
     setLoading(true);
     createSms({ sms: newSmsBody, createdAt })
-      .then(({ data }) => {
+      .then(() => {
         fetchInvalidSms();
         setNewSmsBody('');
         setCreatedAt('');
-        setLoading(false);
       })
       .catch((error) => {
         console.error(error);
@@ -94,127 +101,95 @@ export default function SmsParser({ onClose }: SmsParserProps) {
       });
   };
 
+  const hasUnparsed = invalidSms.length > 0;
+
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="border-b p-4">
-        <div className='flex justify-between items-center'>
-          <h2 className='text-lg font-semibold'>SMS Parser</h2>
-          <button
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <XIcon className='w-5 h-5' />
-          </button>
-        </div>
-      </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        aria-describedby={undefined}
+        className={cn('flex flex-col gap-0 overflow-hidden p-0', hasUnparsed ? 'h-[85vh] max-h-[720px] sm:max-w-5xl' : 'sm:max-w-lg')}
+      >
+        <DialogHeader className="border-b p-4">
+          <DialogTitle>SMS Parser</DialogTitle>
+        </DialogHeader>
 
-      {/* Invalid SMS Cards - Scrollable Top Section */}
-      <div className="flex-1 overflow-y-auto p-4 border-r">
-        {editingSms ? (
-          <div className="mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setEditingSms(null);
-                setEditBody('');
-              }}
-              className="mb-4"
-            >Back</Button>
-            <div>
-              <Input
-                name="body"
-                value={editBody}
-                className="w-full bg-white"
-                onChange={(e) => setEditBody(e.target.value)}
-              />
+        <div className={cn('grid min-h-0 flex-1', hasUnparsed && 'grid-rows-2 md:grid-cols-2 md:grid-rows-1')}>
+          {hasUnparsed && (
+            <div className="flex min-h-0 flex-col border-b md:border-r md:border-b-0">
+              <div className="flex items-center gap-2 px-4 pt-4 pb-2">
+                <h3 className="text-sm font-medium">Unparsed</h3>
+                <Badge variant="outline" className="border-red-200 bg-red-50 text-xs text-red-700">
+                  {invalidSms.length}
+                </Badge>
+              </div>
+
+              <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-4 pb-4">
+                {invalidSms.map((sms) =>
+                  editingSms?.id === sms.id ? (
+                    <div key={sms.id} className="space-y-3 rounded-lg border border-primary/40 p-3">
+                      <Textarea
+                        name="body"
+                        value={editBody}
+                        autoFocus
+                        className="min-h-24 w-full bg-white text-xs"
+                        onChange={(e) => setEditBody(e.target.value)}
+                      />
+                      <div className="flex items-center justify-end gap-2">
+                        <LongPressButton onLongPress={() => handleDelete(sms)} variant="destructiveGhost">
+                          Hold to Delete
+                        </LongPressButton>
+                        <Button variant="outline" size="sm" onClick={cancelEdit}>
+                          Cancel
+                        </Button>
+                        <Button size="sm" onClick={handleUpdate} disabled={loading || !editBody.trim()}>
+                          {loading ? 'Parsing...' : 'Parse'}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      key={sms.id}
+                      type="button"
+                      onClick={() => handleEdit(sms)}
+                      className={cn(
+                        'w-full rounded-lg border p-3 text-left text-xs transition-colors hover:bg-accent',
+                        editingSms && 'opacity-60',
+                      )}
+                    >
+                      <span className="line-clamp-3">{sms.body}</span>
+                    </button>
+                  ),
+                )}
+              </div>
             </div>
+          )}
 
-            <div className="flex items-center justify-end gap-2 mt-4">
-              <LongPressButton
-                onLongPress={() => handleDelete(editingSms)}
-                variant="destructiveGhost"
-              >
-                Hold to Delete
-              </LongPressButton>
-              <Button onClick={handleUpdate} disabled={loading}>
-                {loading ? 'Parsing...' : 'Parse again'}
-              </Button>
-            </div>
-          </div>
-        ) : loading && invalidSms.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <span className="text-sm text-muted-foreground">Loading...</span>
-          </div>
-        ) : invalidSms.length > 0 && (
-          <div className="space-y-2">
-            <div className="mb-3">
-              <p className="text-xs text-muted-foreground">
-                {invalidSms.length} invalid message{invalidSms.length !== 1 ? 's' : ''}, edit and parse again
-              </p>
-            </div>
-            {invalidSms.map((sms) => (
-              <Card key={sms.id} className="py-0 cursor-pointer transition-colors">
-                <CardContent
-                  className="px-3 py-3"
-                  onClick={() => handleEdit(sms)}
-                >
-                  <div className="flex items-center gap-2">
-                    <p className="text-xs flex-1 line-clamp-2">
-                      {sms.body}
-                    </p>
-
-                    <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 text-xs shrink-0">
-                      Invalid
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Fixed Bottom Input Area - Chat-like */}
-      <div className="border-t border-r p-4">
-        <div className="space-y-3">
-          <div>
+          <div className="flex min-h-0 flex-col gap-3 overflow-y-auto p-4">
             <Textarea
               name="newSms"
               value={newSmsBody}
               onChange={(e) => setNewSmsBody(e.target.value)}
-              className="w-full bg-white min-h-36 max-h-60"
-              placeholder="Paste SMS messages here (one per line)..."
+              className="min-h-40 w-full flex-1 bg-white"
+              placeholder="Paste SMS messages, one per line"
             />
-          </div>
 
-          <div className='grid gap-1'>
-            <Label htmlFor="date" className="text-xs text-muted-foreground">
-              Transaction(s) date (leave blank for today)
-            </Label>
-            <Input
-              type="date"
-              name="date"
-              value={createdAt}
-              onChange={(e) => setCreatedAt(e.target.value)}
-              className="w-full bg-white"
-            />
-          </div>
-
-          {/* Parse Button */}
-          <div className="flex justify-end">
-            <Button
-              onClick={handleCreate}
-              disabled={loading || !newSmsBody.trim()}
-              className="w-full sm:w-auto"
-            >
-              {loading ? 'Parsing...' : 'Parse SMS'}
-            </Button>
+            <div className="flex items-center gap-3">
+              <Input
+                type="date"
+                name="date"
+                aria-label="Date"
+                title="Leave empty for today"
+                value={createdAt}
+                onChange={(e) => setCreatedAt(e.target.value)}
+                className="flex-1 bg-white"
+              />
+              <Button onClick={handleCreate} disabled={loading || !newSmsBody.trim()}>
+                {loading ? 'Parsing...' : 'Parse'}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
-

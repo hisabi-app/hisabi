@@ -2,7 +2,6 @@ import React from 'react';
 
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
-import RightSidebar from '@/components/RightSidebar';
 
 export default function Authenticated({ auth, header, children }: { auth?: any; header?: React.ReactNode; children: React.ReactNode }) {
     return (
@@ -23,7 +22,6 @@ export default function Authenticated({ auth, header, children }: { auth?: any; 
                     {children}
                 </main>
             </SidebarInset>
-            <RightSidebar />
         </SidebarProvider>
     );
 }

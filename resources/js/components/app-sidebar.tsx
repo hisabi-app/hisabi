@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import {
   Receipt,
   StorefrontIcon,
   CirclesThreeIcon,
   ChartDonutIcon,
-  WalletIcon
+  WalletIcon,
+  ChatCircleTextIcon
 } from "@phosphor-icons/react"
 
 import {
@@ -20,6 +22,7 @@ import {
 } from "@/components/ui/sidebar"
 import ApplicationLogo from "@/components/Global/ApplicationLogo"
 import { UserNav } from "@/components/user-nav"
+import SmsParser from "@/components/Global/SmsParser"
 
 // Navigation items
 const items = [
@@ -60,6 +63,8 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ auth }: AppSidebarProps) {
+  const [smsParserOpen, setSmsParserOpen] = useState(false)
+
   return (
     <Sidebar collapsible="offcanvas" variant="inset">
       <SidebarHeader>
@@ -92,8 +97,17 @@ export function AppSidebar({ auth }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => setSmsParserOpen(true)}>
+              <ChatCircleTextIcon />
+              <span>SMS Parser</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         {auth?.user && <UserNav user={auth.user} />}
       </SidebarFooter>
+      <SmsParser open={smsParserOpen} onOpenChange={setSmsParserOpen} />
     </Sidebar>
   )
 }
