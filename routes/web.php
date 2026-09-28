@@ -53,7 +53,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'destroy']);
         Route::get('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'index']);
-        Route::get('/budgets/{id}/daily-spending', [\App\Http\Controllers\Api\V1\BudgetController::class, 'dailySpending'])->whereNumber('id');
+        Route::get('/budgets/history', [\App\Http\Controllers\Api\V1\BudgetController::class, 'history']);
+        Route::put('/budgets/{id}', [\App\Http\Controllers\Api\V1\BudgetController::class, 'update'])->whereNumber('id');
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
 
         Route::prefix('metrics')->group(function () {

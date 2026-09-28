@@ -1,4 +1,4 @@
-import { buildBurnDown, getBudgetStatus, toNumber } from '../budgets';
+import { getBudgetStatus, getHistoryBand, monthsBetween, toNumber } from '../budgets';
 
 it('toNumber parses formatted strings', () => {
     expect(toNumber('1,234.50')).toBe(1234.5);
@@ -15,27 +15,21 @@ it('getBudgetStatus compares spending with elapsed time', () => {
     expect(getBudgetStatus(930, 1000, 90)).toBe('on_track');
 });
 
-it('buildBurnDown accumulates daily spending and projects the period total', () => {
-    const result = buildBurnDown(
-        [
-            { date: '2026-09-01', amount: 100 },
-            { date: '2026-09-02', amount: 0 },
-            { date: '2026-09-03', amount: 50 },
-        ],
-        30,
-        900,
-    );
-
-    expect(result.points.map((p) => p.total)).toEqual([0, 100, 100, 150]);
-    expect(result.spent).toBe(150);
-    expect(result.averagePerDay).toBe(50);
-    expect(result.projected).toBe(1500);
-    expect(result.evenPacePerDay).toBe(30);
+it('getHistoryBand groups percentages', () => {
+    expect(getHistoryBand(79)).toBe('under');
+    expect(getHistoryBand(80)).toBe('near');
+    expect(getHistoryBand(100)).toBe('near');
+    expect(getHistoryBand(101)).toBe('over');
 });
 
-it('buildBurnDown handles a period with no elapsed days', () => {
-    const result = buildBurnDown([], 30, 900);
+it('monthsBetween lists the first day of each month, inclusive', () => {
+    const months = monthsBetween(new Date(2025, 10, 15), new Date(2026, 1, 3));
 
-    expect(result.projected).toBe(0);
-    expect(result.averagePerDay).toBe(0);
+    expect(months.map((month) => [month.getFullYear(), month.getMonth(), month.getDate()])).toEqual([
+        [2025, 10, 1],
+        [2025, 11, 1],
+        [2026, 0, 1],
+        [2026, 1, 1],
+    ]);
+    expect(monthsBetween(new Date(2026, 1, 1), new Date(2025, 1, 1))).toEqual([]);
 });

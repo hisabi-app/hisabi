@@ -13,6 +13,7 @@ class BudgetResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'amount' => $this->amount,
+            'reoccurrence' => $this->reoccurrence,
             'total_spent_percentage' => $this->total_spent_percentage,
             'start_at_date' => $this->start_at_date,
             'end_at_date' => $this->end_at_date,

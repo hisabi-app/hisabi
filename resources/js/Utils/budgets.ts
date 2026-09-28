@@ -1,10 +1,5 @@
 export type BudgetStatus = 'on_track' | 'ahead' | 'used' | 'over';
 
-export interface DailySpending {
-    date: string;
-    amount: number;
-}
-
 // Spending more than this many percentage points ahead of the elapsed time counts as "ahead of pace".
 const PACE_TOLERANCE = 3;
 
@@ -27,23 +22,42 @@ export const getBudgetStatus = (spent: number, amount: number, elapsedPercentage
     return 'on_track';
 };
 
-export const buildBurnDown = (days: DailySpending[], totalDays: number, amount: number) => {
-    let total = 0;
-    const points = [{ day: 0, total: 0 }];
+export interface HistoryPeriod {
+    start_date: string;
+    end_date: string;
+    spent: number;
+    percentage: number;
+    is_current: boolean;
+}
 
-    days.forEach((day, index) => {
-        total += day.amount;
-        points.push({ day: index + 1, total });
-    });
+export interface BudgetHistory {
+    id: number;
+    name: string;
+    reoccurrence: string;
+    period: number;
+    amount: number;
+    periods: HistoryPeriod[];
+}
 
-    const elapsedDays = days.length;
+export type HistoryBand = 'under' | 'near' | 'over';
 
-    return {
-        points,
-        spent: total,
-        elapsedDays,
-        projected: elapsedDays > 0 && totalDays > 0 ? (total / elapsedDays) * totalDays : 0,
-        averagePerDay: elapsedDays > 0 ? total / elapsedDays : 0,
-        evenPacePerDay: totalDays > 0 ? amount / totalDays : 0,
-    };
+export const getHistoryBand = (percentage: number): HistoryBand => {
+    if (percentage > 100) return 'over';
+    if (percentage >= 80) return 'near';
+
+    return 'under';
+};
+
+// First day of every month from `from`'s month to `to`'s month, inclusive.
+export const monthsBetween = (from: Date, to: Date): Date[] => {
+    const months: Date[] = [];
+    const cursor = new Date(from.getFullYear(), from.getMonth(), 1);
+    const last = new Date(to.getFullYear(), to.getMonth(), 1);
+
+    while (cursor <= last) {
+        months.push(new Date(cursor));
+        cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    return months;
 };

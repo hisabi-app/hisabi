@@ -66,3 +66,9 @@ Supporting a new bank SMS format usually means only adding a template to `config
 - `/report` renders a Blade view built by `ReportManager` (also `app/Console/Commands/ReportCommand.php`).
 - Tests: mostly PHPUnit-style classes extending `Tests\TestCase` with `RefreshDatabase`; Pest is installed and bound to `tests/Feature`.
 - `DASHBOARD_IMPROVEMENTS.md`, `tasks.md` and `IMPLEMENTATION_PROMPT.md` are task backlogs/prompts for agents (e.g. the planned multi-account system), not documentation of the current behavior.
+
+## UI guidelines
+
+- Only show information the user will act on or asked for. Don't add derived numbers, summary cards, per-day rates, "x days left" hints, projections or stats just because the data allows them; when unsure, leave it out and suggest it instead. The owner has removed these from the budgets page as clutter.
+- Every number or label must make sense at a glance without explanation. If it needs a sentence to understand, it doesn't belong.
+- Prefer fewer, clearer elements over dense dashboards.

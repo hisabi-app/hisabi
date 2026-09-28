@@ -3,6 +3,7 @@
 namespace App\Domains\Budget\Models;
 
 use App\Domains\Category\Models\Category;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -101,13 +102,56 @@ class Budget extends Model
 
     public function getTotalTransactionsAmountAttribute()
     {
-        [$startAt, $endAt] = $this->getCurrentWindowStartAndEndDates();
+        // Several appended attributes read this; query once per model instance.
+        return once(function () {
+            [$startAt, $endAt] = $this->getCurrentWindowStartAndEndDates();
 
-        return $this->categories()
-            ->join('brands', 'categories.id', '=', 'brands.category_id')
-            ->join('transactions', 'brands.id', '=', 'transactions.brand_id')
-            ->whereBetween('transactions.created_at', [$startAt, $endAt])
-            ->sum('transactions.amount');
+            return $this->categories()
+                ->join('brands', 'categories.id', '=', 'brands.category_id')
+                ->join('transactions', 'brands.id', '=', 'transactions.brand_id')
+                ->whereBetween('transactions.created_at', [$startAt, $endAt])
+                ->sum('transactions.amount');
+        });
+    }
+
+    /**
+     * The budget's windows that start between $from and $to (and have started by now), oldest first.
+     * Windows before start_at are included too, stepping back from start_at by the same period.
+     * A custom budget has a single window.
+     *
+     * @return array<int, array{0: \Carbon\Carbon, 1: \Carbon\Carbon}>
+     */
+    public function getWindowsStartingBetween(Carbon $from, Carbon $to): array
+    {
+        if ($this->reoccurrence === self::CUSTOM) {
+            return [[$this->start_at->copy(), $this->end_at->copy()]];
+        }
+
+        $unit = $this->getUnitMapping();
+        $anchor = $this->start_at->copy()->startOfDay();
+
+        $earlierStarts = [];
+        for ($steps = 1; ($start = $this->stepBack($anchor, $unit, $steps))->gte($from); $steps++) {
+            array_unshift($earlierStarts, $start);
+        }
+
+        $starts = [...$earlierStarts, ...CarbonPeriod::create($anchor, $this->period . ' ' . $unit, $to->copy()->min(now()))->toArray()];
+        $starts = array_filter($starts, fn ($start) => $start->gte($from) && $start->lte($to) && now()->isAfter($start));
+
+        return array_map(
+            fn ($start) => [$start->copy(), $start->copy()->add($unit, $this->period)],
+            array_values($starts)
+        );
+    }
+
+    private function stepBack(Carbon $anchor, string $unit, int $steps): Carbon
+    {
+        // Keep month-end anchors on the month end instead of overflowing into the next month
+        return match ($unit) {
+            'month' => $anchor->copy()->subMonthsNoOverflow($this->period * $steps),
+            'year' => $anchor->copy()->subYearsNoOverflow($this->period * $steps),
+            default => $anchor->copy()->sub($unit, $this->period * $steps),
+        };
     }
 
     private function getCurrentWindowStartAndEndDates()
