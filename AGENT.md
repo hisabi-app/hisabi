@@ -62,6 +62,16 @@ Bound via contracts in `AppServiceProvider` (`app/Contracts` → `app/BusinessLo
 
 Supporting a new bank SMS format usually means only adding a template to `config/hisabi.php`. Currency is also set there (`hisabi.currency`).
 
+### Brand names
+SMS brand strings are ALL CAPS, truncated (~20 chars) and carry branch noise. When cleaning brands up, or creating/naming brands:
+- **One brand per merchant, not per branch.** Strip branch/site/store numbers and locations (`EPPCO SITE 1063`, `KFC WARQAA DUBAI`, `1462 LIFE 135 PHY` → `Eppco`, `KFC`, `Life Pharmacy`), legal suffixes (`LLC`, `L.L.C`, `FZC`, `PJSC`, `CO`) and complete truncated words (`SUPERMA` → `Supermarket`).
+- **Title Case**, keeping official stylings: McDonald's, KFC, IKEA, ADNOC, AWS, noon, eToro, DigitalOcean, 1Password.
+- **Use the consumer-facing brand**, not the operator or payment rail: `GALADARI ICE CREAM` → `Baskin Robbins`, `CRAVIA INC CINNABON` → `Cinnabon`, `CHATGPT SUBSCRIPTION` → `OpenAI`, `SDG*DubaiPay` → `DubaiPay`.
+- **Avoid very short or generic names.** `Brand::findOrCreateNew()` matches when an incoming SMS brand *contains* an existing brand name, so `du` or `Max` would swallow unrelated merchants; use `du Telecom`, `Max Fashion`. The same behaviour is why clean base names (`Eppco`) catch future branch variants.
+- **Leave owner-created brands alone** (Salary, House Rent, Family Support, OLDTLB, trips, loans…) and never merge the per-category `Others` brands.
+- **Merging:** keep the brand with the most transactions, move the others' transactions to it with `UPDATE transactions SET brand_id=…`, then delete the empty brands. Never delete a brand through Eloquent to merge it: `Brand::booted()` deletes all of a brand's transactions on `deleted`.
+- **When unsure** (guessed truncations, franchise groups, merges across categories), write the proposed changes to a CSV for the owner to review before touching the DB.
+
 ### Other
 - `/report` renders a Blade view built by `ReportManager` (also `app/Console/Commands/ReportCommand.php`).
 - Tests: mostly PHPUnit-style classes extending `Tests\TestCase` with `RefreshDatabase`; Pest is installed and bound to `tests/Feature`.
