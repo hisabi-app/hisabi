@@ -33,6 +33,7 @@ CI (`.github/workflows/run-tests.yml`) runs on PHP 8.4 / Node 22: `npm run build
 
 ### Request flow
 - `routes/web.php` holds nearly everything. Inertia page routes (`/insights`, `/transactions`, `/brands`, `/categories`, `/budgets`, `/settings`) render thin shells; the pages then fetch data from JSON endpoints under `/api/v1/*`, which are **also in `web.php`** behind session `auth` (not Sanctum). `routes/api.php` only has a Sanctum token-login endpoint.
+- `/kiosk` is a standalone dark, full-screen page for a wall-mounted tablet (no app layout). It reads `/api/v1/kiosk` (this month's spending vs. the same time last month, plus current budgets), refreshes itself hourly and reloads daily at 4am.
 - Frontend API clients live in `resources/js/Api/*.js` (fetch + CSRF token from the meta tag). Inertia pages resolve from `resources/js/pages/<Name>.tsx`; domain-specific components are in `resources/js/components/Domain`.
 
 ### Backend layering (CQRS-style)

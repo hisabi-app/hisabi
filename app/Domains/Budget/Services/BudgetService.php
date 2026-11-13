@@ -23,6 +23,17 @@ class BudgetService
     }
 
     /**
+     * Recurring budgets and custom budgets that haven't ended yet.
+     */
+    public function getCurrent(): Collection
+    {
+        return Budget::query()
+            ->where(fn ($query) => $query->where('reoccurrence', '!=', Budget::CUSTOM)->orWhere('end_at', '>', now()))
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
      * Spending per window for every recurring budget, for windows starting between $from and $to,
      * compared with the budget's current amount.
      */

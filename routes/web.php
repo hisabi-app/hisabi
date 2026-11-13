@@ -7,6 +7,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\InsightsController;
+use App\Http\Controllers\KioskController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -23,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/brands', [BrandController::class, 'index'])->name('brands');
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+    Route::get('/kiosk', [KioskController::class, 'index'])->name('kiosk');
     Route::get('/report', function (Request $request) {
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');
@@ -56,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/budgets/history', [\App\Http\Controllers\Api\V1\BudgetController::class, 'history']);
         Route::put('/budgets/{id}', [\App\Http\Controllers\Api\V1\BudgetController::class, 'update'])->whereNumber('id');
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
+        Route::get('/kiosk', [\App\Http\Controllers\Api\V1\KioskController::class, 'index']);
 
         Route::prefix('metrics')->group(function () {
             Route::get('/total-income', [MetricsController::class, 'totalIncome']);
