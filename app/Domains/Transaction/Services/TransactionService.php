@@ -3,6 +3,7 @@
 namespace App\Domains\Transaction\Services;
 
 use App\Domains\Transaction\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -59,6 +60,14 @@ class TransactionService
         $transaction = Transaction::query()->findOrFail($id);
         $transaction->delete();
         return $transaction;
+    }
+
+    public function getExpensesTotal(Carbon $from, Carbon $to): float
+    {
+        return (float) Transaction::query()
+            ->expenses()
+            ->whereBetween('created_at', [$from, $to])
+            ->sum('amount');
     }
 }
 
