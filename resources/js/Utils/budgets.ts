@@ -1,3 +1,5 @@
+import { format, startOfMonth, startOfWeek, startOfYear } from 'date-fns';
+
 export type BudgetStatus = 'on_track' | 'ahead' | 'used' | 'over';
 
 // Spending more than this many percentage points ahead of the elapsed time counts as "ahead of pace".
@@ -60,4 +62,17 @@ export const monthsBetween = (from: Date, to: Date): Date[] => {
     }
 
     return months;
+};
+
+export type RecurringReoccurrence = 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+
+// New recurring budgets follow the calendar: weeks start on Monday, months on the 1st, years on Jan 1.
+export const getPeriodStart = (reoccurrence: RecurringReoccurrence, date: Date): string => {
+    const start = {
+        WEEKLY: () => startOfWeek(date, { weekStartsOn: 1 }),
+        MONTHLY: () => startOfMonth(date),
+        YEARLY: () => startOfYear(date),
+    }[reoccurrence]();
+
+    return format(start, 'yyyy-MM-dd');
 };

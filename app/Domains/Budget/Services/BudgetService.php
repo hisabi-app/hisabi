@@ -61,10 +61,35 @@ class BudgetService
             ->all();
     }
 
+    public function create(array $data): Budget
+    {
+        $budget = Budget::create([
+            'name' => $data['name'],
+            'amount' => $data['amount'],
+            'reoccurrence' => $data['reoccurrence'],
+            'period' => 1,
+            'saving' => false,
+            'start_at' => Carbon::parse($data['start_at'])->startOfDay(),
+            // end_at is the first day after the budget, like the end of a recurring window, so its last day counts in full
+            'end_at' => isset($data['end_at']) ? Carbon::parse($data['end_at'])->addDay()->startOfDay() : null,
+        ]);
+        $budget->categories()->attach($data['category_ids']);
+
+        return $budget;
+    }
+
     public function update(int $id, array $data): Budget
     {
         $budget = Budget::findOrFail($id);
         $budget->update($data);
+        return $budget;
+    }
+
+    public function delete(int $id): Budget
+    {
+        $budget = Budget::findOrFail($id);
+        $budget->categories()->detach();
+        $budget->delete();
         return $budget;
     }
 

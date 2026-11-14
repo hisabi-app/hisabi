@@ -60,3 +60,44 @@ export const updateBudget = async ({ id, amount }) => {
 
     return result.budget;
 }
+
+export const createBudget = async ({ name, amount, reoccurrence, startAt, endAt, categoryIds }) => {
+    const response = await fetch('/api/v1/budgets', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ name, amount, reoccurrence, start_at: startAt, end_at: endAt, category_ids: categoryIds }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return result.budget;
+}
+
+export const deleteBudget = async (id) => {
+    const response = await fetch(`/api/v1/budgets/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return result.budget;
+}

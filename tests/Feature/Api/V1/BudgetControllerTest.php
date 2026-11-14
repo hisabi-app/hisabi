@@ -341,4 +341,165 @@ class BudgetControllerTest extends TestCase
             ->putJson('/api/v1/budgets/999', ['amount' => 100])
             ->assertStatus(404);
     }
+
+    public function test_store_requires_authentication(): void
+    {
+        $this->postJson('/api/v1/budgets', [])->assertStatus(401);
+    }
+
+    public function test_it_creates_a_recurring_budget_with_its_categories(): void
+    {
+        $categories = Category::factory()->count(2)->create();
+
+        $response = $this->actingAs($this->user)->postJson('/api/v1/budgets', [
+            'name' => 'Dining out',
+            'amount' => 1500,
+            'reoccurrence' => Budget::MONTHLY,
+            'start_at' => '2026-11-01',
+            'end_at' => '2026-11-30',
+            'category_ids' => $categories->modelKeys(),
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('budget.name', 'Dining out')
+            ->assertJsonPath('budget.reoccurrence', Budget::MONTHLY);
+
+        $budget = Budget::findOrFail($response->json('budget.id'));
+        $this->assertEquals(1500, $budget->amount);
+        $this->assertEquals('2026-11-01 00:00:00', $budget->start_at->toDateTimeString());
+        // Recurring budgets don't end
+        $this->assertNull($budget->end_at);
+        $this->assertEqualsCanonicalizing($categories->modelKeys(), $budget->categories->modelKeys());
+    }
+
+    public function test_a_custom_budget_counts_spending_on_its_last_day(): void
+    {
+        Carbon::setTestNow('2026-09-20 12:00:00');
+
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+        Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 300, 'created_at' => '2026-09-30 18:00:00']);
+        Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 50, 'created_at' => '2026-10-01 09:00:00']);
+
+        $response = $this->actingAs($this->user)->postJson('/api/v1/budgets', [
+            'name' => 'Trip',
+            'amount' => 1000,
+            'reoccurrence' => Budget::CUSTOM,
+            'start_at' => '2026-09-01',
+            'end_at' => '2026-09-30',
+            'category_ids' => [$category->id],
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('budget.start_at_date', '2026-09-01')
+            ->assertJsonPath('budget.end_at_date', '2026-10-01')
+            ->assertJsonPath('budget.total_transactions_amount', 300);
+
+        Carbon::setTestNow();
+    }
+
+    public function test_a_recurring_budget_that_has_not_started_yet_is_listed(): void
+    {
+        // Nov 1 in the browser, still Oct 31 in UTC
+        Carbon::setTestNow('2026-10-31 21:00:00');
+
+        $this->actingAs($this->user)->postJson('/api/v1/budgets', [
+            'name' => 'Groceries',
+            'amount' => 2000,
+            'reoccurrence' => Budget::MONTHLY,
+            'start_at' => '2026-11-01',
+            'category_ids' => [Category::factory()->create()->id],
+        ])->assertStatus(201);
+
+        $this->actingAs($this->user)->getJson('/api/v1/budgets')
+            ->assertStatus(200)
+            ->assertJsonPath('data.0.start_at_date', '2026-11-01')
+            ->assertJsonPath('data.0.end_at_date', '2026-12-01')
+            ->assertJsonPath('data.0.elapsed_days_percentage', 0);
+
+        Carbon::setTestNow();
+    }
+
+    public function test_store_validates_the_budget(): void
+    {
+        $category = Category::factory()->create();
+
+        $this->actingAs($this->user)
+            ->postJson('/api/v1/budgets', [])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['name', 'amount', 'reoccurrence', 'start_at', 'category_ids']);
+
+        $this->actingAs($this->user)
+            ->postJson('/api/v1/budgets', [
+                'name' => 'Groceries',
+                'amount' => 0,
+                'reoccurrence' => 'HOURLY',
+                'start_at' => '2026-11-01',
+                'category_ids' => [999],
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['amount', 'reoccurrence', 'category_ids.0']);
+
+        $this->actingAs($this->user)
+            ->postJson('/api/v1/budgets', [
+                'name' => 'Trip',
+                'amount' => 1000,
+                'reoccurrence' => Budget::CUSTOM,
+                'start_at' => '2026-11-01',
+                'category_ids' => [$category->id],
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['end_at']);
+
+        $this->actingAs($this->user)
+            ->postJson('/api/v1/budgets', [
+                'name' => 'Trip',
+                'amount' => 1000,
+                'reoccurrence' => Budget::CUSTOM,
+                'start_at' => '2026-11-10',
+                'end_at' => '2026-11-01',
+                'category_ids' => [$category->id],
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['end_at']);
+
+        $this->assertDatabaseCount('budgets', 0);
+    }
+
+    public function test_destroy_requires_authentication(): void
+    {
+        $budget = Budget::factory()->create();
+
+        $this->deleteJson("/api/v1/budgets/{$budget->id}")->assertStatus(401);
+        $this->assertModelExists($budget);
+    }
+
+    public function test_it_deletes_a_budget_but_not_its_categories_or_transactions(): void
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id]);
+        $transaction = Transaction::factory()->create(['brand_id' => $brand->id]);
+        $budget = Budget::factory()->create(['name' => 'Dining out']);
+        $budget->categories()->attach($category);
+        $otherBudget = Budget::factory()->create();
+        $otherBudget->categories()->attach($category);
+
+        $this->actingAs($this->user)
+            ->deleteJson("/api/v1/budgets/{$budget->id}")
+            ->assertStatus(200)
+            ->assertJsonPath('budget', ['id' => $budget->id, 'name' => 'Dining out']);
+
+        $this->assertModelMissing($budget);
+        $this->assertDatabaseMissing('budget_category', ['budget_id' => $budget->id]);
+        $this->assertModelExists($category);
+        $this->assertModelExists($transaction);
+        $this->assertCount(1, $otherBudget->categories);
+    }
+
+    public function test_destroy_returns_404_for_missing_budget(): void
+    {
+        $this->actingAs($this->user)
+            ->deleteJson('/api/v1/budgets/999')
+            ->assertStatus(404);
+    }
 }

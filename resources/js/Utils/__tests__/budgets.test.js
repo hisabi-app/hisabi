@@ -1,4 +1,4 @@
-import { getBudgetStatus, getHistoryBand, monthsBetween, toNumber } from '../budgets';
+import { getBudgetStatus, getHistoryBand, getPeriodStart, monthsBetween, toNumber } from '../budgets';
 
 it('toNumber parses formatted strings', () => {
     expect(toNumber('1,234.50')).toBe(1234.5);
@@ -32,4 +32,15 @@ it('monthsBetween lists the first day of each month, inclusive', () => {
         [2026, 1, 1],
     ]);
     expect(monthsBetween(new Date(2026, 1, 1), new Date(2025, 1, 1))).toEqual([]);
+});
+
+it('getPeriodStart returns the start of the calendar period containing the date', () => {
+    // Wednesday, Nov 18 2026
+    const date = new Date(2026, 10, 18, 15, 30);
+
+    expect(getPeriodStart('WEEKLY', date)).toBe('2026-11-16');
+    expect(getPeriodStart('MONTHLY', date)).toBe('2026-11-01');
+    expect(getPeriodStart('YEARLY', date)).toBe('2026-01-01');
+    // A Sunday belongs to the week that started the Monday before
+    expect(getPeriodStart('WEEKLY', new Date(2026, 10, 22))).toBe('2026-11-16');
 });
