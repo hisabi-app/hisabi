@@ -169,6 +169,11 @@ class Budget extends Model
                 return [$range->copy(), $range->copy()->add($unit, $this->period)];
             }
         }
+
+        // Hasn't started yet (e.g. created from a timezone ahead of UTC on the first day of a period): its first window is the current one
+        $startAt = $this->start_at->copy()->startOfDay();
+
+        return [$startAt, $startAt->copy()->add($unit, $this->period)];
     }
 
     private function getUnitMapping(): string

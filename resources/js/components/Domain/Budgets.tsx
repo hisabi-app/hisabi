@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { format, parseISO, subDays } from 'date-fns';
+import { DotsThreeIcon, TrashIcon } from '@phosphor-icons/react';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { formatNumber, getAppCurrency } from '@/Utils';
 import { BudgetStatus, getBudgetStatus, toNumber } from '@/Utils/budgets';
-import { getBudgets } from '@/Api/budgets';
+import { deleteBudget, getBudgets } from '@/Api/budgets';
 import { useInView } from '@/hooks/useInView';
 import LoadingView from '../Global/LoadingView';
 import NoContent from '../Global/NoContent';
@@ -68,14 +72,16 @@ const toView = (budget: Budget): BudgetView => {
 interface BudgetsProps {
     view: 'now' | 'history';
     history: HistoryState;
-    onAmountSaved: () => void;
-    // Changes when a budget is updated, so the list is fetched again
+    // Called after a budget is updated or deleted
+    onChange: () => void;
+    // Changes when a budget is created or updated, so the list is fetched again
     refreshKey: number;
 }
 
-export default function Budgets({ view, history, onAmountSaved, refreshKey }: BudgetsProps) {
+export default function Budgets({ view, history, onChange, refreshKey }: BudgetsProps) {
     const [budgets, setBudgets] = useState<BudgetView[]>([]);
     const [loading, setLoading] = useState(true);
+    const [deleting, setDeleting] = useState<BudgetView | null>(null);
     const [ref, isInView] = useInView();
 
     useEffect(() => {
@@ -105,10 +111,18 @@ export default function Budgets({ view, history, onAmountSaved, refreshKey }: Bu
     const needsAttention = budgets.filter((budget) => budget.status !== 'on_track');
     const onTrack = budgets.filter((budget) => budget.status === 'on_track');
 
-    if (view === 'history') return <BudgetsHistoryView state={history} onAmountSaved={onAmountSaved} />;
+    if (view === 'history') return <BudgetsHistoryView state={history} onAmountSaved={onChange} />;
+
+    const onDeleted = (id: number) => {
+        setDeleting(null);
+        setBudgets((current) => current.filter((budget) => budget.id !== id));
+        onChange();
+    };
 
     return (
         <div className="grid gap-7">
+            <DeleteBudgetDialog budget={deleting} onClose={() => setDeleting(null)} onDeleted={onDeleted} />
+
             {[
                 { title: 'Needs attention', items: needsAttention },
                 { title: 'On track', items: onTrack },
@@ -121,7 +135,7 @@ export default function Budgets({ view, history, onAmountSaved, refreshKey }: Bu
                         </h2>
                         <Card className="gap-0 overflow-hidden py-0">
                             {section.items.map((budget, index) => (
-                                <BudgetRow key={budget.id} budget={budget} className={index > 0 ? 'border-t' : ''} />
+                                <BudgetRow key={budget.id} budget={budget} onDelete={() => setDeleting(budget)} className={index > 0 ? 'border-t' : ''} />
                             ))}
                         </Card>
                     </section>
@@ -130,11 +144,13 @@ export default function Budgets({ view, history, onAmountSaved, refreshKey }: Bu
     );
 }
 
-function BudgetRow({ budget, className = '' }: { budget: BudgetView; className?: string }) {
+function BudgetRow({ budget, onDelete, className = '' }: { budget: BudgetView; onDelete: () => void; className?: string }) {
     const style = STATUS_STYLES[budget.status];
 
     return (
-        <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-3 px-5 py-4 md:grid-cols-[220px_minmax(0,1fr)_150px] md:gap-x-8 ${className}`}>
+        <div
+            className={`grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-6 gap-y-3 py-4 pr-3 pl-5 md:grid-cols-[220px_minmax(0,1fr)_150px_auto] md:gap-x-8 ${className}`}
+        >
             <span className="flex items-center gap-3">
                 <span className={`size-2.5 shrink-0 rounded-full ${style.bar}`} />
                 <span className="grid gap-0.5">
@@ -143,7 +159,7 @@ function BudgetRow({ budget, className = '' }: { budget: BudgetView; className?:
                 </span>
             </span>
 
-            <span className="relative order-last col-span-2 h-2 rounded-full bg-muted md:order-none md:col-span-1" aria-hidden="true">
+            <span className="relative order-last col-span-3 h-2 rounded-full bg-muted md:order-none md:col-span-1" aria-hidden="true">
                 <span className={`absolute inset-y-0 left-0 rounded-full ${style.bar}`} style={{ width: `${Math.min(budget.spentPercentage, 100)}%` }} />
                 <span
                     className="absolute -top-1 h-4 w-0.5 -translate-x-1/2 rounded-full bg-foreground"
@@ -162,6 +178,67 @@ function BudgetRow({ budget, className = '' }: { budget: BudgetView; className?:
                     {budget.spentPercentage}% of {money(budget.amount)}
                 </span>
             </span>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="-ml-3 size-8 text-muted-foreground md:-ml-5" aria-label={`More actions for ${budget.name}`}>
+                        <DotsThreeIcon size={18} weight="bold" aria-hidden="true" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem variant="destructive" onSelect={onDelete}>
+                        <TrashIcon aria-hidden="true" />
+                        Delete
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
+    );
+}
+
+function DeleteBudgetDialog({ budget, onClose, onDeleted }: { budget: BudgetView | null; onClose: () => void; onDeleted: (id: number) => void }) {
+    const [deleting, setDeleting] = useState(false);
+    const [error, setError] = useState(false);
+    // Keeps the name on screen while the dialog fades out
+    const [shown, setShown] = useState<BudgetView | null>(null);
+
+    useEffect(() => {
+        if (!budget) return;
+
+        setShown(budget);
+        setError(false);
+    }, [budget]);
+
+    const confirm = () => {
+        if (!budget) return;
+
+        setDeleting(true);
+        setError(false);
+        deleteBudget(budget.id)
+            .then(() => onDeleted(budget.id))
+            .catch(() => setError(true))
+            .finally(() => setDeleting(false));
+    };
+
+    return (
+        <Dialog open={budget !== null} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Delete {shown?.name}?</DialogTitle>
+                    <DialogDescription>Its history goes with it. Your transactions and categories stay as they are.</DialogDescription>
+                </DialogHeader>
+
+                {error && <p className="text-sm text-red-700 dark:text-red-400">Couldn't delete the budget. Try again.</p>}
+
+                <DialogFooter>
+                    <Button variant="ghost" onClick={onClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="destructive" disabled={deleting} onClick={confirm}>
+                        {deleting ? 'Deleting…' : 'Delete budget'}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

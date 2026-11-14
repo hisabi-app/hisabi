@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Head } from '@inertiajs/react';
+import { PlusIcon } from '@phosphor-icons/react';
 
 import Authenticated from '@/Layouts/Authenticated';
+import { Button } from '@/components/ui/button';
 import Budgets from '@/components/Domain/Budgets';
 import { HistoryRangePicker } from '@/components/Domain/BudgetHistory';
 import { useBudgetsHistory } from '@/hooks/useBudgetsHistory';
+import Create from './Create';
 
 type View = 'now' | 'history';
 
@@ -17,10 +20,16 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
     const [view, setView] = useState<View>('now');
     const history = useBudgetsHistory();
     const [refreshKey, setRefreshKey] = useState(0);
+    const [showCreate, setShowCreate] = useState(false);
 
-    const onAmountSaved = () => {
+    const refresh = () => {
         history.reload();
         setRefreshKey((key) => key + 1);
+    };
+
+    const onCreated = () => {
+        setShowCreate(false);
+        refresh();
     };
 
     const selectView = (value: View) => {
@@ -50,6 +59,10 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
                         ))}
                     </div>
                 )}
+                <Button onClick={() => setShowCreate(true)} aria-label="New budget">
+                    <PlusIcon aria-hidden="true" />
+                    <span className="hidden sm:inline">New budget</span>
+                </Button>
             </div>
         </div>
     );
@@ -58,9 +71,11 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
         <Authenticated auth={auth} header={header}>
             <Head title="Budgets" />
 
+            <Create open={showCreate} onClose={() => setShowCreate(false)} onCreated={onCreated} />
+
             <div className="p-4">
                 <div className="max-w-7xl mx-auto grid gap-4">
-                    <Budgets view={view} history={history.state} onAmountSaved={onAmountSaved} refreshKey={refreshKey} />
+                    <Budgets view={view} history={history.state} onChange={refresh} refreshKey={refreshKey} />
                 </div>
             </div>
         </Authenticated>

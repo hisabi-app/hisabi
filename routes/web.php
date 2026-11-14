@@ -56,7 +56,9 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'destroy']);
         Route::get('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'index']);
         Route::get('/budgets/history', [\App\Http\Controllers\Api\V1\BudgetController::class, 'history']);
+        Route::post('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'store']);
         Route::put('/budgets/{id}', [\App\Http\Controllers\Api\V1\BudgetController::class, 'update'])->whereNumber('id');
+        Route::delete('/budgets/{id}', [\App\Http\Controllers\Api\V1\BudgetController::class, 'destroy'])->whereNumber('id');
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
         Route::get('/kiosk', [\App\Http\Controllers\Api\V1\KioskController::class, 'index']);
 
