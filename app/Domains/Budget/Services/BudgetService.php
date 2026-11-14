@@ -27,10 +27,39 @@ class BudgetService
      */
     public function getCurrent(): Collection
     {
-        return Budget::query()
+        $budgets = Budget::query()
+            ->with('categories')
             ->where(fn ($query) => $query->where('reoccurrence', '!=', Budget::CUSTOM)->orWhere('end_at', '>', now()))
             ->orderBy('id')
             ->get();
+
+        $this->preloadCurrentTotals($budgets);
+
+        return $budgets;
+    }
+
+    /**
+     * Works out what each budget has spent in its current window with a single query,
+     * instead of one query per budget (this runs on every page for the sidebar counts).
+     */
+    private function preloadCurrentTotals(Collection $budgets): void
+    {
+        if ($budgets->isEmpty()) {
+            return;
+        }
+
+        $windows = $budgets->mapWithKeys(fn (Budget $budget) => [$budget->id => $budget->currentWindow()]);
+        $dailyTotals = $this->getDailyTotalsPerBudget($budgets->modelKeys(), $windows->values());
+
+        $budgets->each(function (Budget $budget) use ($windows, $dailyTotals) {
+            [$startAt, $endAt] = $windows[$budget->id];
+            $startDay = $startAt->format('Y-m-d');
+            $endDay = $endAt->format('Y-m-d');
+
+            $budget->preloadTotal((float) ($dailyTotals[$budget->id] ?? collect())
+                ->filter(fn ($total, $day) => $day >= $startDay && $day < $endDay)
+                ->sum());
+        });
     }
 
     /**

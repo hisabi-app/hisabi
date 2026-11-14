@@ -84,6 +84,7 @@ export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserPro
       .then(() => {
         setInvalidSms(invalidSms.filter((item) => item.id !== sms.id));
         cancelEdit();
+        onParsed?.();
       })
       .catch(console.error);
   };

@@ -23,7 +23,7 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
     const history = useBudgetsHistory();
     const [refreshKey, setRefreshKey] = useState(0);
     // /budgets?create=1&category=3&name=Groceries opens the form prefilled (from the home's suggestion)
-    const [prefill] = useState(() => {
+    const [prefill, setPrefill] = useState(() => {
         const params = new URLSearchParams(window.location.search);
         const category = Number(params.get('category'));
 
@@ -35,7 +35,10 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
 
     const closeCreate = () => {
         setShowCreate(false);
-        if (prefill) window.history.replaceState({}, '', window.location.pathname);
+        if (!prefill) return;
+
+        window.history.replaceState({}, '', window.location.pathname);
+        setPrefill(null);
     };
 
     const refresh = () => {

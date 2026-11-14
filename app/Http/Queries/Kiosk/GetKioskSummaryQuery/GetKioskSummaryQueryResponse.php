@@ -29,7 +29,8 @@ readonly class GetKioskSummaryQueryResponse
                 'daily' => $this->daily,
                 'last_month_daily' => $this->lastMonthDaily,
                 'latest' => $this->latest ? new TransactionResource($this->latest) : null,
-                'latest_at' => $this->latest?->created_at?->toIso8601String(),
+                // When it was added; its own date often has no time of day
+                'latest_at' => $this->latest?->updated_at?->toIso8601String(),
             ],
         ]);
     }

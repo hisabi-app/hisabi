@@ -74,11 +74,12 @@ function Bars({ bars, byDay }: { bars: Bar[]; byDay: boolean }) {
 
 export default function SpendingOverTime({ range, kind, index, version }: { range: QueryRange | null; kind: PeriodKind; index: number; version: number }) {
     const byDay = kind === 'month';
-    const { data } = useMetric<Bar[]>(() => getSpendingOverTime(range, byDay ? 'day' : 'month'), `over-time-${range?.from}-${range?.to}-${byDay}-${version}`);
+    const { data, error } = useMetric<Bar[]>(() => getSpendingOverTime(range, byDay ? 'day' : 'month'), `over-time-${range?.from}-${range?.to}-${byDay}-${version}`);
 
     return (
         <Panel title={byDay ? 'Spending by day' : 'Spending by month'} index={index}>
-            {!data && <Skeleton className="mt-2 h-40 w-full" />}
+            {!data && !error && <Skeleton className="mt-2 h-40 w-full" />}
+            {!data && error && <p className="py-2 text-muted-foreground">Couldn’t load this. Try again in a moment.</p>}
             {data && data.length === 0 && <p className="py-2 text-muted-foreground">No spending in this period.</p>}
             {data && data.length > 0 && (
                 <div className="mt-2">

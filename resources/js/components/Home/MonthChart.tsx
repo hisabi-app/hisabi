@@ -1,3 +1,5 @@
+import { getDaysInMonth } from 'date-fns';
+
 // Spending so far this month (solid) against the whole of last month (dashed), as running totals
 interface MonthChartProps {
     daily: number[];
@@ -14,7 +16,7 @@ export default function MonthChart({ daily, lastMonth, label, firstDay = 1 }: Mo
     const R = 300;
     const T = 8;
     const B = 80;
-    const days = Math.max(lastMonth.length, 30);
+    const days = Math.max(lastMonth.length, getDaysInMonth(new Date()));
     const max = Math.max(1, ...daily, ...lastMonth) * 1.05;
     const x = (day: number) => L + ((day - 1) / (days - 1)) * (R - L);
     const y = (value: number) => B - (value / max) * (B - T);

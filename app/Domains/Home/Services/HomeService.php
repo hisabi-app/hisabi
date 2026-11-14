@@ -39,7 +39,7 @@ class HomeService
 
         return match (true) {
             $firstTransactionDate === null => self::STAGE_NEW,
-            $firstTransactionDate->gt(now()->subMonth()) => self::STAGE_EARLY,
+            $firstTransactionDate->gt(now()->subMonthNoOverflow()) => self::STAGE_EARLY,
             default => self::STAGE_FULL,
         };
     }

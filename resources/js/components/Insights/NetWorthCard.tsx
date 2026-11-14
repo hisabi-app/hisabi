@@ -75,8 +75,9 @@ export default function NetWorthCard({ index, version }: { index: number; versio
 
     return (
         <Panel title="Net worth" index={index}>
+            {total.error && trend.error && <p className="py-2 text-muted-foreground">Couldn’t load this. Try again in a moment.</p>}
             {total.data === null ? (
-                <Skeleton className="mt-2 h-10 w-52" />
+                !total.error && <Skeleton className="mt-2 h-10 w-52" />
             ) : (
                 <p className="text-[40px] leading-[1.1] font-bold tracking-[-0.03em] font-rounded">
                     <small className="mr-1 text-[0.45em] font-semibold tracking-normal text-muted-foreground">{getAppCurrency()}</small>
@@ -91,7 +92,7 @@ export default function NetWorthCard({ index, version }: { index: number; versio
                     over the last 12 months
                 </p>
             )}
-            <div className="mt-4">{trend.data === null ? <Skeleton className="h-36 w-full" /> : points.length > 1 && <NetWorthChart points={points} />}</div>
+            <div className="mt-4">{trend.data === null ? !trend.error && <Skeleton className="h-36 w-full" /> : points.length > 1 && <NetWorthChart points={points} />}</div>
         </Panel>
     );
 }

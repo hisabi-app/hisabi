@@ -30,6 +30,7 @@ export default function Index({ auth }: { auth: any }) {
     const [showCreate, setShowCreate] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
     const [uncategorized, setUncategorized] = useState<UncategorizedBrand[]>([]);
+    const [uncategorizedCount, setUncategorizedCount] = useState(0);
     const [detail, setDetail] = useState<Detail>(null);
 
     useEffect(() => {
@@ -41,7 +42,10 @@ export default function Index({ auth }: { auth: any }) {
     // The brands still waiting for a category, the same list the home's Needs you uses
     useEffect(() => {
         getHome()
-            .then((home: any) => setUncategorized(home.needs_you.brands.items))
+            .then((home: any) => {
+                setUncategorized(home.needs_you.brands.items);
+                setUncategorizedCount(home.needs_you.brands.count);
+            })
             .catch(console.error);
     }, [reloadKey]);
 
@@ -69,7 +73,10 @@ export default function Index({ auth }: { auth: any }) {
     };
     const onUpdate = (updated: any) => {
         setBrands((current) => current.map((brand) => (brand.id === updated.id ? updated : brand)));
-        setUncategorized((current) => (updated.category ? current.filter((brand) => brand.id !== updated.id) : current));
+        if (updated.category && uncategorized.some((brand) => brand.id === updated.id)) {
+            setUncategorized((current) => current.filter((brand) => brand.id !== updated.id));
+            setUncategorizedCount((count) => Math.max(0, count - 1));
+        }
     };
     const onDelete = (deleted: any) => setBrands((current) => current.filter((brand) => brand.id != deleted.id));
 
@@ -109,14 +116,14 @@ export default function Index({ auth }: { auth: any }) {
                 />
 
                 {uncategorized.length > 0 && (
-                    <Panel title="Need a category" count={uncategorized.length} index={1}>
+                    <Panel title="Need a category" count={uncategorizedCount} index={1}>
                         <div className="flex flex-wrap items-center justify-between gap-3 py-1.5">
                             <p className="min-w-0 text-muted-foreground">
                                 {uncategorized
                                     .slice(0, 3)
                                     .map((brand) => brand.name)
                                     .join(', ')}
-                                {uncategorized.length > 3 && ` and ${uncategorized.length - 3} more`}
+                                {uncategorizedCount > 3 && ` and ${uncategorizedCount - 3} more`}
                             </p>
                             <Button variant="secondary" onClick={() => setDetail({ kind: 'brands' })}>
                                 Assign

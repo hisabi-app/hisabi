@@ -21,7 +21,7 @@ const PARTS = [
 
 // Where the income went: one bar that adds up, instead of separate cash, savings and investment tiles
 export default function IncomeSplit({ range, index, version }: { range: QueryRange | null; index: number; version: number }) {
-    const { data } = useMetric<Allocation>(() => getIncomeAllocation(range), `allocation-${range?.from}-${range?.to}-${version}`);
+    const { data, error } = useMetric<Allocation>(() => getIncomeAllocation(range), `allocation-${range?.from}-${range?.to}-${version}`);
 
     const parts = data
         ? [
@@ -39,7 +39,8 @@ export default function IncomeSplit({ range, index, version }: { range: QueryRan
                 {data && <span className="font-semibold font-rounded tabular">{money(data.income)} in</span>}
             </div>
 
-            {!data && <Skeleton className="mt-3 h-20 w-full" />}
+            {!data && !error && <Skeleton className="mt-3 h-20 w-full" />}
+            {!data && error && <p className="py-2 text-muted-foreground">Couldn’t load this. Try again in a moment.</p>}
 
             {data && data.income <= 0 && <p className="py-2 text-muted-foreground">No income in this period.</p>}
 

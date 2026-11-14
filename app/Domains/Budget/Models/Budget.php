@@ -25,6 +25,9 @@ class Budget extends Model
 
     protected $guarded = [];
 
+    // Set by BudgetService when it loads many budgets at once, to skip one query per budget
+    protected ?float $preloadedTotal = null;
+
     protected $appends = [
         'is_saving',
         'total_spent_percentage',
@@ -133,8 +136,17 @@ class Budget extends Model
         return $this->getCurrentWindowStartAndEndDates()[1]->format('Y-m-d');
     }
 
+    public function preloadTotal(float $total): void
+    {
+        $this->preloadedTotal = $total;
+    }
+
     public function getTotalTransactionsAmountAttribute()
     {
+        if ($this->preloadedTotal !== null) {
+            return $this->preloadedTotal;
+        }
+
         // Several appended attributes read this; query once per model instance.
         return once(function () {
             [$startAt, $endAt] = $this->getCurrentWindowStartAndEndDates();

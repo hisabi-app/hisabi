@@ -29,12 +29,13 @@ export const transactionsLink = (filter: string, range: QueryRange | null) => {
 };
 
 export default function CategoryBreakdown({ range, index, version }: { range: QueryRange | null; index: number; version: number }) {
-    const { data } = useMetric<Row[]>(() => getCategoryBreakdown(range), `categories-${range?.from}-${range?.to}-${version}`);
+    const { data, error } = useMetric<Row[]>(() => getCategoryBreakdown(range), `categories-${range?.from}-${range?.to}-${version}`);
     const top = data?.[0]?.total ?? 1;
 
     return (
         <Panel title="Spending by category" index={index}>
-            {!data && <Skeleton className="mt-2 h-60 w-full" />}
+            {!data && !error && <Skeleton className="mt-2 h-60 w-full" />}
+            {!data && error && <p className="py-2 text-muted-foreground">Couldn’t load this. Try again in a moment.</p>}
             {data && data.length === 0 && <p className="py-2 text-muted-foreground">Nothing spent in this period.</p>}
             {data && data.length > 0 && (
                 <div className="divide-y">

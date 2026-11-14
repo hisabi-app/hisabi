@@ -18,11 +18,12 @@ interface Row {
 }
 
 export default function TopBrands({ range, index, version }: { range: QueryRange | null; index: number; version: number }) {
-    const { data } = useMetric<Row[]>(() => getTopBrands(range), `brands-${range?.from}-${range?.to}-${version}`);
+    const { data, error } = useMetric<Row[]>(() => getTopBrands(range), `brands-${range?.from}-${range?.to}-${version}`);
 
     return (
         <Panel title="Top brands" more={{ label: 'All', href: '/brands' }} index={index}>
-            {!data && <Skeleton className="mt-2 h-48 w-full" />}
+            {!data && !error && <Skeleton className="mt-2 h-48 w-full" />}
+            {!data && error && <p className="py-2 text-muted-foreground">Couldn’t load this. Try again in a moment.</p>}
             {data && data.length === 0 && <p className="py-2 text-muted-foreground">No spending in this period.</p>}
             {data && data.length > 0 && (
                 <div className="divide-y">

@@ -74,9 +74,8 @@ class KioskControllerTest extends TestCase
     {
         $brand = Brand::factory()->create(['name' => 'Carrefour', 'category_id' => Category::factory()->create()->id]);
         Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 100, 'created_at' => '2026-11-02 09:00:00']);
-        Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 50, 'created_at' => '2026-11-13 16:00:00']);
-        // Future-dated transactions aren't the latest yet
-        Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 1, 'created_at' => '2026-11-20 09:00:00']);
+        // Added last, though dated earlier: an SMS pasted late
+        Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 50, 'created_at' => '2026-11-01 00:00:00', 'updated_at' => '2026-11-13 16:00:00']);
 
         $response = $this->actingAs($this->user)
             ->getJson('/api/v1/kiosk')
@@ -87,6 +86,7 @@ class KioskControllerTest extends TestCase
             ->assertJsonCount(31, 'data.last_month_daily');
 
         $this->assertEquals(150, $response->json('data.daily.12'));
+        // When it was added, not its date
         $this->assertStringStartsWith('2026-11-13T16:00:00', $response->json('data.latest_at'));
     }
 }
