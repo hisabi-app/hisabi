@@ -67,10 +67,14 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 ### Phase 7: wrap up
 - [x] `AGENT.md` architecture notes (home, shell, tokens, Wallet components)
 - [x] README showcase image refreshed
-- [ ] CI green, PR ready for review
+- [x] CI green, PR ready for review
 
 ### Phase 8: landing page (`../marketing`)
-- [ ] New branding and look on the Next.js marketing site, on a branch with a PR
+- [x] New branding and look on the Next.js marketing site, on a branch with a PR (hisabi-app/marketing#1)
+
+## Status
+
+All phases are done. Review fixes landed after an independent review of the full diff. What's left is the owner's review and merge of #115 and hisabi-app/marketing#1.
 
 ## Local preview (for screenshots)
 
