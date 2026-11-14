@@ -8,6 +8,7 @@ import { createCategory } from "../../Api";
 import {
     Dialog,
     DialogContent,
+    DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
@@ -54,8 +55,10 @@ export default function Create({ showCreate, onClose, onCreate }) {
     return (
         <>
             <Dialog open={showCreate} onOpenChange={(open) => !open && onClose()}>
-                <DialogContent>
-                    <DialogTitle className="sr-only">Create Category</DialogTitle>
+                <DialogContent aria-describedby={undefined}>
+                    <DialogHeader>
+                        <DialogTitle>New category</DialogTitle>
+                    </DialogHeader>
                     <div className="space-y-4">
 
                     <div className="flex justify-center">
@@ -73,11 +76,12 @@ export default function Create({ showCreate, onClose, onCreate }) {
                                 </div>
                             </div>
                         <div>
-                            <Label htmlFor="name">
+                            <Label htmlFor="category-name">
                                 Name
                             </Label>
                             <div className="relative mt-1">
                                 <Input
+                                    id="category-name"
                                     type="text"
                                     name="name"
                                     value={name}

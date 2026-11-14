@@ -3,6 +3,7 @@
 namespace App\Http\Commands\Brand\CreateBrandCommand;
 
 use App\Domains\Brand\Models\Brand;
+use App\Http\Resources\BrandResource;
 use Illuminate\Http\JsonResponse;
 
 readonly class CreateBrandCommandResponse
@@ -14,7 +15,7 @@ readonly class CreateBrandCommandResponse
     public function toResponse(): JsonResponse
     {
         return response()->json([
-            'brand' => $this->brand->load('category')->loadCount('transactions'),
+            'brand' => new BrandResource($this->brand->load('category')->loadCount('transactions')),
         ], 201);
     }
 }

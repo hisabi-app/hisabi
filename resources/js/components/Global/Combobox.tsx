@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef } from 'react'
+import { useState, useEffect, useId, forwardRef } from 'react'
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label'
 
 interface ComboboxProps {
   label?: string
+  className?: string
   items: any[]
   initialSelectedItem?: any
   onChange: (item: any) => void
@@ -29,9 +30,10 @@ interface ComboboxProps {
 
 const ComboboxComponent = forwardRef<HTMLDivElement, ComboboxProps>(
   function ComboboxComponent(
-    { label, items, initialSelectedItem, onChange, displayInputValue, displayOptionValue },
+    { label, className, items, initialSelectedItem, onChange, displayInputValue, displayOptionValue },
     ref
   ) {
+    const id = useId()
     const [open, setOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState(initialSelectedItem)
 
@@ -59,15 +61,17 @@ const ComboboxComponent = forwardRef<HTMLDivElement, ComboboxProps>(
     }
 
     return (
-      <div ref={ref}>
+      <div ref={ref} className={className}>
         {label && (
-          <Label className="text-sm text-foreground">
+          <Label htmlFor={id} className="text-sm text-foreground">
             {label}
           </Label>
         )}
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger className="w-full">
+          <PopoverTrigger asChild>
             <Button
+              id={id}
+              type="button"
               variant="outline"
               role="combobox"
               aria-expanded={open}

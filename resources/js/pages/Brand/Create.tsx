@@ -1,83 +1,78 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
+import Combobox from '@/components/Global/Combobox';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import Combobox from "@/components/Global/Combobox";
 import { createBrand } from '../../Api';
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-} from '@/components/ui/dialog';
 
-export default function Create({ categories, showCreate, onClose, onCreate }) {
+type Category = { id: number; name: string };
+
+type Props = {
+    categories: Category[];
+    showCreate: boolean;
+    onClose: () => void;
+    onCreate: (brand: any) => void;
+};
+
+export default function Create({ categories, showCreate, onClose, onCreate }: Props) {
     const [name, setName] = useState('');
-    const [category, setCategory] = useState(null);
-    const [isReady, setIsReady] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [category, setCategory] = useState<Category | null>(null);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState(false);
 
-    useEffect(() => {
-        setIsReady(name !== '' && category !== null);
-    }, [name, category]);
+    const valid = name.trim() !== '' && category !== null;
 
-    const handleCreate = () => {
-        if (loading || !isReady || !category) return;
-        
-        setLoading(true);
+    const submit = (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!category || !valid || saving) return;
 
-        createBrand({
-            name,
-            categoryId: category.id
-        })
-        .then(({ data }) => {
-            onCreate(data.createBrand);
-            // Reset form
-            setCategory(null);
-            setName('');
-            setLoading(false);
-            onClose();
-        })
-        .catch(console.error);
+        setSaving(true);
+        setError(false);
+        createBrand({ name: name.trim(), categoryId: category.id })
+            .then(({ data }) => {
+                setName('');
+                setCategory(null);
+                onCreate(data.createBrand);
+            })
+            .catch(() => setError(true))
+            .finally(() => setSaving(false));
     };
 
     return (
         <Dialog open={showCreate} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent>
-                <DialogTitle className="sr-only">Create Brand</DialogTitle>
-                <div className="space-y-4">
-                    <div>
-                        <Label htmlFor="name">
-                            Name
-                        </Label>
-                        <Input
-                            type="text"
-                            name="name"
-                            value={name}
-                            className="mt-1"
-                            onChange={(e) => setName(e.target.value)}
-                        />
+            <DialogContent aria-describedby={undefined}>
+                <DialogHeader>
+                    <DialogTitle>New brand</DialogTitle>
+                </DialogHeader>
+
+                <form onSubmit={submit} className="grid gap-5">
+                    <div className="grid gap-2">
+                        <Label htmlFor="brand-name">Name</Label>
+                        <Input id="brand-name" autoFocus value={name} placeholder="e.g. Carrefour" onChange={(event) => setName(event.target.value)} />
                     </div>
 
-                    <div>
-                        <Combobox
-                            label="Category"
-                            items={categories}
-                            initialSelectedItem={category}
-                            onChange={(item) => setCategory(item)}
-                            displayInputValue={(item) => item?.name ?? ''}
-                        />
-                    </div>
+                    <Combobox
+                        label="Category"
+                        className="grid gap-2"
+                        items={categories}
+                        initialSelectedItem={category}
+                        onChange={(item) => setCategory(item)}
+                        displayInputValue={(item) => item?.name ?? ''}
+                    />
 
-                    <div className="flex items-center justify-end pt-2">
-                        <Button 
-                            disabled={!isReady || loading} 
-                            onClick={handleCreate}
-                        >
-                            Create
+                    {error && <p className="text-sm text-red-700 dark:text-red-400">Couldn't create the brand. Try again.</p>}
+
+                    <DialogFooter>
+                        <Button type="button" variant="ghost" onClick={onClose}>
+                            Cancel
                         </Button>
-                    </div>
-                </div>
+                        <Button type="submit" disabled={!valid || saving}>
+                            {saving ? 'Creating…' : 'Create brand'}
+                        </Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     );

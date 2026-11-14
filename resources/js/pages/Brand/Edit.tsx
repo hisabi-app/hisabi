@@ -1,99 +1,101 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { updateBrand, deleteBrand } from "../../Api";
+import Combobox from '@/components/Global/Combobox';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { LongPressButton } from '@/components/ui/long-press-button';
-import Combobox from "@/components/Global/Combobox";
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { deleteBrand, updateBrand } from '../../Api';
 
-export default function Edit({ categories, brand, onUpdate, onDelete, onClose }) {
+type Category = { id: number; name: string };
+
+type Props = {
+    categories: Category[];
+    brand: any;
+    onUpdate: (brand: any) => void;
+    onDelete: (brand: any) => void;
+    onClose: () => void;
+};
+
+export default function Edit({ categories, brand, onUpdate, onDelete, onClose }: Props) {
     const [name, setName] = useState('');
-    const [category, setCategory] = useState(null);
+    const [category, setCategory] = useState<Category | null>(null);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        // Closing keeps the last brand's fields on screen while the dialog fades out
         if (!brand) return;
 
         setName(brand.name);
-        if (brand.category) {
-            setCategory(brand.category);
-        }
+        setCategory(brand.category ?? null);
+        setError(null);
     }, [brand]);
 
-    const handleUpdate = () => {
-        if (!brand || !category) return;
+    const valid = name.trim() !== '' && category !== null;
 
-        const brandId = brand.id;
-        updateBrand({
-            id: brandId,
-            name,
-            categoryId: category.id
-        })
-        .then(({ data }) => {
-            onUpdate(data.updateBrand);
-            onClose();
-        })
-        .catch(console.error);
+    const submit = (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!brand || !category || !valid || saving) return;
+
+        setSaving(true);
+        setError(null);
+        updateBrand({ id: brand.id, name: name.trim(), categoryId: category.id })
+            .then(({ data }) => {
+                onUpdate(data.updateBrand);
+                onClose();
+            })
+            .catch(() => setError("Couldn't save the brand. Try again."))
+            .finally(() => setSaving(false));
     };
 
     const handleDelete = () => {
         if (!brand) return;
 
-        const brandToDelete = brand;
-        deleteBrand(brandToDelete.id)
+        const deleted = brand;
+        setError(null);
+        deleteBrand(deleted.id)
             .then(() => {
-                onDelete(brandToDelete);
+                onDelete(deleted);
                 onClose();
             })
-            .catch(console.error);
+            .catch(() => setError("Couldn't delete the brand. Try again."));
     };
-
-    const isReady = name !== '' && category !== null;
 
     return (
         <Dialog open={!!brand} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent>
-                <DialogTitle className="sr-only">Edit Brand</DialogTitle>
-                {brand && (
-                    <div className="space-y-4">
-                        <div>
-                            <Label htmlFor="name">
-                                Name
-                            </Label>
-                            <Input
-                                type="text"
-                                name="name"
-                                value={name}
-                                className="mt-1"
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
+            <DialogContent aria-describedby={undefined}>
+                <DialogHeader>
+                    <DialogTitle>Edit brand</DialogTitle>
+                </DialogHeader>
 
-                        <div>
-                            <Combobox
-                                label="Category"
-                                items={categories}
-                                initialSelectedItem={category}
-                                onChange={(item) => setCategory(item)}
-                                displayInputValue={(item) => item?.name ?? ''}
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-end pt-2 gap-2">
-                            <LongPressButton onLongPress={handleDelete}>
-                                Hold to Delete
-                            </LongPressButton>
-                            <Button disabled={!isReady} onClick={handleUpdate}>
-                                Update
-                            </Button>
-                        </div>
+                <form onSubmit={submit} className="grid gap-5">
+                    <div className="grid gap-2">
+                        <Label htmlFor="brand-name">Name</Label>
+                        <Input id="brand-name" value={name} onChange={(event) => setName(event.target.value)} />
                     </div>
-                )}
+
+                    <Combobox
+                        label="Category"
+                        className="grid gap-2"
+                        items={categories}
+                        initialSelectedItem={category}
+                        onChange={(item) => setCategory(item)}
+                        displayInputValue={(item) => item?.name ?? ''}
+                    />
+
+                    {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
+
+                    <DialogFooter className="sm:justify-between">
+                        <LongPressButton type="button" onLongPress={handleDelete}>
+                            Hold to delete
+                        </LongPressButton>
+                        <Button type="submit" disabled={!valid || saving}>
+                            {saving ? 'Saving…' : 'Save'}
+                        </Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     );

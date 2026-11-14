@@ -149,7 +149,7 @@ class BrandControllerTest extends TestCase
                         'id',
                         'name',
                     ],
-                    'transactions_count',
+                    'transactionsCount',
                 ],
             ])
             ->assertJsonPath('brand.name', 'Test Brand')
@@ -214,7 +214,7 @@ class BrandControllerTest extends TestCase
                         'id',
                         'name',
                     ],
-                    'transactions_count',
+                    'transactionsCount',
                 ],
             ])
             ->assertJsonPath('brand.name', 'New Name')
