@@ -40,7 +40,7 @@ CI (`.github/workflows/run-tests.yml`) runs on PHP 8.4 / Node 22: `npm run build
 - `/kiosk` is a standalone full-screen page for a wall-mounted tablet (no app layout): light by day, neutral dark from 22:00 to 06:00. It reads `/api/v1/kiosk` (this month's spending vs. the same time last month with daily running totals, current budgets, the latest transaction), refreshes itself hourly and reloads daily at 4am.
 - Frontend API clients live in `resources/js/Api/*.js` (fetch + CSRF token from the meta tag). Inertia pages resolve from `resources/js/pages/<Name>.tsx`.
 - Components: `components/Wallet` (design-system pieces: `PageHeader`, `Panel`, `Tile`, `Ring`, `CountUp`, `EmptyState`, `format.ts`), `components/Shell` (floating sidebar, phone dock, navigation config), `components/Home` and `components/Insights` (page sections), `components/Domain` (older metric charts, budgets list).
-- `Layouts/Authenticated.tsx` owns the Add dialogs (paste an SMS, add by hand). Pages open them with `requestAdd()` and refresh on `useDataChanged()` (`hooks/useDataChanged.ts`).
+- `Layouts/Authenticated.tsx` owns the Add dialogs (paste an SMS, add by hand). Pages open them with `requestAdd()` (Home and Transactions put `Shell/AddButton` in their header; phones use the dock's +) and refresh on `useDataChanged()` (`hooks/useDataChanged.ts`).
 
 ### Backend layering (CQRS-style)
 API controllers in `app/Http/Controllers/Api/V1` are thin: they build a command/query DTO and call its handler. Each operation is a folder with three classes:
@@ -86,7 +86,7 @@ SMS brand strings are ALL CAPS, truncated (~20 chars) and carry branch noise. Wh
 
 ## UI guidelines
 
-- Follow `DESIGN.md`: white or off-white canvas only (never tint page or panel backgrounds), white rounded cards, the system font with `font-rounded` for amounts, color only from categories and status. The app is light only; the kiosk's night mode is the one dark surface.
+- Follow `DESIGN.md`: white or off-white canvas only (never tint page or panel backgrounds), white rounded cards, the system font with `font-rounded` for amounts, color only from categories and status. The logo's green stays in the logo. The app is light only; the kiosk's night mode is the one dark surface.
 - Navigation is the floating sidebar on laptops and the bottom dock on phones; don't add a top navbar.
 - Easy first, detail on demand: summaries on the page, detail in a side `Sheet` (see `components/Home/DetailSheet.tsx`).
 - No empty charts or "AED 0" cards: a section shows up once it has something real to say (see the stages above).

@@ -45,6 +45,7 @@ The logo is the original Hisabi wordmark with three green bars: `public/images/l
 - Rows inside a card are split by 1px `border` lines, not separate cards.
 - Floating chrome (sidebar, dock, menus, panels) uses `shadow-float` / `shadow-panel`.
 - Buttons are pills: primary is ink, secondary is a soft grey pill.
+- Add (paste a bank SMS, add by hand) is part of the page: an Add button in the header of Home and Transactions on laptops (`components/Shell/AddButton.tsx`), the + in the middle of the dock on phones. The sidebar is navigation only.
 - Category tiles: 36px rounded squares (10px radius) with a white icon.
 
 ## Layout

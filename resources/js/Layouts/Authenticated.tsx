@@ -41,7 +41,7 @@ export default function Authenticated({ auth, header, children }: AuthenticatedP
 
     return (
         <div className="min-h-dvh bg-background">
-            <Sidebar nav={nav ?? FALLBACK_NAV} user={user} onAdd={setAdding} />
+            <Sidebar nav={nav ?? FALLBACK_NAV} user={user} />
 
             <main className="pb-28 md:pb-10 md:pl-[248px]">
                 {header && (

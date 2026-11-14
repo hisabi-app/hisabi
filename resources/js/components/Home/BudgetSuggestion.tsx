@@ -41,7 +41,7 @@ export default function BudgetSuggestion({ suggestion, index, onDismissed }: Bud
                 <p className="col-start-2 text-[12.5px] text-muted-foreground">A monthly budget tells you when you’re ahead of pace.</p>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-                <Link href={`/budgets?${params}`} className="inline-flex h-[34px] items-center rounded-full bg-primary px-4 font-semibold text-primary-foreground transition-transform duration-150 ease-out-quint active:scale-[0.97]">
+                <Link href={`/budgets?${params}`} className="inline-flex h-[34px] items-center rounded-full bg-primary px-4 font-semibold text-primary-foreground hover:bg-primary/85 transition-transform duration-150 ease-out-quint active:scale-[0.97]">
                     Set a budget
                 </Link>
                 <button type="button" onClick={notNow} className="inline-flex h-[34px] items-center rounded-full bg-secondary px-4 font-semibold">

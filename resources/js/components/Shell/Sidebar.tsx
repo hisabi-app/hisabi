@@ -1,18 +1,13 @@
 import { Link } from '@inertiajs/react';
-import { ChatCircleTextIcon, PencilSimpleIcon, PlusIcon } from '@phosphor-icons/react';
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Logo from '@/components/Wallet/Logo';
 import { cn } from '@/lib/utils';
 import AccountMenu, { type ShellUser } from './AccountMenu';
 import { hasSeen, isCurrent, isVisible, MAIN_ITEMS, MANAGE_ITEMS, type Navigation, type NavItem } from './navigation';
 
-import type { AddKind } from '@/hooks/useDataChanged';
-
 interface SidebarProps {
     nav: Navigation;
     user?: ShellUser;
-    onAdd: (kind: AddKind) => void;
 }
 
 function SidebarLink({ item, nav }: { item: NavItem; nav: Navigation }) {
@@ -44,34 +39,12 @@ function SidebarLink({ item, nav }: { item: NavItem; nav: Navigation }) {
 }
 
 // The floating sidebar: a white card inset from the window edges, laptop and up
-export default function Sidebar({ nav, user, onAdd }: SidebarProps) {
+export default function Sidebar({ nav, user }: SidebarProps) {
     return (
         <aside className="fixed inset-y-3 left-3 z-30 hidden w-[224px] flex-col rounded-2xl bg-card px-2.5 pt-3.5 pb-2 shadow-float md:flex" aria-label="Main">
-            <Link href="/" className="mb-2.5 self-start rounded-lg px-1" aria-label="Home">
+            <Link href="/" className="mb-3 self-start rounded-lg px-1" aria-label="Home">
                 <Logo className="-my-0.5 h-10" />
             </Link>
-
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <button
-                        type="button"
-                        className="mb-3 flex h-[38px] items-center justify-center gap-1.5 rounded-xl bg-primary font-semibold text-primary-foreground transition-[background-color,transform] duration-150 ease-out-quint hover:bg-primary/85 active:scale-[0.98]"
-                    >
-                        <PlusIcon size={15} weight="bold" aria-hidden="true" />
-                        Add
-                    </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                    <DropdownMenuItem onSelect={() => onAdd('sms')}>
-                        <ChatCircleTextIcon aria-hidden="true" />
-                        Paste a bank SMS
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => onAdd('manual')}>
-                        <PencilSimpleIcon aria-hidden="true" />
-                        Add by hand
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
 
             <nav className="grid gap-0.5">
                 {MAIN_ITEMS.filter((item) => isVisible(item, nav)).map((item) => (

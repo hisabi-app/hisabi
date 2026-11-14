@@ -10,6 +10,7 @@ import Filters from './Filters';
 import DetailSheet from '@/components/Home/DetailSheet';
 import type { Detail, UncategorizedBrand } from '@/components/Home/types';
 import EmptyState from '@/components/Wallet/EmptyState';
+import AddButton from '@/components/Shell/AddButton';
 import PageHeader from '@/components/Wallet/PageHeader';
 import Tile from '@/components/Wallet/Tile';
 import { amount, money, toAmount } from '@/components/Wallet/format';
@@ -158,7 +159,7 @@ export default function Index({ auth }: { auth: any }) {
             />
 
             <div className="mx-auto grid w-full max-w-[1100px] gap-3.5 px-4 pt-6 md:px-6 md:pt-7">
-                <PageHeader title="Transactions" />
+                <PageHeader title="Transactions" actions={<AddButton />} />
 
                 <div className="rise flex flex-wrap items-center gap-2" style={{ '--i': 1 } as React.CSSProperties}>
                     <div className="relative w-full sm:w-64">
