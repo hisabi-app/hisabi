@@ -27,16 +27,16 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 ### Phase 0: setup
 - [x] Branch `wallet-redesign`
 - [x] `PRODUCT.md` and this plan committed
-- [ ] Draft PR opened
+- [x] Draft PR opened (#115)
 
 ### Phase 1: foundation
-- [ ] `resources/css/app.css`: Wallet tokens mapped onto the existing shadcn token names (so every component follows), category colors (`--cat-<color>` for red, blue, green, orange, purple, pink, indigo, gray), neutral dark tokens under `.dark`, radius scale
-- [ ] Fonts: system stack for UI, `ui-rounded` stack for amounts (`.font-rounded` / `tabular-nums`); drop Geist from `app.blade.php`; stop applying `.dark` from the OS setting
-- [ ] Motion utilities: keyframes and classes for rise (with `--i` stagger), ring draw, bar grow, line draw, shimmer, pop; reduced-motion fallbacks
-- [ ] Shared primitives in `resources/js/components/Wallet/`: `Tile` (category icon tile), `Ring`, `CountUp`, `PageHeader`, `Section`/card helpers, `Skeleton`
-- [ ] Restyle base shadcn components: card, button, input, dialog, sheet, dropdown, badge
-- [ ] New logo (app icon: black rounded square with three white ascending bars, plus the "hisabi" wordmark): `public/images/logo.svg`, `public/favicon.svg`, PNG favicons, `ApplicationLogo`
-- [ ] `DESIGN.md` documenting tokens, type, components and motion
+- [x] `resources/css/app.css`: Wallet tokens mapped onto the existing shadcn token names (so every component follows), category colors (`--cat-<color>` for red, blue, green, orange, purple, pink, indigo, gray), neutral dark tokens under `.dark`, radius scale
+- [x] Fonts: system stack for UI, `ui-rounded` stack for amounts (`.font-rounded` / `tabular-nums`); drop Geist from `app.blade.php`; stop applying `.dark` from the OS setting
+- [x] Motion utilities: keyframes and classes for rise (with `--i` stagger), ring draw, bar grow, line draw, shimmer, pop; reduced-motion fallbacks
+- [x] Shared primitives in `resources/js/components/Wallet/`: `Tile` (category icon tile), `Ring`, `CountUp`, `PageHeader`, `Section`/card helpers, `Skeleton`
+- [x] Restyle base shadcn components: card, button, input, dialog, sheet, dropdown, badge
+- [x] New logo (app icon: black rounded square with three white ascending bars, plus the "hisabi" wordmark): `public/images/logo.svg`, `public/favicon.svg`, PNG favicons, `ApplicationLogo`
+- [x] `DESIGN.md` documenting tokens, type, components and motion
 
 ### Phase 2: shell
 - [ ] Shared Inertia prop `nav` (from a `NavigationService`): uncategorized brands count, budgets needing attention, whether Budgets and Insights are unlocked
