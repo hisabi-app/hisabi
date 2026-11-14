@@ -11,15 +11,15 @@ services:
             - mysql
     mysql:
         image: 'mysql/mysql-server:8.0'
+        # Localhost only, so the database and its default passwords aren't reachable from the network
         ports:
-            - '3306:3306'
+            - '127.0.0.1:3306:3306'
         environment:
             MYSQL_ROOT_PASSWORD: 'root'
             MYSQL_ROOT_HOST: "%"
             MYSQL_DATABASE: 'hisabi'
             MYSQL_USER: 'hisabi'
             MYSQL_PASSWORD: 'hisabi'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
             - 'hisabimysql:/var/lib/mysql'
         networks:
