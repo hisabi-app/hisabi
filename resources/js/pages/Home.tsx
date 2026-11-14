@@ -15,6 +15,7 @@ import Recent from '@/components/Home/Recent';
 import { monthName } from '@/components/Home/dates';
 import type { Detail, HomeData } from '@/components/Home/types';
 import EmptyState from '@/components/Wallet/EmptyState';
+import AddButton from '@/components/Shell/AddButton';
 import PageHeader from '@/components/Wallet/PageHeader';
 import Tile from '@/components/Wallet/Tile';
 import { amount } from '@/components/Wallet/format';
@@ -117,7 +118,7 @@ export default function Home({ auth }: { auth: any }) {
 
         content = (
             <>
-                <PageHeader eyebrow="This month" title={monthName(new Date())} />
+                <PageHeader eyebrow="This month" title={monthName(new Date())} actions={<AddButton />} />
 
                 <NeedsYou items={needsYou} index={1} />
 

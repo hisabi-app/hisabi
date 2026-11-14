@@ -17,7 +17,6 @@ White rounded cards on an off-white canvas, ink for text and primary actions, an
 | `--background` | `oklch(0.972 0.002 286)` | The canvas |
 | `--card` | `oklch(1 0 0)` | Cards, sidebar, panels, dialogs |
 | `--foreground` / `--primary` | `oklch(0.2 0.004 286)` | Text, primary buttons |
-| `--brand` / `--brand-foreground` | `oklch(0.834 0.251 143)` / ink | Primary buttons, the Add button (the logo's green, #42EF44) |
 | `--muted-foreground` | `oklch(0.52 0.006 286)` | Secondary text |
 | `--muted` / `--secondary` | `oklch(0.958 0.003 286)` | Pills, active nav item, soft buttons |
 | `--border` | `oklch(0.93 0.003 286)` | Row dividers inside cards |
@@ -31,7 +30,7 @@ Category colors come from the `color` stored on each category: `--cat-red`, `--c
 
 ## Logo
 
-The logo is the original Hisabi wordmark with three green bars: `public/images/logo.svg`, used as an image by `components/Wallet/Logo.tsx` (sidebar) and the login page. The favicons are the three bars on their own (`public/favicon.svg`, `favicon.ico` and the PNGs). The logo's green is also the primary button color (`--brand`).
+The logo is the original Hisabi wordmark with three green bars: `public/images/logo.svg`, used as an image by `components/Wallet/Logo.tsx` (sidebar) and the login page. The favicons are the three bars on their own (`public/favicon.svg`, `favicon.ico` and the PNGs). The logo's green belongs to the logo only; don't use it in the interface, where green already means "done" or "under".
 
 ## Typography
 
@@ -45,8 +44,8 @@ The logo is the original Hisabi wordmark with three green bars: `public/images/l
 - Cards: `rounded-2xl` (22px), `bg-card`, `shadow-card` (a 1px soft shadow). No borders on cards.
 - Rows inside a card are split by 1px `border` lines, not separate cards.
 - Floating chrome (sidebar, dock, menus, panels) uses `shadow-float` / `shadow-panel`.
-- Buttons are pills: primary is the logo green (`bg-brand`) with ink text (white on that green is unreadable), secondary is a soft grey pill. Selected tabs and count pills stay ink; green is for actions only.
-- The sidebar's Add is a small green icon button beside the logo; on phones it's the green + in the middle of the dock.
+- Buttons are pills: primary is ink, secondary is a soft grey pill.
+- Add (paste a bank SMS, add by hand) is part of the page: an Add button in the header of Home and Transactions on laptops (`components/Shell/AddButton.tsx`), the + in the middle of the dock on phones. The sidebar is navigation only.
 - Category tiles: 36px rounded squares (10px radius) with a white icon.
 
 ## Layout

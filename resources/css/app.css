@@ -34,11 +34,6 @@
   --ring: oklch(0.6 0.18 255);
   --radius: 0.875rem;
 
-  /* The logo's green (#42EF44), for primary buttons; ink text keeps it readable */
-  --brand: oklch(0.834 0.251 143);
-  --brand-hover: oklch(0.79 0.24 143);
-  --brand-foreground: oklch(0.2 0.004 286);
-
   --success: oklch(0.6 0.15 150);
   --warning: oklch(0.6 0.15 55);
   --warning-bar: oklch(0.74 0.16 60);
@@ -142,9 +137,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-brand: var(--brand);
-  --color-brand-hover: var(--brand-hover);
-  --color-brand-foreground: var(--brand-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-warning-bar: var(--warning-bar);

@@ -71,7 +71,7 @@ export default function Dock({ nav, onAdd }: { nav: Navigation; onAdd: (kind: Ad
                 <button
                     type="button"
                     onClick={() => setSheet('add')}
-                    className="mx-1 grid size-11 shrink-0 place-items-center rounded-full bg-brand text-brand-foreground transition-transform duration-150 ease-out-quint active:scale-95"
+                    className="mx-1 grid size-11 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform duration-150 ease-out-quint active:scale-95"
                     aria-label="Add"
                 >
                     <PlusIcon size={20} weight="bold" aria-hidden="true" />
