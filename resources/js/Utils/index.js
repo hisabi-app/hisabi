@@ -39,6 +39,11 @@ export const cutString = (stringValue, upTo) => {
     return stringValue
 }
 
+const htmlEntities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+
+// For text that a library writes with innerHTML, like chart tooltips
+export const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => htmlEntities[char])
+
 export const colors = () => {
     return [
         {tailwind: 'bg-red-500', hex: '#ef4444'},

@@ -4,12 +4,27 @@ import { metricEndpoints } from '@/Api/metrics';
 import LoadingView from "../Global/LoadingView";
 import { Card } from '@/components/ui/card';
 import { useInView } from '@/hooks/useInView';
+import { escapeHtml } from '@/Utils';
 
 interface CirclePackMetricProps {
     name: string;
     metric: string;
     dateRange: DateRange | undefined;
 }
+
+interface TooltipNode {
+    data: object;
+    parent: TooltipNode | null;
+}
+
+// The chart writes its tooltip with innerHTML, so the brand and category names (which come from SMS) are escaped
+const tooltipTitle = (_: unknown, node: TooltipNode): string => {
+    const names: string[] = [];
+    for (let current = node; current.parent; current = current.parent) {
+        names.unshift(escapeHtml((current.data as { label?: string }).label));
+    }
+    return names.join(' &rarr; ');
+};
 
 export default function CirclePackMetric({ name, metric, dateRange }: CirclePackMetricProps) {
     const [value, setValue] = useState(null);
@@ -69,7 +84,8 @@ export default function CirclePackMetric({ name, metric, dateRange }: CirclePack
                 if (refContainer.current && typeof window !== 'undefined') {
                     // Initialize and render the chart
                     const myChart = CirclePack();
-                    myChart.tooltipContent((d, node) => `Total: <i>${node.value}</i>`)
+                    myChart.tooltipTitle(tooltipTitle)
+                        .tooltipContent((d, node) => `Total: <i>${node.value}</i>`)
                         .excludeRoot(true)
                         .label(d => d.label)
                         .color(d => d.color ?? 'white')
