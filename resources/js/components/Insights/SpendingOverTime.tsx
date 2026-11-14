@@ -1,10 +1,10 @@
 import { format, parseISO } from 'date-fns';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import ChartTip, { useChartHover } from '@/components/Wallet/ChartTip';
 import Panel from '@/components/Wallet/Panel';
-import { amount } from '@/components/Wallet/format';
+import { money } from '@/components/Wallet/format';
 import { getSpendingOverTime } from '@/Api/insights';
-import { getAppCurrency } from '@/Utils';
 import type { PeriodKind, QueryRange } from './period';
 import { useMetric } from './useMetric';
 
@@ -29,46 +29,64 @@ function Bars({ bars, byDay }: { bars: Bar[]; byDay: boolean }) {
     const peak = bars.reduce((best, bar, i) => (bar.total > bars[best].total ? i : best), 0);
     const label = (bar: Bar) => (byDay ? format(parseISO(bar.period), 'd') : format(parseISO(`${bar.period}-01`), 'MMM').charAt(0));
     const everyNth = byDay ? 5 : bars.length > 14 ? 3 : 1;
+    const top = (bar: Bar) => B - (bar.total / max) * (B - T);
+    const { index: hovered, svgProps } = useChartHover(W, bars.length, (x) => Math.min(bars.length - 1, Math.max(0, Math.floor((x - L) / slot))));
 
     return (
-        <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full overflow-visible" role="img" aria-label="Spending over time">
-            <line x1={L} x2={R} y1={B} y2={B} stroke="var(--border)" />
-            {bars.map((bar, i) => {
-                const height = (bar.total / max) * (B - T);
-                const x = L + i * slot + gap / 2;
-                const last = i === bars.length - 1;
-                const showValue = last || (i === peak && bar.total > 0);
+        <div className="relative">
+            <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full overflow-visible" role="img" aria-label="Spending over time" {...svgProps}>
+                <line x1={L} x2={R} y1={B} y2={B} stroke="var(--border)" />
+                {bars.map((bar, i) => {
+                    const height = (bar.total / max) * (B - T);
+                    const x = L + i * slot + gap / 2;
+                    const last = i === bars.length - 1;
+                    const showValue = last || (i === peak && bar.total > 0);
 
-                return (
-                    <g key={bar.period}>
-                        <rect
-                            className="grow-y"
-                            style={{ '--j': i } as React.CSSProperties}
-                            x={x.toFixed(1)}
-                            y={(B - height).toFixed(1)}
-                            width={width.toFixed(1)}
-                            height={Math.max(0, height).toFixed(1)}
-                            rx={Math.min(4, width / 2)}
-                            fill={last ? 'var(--foreground)' : 'oklch(0.86 0.004 286)'}
-                        >
-                            <title>
-                                {byDay ? format(parseISO(bar.period), 'd MMM') : format(parseISO(`${bar.period}-01`), 'MMMM yyyy')}: {getAppCurrency()} {amount(bar.total)}
-                            </title>
-                        </rect>
-                        {(i % everyNth === 0 || last) && (
-                            <text x={(x + width / 2).toFixed(1)} y={B + 18} textAnchor="middle" fontSize="10.5" fill="var(--muted-foreground)">
-                                {label(bar)}
-                            </text>
-                        )}
-                        {showValue && (
-                            <text x={(x + width / 2).toFixed(1)} y={(B - height - 7).toFixed(1)} textAnchor="middle" fontSize="11" fontWeight={last ? 700 : 400} fill={last ? 'var(--foreground)' : 'var(--muted-foreground)'}>
-                                {short(bar.total)}
-                            </text>
-                        )}
-                    </g>
-                );
-            })}
-        </svg>
+                    return (
+                        <g key={bar.period}>
+                            <rect
+                                className="grow-y transition-[fill] duration-150"
+                                style={{ '--j': i } as React.CSSProperties}
+                                x={x.toFixed(1)}
+                                y={(B - height).toFixed(1)}
+                                width={width.toFixed(1)}
+                                height={Math.max(0, height).toFixed(1)}
+                                rx={Math.min(4, width / 2)}
+                                fill={last ? 'var(--foreground)' : i === hovered ? 'oklch(0.62 0.006 286)' : 'oklch(0.86 0.004 286)'}
+                            />
+                            {(i % everyNth === 0 || last) && (
+                                <text x={(x + width / 2).toFixed(1)} y={B + 18} textAnchor="middle" fontSize="10.5" fill="var(--muted-foreground)">
+                                    {label(bar)}
+                                </text>
+                            )}
+                            {showValue && (
+                                <text
+                                    x={(x + width / 2).toFixed(1)}
+                                    y={(B - height - 7).toFixed(1)}
+                                    textAnchor="middle"
+                                    fontSize="11"
+                                    fontWeight={last ? 700 : 400}
+                                    fill={last ? 'var(--foreground)' : 'var(--muted-foreground)'}
+                                    // The tooltip takes over while it's up
+                                    opacity={hovered === null ? 1 : 0}
+                                    className="transition-opacity duration-150"
+                                >
+                                    {short(bar.total)}
+                                </text>
+                            )}
+                        </g>
+                    );
+                })}
+            </svg>
+            {hovered !== null && (
+                <ChartTip x={L + hovered * slot + slot / 2} y={top(bars[hovered])} width={W} height={H}>
+                    <span className="text-background/70">
+                        {byDay ? format(parseISO(bars[hovered].period), 'EEE d MMM') : format(parseISO(`${bars[hovered].period}-01`), 'MMMM yyyy')}
+                    </span>
+                    <b className="text-[13px] font-bold font-rounded tabular">{money(bars[hovered].total)}</b>
+                </ChartTip>
+            )}
+        </div>
     );
 }
 

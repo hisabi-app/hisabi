@@ -1,9 +1,10 @@
 import { endOfMonth, format, parseISO, startOfMonth, subMonths } from 'date-fns';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import ChartTip, { nearest, useChartHover } from '@/components/Wallet/ChartTip';
 import CountUp from '@/components/Wallet/CountUp';
 import Panel from '@/components/Wallet/Panel';
-import { amount } from '@/components/Wallet/format';
+import { amount, money } from '@/components/Wallet/format';
 import { getNetWorth, getNetWorthTrend } from '@/Api/insights';
 import { getAppCurrency } from '@/Utils';
 import { useMetric } from './useMetric';
@@ -32,35 +33,58 @@ function NetWorthChart({ points }: { points: Point[] }) {
     const area = `${line} L${x(points.length - 1)} ${B} L${x(0)} ${B} Z`;
     const ticks = [0, 1, 2, 3].map((i) => lo + ((hi - lo) * (i + 0.5)) / 4);
     const short = (value: number) => (Math.abs(value) >= 1000 ? `${Math.round(value / 1000)}k` : String(Math.round(value)));
+    const { index: hovered, svgProps } = useChartHover(W, points.length, (pointerX) => nearest(pointerX, L, R, points.length));
 
     return (
-        <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full overflow-visible" role="img" aria-label="Net worth by month">
-            {ticks.map((tick) => (
-                <g key={tick}>
-                    <line x1={L} x2={R} y1={y(tick)} y2={y(tick)} stroke="var(--border)" />
-                    <text x={L - 8} y={y(tick) + 4} textAnchor="end" fontSize="11" fill="var(--muted-foreground)">
-                        {short(tick)}
-                    </text>
-                </g>
-            ))}
-            {points.map((point, i) =>
-                i % 2 === 0 || i === points.length - 1 ? (
-                    <text key={point.label} x={x(i)} y={B + 20} textAnchor="middle" fontSize="11" fill="var(--muted-foreground)">
-                        {format(parseISO(`${point.label}-01`), 'MMM')}
-                    </text>
-                ) : null,
+        <div className="relative">
+            <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full overflow-visible" role="img" aria-label="Net worth by month" {...svgProps}>
+                {ticks.map((tick) => (
+                    <g key={tick}>
+                        <line x1={L} x2={R} y1={y(tick)} y2={y(tick)} stroke="var(--border)" />
+                        <text x={L - 8} y={y(tick) + 4} textAnchor="end" fontSize="11" fill="var(--muted-foreground)">
+                            {short(tick)}
+                        </text>
+                    </g>
+                ))}
+                {points.map((point, i) =>
+                    i % 2 === 0 || i === points.length - 1 ? (
+                        <text key={point.label} x={x(i)} y={B + 20} textAnchor="middle" fontSize="11" fill="var(--muted-foreground)">
+                            {format(parseISO(`${point.label}-01`), 'MMM')}
+                        </text>
+                    ) : null,
+                )}
+                <path className="fade-in-late" d={area} fill="oklch(0.2 0.004 286 / 0.05)" />
+                <path
+                    className="line-draw"
+                    pathLength={1}
+                    d={line}
+                    fill="none"
+                    stroke="var(--foreground)"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                />
+                {hovered !== null && <line x1={x(hovered)} x2={x(hovered)} y1={T} y2={B} stroke="var(--muted-foreground)" strokeOpacity="0.35" />}
+                <circle
+                    className="fade-in-late"
+                    cx={x(points.length - 1)}
+                    cy={y(values[values.length - 1])}
+                    r="5"
+                    fill="var(--foreground)"
+                    stroke="var(--card)"
+                    strokeWidth="2"
+                />
+                {hovered !== null && (
+                    <circle cx={x(hovered)} cy={y(points[hovered].value)} r="5" fill="var(--foreground)" stroke="var(--card)" strokeWidth="2" />
+                )}
+            </svg>
+            {hovered !== null && (
+                <ChartTip x={x(hovered)} y={y(points[hovered].value)} width={W} height={H}>
+                    <span className="text-background/70">{format(parseISO(`${points[hovered].label}-01`), 'MMMM yyyy')}</span>
+                    <b className="text-[13px] font-bold font-rounded tabular">{money(points[hovered].value)}</b>
+                </ChartTip>
             )}
-            <path className="fade-in-late" d={area} fill="oklch(0.2 0.004 286 / 0.05)" />
-            <path className="line-draw" pathLength={1} d={line} fill="none" stroke="var(--foreground)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-            {points.map((point, i) => (
-                <circle key={point.label} cx={x(i)} cy={y(point.value)} r="10" fill="transparent">
-                    <title>
-                        {format(parseISO(`${point.label}-01`), 'MMMM yyyy')}: {getAppCurrency()} {amount(point.value)}
-                    </title>
-                </circle>
-            ))}
-            <circle className="fade-in-late" cx={x(points.length - 1)} cy={y(values[values.length - 1])} r="5" fill="var(--foreground)" stroke="var(--card)" strokeWidth="2" />
-        </svg>
+        </div>
     );
 }
 
