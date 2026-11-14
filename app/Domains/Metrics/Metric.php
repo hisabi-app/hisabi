@@ -34,6 +34,20 @@ abstract class Metric
         return $this->from !== null && $this->to !== null;
     }
 
+    /**
+     * The range as whole days: from the start of `from` to the end of `to`, so the last day counts in full.
+     *
+     * @return array{0: Carbon, 1: Carbon}|null
+     */
+    protected function getDayRange(): ?array
+    {
+        if (! $this->hasDateRange()) {
+            return null;
+        }
+
+        return [Carbon::parse($this->from)->startOfDay(), Carbon::parse($this->to)->endOfDay()];
+    }
+
     protected function getPreviousRange(): ?array
     {
         if (!$this->hasDateRange()) {

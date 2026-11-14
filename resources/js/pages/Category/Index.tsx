@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { debounce } from 'lodash';
-import { startOfMonth, endOfMonth } from 'date-fns';
-import { DateRange } from 'react-day-picker';
 
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
@@ -11,12 +9,11 @@ import { Button } from '@/components/ui/button';
 import { getAllCategories } from '@/Api';
 import { animateRowItem } from '@/Utils';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import CategoryStats from '@/components/Domain/CategoryStats';
-import { getCategoryIcon } from '@/Utils/categoryIcons';
-import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
+import { CaretRightIcon, MagnifyingGlassIcon, PlusIcon } from '@phosphor-icons/react';
+import EmptyState from '@/components/Wallet/EmptyState';
+import PageHeader from '@/components/Wallet/PageHeader';
+import Panel from '@/components/Wallet/Panel';
+import Tile from '@/components/Wallet/Tile';
 
 interface Category {
     id: number;
@@ -39,10 +36,6 @@ export default function Index({ auth }: { auth: any }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [editCategory, setEditCategory] = useState<Category | null>(null);
     const [showCreate, setShowCreate] = useState(false);
-    const [dateRange, setDateRange] = useState<DateRange>({
-        from: startOfMonth(new Date()),
-        to: endOfMonth(new Date()),
-    });
 
     useEffect(() => {
         getAllCategories()
@@ -110,275 +103,69 @@ export default function Index({ auth }: { auth: any }) {
         return grouped;
     }, [filteredCategories]);
 
-    const handleDateChange = (newDateRange: DateRange | undefined) => {
-        if (newDateRange?.from && newDateRange?.to) {
-            setDateRange(newDateRange);
-        }
-    };
-
-    const header = (
-        <div className="flex items-center justify-between w-full">
-            <h2>Categories</h2>
-            <div className="flex items-center gap-2">
-                <DatePickerWithRange
-                    onDateChange={handleDateChange}
-                    initialDate={dateRange}
-                />
-                <Button onClick={() => setShowCreate(true)}>Create Category</Button>
-            </div>
-        </div>
-    )
+    const sections: { type: keyof GroupedCategories; label: string }[] = [
+        { type: 'EXPENSES', label: 'Spending' },
+        { type: 'INCOME', label: 'Income' },
+        { type: 'SAVINGS', label: 'Savings' },
+        { type: 'INVESTMENT', label: 'Investment' },
+    ];
+    const visibleSections = sections.filter((section) => groupedCategories[section.type].length > 0);
 
     return (
-        <Authenticated auth={auth} header={header}>
+        <Authenticated auth={auth}>
             <Head title="Categories" />
 
-            <Create showCreate={showCreate}
-                onCreate={onCreate}
-                onClose={() => setShowCreate(false)} />
+            <Create showCreate={showCreate} onCreate={onCreate} onClose={() => setShowCreate(false)} />
 
-            <Edit
-                category={editCategory}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-                onClose={() => setEditCategory(null)}
-            />
+            <Edit category={editCategory} onUpdate={onUpdate} onDelete={onDelete} onClose={() => setEditCategory(null)} />
 
-            <div className="p-4">
-                <div className="max-w-7xl mx-auto grid gap-4">
-                    <CategoryStats dateRange={dateRange} />
+            <div className="mx-auto grid w-full max-w-[1100px] gap-3.5 px-4 pt-6 md:px-6 md:pt-7">
+                <PageHeader
+                    title="Categories"
+                    actions={
+                        <Button onClick={() => setShowCreate(true)}>
+                            <PlusIcon weight="bold" aria-hidden="true" />
+                            New category
+                        </Button>
+                    }
+                />
 
-                    {categories.length > 0 && (
-                        <Tabs defaultValue="all" className="w-full">
-                            <div className="flex justify-between items-center mb-2">
-                                <Input
-                                    name="search"
-                                    placeholder='Search..'
-                                    className='bg-white max-w-56'
-                                    onChange={performSearch}
-                                />
-                                <TabsList>
-                                    <TabsTrigger value="all">
-                                        All ({filteredCategories.length})
-                                    </TabsTrigger>
-                                    {groupedCategories.INCOME.length > 0 && (
-                                        <TabsTrigger value="INCOME">
-                                            Income ({groupedCategories.INCOME.length})
-                                        </TabsTrigger>
-                                    )}
-                                    {groupedCategories.EXPENSES.length > 0 && (
-                                        <TabsTrigger value="EXPENSES">
-                                            Expenses ({groupedCategories.EXPENSES.length})
-                                        </TabsTrigger>
-                                    )}
-                                    {groupedCategories.SAVINGS.length > 0 && (
-                                        <TabsTrigger value="SAVINGS">
-                                            Savings ({groupedCategories.SAVINGS.length})
-                                        </TabsTrigger>
-                                    )}
-                                    {groupedCategories.INVESTMENT.length > 0 && (
-                                        <TabsTrigger value="INVESTMENT">
-                                            Investment ({groupedCategories.INVESTMENT.length})
-                                        </TabsTrigger>
-                                    )}
-                                </TabsList>
-                            </div>
+                {categories.length > 0 && (
+                    <div className="rise relative w-full sm:w-64" style={{ '--i': 1 } as React.CSSProperties}>
+                        <MagnifyingGlassIcon size={16} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                        <Input name="search" placeholder="Search categories" className="pl-9" onChange={performSearch} aria-label="Search categories" />
+                    </div>
+                )}
 
-                            <TabsContent value="all">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                    {filteredCategories.map((category) => {
-                                        const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
-                                        return (
-                                            <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                <CardContent className='flex justify-between items-center p-4'>
-                                                    <div className='flex gap-3 items-center'>
-                                                        {CategoryIcon ? (
-                                                            <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
-                                                                <CategoryIcon size={20} weight="regular" className="text-current" />
-                                                            </div>
-                                                        ) : (
-                                                            <Badge
-                                                                className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
-                                                                variant="outline"
-                                                            />
-                                                        )}
-                                                        <div>
-                                                            <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                <p>{category.name}</p>
-                                                            </button>
-                                                            <Link
-                                                                href={`/transactions?category=${category.id}`}
-                                                                className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
-                                                            >
-                                                                {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        );
-                                    })}
+                {categories.length === 0 && (
+                    <EmptyState
+                        className="rounded-2xl bg-card shadow-card"
+                        title="No categories yet"
+                        body="Categories group your brands, like Groceries or Salary. Every brand's transactions follow its category."
+                        action={<Button onClick={() => setShowCreate(true)}>New category</Button>}
+                    />
+                )}
+
+                {categories.length > 0 && visibleSections.length === 0 && <EmptyState title="No categories match" body="Try another name." />}
+
+                {visibleSections.map((section, i) => (
+                    <Panel key={section.type} title={section.label} index={i + 2}>
+                        <div className="grid sm:grid-cols-2 sm:gap-x-8">
+                            {groupedCategories[section.type].map((category) => (
+                                <div key={category.id} id={'item-' + category.id} className="grid grid-cols-[36px_minmax(0,1fr)_auto] items-center gap-x-3 border-b py-2.5 last:border-b-0 sm:[&:nth-last-child(2):nth-child(odd)]:border-b-0">
+                                    <Tile color={category.color} icon={category.icon} className="row-span-2" />
+                                    <button type="button" onClick={() => setEditCategory(category)} className="min-w-0 truncate text-left font-semibold hover:underline">
+                                        {category.name}
+                                    </button>
+                                    <Link href={`/transactions?category=${category.id}`} className="col-start-2 text-[12.5px] text-muted-foreground hover:text-foreground hover:underline">
+                                        {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
+                                    </Link>
+                                    <CaretRightIcon size={14} weight="bold" className="col-start-3 row-span-2 row-start-1 text-muted-foreground" aria-hidden="true" />
                                 </div>
-                            </TabsContent>
-
-                            {groupedCategories.INCOME.length > 0 && (
-                                <TabsContent value="INCOME">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.INCOME.map((category) => {
-                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
-                                            return (
-                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                    <CardContent className='flex justify-between items-center p-4'>
-                                                        <div className='flex gap-3 items-center'>
-                                                            {CategoryIcon ? (
-                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
-                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
-                                                                </div>
-                                                            ) : (
-                                                                <Badge
-                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
-                                                                    variant="outline"
-                                                                />
-                                                            )}
-                                                            <div>
-                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                    <p>{category.name}</p>
-                                                                </button>
-                                                                <Link
-                                                                    href={`/transactions?category=${category.id}`}
-                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
-                                                                >
-                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </Link>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            );
-                                        })}
-                                    </div>
-                                </TabsContent>
-                            )}
-
-                            {groupedCategories.EXPENSES.length > 0 && (
-                                <TabsContent value="EXPENSES">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.EXPENSES.map((category) => {
-                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
-                                            return (
-                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                    <CardContent className='flex justify-between items-center p-4'>
-                                                        <div className='flex gap-3 items-center'>
-                                                            {CategoryIcon ? (
-                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
-                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
-                                                                </div>
-                                                            ) : (
-                                                                <Badge
-                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
-                                                                    variant="outline"
-                                                                />
-                                                            )}
-                                                            <div>
-                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                    <p>{category.name}</p>
-                                                                </button>
-                                                                <Link
-                                                                    href={`/transactions?category=${category.id}`}
-                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
-                                                                >
-                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </Link>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            );
-                                        })}
-                                    </div>
-                                </TabsContent>
-                            )}
-
-                            {groupedCategories.SAVINGS.length > 0 && (
-                                <TabsContent value="SAVINGS">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.SAVINGS.map((category) => {
-                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
-                                            return (
-                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                    <CardContent className='flex justify-between items-center p-4'>
-                                                        <div className='flex gap-3 items-center'>
-                                                            {CategoryIcon ? (
-                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
-                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
-                                                                </div>
-                                                            ) : (
-                                                                <Badge
-                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
-                                                                    variant="outline"
-                                                                />
-                                                            )}
-                                                            <div>
-                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                    <p>{category.name}</p>
-                                                                </button>
-                                                                <Link
-                                                                    href={`/transactions?category=${category.id}`}
-                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
-                                                                >
-                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </Link>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            );
-                                        })}
-                                    </div>
-                                </TabsContent>
-                            )}
-
-                            {groupedCategories.INVESTMENT.length > 0 && (
-                                <TabsContent value="INVESTMENT">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {groupedCategories.INVESTMENT.map((category) => {
-                                            const CategoryIcon = category.icon ? getCategoryIcon(category.icon) : null;
-                                            return (
-                                                <Card key={category.id} className='py-0' id={'item-' + category.id}>
-                                                    <CardContent className='flex justify-between items-center p-4'>
-                                                        <div className='flex gap-3 items-center'>
-                                                            {CategoryIcon ? (
-                                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${category.color}`}>
-                                                                    <CategoryIcon size={20} weight="regular" className="text-current" />
-                                                                </div>
-                                                            ) : (
-                                                                <Badge
-                                                                    className={`badge badge-${category.color} h-3 w-3 p-0 rounded-full`}
-                                                                    variant="outline"
-                                                                />
-                                                            )}
-                                                            <div>
-                                                                <button onClick={() => setEditCategory(category)} className='font-medium hover:underline text-left'>
-                                                                    <p>{category.name}</p>
-                                                                </button>
-                                                                <Link
-                                                                    href={`/transactions?category=${category.id}`}
-                                                                    className='block text-muted-foreground hover:text-foreground text-xs hover:underline transition-colors'
-                                                                >
-                                                                    {category.transactionsCount} {category.transactionsCount === 1 ? 'transaction' : 'transactions'}
-                                                                </Link>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            );
-                                        })}
-                                    </div>
-                                </TabsContent>
-                            )}
-                        </Tabs>
-                    )}
-                </div>
+                            ))}
+                        </div>
+                    </Panel>
+                ))}
             </div>
         </Authenticated>
     );

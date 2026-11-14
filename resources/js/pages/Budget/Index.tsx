@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { PlusIcon } from '@phosphor-icons/react';
 
@@ -8,6 +8,8 @@ import Budgets from '@/components/Domain/Budgets';
 import { HistoryRangePicker } from '@/components/Domain/BudgetHistory';
 import { useBudgetsHistory } from '@/hooks/useBudgetsHistory';
 import Create from './Create';
+import PageHeader from '@/components/Wallet/PageHeader';
+import { markSeen } from '@/components/Shell/navigation';
 
 type View = 'now' | 'history';
 
@@ -20,7 +22,24 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
     const [view, setView] = useState<View>('now');
     const history = useBudgetsHistory();
     const [refreshKey, setRefreshKey] = useState(0);
-    const [showCreate, setShowCreate] = useState(false);
+    // /budgets?create=1&category=3&name=Groceries opens the form prefilled (from the home's suggestion)
+    const [prefill, setPrefill] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        const category = Number(params.get('category'));
+
+        return params.get('create') ? { name: params.get('name') ?? '', categoryIds: category ? [category] : [] } : null;
+    });
+    const [showCreate, setShowCreate] = useState(prefill !== null);
+
+    useEffect(() => markSeen('budgets'), []);
+
+    const closeCreate = () => {
+        setShowCreate(false);
+        if (!prefill) return;
+
+        window.history.replaceState({}, '', window.location.pathname);
+        setPrefill(null);
+    };
 
     const refresh = () => {
         history.reload();
@@ -28,7 +47,7 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
     };
 
     const onCreated = () => {
-        setShowCreate(false);
+        closeCreate();
         refresh();
     };
 
@@ -37,21 +56,19 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
         if (value === 'history') history.load();
     };
 
-    const header = (
-        <div className="flex items-center justify-between w-full gap-2">
-            <h2>Budgets</h2>
-            <div className="flex items-center gap-2">
+    const actions = (
+        <>
                 {view === 'history' && history.state.data && <HistoryRangePicker meta={history.state.data.meta} onChange={history.load} />}
                 {hasHistory && (
-                    <div role="group" aria-label="Budgets view" className="inline-flex h-9 items-center rounded-lg bg-muted p-[3px]">
+                    <div role="group" aria-label="Budgets view" className="inline-flex h-9 items-center rounded-full bg-card p-[3px] shadow-card ring-1 ring-border ring-inset">
                         {VIEWS.map(({ value, label }) => (
                             <button
                                 key={value}
                                 type="button"
                                 aria-pressed={view === value}
                                 onClick={() => selectView(value)}
-                                className={`h-full rounded-md px-3 text-sm font-medium transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none ${
-                                    view === value ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                                className={`h-full rounded-full px-3.5 text-[13px] font-semibold transition-colors duration-200 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none ${
+                                    view === value ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
                                 }`}
                             >
                                 {label}
@@ -60,23 +77,21 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
                     </div>
                 )}
                 <Button onClick={() => setShowCreate(true)} aria-label="New budget">
-                    <PlusIcon aria-hidden="true" />
+                    <PlusIcon weight="bold" aria-hidden="true" />
                     <span className="hidden sm:inline">New budget</span>
                 </Button>
-            </div>
-        </div>
+        </>
     );
 
     return (
-        <Authenticated auth={auth} header={header}>
+        <Authenticated auth={auth}>
             <Head title="Budgets" />
 
-            <Create open={showCreate} onClose={() => setShowCreate(false)} onCreated={onCreated} />
+            <Create open={showCreate} onClose={closeCreate} onCreated={onCreated} initial={prefill} />
 
-            <div className="p-4">
-                <div className="max-w-7xl mx-auto grid gap-4">
-                    <Budgets view={view} history={history.state} onChange={refresh} refreshKey={refreshKey} />
-                </div>
+            <div className="mx-auto grid w-full max-w-[1100px] gap-3.5 px-4 pt-6 md:px-6 md:pt-7">
+                <PageHeader title="Budgets" actions={actions} />
+                <Budgets view={view} history={history.state} onChange={refresh} refreshKey={refreshKey} />
             </div>
         </Authenticated>
     );

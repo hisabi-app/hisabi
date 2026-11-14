@@ -9,8 +9,10 @@ import { formatNumber, getAppCurrency } from '@/Utils';
 import { BudgetStatus, getBudgetStatus, toNumber } from '@/Utils/budgets';
 import { deleteBudget, getBudgets } from '@/Api/budgets';
 import { useInView } from '@/hooks/useInView';
-import LoadingView from '../Global/LoadingView';
-import NoContent from '../Global/NoContent';
+import Tile from '@/components/Wallet/Tile';
+import { categoryColor } from '@/components/Wallet/categoryColor';
+import { Skeleton } from '@/components/ui/skeleton';
+import EmptyState from '@/components/Wallet/EmptyState';
 import { BudgetsHistoryView, HistoryState } from './BudgetHistory';
 
 interface Budget {
@@ -27,6 +29,8 @@ interface Budget {
     elapsed_days_percentage: number;
     is_saving: boolean;
     total_transactions_amount: number | string;
+    color: string | null;
+    icon: string | null;
 }
 
 interface BudgetView {
@@ -39,13 +43,16 @@ interface BudgetView {
     elapsedPercentage: number;
     status: BudgetStatus;
     endLabel: string;
+    color: string | null;
+    icon: string | null;
 }
 
-const STATUS_STYLES: Record<BudgetStatus, { label: string; bar: string }> = {
-    on_track: { label: 'On track', bar: 'bg-green-500' },
-    ahead: { label: 'Ahead of pace', bar: 'bg-amber-500' },
-    used: { label: 'Fully used', bar: 'bg-neutral-500' },
-    over: { label: 'Over budget', bar: 'bg-red-600' },
+// On track bars wear the category's color; anything that needs attention says so in color and words
+const STATUS_STYLES: Record<BudgetStatus, { label: string; bar: string | null; text: string }> = {
+    on_track: { label: 'On track', bar: null, text: 'text-muted-foreground' },
+    ahead: { label: 'Ahead of pace', bar: 'var(--warning-bar)', text: 'text-warning font-semibold' },
+    used: { label: 'Fully used', bar: 'var(--cat-gray)', text: 'text-muted-foreground' },
+    over: { label: 'Over budget', bar: 'var(--destructive)', text: 'text-destructive font-semibold' },
 };
 
 const money = (value: number) => `${getAppCurrency()} ${formatNumber(Math.round(value), '0,0')}`.trim();
@@ -65,7 +72,9 @@ const toView = (budget: Budget): BudgetView => {
         elapsedPercentage: toNumber(budget.elapsed_days_percentage),
         status: getBudgetStatus(spent, amount, toNumber(budget.elapsed_days_percentage)),
         // end_at_date is the first day of the next window
-        endLabel: format(subDays(parseISO(budget.end_at_date), 1), 'MMM d'),
+        endLabel: format(subDays(parseISO(budget.end_at_date), 1), 'd MMM'),
+        color: budget.color,
+        icon: budget.icon,
     };
 };
 
@@ -99,14 +108,19 @@ export default function Budgets({ view, history, onChange, refreshKey }: Budgets
     if (loading) {
         return (
             <div ref={ref}>
-                <Card className="h-[158px]">
-                    <LoadingView />
-                </Card>
+                <Skeleton className="h-[158px] w-full rounded-2xl" />
             </div>
         );
     }
 
-    if (budgets.length === 0) return <NoContent body="No budgets found" />;
+    if (budgets.length === 0)
+        return (
+            <EmptyState
+                className="rounded-2xl bg-card shadow-card"
+                title="No budgets yet"
+                body="A budget tells you when a category is spending faster than the month is passing."
+            />
+        );
 
     const needsAttention = budgets.filter((budget) => budget.status !== 'on_track');
     const onTrack = budgets.filter((budget) => budget.status === 'on_track');
@@ -130,10 +144,10 @@ export default function Budgets({ view, history, onChange, refreshKey }: Budgets
                 .filter((section) => section.items.length > 0)
                 .map((section) => (
                     <section key={section.title} className="grid gap-3">
-                        <h2 className="text-[15px] font-semibold">
+                        <h2 className="px-1 text-[15px] font-bold">
                             {section.title} <span className="font-normal text-muted-foreground">· {section.items.length}</span>
                         </h2>
-                        <Card className="gap-0 overflow-hidden py-0">
+                        <Card className="rise gap-0 overflow-hidden py-0">
                             {section.items.map((budget, index) => (
                                 <BudgetRow key={budget.id} budget={budget} onDelete={() => setDeleting(budget)} className={index > 0 ? 'border-t' : ''} />
                             ))}
@@ -152,15 +166,18 @@ function BudgetRow({ budget, onDelete, className = '' }: { budget: BudgetView; o
             className={`grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-6 gap-y-3 py-4 pr-3 pl-5 md:grid-cols-[220px_minmax(0,1fr)_150px_auto] md:gap-x-8 ${className}`}
         >
             <span className="flex items-center gap-3">
-                <span className={`size-2.5 shrink-0 rounded-full ${style.bar}`} />
+                <Tile color={budget.color} icon={budget.icon ?? 'Wallet'} />
                 <span className="grid gap-0.5">
-                    <span className="font-medium">{budget.name}</span>
-                    <span className="text-xs text-muted-foreground">{budget.status === 'on_track' ? `Until ${budget.endLabel}` : style.label}</span>
+                    <span className="font-semibold">{budget.name}</span>
+                    <span className={`text-xs ${style.text}`}>{budget.status === 'on_track' ? `Until ${budget.endLabel}` : style.label}</span>
                 </span>
             </span>
 
-            <span className="relative order-last col-span-3 h-2 rounded-full bg-muted md:order-none md:col-span-1" aria-hidden="true">
-                <span className={`absolute inset-y-0 left-0 rounded-full ${style.bar}`} style={{ width: `${Math.min(budget.spentPercentage, 100)}%` }} />
+            <span className="relative order-last col-span-3 h-2 rounded-full bg-track md:order-none md:col-span-1" aria-hidden="true">
+                <span
+                    className="grow-x absolute inset-y-0 left-0 rounded-full"
+                    style={{ width: `${Math.min(budget.spentPercentage, 100)}%`, background: style.bar ?? categoryColor(budget.color) }}
+                />
                 <span
                     className="absolute -top-1 h-4 w-0.5 -translate-x-1/2 rounded-full bg-foreground"
                     style={{ left: `${budget.elapsedPercentage}%` }}
@@ -169,7 +186,7 @@ function BudgetRow({ budget, onDelete, className = '' }: { budget: BudgetView; o
             </span>
 
             <span className="grid gap-0.5 text-right">
-                <span className={`font-semibold tabular-nums ${budget.remaining < 0 ? 'text-red-700 dark:text-red-400' : ''}`}>
+                <span className={`font-semibold font-rounded tabular-nums ${budget.remaining < 0 ? 'text-destructive' : ''}`}>
                     {budget.remaining > 0 && `${money(budget.remaining)} left`}
                     {budget.remaining === 0 && 'Nothing left'}
                     {budget.remaining < 0 && `${money(-budget.remaining)} over`}

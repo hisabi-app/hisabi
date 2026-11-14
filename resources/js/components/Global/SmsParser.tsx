@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 interface SmsParserProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  // Called after messages are parsed, so pages can refresh
+  onParsed?: () => void;
 }
 
 interface Sms {
@@ -19,7 +21,7 @@ interface Sms {
   transaction_id: number | null;
 }
 
-export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
+export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserProps) {
   const [invalidSms, setInvalidSms] = useState<Sms[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingSms, setEditingSms] = useState<Sms | null>(null);
@@ -69,6 +71,7 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
       .then(() => {
         fetchInvalidSms();
         cancelEdit();
+        onParsed?.();
       })
       .catch((error) => {
         console.error(error);
@@ -81,6 +84,7 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
       .then(() => {
         setInvalidSms(invalidSms.filter((item) => item.id !== sms.id));
         cancelEdit();
+        onParsed?.();
       })
       .catch(console.error);
   };
@@ -94,6 +98,7 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
         fetchInvalidSms();
         setNewSmsBody('');
         setCreatedAt('');
+        onParsed?.();
       })
       .catch((error) => {
         console.error(error);
@@ -110,15 +115,15 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
         className={cn('flex flex-col gap-0 overflow-hidden p-0', hasUnparsed ? 'h-[85vh] max-h-[720px] sm:max-w-5xl' : 'sm:max-w-lg')}
       >
         <DialogHeader className="border-b p-4">
-          <DialogTitle>SMS Parser</DialogTitle>
+          <DialogTitle>Paste a bank SMS</DialogTitle>
         </DialogHeader>
 
         <div className={cn('grid min-h-0 flex-1', hasUnparsed && 'grid-rows-2 md:grid-cols-2 md:grid-rows-1')}>
           {hasUnparsed && (
             <div className="flex min-h-0 flex-col border-b md:border-r md:border-b-0">
               <div className="flex items-center gap-2 px-4 pt-4 pb-2">
-                <h3 className="text-sm font-medium">Unparsed</h3>
-                <Badge variant="outline" className="border-red-200 bg-red-50 text-xs text-red-700">
+                <h3 className="text-sm font-semibold">Couldn’t read</h3>
+                <Badge variant="secondary" className="text-xs">
                   {invalidSms.length}
                 </Badge>
               </div>
@@ -170,7 +175,7 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
               value={newSmsBody}
               onChange={(e) => setNewSmsBody(e.target.value)}
               className="min-h-40 w-full flex-1 bg-white"
-              placeholder="Paste SMS messages, one per line"
+              placeholder="Paste one or more SMS from your bank, one per line"
             />
 
             <div className="flex items-center gap-3">
@@ -184,7 +189,7 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
                 className="flex-1 bg-white"
               />
               <Button onClick={handleCreate} disabled={loading || !newSmsBody.trim()}>
-                {loading ? 'Parsing...' : 'Parse'}
+                {loading ? 'Reading…' : 'Read SMS'}
               </Button>
             </div>
           </div>

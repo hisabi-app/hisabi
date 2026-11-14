@@ -107,10 +107,10 @@ export default function CirclePackMetric({ name, metric, dateRange }: CirclePack
     }
 
     return (
-        <Card className={"bg-white shadow rounded-lg w-full overflow-hidden"}>
+        <Card className={"w-full overflow-hidden"}>
             <div className="px-6 py-4">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="mr-3 text-base text-gray-600">{ name }</h3>
+                    <h3 className="mr-3 text-base font-bold tracking-[-0.018em] text-foreground">{ name }</h3>
                 </div>
 
                 <div className="w-full flex justify-center items-center overflow-hidden">

@@ -118,7 +118,7 @@ export default function PartitionMetric({ name, metric, relation, show_currency,
             <div className="px-6 flex flex-col h-full">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                        <h3 className="mr-3 text-base text-gray-600">{name}</h3>
+                        <h3 className="mr-3 text-base font-bold tracking-[-0.018em] text-foreground">{name}</h3>
 
                         {relation && relationData && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                             name="relation"

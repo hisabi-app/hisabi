@@ -4,7 +4,9 @@ import { getTotalIncome, getTotalExpenses, getTransactionsCount } from './metric
 export const getTransactions = async (page, searchQuery, filters = {}) => {
     const params = new URLSearchParams({
         page: page.toString(),
-        perPage: '100'
+        perPage: '100',
+        // Newest day first, so the page can group transactions by day
+        sort: '-created_at,-id'
     });
     
     if (searchQuery) {

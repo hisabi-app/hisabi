@@ -69,4 +69,24 @@ class KioskControllerTest extends TestCase
             ->assertJsonPath('data.budgets.0.name', 'Groceries')
             ->assertJsonPath('data.budgets.1.name', 'Trip');
     }
+
+    public function test_it_includes_the_latest_transaction_and_daily_running_totals(): void
+    {
+        $brand = Brand::factory()->create(['name' => 'Carrefour', 'category_id' => Category::factory()->create()->id]);
+        Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 100, 'created_at' => '2026-11-02 09:00:00']);
+        // Added last, though dated earlier: an SMS pasted late
+        Transaction::factory()->create(['brand_id' => $brand->id, 'amount' => 50, 'created_at' => '2026-11-01 00:00:00', 'updated_at' => '2026-11-13 16:00:00']);
+
+        $response = $this->actingAs($this->user)
+            ->getJson('/api/v1/kiosk')
+            ->assertStatus(200)
+            ->assertJsonPath('data.latest.brand.name', 'Carrefour')
+            ->assertJsonPath('data.latest.amount', 50)
+            ->assertJsonCount(13, 'data.daily')
+            ->assertJsonCount(31, 'data.last_month_daily');
+
+        $this->assertEquals(150, $response->json('data.daily.12'));
+        // When it was added, not its date
+        $this->assertStringStartsWith('2026-11-13T16:00:00', $response->json('data.latest_at'));
+    }
 }

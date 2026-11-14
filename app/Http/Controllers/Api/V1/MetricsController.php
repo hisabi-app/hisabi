@@ -29,6 +29,10 @@ use App\Domains\Metrics\Metrics\TransactionsStdDevMetric;
 use App\Domains\Metrics\Metrics\BrandStatsMetric;
 use App\Domains\Metrics\Metrics\CategoryStatsMetric;
 use App\Domains\Metrics\Metrics\CirclePackMetric;
+use App\Domains\Metrics\Metrics\CategoryBreakdownMetric;
+use App\Domains\Metrics\Metrics\IncomeAllocationMetric;
+use App\Domains\Metrics\Metrics\SpendingOverTimeMetric;
+use App\Domains\Metrics\Metrics\TopBrandsMetric;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -215,6 +219,30 @@ class MetricsController extends Controller
     public function circlePack(Request $request): JsonResponse
     {
         $metric = new CirclePackMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function incomeAllocation(Request $request): JsonResponse
+    {
+        $metric = new IncomeAllocationMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function categoryBreakdown(Request $request): JsonResponse
+    {
+        $metric = new CategoryBreakdownMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function topBrands(Request $request): JsonResponse
+    {
+        $metric = new TopBrandsMetric($request->query('from'), $request->query('to'));
+        return response()->json(['data' => $metric->calculate()]);
+    }
+
+    public function spendingOverTime(Request $request): JsonResponse
+    {
+        $metric = new SpendingOverTimeMetric($request->query('from'), $request->query('to'), $request->query('by') === 'day' ? 'day' : 'month');
         return response()->json(['data' => $metric->calculate()]);
     }
 }

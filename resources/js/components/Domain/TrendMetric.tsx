@@ -148,13 +148,13 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                 },
                 {
                     type: 'line',
-                    borderColor: '#3b82f6',
+                    borderColor: '#8e8e93',
                     borderDash: [6, 6],
                     borderDashOffset: 0,
                     borderWidth: 2,
                     label: {
                         display: true,
-                        backgroundColor: '#3b82f6',
+                        backgroundColor: '#8e8e93',
                         content: (ctx) => 'Average: ' + average(ctx).toFixed(2)
                     },
                     scaleID: 'y',
@@ -216,8 +216,8 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
         const ctx = document.getElementById(metric).getContext('2d');
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 150);
-        gradient.addColorStop(0, 'rgba(14, 165, 233, 0.4)');
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)');
+        gradient.addColorStop(0, 'rgba(22, 22, 24, 0.08)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
         setChartRef(new Chart(ctx, {
             type: 'line',
@@ -226,11 +226,11 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                 datasets: [
                     {
                         data: data.map(item => item.value),
-                        borderColor: '#0ea5e9',
+                        borderColor: '#161618',
                         backgroundColor: gradient,
-                        pointHoverRadius: 8,
-                        pointRadius: 6,
-                        pointBackgroundColor: '#0ea5e9',
+                        pointHoverRadius: 5,
+                        pointRadius: 0,
+                        pointBackgroundColor: '#161618',
                         fill: 'start',
                         tension: 0.4,
                     },
@@ -255,10 +255,10 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                     tooltip: {
                         displayColors: false,
                         backgroundColor: '#fff',
-                        borderColor: '#0ea5e9',
+                        borderColor: '#161618',
                         borderWidth: 1,
-                        titleColor: '#0ea5e9',
-                        bodyColor: '#0ea5e9',
+                        titleColor: '#161618',
+                        bodyColor: '#161618',
                         xAlign: 'center',
                         yAlign: 'center',
                     },
@@ -302,7 +302,7 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
             <div className="px-6">
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                        <h3 className="mr-2 text-base text-gray-600">{name}</h3>
+                        <h3 className="mr-2 text-base font-bold tracking-[-0.018em] text-foreground">{name}</h3>
 
                         {relation && relationData && <select className="ml-auto min-w-24 h-8 text-xs border-none appearance-none pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
                             name="relation"
@@ -313,7 +313,7 @@ export default function TrendMetric({ name, metric, relation, show_standard_devi
                     </div>
                 </div>
 
-                <div className="text-2xl font-semibold text-gray-800">
+                <div className="text-2xl font-bold font-rounded tabular text-foreground">
                     {data[data.length - 1] && data[data.length - 1].value > 0
                         ? formatNumber(data[data.length - 1].value)
                         : '-'
