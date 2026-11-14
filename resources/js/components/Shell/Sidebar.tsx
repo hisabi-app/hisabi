@@ -47,31 +47,34 @@ function SidebarLink({ item, nav }: { item: NavItem; nav: Navigation }) {
 export default function Sidebar({ nav, user, onAdd }: SidebarProps) {
     return (
         <aside className="fixed inset-y-3 left-3 z-30 hidden w-[224px] flex-col rounded-2xl bg-card px-2.5 pt-3.5 pb-2 shadow-float md:flex" aria-label="Main">
-            <Link href="/" className="mb-2.5 self-start rounded-lg px-1" aria-label="Home">
-                <Logo className="-my-0.5 h-10" />
-            </Link>
+            <div className="mb-3 flex items-center justify-between gap-2 pr-1">
+                <Link href="/" className="rounded-lg px-1" aria-label="Home">
+                    <Logo className="-my-0.5 h-10" />
+                </Link>
 
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <button
-                        type="button"
-                        className="mb-3 flex h-[38px] items-center justify-center gap-1.5 rounded-xl bg-primary font-semibold text-primary-foreground transition-[background-color,transform] duration-150 ease-out-quint hover:bg-primary/85 active:scale-[0.98]"
-                    >
-                        <PlusIcon size={15} weight="bold" aria-hidden="true" />
-                        Add
-                    </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                    <DropdownMenuItem onSelect={() => onAdd('sms')}>
-                        <ChatCircleTextIcon aria-hidden="true" />
-                        Paste a bank SMS
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => onAdd('manual')}>
-                        <PencilSimpleIcon aria-hidden="true" />
-                        Add by hand
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button
+                            type="button"
+                            aria-label="Add"
+                            title="Add"
+                            className="grid size-8 shrink-0 place-items-center rounded-full bg-brand text-brand-foreground shadow-card transition-[background-color,transform] duration-150 ease-out-quint hover:bg-brand-hover active:scale-95 data-[state=open]:bg-brand-hover"
+                        >
+                            <PlusIcon size={16} weight="bold" aria-hidden="true" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-[200px]">
+                        <DropdownMenuItem onSelect={() => onAdd('sms')}>
+                            <ChatCircleTextIcon aria-hidden="true" />
+                            Paste a bank SMS
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => onAdd('manual')}>
+                            <PencilSimpleIcon aria-hidden="true" />
+                            Add by hand
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
 
             <nav className="grid gap-0.5">
                 {MAIN_ITEMS.filter((item) => isVisible(item, nav)).map((item) => (

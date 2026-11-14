@@ -86,7 +86,7 @@ SMS brand strings are ALL CAPS, truncated (~20 chars) and carry branch noise. Wh
 
 ## UI guidelines
 
-- Follow `DESIGN.md`: white or off-white canvas only (never tint page or panel backgrounds), white rounded cards, the system font with `font-rounded` for amounts, color only from categories and status. The app is light only; the kiosk's night mode is the one dark surface.
+- Follow `DESIGN.md`: white or off-white canvas only (never tint page or panel backgrounds), white rounded cards, the system font with `font-rounded` for amounts, color only from categories and status, plus the logo green for primary buttons (`bg-brand` with ink text). The app is light only; the kiosk's night mode is the one dark surface.
 - Navigation is the floating sidebar on laptops and the bottom dock on phones; don't add a top navbar.
 - Easy first, detail on demand: summaries on the page, detail in a side `Sheet` (see `components/Home/DetailSheet.tsx`).
 - No empty charts or "AED 0" cards: a section shows up once it has something real to say (see the stages above).
