@@ -65,8 +65,8 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 - [x] Transactions, Brands, Categories, Budgets, Settings, Login, and the dialogs (SMS parser, create/edit forms) in the Wallet look
 
 ### Phase 7: wrap up
-- [ ] `AGENT.md` architecture notes (home, shell, tokens, Wallet components)
-- [ ] README showcase image refreshed
+- [x] `AGENT.md` architecture notes (home, shell, tokens, Wallet components)
+- [x] README showcase image refreshed
 - [ ] CI green, PR ready for review
 
 ### Phase 8: landing page (`../marketing`)

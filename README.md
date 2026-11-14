@@ -41,7 +41,7 @@ Once done, visit the app on `http://localhost`
 
 ## 📺 Kitchen display
 
-`/kiosk` is a full-screen dashboard for a tablet on the wall: what you've spent this month compared with the same time last month, and what's left in each budget. It refreshes itself every hour and reloads once a day at 4am.
+`/kiosk` is a full-screen dashboard for a tablet on the wall: what you've spent this month compared with the same time last month, what's left in each budget, and the latest transaction. It's white by day and switches to a dark version from 10pm to 6am. It refreshes itself every hour and reloads once a day at 4am.
 
 1. Keep the tablet logged in by setting `SESSION_LIFETIME=525600` (a year, in minutes) in `.env`, then run `php artisan config:clear`.
 2. On the tablet, install a kiosk browser such as [Fully Kiosk Browser](https://www.fully-kiosk.com), set its start URL to `http://<your-hisabi>/kiosk`, turn on *Keep Screen On* and *Launch on Boot*, and log in once.
