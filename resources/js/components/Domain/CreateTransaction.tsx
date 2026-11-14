@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createTransaction } from "@/Api";
@@ -14,7 +15,8 @@ import {
 export default function Create({ brands, showCreate, onClose, onCreate }) {
     const [amount, setAmount] = useState(0);
     const [brand, setBrand] = useState(null);
-    const [createdAt, setCreatedAt] = useState('');
+    // Most transactions added by hand happened today
+    const [createdAt, setCreatedAt] = useState(() => format(new Date(), 'yyyy-MM-dd'));
     const [note, setNote] = useState('');
     const [isReady, setIsReady] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -39,7 +41,7 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
                 // Reset form
                 setBrand(null);
                 setAmount(0);
-                setCreatedAt('');
+                setCreatedAt(format(new Date(), 'yyyy-MM-dd'));
                 setNote('');
                 setLoading(false);
                 onClose();
@@ -50,7 +52,7 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
     return (
         <Dialog open={showCreate} onOpenChange={(open) => !open && onClose()}>
             <DialogContent>
-                <DialogTitle className="sr-only">Create Transaction</DialogTitle>
+                <DialogTitle>Add a transaction</DialogTitle>
                 <div className="space-y-4">
                     <div>
                         <Label htmlFor="amount">
@@ -107,7 +109,7 @@ export default function Create({ brands, showCreate, onClose, onCreate }) {
                             disabled={!isReady || loading}
                             onClick={handleCreate}
                         >
-                            Create
+                            Add
                         </Button>
                     </div>
                 </div>

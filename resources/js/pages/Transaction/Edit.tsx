@@ -61,7 +61,7 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
     return (
         <Dialog open={!!transaction} onOpenChange={(open) => !open && onClose()}>
             <DialogContent>
-                <DialogTitle className="sr-only">Edit Transaction</DialogTitle>
+                <DialogTitle>Edit transaction</DialogTitle>
                 {transaction && (
                     <div className="space-y-4">
                         <div>
@@ -119,7 +119,7 @@ export default function Edit({ transaction, brands, onUpdate, onDelete, onClose 
                                 Hold to Delete
                             </LongPressButton>
                             <Button onClick={handleUpdate}>
-                                Update
+                                Save
                             </Button>
                         </div>
                     </div>

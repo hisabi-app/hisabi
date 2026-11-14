@@ -62,7 +62,7 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 - [x] Kiosk API adds the latest transaction and the cumulative series; tests updated
 
 ### Phase 6: remaining pages
-- [ ] Transactions, Brands, Categories, Budgets, Settings, Login, and the dialogs (SMS parser, create/edit forms) in the Wallet look
+- [x] Transactions, Brands, Categories, Budgets, Settings, Login, and the dialogs (SMS parser, create/edit forms) in the Wallet look
 
 ### Phase 7: wrap up
 - [ ] `AGENT.md` architecture notes (home, shell, tokens, Wallet components)

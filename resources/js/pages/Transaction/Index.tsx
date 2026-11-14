@@ -1,33 +1,38 @@
-import { useEffect, useState, useMemo } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { useEffect, useMemo, useState } from 'react';
+import { Head } from '@inertiajs/react';
 import { debounce } from 'lodash';
-import { startOfMonth, endOfMonth } from 'date-fns';
-import { DateRange } from 'react-day-picker';
+import { format, isThisYear, isToday, isYesterday, parseISO } from 'date-fns';
+import { MagnifyingGlassIcon, X } from '@phosphor-icons/react';
 
 import Authenticated from '@/Layouts/Authenticated';
 import Edit from './Edit';
-import RecordTransactionButton from '@/components/Domain/RecordTransactionButton';
 import Filters from './Filters';
-import LoadMore from '@/components/Global/LoadMore';
+import DetailSheet from '@/components/Home/DetailSheet';
+import type { Detail, UncategorizedBrand } from '@/components/Home/types';
+import EmptyState from '@/components/Wallet/EmptyState';
+import PageHeader from '@/components/Wallet/PageHeader';
+import Tile from '@/components/Wallet/Tile';
+import { amount, money, toAmount } from '@/components/Wallet/format';
 import { Button } from '@/components/ui/button';
-import { getTransactions, getAllBrands } from '@/Api';
-import { getAllCategories } from '@/Api/categories';
-import { animateRowItem, formatNumber, getAppCurrency } from '@/Utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowElbowDownRightIcon, X } from '@phosphor-icons/react';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import TransactionStats from '@/components/Domain/TransactionStats';
-import { getCategoryIcon } from '@/Utils/categoryIcons';
-import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
+import { Skeleton } from '@/components/ui/skeleton';
+import { getAllBrands, getTransactions } from '@/Api';
+import { getAllCategories } from '@/Api/categories';
+import { getHome } from '@/Api/home';
+import { useDataChanged } from '@/hooks/useDataChanged';
+import { cn } from '@/lib/utils';
 
+const dayLabel = (date: string) => {
+    const day = parseISO(date);
+    if (isToday(day)) return 'Today';
+    if (isYesterday(day)) return 'Yesterday';
+
+    return format(day, isThisYear(day) ? 'EEEE d MMM' : 'EEEE d MMM yyyy');
+};
 
 export default function Index({ auth }: { auth: any }) {
     const urlParams = new URLSearchParams(window.location.search);
     const initialSearch = urlParams.get('search') || '';
-
-    // Initialize filters from URL
     const initialFilters = {
         brandId: urlParams.get('brand') || '',
         categoryId: urlParams.get('category') || '',
@@ -41,268 +46,202 @@ export default function Index({ auth }: { auth: any }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [searchQuery, setSearchQuery] = useState(initialSearch);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [editItem, setEditItem] = useState(null);
     const [filters, setFilters] = useState(initialFilters);
-    const [dateRange, setDateRange] = useState<DateRange>({
-        from: startOfMonth(new Date()),
-        to: endOfMonth(new Date()),
-    });
+    const [reloadKey, setReloadKey] = useState(0);
+    const [detail, setDetail] = useState<Detail>(null);
+    const [uncategorized, setUncategorized] = useState<UncategorizedBrand[]>([]);
 
     useEffect(() => {
         getAllBrands()
-            .then(({ data }) => {
-                setAllBrands(data.allBrands)
-            })
+            .then(({ data }) => setAllBrands(data.allBrands))
             .catch(console.error);
-
         getAllCategories()
-            .then(({ data }) => {
-                setAllCategories(data.allCategories)
-            })
+            .then(({ data }) => setAllCategories(data.allCategories))
             .catch(console.error);
     }, []);
 
     useEffect(() => {
-        if (currentPage > 1 && !hasMorePages) return;
-
         setLoading(true);
 
         getTransactions(currentPage, searchQuery, filters)
             .then(({ data }) => {
-                const newTransactions = currentPage === 1
-                    ? data.transactions.data
-                    : [...transactions, ...data.transactions.data];
-
-                setTransactions(newTransactions)
-                setHasMorePages(data.transactions.paginatorInfo.hasMorePages)
-                setLoading(false);
+                setTransactions((current) => (currentPage === 1 ? data.transactions.data : [...current, ...data.transactions.data]));
+                setHasMorePages(data.transactions.paginatorInfo.hasMorePages);
             })
-            .catch(console.error);
-    }, [currentPage, searchQuery, filters]);
+            .catch(console.error)
+            .finally(() => setLoading(false));
+    }, [currentPage, searchQuery, filters, reloadKey]);
 
-    const onCreate = (createdItem: any) => {
-        setTransactions([createdItem, ...transactions]);
-        animateRowItem(createdItem.id);
-    };
-
-    const onUpdate = (updatedItem: any) => {
-        setTransactions(transactions.map(transaction => {
-            if (transaction.id === updatedItem.id) {
-                return updatedItem;
-            }
-            return transaction;
-        }));
-        animateRowItem(updatedItem.id);
-    };
-
-    const onDelete = (deletedItem: any) => {
-        (animateRowItem as any)(deletedItem.id, 'deleted', () => {
-            setTransactions(transactions.filter(item => item.id != deletedItem.id));
-        });
-    };
-
-    const performSearchHandler = (e: any) => {
-        const value = e.target.value ?? '';
-
-        const url = new URL(window.location.href);
-        if (value) {
-            url.searchParams.set('search', value);
-        } else {
-            url.searchParams.delete('search');
-        }
-        window.history.pushState({}, '', url);
-
+    // Added from the sidebar or parsed from an SMS
+    const reload = () => {
         setCurrentPage(1);
-        setSearchQuery(value);
-    }
+        setReloadKey((key) => key + 1);
+    };
+    useDataChanged(reload);
+
+    const onUpdate = (updated: any) => setTransactions((current) => current.map((transaction) => (transaction.id === updated.id ? updated : transaction)));
+    const onDelete = (deleted: any) => setTransactions((current) => current.filter((transaction) => transaction.id != deleted.id));
 
     const performSearch = useMemo(
-        () => debounce(performSearchHandler, 300)
-        , []);
+        () =>
+            debounce((event: any) => {
+                const value = event.target.value ?? '';
+                const url = new URL(window.location.href);
+                value ? url.searchParams.set('search', value) : url.searchParams.delete('search');
+                window.history.pushState({}, '', url);
 
-    const handleFiltersApply = (newFilters: any) => {
+                setCurrentPage(1);
+                setSearchQuery(value);
+            }, 300),
+        [],
+    );
+
+    const applyFilters = (next: typeof initialFilters) => {
         const url = new URL(window.location.href);
-
-        // Update URL params for filters
-        if (newFilters.brandId) {
-            url.searchParams.set('brand', newFilters.brandId);
-        } else {
-            url.searchParams.delete('brand');
-        }
-
-        if (newFilters.categoryId) {
-            url.searchParams.set('category', newFilters.categoryId);
-        } else {
-            url.searchParams.delete('category');
-        }
-
-        if (newFilters.dateFrom && newFilters.dateTo) {
-            url.searchParams.set('dateFrom', newFilters.dateFrom);
-            url.searchParams.set('dateTo', newFilters.dateTo);
+        next.brandId ? url.searchParams.set('brand', next.brandId) : url.searchParams.delete('brand');
+        next.categoryId ? url.searchParams.set('category', next.categoryId) : url.searchParams.delete('category');
+        if (next.dateFrom && next.dateTo) {
+            url.searchParams.set('dateFrom', next.dateFrom);
+            url.searchParams.set('dateTo', next.dateTo);
         } else {
             url.searchParams.delete('dateFrom');
             url.searchParams.delete('dateTo');
         }
-
         window.history.pushState({}, '', url);
 
         setCurrentPage(1);
-        setFilters(newFilters);
+        setFilters(next);
     };
 
-    const clearFilter = (filterKey: string) => {
-        const updatedFilters = { ...filters };
-
-        switch (filterKey) {
-            case 'brand':
-                updatedFilters.brandId = '';
-                break;
-            case 'category':
-                updatedFilters.categoryId = '';
-                break;
-            case 'date':
-                updatedFilters.dateFrom = '';
-                updatedFilters.dateTo = '';
-                break;
-        }
-
-        handleFiltersApply(updatedFilters);
+    const chooseCategories = () => {
+        getHome()
+            .then((home: any) => {
+                setUncategorized(home.needs_you.brands.items);
+                setDetail({ kind: 'brands' });
+            })
+            .catch(console.error);
     };
 
-    const handleDateChange = (newDateRange: DateRange | undefined) => {
-        if (newDateRange?.from && newDateRange?.to) {
-            setDateRange(newDateRange);
-        }
-    };
+    const groups = useMemo(() => {
+        const byDay = new Map<string, any[]>();
+        transactions.forEach((transaction) => byDay.set(transaction.created_at, [...(byDay.get(transaction.created_at) ?? []), transaction]));
 
-    const header = (
-        <div className="flex items-center justify-between w-full">
-            <h2>Transactions</h2>
-            <div className="flex items-center gap-2">
-                <DatePickerWithRange
-                    onDateChange={handleDateChange}
-                    initialDate={dateRange}
-                />
-                <RecordTransactionButton
-                    brands={allBrands}
-                    onSuccess={onCreate}
-                />
-            </div>
-        </div>
-    )
+        return [...byDay.entries()].map(([day, items]) => ({
+            day,
+            items,
+            spent: items.filter((item) => !item.brand.category || item.brand.category.type === 'EXPENSES').reduce((sum, item) => sum + toAmount(item.amount), 0),
+        }));
+    }, [transactions]);
+
+    const chips = [
+        filters.brandId && { key: 'brand', label: allBrands.find((brand) => brand.id == filters.brandId)?.name ?? 'Brand', clear: { ...filters, brandId: '' } },
+        filters.categoryId && { key: 'category', label: allCategories.find((category) => category.id == filters.categoryId)?.name ?? 'Category', clear: { ...filters, categoryId: '' } },
+        filters.dateFrom && filters.dateTo && { key: 'date', label: `${format(parseISO(filters.dateFrom), 'd MMM')} to ${format(parseISO(filters.dateTo), 'd MMM yyyy')}`, clear: { ...filters, dateFrom: '', dateTo: '' } },
+    ].filter(Boolean) as { key: string; label: string; clear: typeof initialFilters }[];
+
+    const filtered = Boolean(searchQuery) || chips.length > 0;
 
     return (
-        <Authenticated auth={auth} header={header}>
+        <Authenticated auth={auth}>
             <Head title="Transactions" />
 
-            <Edit
-                transaction={editItem}
-                brands={allBrands}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-                onClose={() => setEditItem(null)}
+            <Edit transaction={editItem} brands={allBrands} onUpdate={onUpdate} onDelete={onDelete} onClose={() => setEditItem(null)} />
+            <DetailSheet
+                detail={detail}
+                brands={uncategorized}
+                onClose={() => {
+                    setDetail(null);
+                    reload();
+                }}
             />
 
-            <div className="p-4">
-                <div className="max-w-7xl mx-auto grid gap-4">
+            <div className="mx-auto grid w-full max-w-[1100px] gap-3.5 px-4 pt-6 md:px-6 md:pt-7">
+                <PageHeader title="Transactions" />
 
-                    <TransactionStats dateRange={dateRange} />
-
-                    <div className="flex justify-between gap-2">
-                        <Input
-                            name="search"
-                            placeholder='Search..'
-                            className='bg-white max-w-56'
-                            defaultValue={searchQuery}
-                            onChange={performSearch}
-                        />
-                        <div className="flex gap-2">
-                            {/* Active filter badges */}
-                            {filters.brandId && (
-                                <Badge
-                                    variant="secondary"
-                                    className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
-                                    onClick={() => clearFilter('brand')}
-                                >
-                                    {allBrands.find((b: any) => b.id == filters.brandId)?.name}
-                                    <X size={14} weight="bold" />
-                                </Badge>
-                            )}
-                            {filters.categoryId && (
-                                <Badge
-                                    variant="secondary"
-                                    className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
-                                    onClick={() => clearFilter('category')}
-                                >
-                                    {allCategories.find((c: any) => c.id == filters.categoryId)?.name}
-                                    <X size={14} weight="bold" />
-                                </Badge>
-                            )}
-                            {filters.dateFrom && filters.dateTo && (
-                                <Badge
-                                    variant="secondary"
-                                    className="h-9 gap-1.5 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full px-3"
-                                    onClick={() => clearFilter('date')}
-                                >
-                                    {filters.dateFrom} - {filters.dateTo}
-                                    <X size={14} weight="bold" />
-                                </Badge>
-                            )}
-                            <Filters
-                                brands={allBrands}
-                                categories={allCategories}
-                                onApply={handleFiltersApply}
-                                activeFilters={filters}
-                            />
-                        </div>
+                <div className="rise flex flex-wrap items-center gap-2" style={{ '--i': 1 } as React.CSSProperties}>
+                    <div className="relative w-full sm:w-64">
+                        <MagnifyingGlassIcon size={16} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                        <Input name="search" placeholder="Search brands, categories, notes" className="pl-9" defaultValue={searchQuery} onChange={performSearch} aria-label="Search transactions" />
                     </div>
-
-                    <div className="grid gap-2">
-                        {transactions.length > 0 && transactions.map((transaction) => {
-                            const CategoryIcon = transaction.brand.category?.icon
-                                ? getCategoryIcon(transaction.brand.category.icon)
-                                : null;
-                            const hasCategory = transaction.brand.category !== null;
-                            const isUncategorized = !hasCategory;
-                            const categoryType = hasCategory ? transaction.brand.category.type : null;
-                            const isIncomeTransaction = categoryType === "INCOME";
-
-                            return (
-                                <Card key={transaction.id} className={`py-0 ${isUncategorized ? 'bg-red-50 border-red-100' : ''}`} id={'item-' + transaction.id}>
-                                    <CardContent className='flex justify-between items-center px-4 py-3'>
-                                        <div className='flex gap-2 items-center'>
-                                            {CategoryIcon && hasCategory ? (
-                                                <div className={`size-10 rounded-full flex items-center justify-center badge badge-${transaction.brand.category.color}`}>
-                                                    <CategoryIcon size={24} weight="regular" className="text-current" />
-                                                </div>
-                                            ) : (
-                                                <Avatar className='size-10'>
-                                                    <AvatarImage src={transaction.brand.image} />
-                                                    <AvatarFallback>{transaction.brand.name.charAt(0)}</AvatarFallback>
-                                                </Avatar>
-                                            )}
-                                            <div>
-                                                <button onClick={() => setEditItem(transaction)} className='font-medium hover:underline'>{transaction.brand.name} </button>
-                                                <div className='flex gap-1 text-muted-foreground items-center'>
-                                                    <ArrowElbowDownRightIcon size={10} weight="bold" />
-                                                    <p className=' text-xs'>{hasCategory ? <span>{transaction.brand.category.name} -</span> : ''} {transaction.created_at}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='flex gap-2 items-center'>
-                                            {transaction.note && <Badge variant="secondary">{transaction.note}</Badge>
-                                            }
-                                            <p className={`${isIncomeTransaction ? 'text-green-500' : ''} min-w-26 text-right`}> {isIncomeTransaction ? '' : '-'}{getAppCurrency()} {formatNumber(transaction.amount, null)}</p>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            );
-                        })}
-
-                        <LoadMore hasContent={transactions.length > 0} hasMorePages={hasMorePages} loading={loading} onClick={() => setCurrentPage(currentPage + 1)} />
+                    {chips.map((chip) => (
+                        <button
+                            key={chip.key}
+                            type="button"
+                            onClick={() => applyFilters(chip.clear)}
+                            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-card px-3.5 text-[13px] font-semibold shadow-card ring-1 ring-border ring-inset hover:bg-secondary"
+                            aria-label={`Remove filter ${chip.label}`}
+                        >
+                            {chip.label}
+                            <X size={13} weight="bold" aria-hidden="true" />
+                        </button>
+                    ))}
+                    <div className="ml-auto">
+                        <Filters brands={allBrands} categories={allCategories} onApply={applyFilters} activeFilters={filters} />
                     </div>
                 </div>
+
+                {loading && transactions.length === 0 && (
+                    <div className="grid gap-3.5" aria-busy="true">
+                        <Skeleton className="h-48 w-full rounded-2xl" />
+                        <Skeleton className="h-32 w-full rounded-2xl" />
+                    </div>
+                )}
+
+                {!loading && transactions.length === 0 && (
+                    <EmptyState
+                        className="rounded-2xl bg-card shadow-card"
+                        title={filtered ? 'No transactions match' : 'No transactions yet'}
+                        body={filtered ? 'Try another search or remove a filter.' : 'Paste a bank SMS or add one by hand from Add.'}
+                    />
+                )}
+
+                {groups.map((group, i) => (
+                    <section key={group.day} className={cn('rounded-2xl bg-card px-4 py-3 shadow-card sm:px-[18px]', i < 6 && 'rise')} style={{ '--i': i + 2 } as React.CSSProperties}>
+                        <div className="flex items-baseline justify-between gap-3 border-b pb-2">
+                            <h2 className="font-bold tracking-[-0.01em]">{dayLabel(group.day)}</h2>
+                            {group.spent > 0 && <span className="text-[13px] text-muted-foreground font-rounded tabular">{money(group.spent, 2)} spent</span>}
+                        </div>
+                        <div className="divide-y">
+                            {group.items.map((transaction) => {
+                                const category = transaction.brand.category;
+                                const isIncome = category?.type === 'INCOME';
+
+                                return (
+                                    <div key={transaction.id} className="grid grid-cols-[36px_minmax(0,1fr)_auto] items-center gap-x-3 py-2.5">
+                                        <Tile color={category?.color} icon={category?.icon} className="row-span-2" label={category?.name ?? 'No category'} />
+                                        <button type="button" onClick={() => setEditItem(transaction)} className="min-w-0 truncate text-left font-semibold hover:underline">
+                                            {transaction.brand.name}
+                                        </button>
+                                        <p className="col-start-2 truncate text-[12.5px] text-muted-foreground">
+                                            {category ? (
+                                                category.name
+                                            ) : (
+                                                <button type="button" onClick={chooseCategories} className="font-semibold text-info hover:underline">
+                                                    Choose a category
+                                                </button>
+                                            )}
+                                            {transaction.note && <span> · {transaction.note}</span>}
+                                        </p>
+                                        <p className={cn('col-start-3 row-span-2 row-start-1 text-right text-sm font-semibold font-rounded tabular', isIncome && 'text-success')}>
+                                            {isIncome ? '+' : ''}
+                                            {amount(transaction.amount, 2)}
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+                ))}
+
+                {transactions.length > 0 && hasMorePages && (
+                    <div className="flex justify-center py-2">
+                        <Button variant="secondary" disabled={loading} onClick={() => setCurrentPage((page) => page + 1)}>
+                            {loading ? 'Loading…' : 'Show more'}
+                        </Button>
+                    </div>
+                )}
             </div>
         </Authenticated>
     );

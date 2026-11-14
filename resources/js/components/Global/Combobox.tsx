@@ -71,7 +71,7 @@ const ComboboxComponent = forwardRef<HTMLDivElement, ComboboxProps>(
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-full justify-between font-normal"
+              className="h-10 w-full justify-between rounded-xl font-normal shadow-none ring-input active:scale-100"
             >
               <span className={cn(
                 "truncate",
