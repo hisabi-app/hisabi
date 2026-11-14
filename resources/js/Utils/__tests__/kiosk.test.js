@@ -1,4 +1,4 @@
-import { compareWithLastMonth, msUntilDailyReload, toKioskBudgets } from '../kiosk';
+import { compareWithLastMonth, isNight, msUntilDailyReload, toKioskBudgets } from '../kiosk';
 
 const budget = (id, amount, spent, elapsed = 43) => ({
     id,
@@ -42,4 +42,17 @@ it('msUntilDailyReload waits until the next 4am', () => {
     expect(msUntilDailyReload(new Date(2026, 10, 13, 2, 0))).toBe(2 * hour);
     expect(msUntilDailyReload(new Date(2026, 10, 13, 18, 0))).toBe(10 * hour);
     expect(msUntilDailyReload(new Date(2026, 10, 13, 4, 0))).toBe(24 * hour);
+});
+
+it('toKioskBudgets keeps the category look for the rings', () => {
+    const [ring] = toKioskBudgets([{ ...budget(1, 1000, 200), color: 'pink', icon: 'ShoppingBag' }]);
+
+    expect(ring).toMatchObject({ color: 'pink', icon: 'ShoppingBag' });
+});
+
+it('isNight is true from 22:00 to 06:00', () => {
+    expect(isNight(new Date(2026, 10, 13, 21, 59))).toBe(false);
+    expect(isNight(new Date(2026, 10, 13, 22, 0))).toBe(true);
+    expect(isNight(new Date(2026, 10, 14, 3, 0))).toBe(true);
+    expect(isNight(new Date(2026, 10, 14, 6, 0))).toBe(false);
 });

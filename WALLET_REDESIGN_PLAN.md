@@ -58,8 +58,8 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 - [x] Before a full month: only spending by category and top brands
 
 ### Phase 5: kiosk
-- [ ] Wallet layout (spent card with chart, budget rings, latest transaction pill), light by day, neutral dark 22:00 to 06:00
-- [ ] Kiosk API adds the latest transaction and the cumulative series; tests updated
+- [x] Wallet layout (spent card with chart, budget rings, latest transaction pill), light by day, neutral dark 22:00 to 06:00
+- [x] Kiosk API adds the latest transaction and the cumulative series; tests updated
 
 ### Phase 6: remaining pages
 - [ ] Transactions, Brands, Categories, Budgets, Settings, Login, and the dialogs (SMS parser, create/edit forms) in the Wallet look

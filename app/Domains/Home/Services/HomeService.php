@@ -173,7 +173,7 @@ class HomeService
     /**
      * Running total of spending per day from $from to $to, one entry per day.
      */
-    private function getCumulativeDailyExpenses(Carbon $from, Carbon $to): array
+    public function getCumulativeDailyExpenses(Carbon $from, Carbon $to): array
     {
         $totals = Transaction::query()
             ->expenses()

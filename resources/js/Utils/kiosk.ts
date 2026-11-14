@@ -8,6 +8,8 @@ export interface KioskBudget {
     spentPercentage: number;
     elapsedPercentage: number;
     status: BudgetStatus;
+    color: string | null;
+    icon: string | null;
 }
 
 export interface Comparison {
@@ -20,6 +22,12 @@ const STATUS_ORDER: BudgetStatus[] = ['over', 'ahead', 'on_track', 'used'];
 
 // The hour (local time) the page reloads itself, to pick up new deploys
 const DAILY_RELOAD_HOUR = 4;
+
+// The kiosk goes dark from 22:00 to 06:00 so it doesn't light up the kitchen at night
+const NIGHT_STARTS = 22;
+const NIGHT_ENDS = 6;
+
+export const isNight = (now: Date): boolean => now.getHours() >= NIGHT_STARTS || now.getHours() < NIGHT_ENDS;
 
 export const toKioskBudgets = (budgets: any[]): KioskBudget[] =>
     budgets
@@ -36,6 +44,8 @@ export const toKioskBudgets = (budgets: any[]): KioskBudget[] =>
                 spentPercentage: amount > 0 ? Math.round((spent / amount) * 100) : 0,
                 elapsedPercentage,
                 status: getBudgetStatus(spent, amount, elapsedPercentage),
+                color: budget.color ?? null,
+                icon: budget.icon ?? null,
             };
         })
         .sort((a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status));

@@ -4,7 +4,8 @@ interface RingProps {
     // 0 to 100; anything above 100 draws a full ring
     value: number;
     color: string;
-    size?: number;
+    // Pixels, or any CSS length (the kiosk sizes rings in em)
+    size?: number | string;
     stroke?: number;
     // Position in a row of rings, so they draw one after another
     index?: number;
