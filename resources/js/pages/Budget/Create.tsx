@@ -29,7 +29,15 @@ interface Category {
 
 const today = () => format(new Date(), 'yyyy-MM-dd');
 
-export default function Create({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: () => void }) {
+interface CreateProps {
+    open: boolean;
+    onClose: () => void;
+    onCreated: () => void;
+    // Prefilled from a suggestion, e.g. "Set a budget" for Groceries on the home
+    initial?: { name: string; categoryIds: number[] } | null;
+}
+
+export default function Create({ open, onClose, onCreated, initial = null }: CreateProps) {
     const [categories, setCategories] = useState<Category[] | null>(null);
     const [name, setName] = useState('');
     const [amount, setAmount] = useState('');
@@ -39,6 +47,13 @@ export default function Create({ open, onClose, onCreated }: { open: boolean; on
     const [categoryIds, setCategoryIds] = useState<number[]>([]);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(false);
+
+    useEffect(() => {
+        if (!open || !initial) return;
+
+        setName(initial.name);
+        setCategoryIds(initial.categoryIds);
+    }, [open, initial]);
 
     useEffect(() => {
         if (!open || categories) return;

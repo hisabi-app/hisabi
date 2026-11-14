@@ -44,12 +44,12 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 - [x] Feature tests for the shared props
 
 ### Phase 3: home
-- [ ] `/` renders `Home` (`HomeController`); `/dashboard` redirects to `/`; `RouteServiceProvider::HOME = '/'`
-- [ ] `GET /api/v1/home` (`GetHomeQuery`): stage, needs you (uncategorized brands, budgets over or ahead, unparsed SMS), month summary with cumulative daily series for this and last month, insights, current budgets, recent transactions, budget suggestion
-- [ ] `users.preferences` JSON column and `POST /api/v1/home/dismissals` for "Not now" (hidden until next month)
-- [ ] `GET /api/v1/budgets/{id}/detail` (`GetBudgetDetailQuery`): spending by brand and transactions in the current window
-- [ ] `pages/Home.tsx` with the three stages, Needs you (assign categories inline, review a budget), detail panels, the first-run SMS card with highlighted tokens
-- [ ] PHP feature tests for the new endpoints; Jest tests for stage and formatting helpers
+- [x] `/` renders `Home` (`HomeController`); `/dashboard` redirects to `/`; `RouteServiceProvider::HOME = '/'`
+- [x] `GET /api/v1/home` (`GetHomeQuery`): stage, needs you (uncategorized brands, budgets over or ahead, unparsed SMS), month summary with cumulative daily series for this and last month, insights, current budgets, recent transactions, budget suggestion
+- [x] `users.preferences` JSON column and `POST /api/v1/home/dismissals` for "Not now" (hidden until next month)
+- [x] `GET /api/v1/budgets/{id}/detail` (`GetBudgetDetailQuery`): spending by brand and transactions in the current window
+- [x] `pages/Home.tsx` with the three stages, Needs you (assign categories inline, review a budget), detail panels, the first-run SMS card with highlighted tokens
+- [x] PHP feature tests for the new endpoints; Jest tests for stage and formatting helpers
 
 ### Phase 4: Insights page
 - [ ] Period control and the new sections (net worth, where your income went, spending by category, spending by month, top brands)

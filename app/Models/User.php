@@ -39,5 +39,22 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'preferences' => 'array',
     ];
+
+    /**
+     * Hide a suggestion until next month.
+     */
+    public function dismissForThisMonth(string $key): void
+    {
+        $preferences = $this->preferences ?? [];
+        $preferences['dismissed'][$key] = now()->format('Y-m');
+
+        $this->forceFill(['preferences' => $preferences])->save();
+    }
+
+    public function dismissedThisMonth(string $key): bool
+    {
+        return ($this->preferences['dismissed'][$key] ?? null) === now()->format('Y-m');
+    }
 }

@@ -24,6 +24,9 @@ class BudgetResource extends JsonResource
             'is_saving' => $this->is_saving,
             'total_transactions_amount' => $this->total_transactions_amount,
             'status' => $this->status(),
+            // The first category's look, for rings and tiles
+            'color' => $this->categories->first()?->color,
+            'icon' => $this->categories->first()?->icon,
         ];
     }
 }

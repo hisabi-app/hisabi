@@ -4,7 +4,7 @@ import { ChatCircleTextIcon, DotsThreeIcon, MonitorIcon, PencilSimpleIcon, PlusI
 
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import type { AddKind } from './Sidebar';
+import type { AddKind } from '@/hooks/useDataChanged';
 import { isCurrent, isVisible, MAIN_ITEMS, MANAGE_ITEMS, type Navigation, type NavItem } from './navigation';
 
 const SHORT_LABELS: Record<string, string> = { transactions: 'Activity' };

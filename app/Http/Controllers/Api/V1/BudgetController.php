@@ -9,6 +9,8 @@ use App\Http\Commands\Budget\DeleteBudgetCommand\DeleteBudgetCommandHandler;
 use App\Http\Commands\Budget\UpdateBudgetCommand\UpdateBudgetCommand;
 use App\Http\Commands\Budget\UpdateBudgetCommand\UpdateBudgetCommandHandler;
 use App\Http\Controllers\Controller;
+use App\Http\Queries\Budget\GetBudgetDetailQuery\GetBudgetDetailQuery;
+use App\Http\Queries\Budget\GetBudgetDetailQuery\GetBudgetDetailQueryHandler;
 use App\Http\Queries\Budget\GetBudgetsHistoryQuery\GetBudgetsHistoryQuery;
 use App\Http\Queries\Budget\GetBudgetsHistoryQuery\GetBudgetsHistoryQueryHandler;
 use App\Http\Queries\Budget\GetBudgetsQuery\GetBudgetsQuery;
@@ -23,6 +25,7 @@ class BudgetController extends Controller
     public function __construct(
         private readonly GetBudgetsQueryHandler $getBudgetsQueryHandler,
         private readonly GetBudgetsHistoryQueryHandler $getBudgetsHistoryQueryHandler,
+        private readonly GetBudgetDetailQueryHandler $getBudgetDetailQueryHandler,
         private readonly CreateBudgetCommandHandler $createBudgetCommandHandler,
         private readonly UpdateBudgetCommandHandler $updateBudgetCommandHandler,
         private readonly DeleteBudgetCommandHandler $deleteBudgetCommandHandler
@@ -43,6 +46,13 @@ class BudgetController extends Controller
         );
 
         return $this->getBudgetsHistoryQueryHandler->handle($query)->toResponse();
+    }
+
+    public function detail(int $id): JsonResponse
+    {
+        $query = new GetBudgetDetailQuery(id: $id);
+
+        return $this->getBudgetDetailQueryHandler->handle($query)->toResponse();
     }
 
     public function store(CreateBudgetRequest $request): JsonResponse

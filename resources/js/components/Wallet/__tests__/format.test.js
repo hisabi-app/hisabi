@@ -14,6 +14,7 @@ describe('Wallet format helpers', () => {
     it('formats whole amounts with thousands separators', () => {
         expect(amount(9486)).toBe('9,486');
         expect(amount('2,310')).toBe('2,310');
+        expect(amount(10284.99)).toBe('10,285');
     });
 
     it('keeps the requested decimals', () => {

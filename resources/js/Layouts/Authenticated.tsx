@@ -4,10 +4,10 @@ import { router, usePage } from '@inertiajs/react';
 import CreateTransaction from '@/components/Domain/CreateTransaction';
 import SmsParser from '@/components/Global/SmsParser';
 import Dock from '@/components/Shell/Dock';
-import Sidebar, { type AddKind } from '@/components/Shell/Sidebar';
+import Sidebar from '@/components/Shell/Sidebar';
 import { FALLBACK_NAV, type Navigation } from '@/components/Shell/navigation';
 import { getAllBrands } from '@/Api';
-import { notifyDataChanged } from '@/hooks/useDataChanged';
+import { notifyDataChanged, useAddRequests, type AddKind } from '@/hooks/useDataChanged';
 
 interface AuthenticatedProps {
     auth?: any;
@@ -21,6 +21,9 @@ export default function Authenticated({ auth, header, children }: AuthenticatedP
     const [adding, setAdding] = useState<AddKind | null>(null);
     const [brands, setBrands] = useState<any[]>([]);
     const user = auth?.user;
+
+    // Pages can open the same dialogs, e.g. Needs you's "Review" for unread SMS
+    useAddRequests(setAdding);
 
     useEffect(() => {
         if (adding !== 'manual') return;

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InsightsController;
 use App\Http\Controllers\KioskController;
 use App\Http\Controllers\SettingsController;
@@ -13,10 +14,10 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\V1\MetricsController;
 
-Route::redirect('/', '/insights');
-Route::redirect('/dashboard', '/insights');
+Route::redirect('/dashboard', '/');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/insights', [InsightsController::class, 'index'])->name('insights');
     Route::get('/budgets', [BudgetController::class, 'index'])->name('budgets');
 
@@ -56,11 +57,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/categories/{id}', [\App\Http\Controllers\Api\V1\CategoryController::class, 'destroy']);
         Route::get('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'index']);
         Route::get('/budgets/history', [\App\Http\Controllers\Api\V1\BudgetController::class, 'history']);
+        Route::get('/budgets/{id}/detail', [\App\Http\Controllers\Api\V1\BudgetController::class, 'detail'])->whereNumber('id');
         Route::post('/budgets', [\App\Http\Controllers\Api\V1\BudgetController::class, 'store']);
         Route::put('/budgets/{id}', [\App\Http\Controllers\Api\V1\BudgetController::class, 'update'])->whereNumber('id');
         Route::delete('/budgets/{id}', [\App\Http\Controllers\Api\V1\BudgetController::class, 'destroy'])->whereNumber('id');
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
         Route::get('/kiosk', [\App\Http\Controllers\Api\V1\KioskController::class, 'index']);
+        Route::get('/home', [\App\Http\Controllers\Api\V1\HomeController::class, 'index']);
+        Route::post('/home/dismissals', [\App\Http\Controllers\Api\V1\HomeController::class, 'dismiss']);
 
         Route::prefix('metrics')->group(function () {
             Route::get('/total-income', [MetricsController::class, 'totalIncome']);

@@ -1,4 +1,4 @@
-import { formatNumber, getAppCurrency } from '@/Utils';
+import { getAppCurrency } from '@/Utils';
 
 // Amounts arrive as numbers or number_format()'ed strings ("1,234.50")
 export const toAmount = (value: number | string | null | undefined): number => {
@@ -7,9 +7,16 @@ export const toAmount = (value: number | string | null | undefined): number => {
     return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const formatters = new Map<number, Intl.NumberFormat>();
+
 // 9486 → "9,486", with decimals → "312.40"
-export const amount = (value: number | string, decimals = 0): string =>
-    formatNumber(toAmount(value), decimals > 0 ? `0,0.${'0'.repeat(decimals)}` : '0,0');
+export const amount = (value: number | string, decimals = 0): string => {
+    if (!formatters.has(decimals)) {
+        formatters.set(decimals, new Intl.NumberFormat('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }));
+    }
+
+    return formatters.get(decimals)!.format(toAmount(value));
+};
 
 // 9486 → "AED 9,486"
 export const money = (value: number | string, decimals = 0): string => `${getAppCurrency() ?? ''} ${amount(value, decimals)}`.trim();

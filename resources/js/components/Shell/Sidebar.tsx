@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import AccountMenu, { type ShellUser } from './AccountMenu';
 import { hasSeen, isCurrent, isVisible, MAIN_ITEMS, MANAGE_ITEMS, type Navigation, type NavItem } from './navigation';
 
-export type AddKind = 'sms' | 'manual';
+import type { AddKind } from '@/hooks/useDataChanged';
 
 interface SidebarProps {
     nav: Navigation;

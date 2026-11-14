@@ -21,9 +21,21 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
     const [view, setView] = useState<View>('now');
     const history = useBudgetsHistory();
     const [refreshKey, setRefreshKey] = useState(0);
-    const [showCreate, setShowCreate] = useState(false);
+    // /budgets?create=1&category=3&name=Groceries opens the form prefilled (from the home's suggestion)
+    const [prefill] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        const category = Number(params.get('category'));
+
+        return params.get('create') ? { name: params.get('name') ?? '', categoryIds: category ? [category] : [] } : null;
+    });
+    const [showCreate, setShowCreate] = useState(prefill !== null);
 
     useEffect(() => markSeen('budgets'), []);
+
+    const closeCreate = () => {
+        setShowCreate(false);
+        if (prefill) window.history.replaceState({}, '', window.location.pathname);
+    };
 
     const refresh = () => {
         history.reload();
@@ -31,7 +43,7 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
     };
 
     const onCreated = () => {
-        setShowCreate(false);
+        closeCreate();
         refresh();
     };
 
@@ -74,7 +86,7 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
         <Authenticated auth={auth} header={header}>
             <Head title="Budgets" />
 
-            <Create open={showCreate} onClose={() => setShowCreate(false)} onCreated={onCreated} />
+            <Create open={showCreate} onClose={closeCreate} onCreated={onCreated} initial={prefill} />
 
             <div className="p-4">
                 <div className="max-w-7xl mx-auto grid gap-4">

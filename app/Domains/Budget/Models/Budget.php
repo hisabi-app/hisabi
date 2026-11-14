@@ -187,6 +187,16 @@ class Budget extends Model
         };
     }
 
+    /**
+     * The window the budget is in now: [start, end], end being the first moment after it.
+     *
+     * @return array{0: \Carbon\Carbon, 1: \Carbon\Carbon}
+     */
+    public function currentWindow(): array
+    {
+        return array_map(fn ($date) => $date->copy(), $this->getCurrentWindowStartAndEndDates());
+    }
+
     private function getCurrentWindowStartAndEndDates()
     {
         if ($this->reoccurrence === self::CUSTOM) {
