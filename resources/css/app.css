@@ -217,6 +217,14 @@
     .badge-pink { background-color: var(--cat-pink); }
     .badge-indigo { background-color: var(--cat-indigo); }
     .badge-gray { background-color: var(--cat-gray); }
+
+    /* Older or seeded categories may use other Tailwind color names */
+    .badge-amber, .badge-yellow { background-color: var(--cat-orange); }
+    .badge-lime, .badge-emerald, .badge-teal { background-color: var(--cat-green); }
+    .badge-cyan, .badge-sky { background-color: var(--cat-blue); }
+    .badge-violet, .badge-fuchsia { background-color: var(--cat-purple); }
+    .badge-rose { background-color: var(--cat-red); }
+    .badge-slate, .badge-zinc, .badge-neutral, .badge-stone { background-color: var(--cat-gray); }
 }
 
 /* ---------- Motion: one ease-out curve, every animation explains a change ---------- */

@@ -23,6 +23,7 @@ class BudgetResource extends JsonResource
             'elapsed_days_percentage' => $this->elapsed_days_percentage,
             'is_saving' => $this->is_saving,
             'total_transactions_amount' => $this->total_transactions_amount,
+            'status' => $this->status(),
         ];
     }
 }

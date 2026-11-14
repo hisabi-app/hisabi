@@ -2,7 +2,7 @@ import { amount, money, toAmount } from '../format';
 
 describe('Wallet format helpers', () => {
     beforeEach(() => {
-        (window as any).AppCurrency = 'AED';
+        window.AppCurrency = 'AED';
     });
 
     it('reads number_format()ed strings as numbers', () => {

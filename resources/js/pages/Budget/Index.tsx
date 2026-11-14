@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { PlusIcon } from '@phosphor-icons/react';
 
@@ -8,6 +8,7 @@ import Budgets from '@/components/Domain/Budgets';
 import { HistoryRangePicker } from '@/components/Domain/BudgetHistory';
 import { useBudgetsHistory } from '@/hooks/useBudgetsHistory';
 import Create from './Create';
+import { markSeen } from '@/components/Shell/navigation';
 
 type View = 'now' | 'history';
 
@@ -21,6 +22,8 @@ export default function Index({ auth, hasHistory }: { auth: any; hasHistory: boo
     const history = useBudgetsHistory();
     const [refreshKey, setRefreshKey] = useState(0);
     const [showCreate, setShowCreate] = useState(false);
+
+    useEffect(() => markSeen('budgets'), []);
 
     const refresh = () => {
         history.reload();

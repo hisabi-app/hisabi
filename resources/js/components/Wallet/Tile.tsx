@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
+import { categoryColor } from './categoryColor';
 
 interface TileProps {
     // A category's stored color (red, blue, green, orange, purple, pink, indigo, gray)
@@ -33,7 +34,7 @@ export default function Tile({ color, icon, size = 'md', className, label }: Til
     return (
         <span
             className={cn('grid shrink-0 place-items-center text-white transition-[background-color,transform] duration-300 ease-out-quint', box, className)}
-            style={{ backgroundColor: `var(--cat-${color ?? 'gray'})` }}
+            style={{ backgroundColor: categoryColor(color) }}
             aria-label={label}
         >
             <Icon size={iconSize} weight="bold" aria-hidden="true" />

@@ -39,9 +39,9 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 - [x] `DESIGN.md` documenting tokens, type, components and motion
 
 ### Phase 2: shell
-- [ ] Shared Inertia prop `nav` (from a `NavigationService`): uncategorized brands count, budgets needing attention, whether Budgets and Insights are unlocked
-- [ ] `Layouts/Authenticated.tsx`: floating sidebar on `md+`, bottom dock on phones, Add menu (Paste a bank SMS / Add by hand), More sheet on phones; drop the shadcn `Sidebar` usage
-- [ ] Feature tests for the shared props
+- [x] Shared Inertia prop `nav` (from a `NavigationService`): uncategorized brands count, budgets needing attention, whether Budgets and Insights are unlocked
+- [x] `Layouts/Authenticated.tsx`: floating sidebar on `md+`, bottom dock on phones, Add menu (Paste a bank SMS / Add by hand), More sheet on phones; drop the shadcn `Sidebar` usage
+- [x] Feature tests for the shared props
 
 ### Phase 3: home
 - [ ] `/` renders `Home` (`HomeController`); `/dashboard` redirects to `/`; `RouteServiceProvider::HOME = '/'`
@@ -71,6 +71,18 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 
 ### Phase 8: landing page (`../marketing`)
 - [ ] New branding and look on the Next.js marketing site, on a branch with a PR
+
+## Local preview (for screenshots)
+
+A throwaway SQLite database keeps the owner's data out of it:
+
+```bash
+touch /tmp/demo.sqlite
+DB_CONNECTION=sqlite DB_DATABASE=/tmp/demo.sqlite php artisan migrate --force
+DB_CONNECTION=sqlite DB_DATABASE=/tmp/demo.sqlite php artisan db:seed --class=DemoAccountSeeder --force
+# add a user with php artisan tinker, then serve from public/ (artisan serve drops DB_* variables):
+cd public && DB_CONNECTION=sqlite DB_DATABASE=/tmp/demo.sqlite DEBUGBAR_ENABLED=false php -S 127.0.0.1:8123 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php
+```
 
 ## Where things live
 

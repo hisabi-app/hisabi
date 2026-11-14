@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Domains\Home\Services\HomeService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -37,6 +38,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Evaluated per response, so the sidebar counts stay current
+            'nav' => fn () => $request->user() ? app(HomeService::class)->getNavigation() : null,
         ]);
     }
 }

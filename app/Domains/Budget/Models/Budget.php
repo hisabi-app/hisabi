@@ -19,6 +19,10 @@ class Budget extends Model
     const MONTHLY = "MONTHLY";
     const YEARLY = "YEARLY";
 
+    // Spending more than this many percentage points ahead of the elapsed time counts as "ahead of pace".
+    // Mirrors PACE_TOLERANCE in resources/js/Utils/budgets.ts.
+    const PACE_TOLERANCE = 3;
+
     protected $guarded = [];
 
     protected $appends = [
@@ -41,6 +45,35 @@ class Budget extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    /**
+     * on_track, ahead (spending faster than time passes), used (exactly spent) or over.
+     * Mirrors getBudgetStatus() in resources/js/Utils/budgets.ts.
+     */
+    public function status(): string
+    {
+        $amount = (float) $this->amount;
+        $spent = (float) $this->total_transactions_amount;
+
+        if ($amount <= 0) {
+            return $spent > 0 ? 'over' : 'on_track';
+        }
+
+        $spentPercentage = $spent / $amount * 100;
+
+        return match (true) {
+            $spentPercentage > 100 => 'over',
+            $spentPercentage == 100 => 'used',
+            $spentPercentage > $this->elapsed_days_percentage + self::PACE_TOLERANCE => 'ahead',
+            default => 'on_track',
+        };
+    }
+
+    // Saving goals are meant to be exceeded, so only spending budgets ask for attention
+    public function needsAttention(): bool
+    {
+        return ! $this->saving && in_array($this->status(), ['over', 'ahead'], true);
     }
 
     public function getIsSavingAttribute(): bool

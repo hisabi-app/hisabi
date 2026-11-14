@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 interface SmsParserProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  // Called after messages are parsed, so pages can refresh
+  onParsed?: () => void;
 }
 
 interface Sms {
@@ -19,7 +21,7 @@ interface Sms {
   transaction_id: number | null;
 }
 
-export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
+export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserProps) {
   const [invalidSms, setInvalidSms] = useState<Sms[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingSms, setEditingSms] = useState<Sms | null>(null);
@@ -69,6 +71,7 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
       .then(() => {
         fetchInvalidSms();
         cancelEdit();
+        onParsed?.();
       })
       .catch((error) => {
         console.error(error);
@@ -94,6 +97,7 @@ export default function SmsParser({ open, onOpenChange }: SmsParserProps) {
         fetchInvalidSms();
         setNewSmsBody('');
         setCreatedAt('');
+        onParsed?.();
       })
       .catch((error) => {
         console.error(error);
