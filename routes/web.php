@@ -93,6 +93,10 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/brand-stats', [MetricsController::class, 'brandStats']);
             Route::get('/category-stats', [MetricsController::class, 'categoryStats']);
             Route::get('/circle-pack', [MetricsController::class, 'circlePack']);
+            Route::get('/income-allocation', [MetricsController::class, 'incomeAllocation']);
+            Route::get('/category-breakdown', [MetricsController::class, 'categoryBreakdown']);
+            Route::get('/top-brands', [MetricsController::class, 'topBrands']);
+            Route::get('/spending-over-time', [MetricsController::class, 'spendingOverTime']);
         });
     });
 

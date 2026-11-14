@@ -52,10 +52,10 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 - [x] PHP feature tests for the new endpoints; Jest tests for stage and formatting helpers
 
 ### Phase 4: Insights page
-- [ ] Period control and the new sections (net worth, where your income went, spending by category, spending by month, top brands)
-- [ ] `GET /api/v1/metrics/income-allocation` for income, spent, saved, invested within a range, with tests
-- [ ] "More charts" disclosure keeping the existing trend charts and the circle pack
-- [ ] Before a full month: only spending by category and top brands
+- [x] Period control and the new sections (net worth, where your income went, spending by category, spending by month, top brands)
+- [x] New metrics with tests: `income-allocation`, `category-breakdown`, `top-brands`, `spending-over-time` (by day or month, gaps filled)
+- [x] "More charts" disclosure keeping the existing trend charts and the circle pack
+- [x] Before a full month: only spending by category and top brands
 
 ### Phase 5: kiosk
 - [ ] Wallet layout (spent card with chart, budget rings, latest transaction pill), light by day, neutral dark 22:00 to 06:00

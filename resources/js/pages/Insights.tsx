@@ -1,221 +1,64 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Head } from '@inertiajs/react';
-import { startOfMonth, endOfMonth } from 'date-fns';
-import { DateRange } from 'react-day-picker';
+import { useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 
 import Authenticated from '@/Layouts/Authenticated';
-import NoContent from '@/components/Global/NoContent';
-import ValueMetric from '@/components/Domain/ValueMetric';
-import TrendMetric from '@/components/Domain/TrendMetric';
-import PartitionMetric from '@/components/Domain/PartitionMetric';
-import CirclePackMetric from '@/components/Domain/CirclePackMetric';
-import SectionDivider from '@/components/Global/SectionDivider';
-import RecordTransactionButton from '@/components/Domain/RecordTransactionButton';
-import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
-import { getAllCategories } from '@/Api/categories';
-import { getAllBrands } from '@/Api/brands';
+import CategoryBreakdown from '@/components/Insights/CategoryBreakdown';
+import IncomeSplit from '@/components/Insights/IncomeSplit';
+import MoreCharts from '@/components/Insights/MoreCharts';
+import NetWorthCard from '@/components/Insights/NetWorthCard';
+import PeriodControl from '@/components/Insights/PeriodControl';
+import SpendingOverTime from '@/components/Insights/SpendingOverTime';
+import TopBrands from '@/components/Insights/TopBrands';
+import { periodTitle, toQuery, type Period } from '@/components/Insights/period';
+import type { Navigation } from '@/components/Shell/navigation';
+import EmptyState from '@/components/Wallet/EmptyState';
+import PageHeader from '@/components/Wallet/PageHeader';
+import { useDataChanged } from '@/hooks/useDataChanged';
 
-export default function Insights({ auth, hasData }: any) {
-    const [allCategories, setAllCategories] = useState<any[]>([]);
-    const [allBrands, setAllBrands] = useState<any[]>([]);
-    const [refreshKey, setRefreshKey] = useState(0);
-    const [dateRange, setDateRange] = useState<DateRange>({
-        from: startOfMonth(new Date()),
-        to: endOfMonth(new Date()),
-    });
+export default function Insights({ auth, hasData }: { auth: any; hasData: boolean }) {
+    const { nav } = usePage<{ nav?: Navigation | null }>().props;
+    const [period, setPeriod] = useState<Period>({ kind: 'year', anchor: new Date() });
+    // Bumped when transactions change elsewhere, so every section reloads
+    const [version, setVersion] = useState(0);
+    useDataChanged(() => setVersion((current) => current + 1));
 
-    useEffect(() => {
-        Promise.all([
-            getAllCategories(),
-            getAllBrands()
-        ]).then(([{ data: categories }, { data: brands }]) => {
-            setAllCategories(categories.allCategories);
-            setAllBrands(brands.allBrands);
-        }).catch(console.error);
-    }, []);
-
-    const handleDateChange = (newDateRange: DateRange | undefined) => {
-        if (newDateRange?.from && newDateRange?.to) {
-            setDateRange(newDateRange);
-        }
-    };
-
-    const header = (
-        <div className="flex items-center justify-between w-full">
-            <h2>Insights</h2>
-            <div className="flex items-center gap-2">
-                <DatePickerWithRange
-                    onDateChange={handleDateChange}
-                    initialDate={dateRange}
-                />
-                <RecordTransactionButton
-                    brands={allBrands}
-                    onSuccess={() => setRefreshKey(prev => prev + 1)}
-                />
-            </div>
-        </div>
-    );
-
-    const categoryRelation = useMemo(() => ({
-        data: allCategories,
-        display_using: 'name',
-        foreign_key: 'id'
-    }), [allCategories]);
-
-    const categoryRelationForBrands = useMemo(() => ({
-        data: allCategories,
-        display_using: 'name',
-        foreign_key: 'category_id'
-    }), [allCategories]);
-
-    const brandRelation = useMemo(() => ({
-        data: allBrands,
-        display_using: 'name',
-        foreign_key: 'id'
-    }), [allBrands]);
+    const range = toQuery(period);
+    // Before a full month there's no history to draw, so only the breakdowns show
+    const hasHistory = nav?.stage !== 'early' && nav?.stage !== 'new';
 
     return (
-        <Authenticated auth={auth} header={header}>
+        <Authenticated auth={auth}>
             <Head title="Insights" />
 
-            <div className="py-4">
-                <div className="max-w-7xl overflow-hidden mx-auto px-4 grid grid-cols-1 gap-4">
+            <div className="mx-auto grid w-full max-w-[1100px] gap-3.5 px-4 pt-6 md:px-6 md:pt-7">
+                <PageHeader eyebrow="Insights" title={periodTitle(period)} actions={hasData && <PeriodControl period={period} onChange={setPeriod} />} />
 
-                    {!hasData && <NoContent body="No enough data to show reports" />}
+                {!hasData && (
+                    <EmptyState
+                        className="rise rounded-2xl bg-card shadow-card"
+                        title="Nothing to look at yet"
+                        body="Insights fill in as transactions come in. Paste a bank SMS from Add to get started."
+                    />
+                )}
 
-                    {hasData && (
-                        <div className="grid grid-cols-1 gap-4">
-                            {/* Net Worth - Full Width Trend */}
-                            <div className="w-full">
-                                <TrendMetric
-                                    key={`netWorthTrend-${refreshKey}`}
-                                    name="Net Worth Over Time"
-                                    metric="netWorthTrend"
-                                    dateRange={dateRange}
-                                />
-                            </div>
+                {hasData && hasHistory && (
+                    <>
+                        <NetWorthCard index={1} version={version} />
+                        <IncomeSplit range={range} index={2} version={version} />
+                    </>
+                )}
 
-                            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4"
-                            >
-                                <ValueMetric
-                                    key={`totalCash-${refreshKey}`}
-                                    name="Total Cash"
-                                    metric="totalCash"
-                                    helpText="The available cash = income - (expenses + savings + investments)"
-                                    dateRange={dateRange}
-                                />
-                                <ValueMetric
-                                    key={`totalSavings-${refreshKey}`}
-                                    name="Total Savings"
-                                    metric="totalSavings"
-                                    dateRange={dateRange}
-                                />
-                                <ValueMetric
-                                    key={`totalInvestment-${refreshKey}`}
-                                    name="Total Investment"
-                                    metric="totalInvestment"
-                                    dateRange={dateRange}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <ValueMetric
-                                    key={`totalIncome-${refreshKey}`}
-                                    name="Total Income"
-                                    metric="totalIncome"
-                                    dateRange={dateRange}
-                                />
-                                <ValueMetric
-                                    key={`totalExpenses-${refreshKey}`}
-                                    name="Total Expenses"
-                                    metric="totalExpenses"
-                                    dateRange={dateRange}
-                                />
-
-                                <TrendMetric
-                                    key={`totalIncomeTrend-${refreshKey}`}
-                                    name="Income Over Time"
-                                    metric="totalIncomeTrend"
-                                    dateRange={dateRange}
-                                />
-                                <TrendMetric
-                                    key={`totalExpensesTrend-${refreshKey}`}
-                                    name="Spending Over Time"
-                                    metric="totalExpensesTrend"
-                                    dateRange={dateRange}
-                                />
-                            </div>
-
-
-                            <SectionDivider title="Categories Analytics" />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <PartitionMetric
-                                    key={`incomePerCategory-${refreshKey}`}
-                                    name="Income Sources"
-                                    metric="incomePerCategory"
-                                    show_currency={true}
-                                    dateRange={dateRange}
-                                />
-                                <PartitionMetric
-                                    key={`expensesPerCategory-${refreshKey}`}
-                                    name="Spending by Category"
-                                    metric="expensesPerCategory"
-                                    show_currency={true}
-                                    dateRange={dateRange}
-                                />
-
-                                <TrendMetric
-                                    key={`totalPerCategoryTrend-${refreshKey}`}
-                                    name="Overall Trend by Category"
-                                    metric="totalPerCategoryTrend"
-                                    relation={categoryRelation}
-                                    dateRange={dateRange}
-                                />
-                                <TrendMetric
-                                    key={`totalPerCategoryDailyTrend-${refreshKey}`}
-                                    name="Daily Trend by Category"
-                                    metric="totalPerCategoryDailyTrend"
-                                    relation={categoryRelation}
-                                    dateRange={dateRange}
-                                    defaultToCurrentYear={false}
-                                />
-                            </div>
-
-                            <SectionDivider title="Brands Analytics" />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <PartitionMetric
-                                    key={`totalPerBrand-${refreshKey}`}
-                                    name="Spending by Brand"
-                                    metric="totalPerBrand"
-                                    relation={categoryRelationForBrands}
-                                    show_currency={true}
-                                    dateRange={dateRange}
-                                />
-                                <TrendMetric
-                                    key={`totalPerBrandTrend-${refreshKey}`}
-                                    name="Overall Trend by Brand"
-                                    metric="totalPerBrandTrend"
-                                    relation={brandRelation}
-                                    dateRange={dateRange}
-                                />
-                            </div>
-
-                            <SectionDivider title="Finance Visualization" />
-
-                            <div className="w-full">
-                                <CirclePackMetric
-                                    key={`financeVisualizationCirclePackMetric-${refreshKey}`}
-                                    name="Finance Visualization"
-                                    metric="financeVisualizationCirclePackMetric"
-                                    dateRange={dateRange}
-                                />
-                            </div>
-
+                {hasData && (
+                    <div className="grid items-start gap-3.5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                        <CategoryBreakdown range={range} index={3} version={version} />
+                        <div className="grid gap-3.5">
+                            {hasHistory && <SpendingOverTime range={range} kind={period.kind} index={4} version={version} />}
+                            <TopBrands range={range} index={5} version={version} />
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
+
+                {hasData && hasHistory && <MoreCharts period={period} index={6} />}
             </div>
         </Authenticated>
     );
