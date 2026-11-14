@@ -16,7 +16,7 @@ White rounded cards on an off-white canvas, ink for text and primary actions, an
 |---|---|---|
 | `--background` | `oklch(0.972 0.002 286)` | The canvas |
 | `--card` | `oklch(1 0 0)` | Cards, sidebar, panels, dialogs |
-| `--foreground` / `--primary` | `oklch(0.2 0.004 286)` | Text, primary buttons, the app icon |
+| `--foreground` / `--primary` | `oklch(0.2 0.004 286)` | Text, primary buttons |
 | `--muted-foreground` | `oklch(0.52 0.006 286)` | Secondary text |
 | `--muted` / `--secondary` | `oklch(0.958 0.003 286)` | Pills, active nav item, soft buttons |
 | `--border` | `oklch(0.93 0.003 286)` | Row dividers inside cards |
@@ -27,6 +27,10 @@ White rounded cards on an off-white canvas, ink for text and primary actions, an
 | `--info` | `oklch(0.6 0.18 255)` | Links that ask for an action ("Choose a category"), focus |
 
 Category colors come from the `color` stored on each category: `--cat-red`, `--cat-blue`, `--cat-green`, `--cat-orange`, `--cat-purple`, `--cat-pink`, `--cat-indigo`, `--cat-gray`. Use them for tiles, rings and category bars only, never for text. Status is always written out ("Over by 310", "Ahead of pace"), never shown by color alone.
+
+## Logo
+
+The logo is the original Hisabi wordmark with three green bars: `public/images/logo.svg`, used as an image by `components/Wallet/Logo.tsx` (sidebar) and the login page. The favicons are the three bars on their own (`public/favicon.svg`, `favicon.ico` and the PNGs). The logo's green belongs to the logo only; don't use it in the interface, where green already means "done" or "under".
 
 ## Typography
 

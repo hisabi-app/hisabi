@@ -47,8 +47,8 @@ function SidebarLink({ item, nav }: { item: NavItem; nav: Navigation }) {
 export default function Sidebar({ nav, user, onAdd }: SidebarProps) {
     return (
         <aside className="fixed inset-y-3 left-3 z-30 hidden w-[224px] flex-col rounded-2xl bg-card px-2.5 pt-3.5 pb-2 shadow-float md:flex" aria-label="Main">
-            <Link href="/" className="mb-3.5 rounded-lg px-2 py-0.5">
-                <Logo />
+            <Link href="/" className="mb-2.5 self-start rounded-lg px-1" aria-label="Home">
+                <Logo className="-my-0.5 h-10" />
             </Link>
 
             <DropdownMenu>

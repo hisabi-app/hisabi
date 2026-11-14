@@ -35,7 +35,7 @@ read this file, check the boxes, run the tests, continue with the first unchecke
 - [x] Motion utilities: keyframes and classes for rise (with `--i` stagger), ring draw, bar grow, line draw, shimmer, pop; reduced-motion fallbacks
 - [x] Shared primitives in `resources/js/components/Wallet/`: `Tile` (category icon tile), `Ring`, `CountUp`, `PageHeader`, `Section`/card helpers, `Skeleton`
 - [x] Restyle base shadcn components: card, button, input, dialog, sheet, dropdown, badge
-- [x] New logo (app icon: black rounded square with three white ascending bars, plus the "hisabi" wordmark): `public/images/logo.svg`, `public/favicon.svg`, PNG favicons, `ApplicationLogo`
+- [x] Logo and favicons (the redesign briefly used a new black app icon; the owner brought the original green-bars logo back afterwards, see DESIGN.md)
 - [x] `DESIGN.md` documenting tokens, type, components and motion
 
 ### Phase 2: shell
