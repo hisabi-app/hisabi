@@ -13,12 +13,18 @@ import { getKioskSummary } from '@/Api/kiosk';
 import { getAppCurrency } from '@/Utils';
 import { toNumber } from '@/Utils/budgets';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
-import { compareWithLastMonth, isNight, KioskBudget, KioskCategory, msUntilDailyReload, toKioskBudgets } from '@/Utils/kiosk';
+import { categoryLayout, compareWithLastMonth, isNight, KioskBudget, KioskCategory, msUntilDailyReload, toKioskBudgets } from '@/Utils/kiosk';
 import { cn } from '@/lib/utils';
 
 const REFRESH_INTERVAL = 60 * 60 * 1000;
 const RETRY_INTERVAL = 5 * 60 * 1000;
 const CLOCK_INTERVAL = 60 * 1000;
+const PAGE_INTERVAL = 20 * 1000;
+
+// The overview and the categories take turns on the screen
+type PageName = 'overview' | 'categories';
+const PAGES: PageName[] = ['overview', 'categories'];
+const nextPage = (page: PageName): PageName => (page === 'overview' ? 'categories' : 'overview');
 
 interface Summary {
     spent: number;
@@ -36,6 +42,7 @@ export default function Kiosk() {
     const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
     const [failed, setFailed] = useState(false);
     const [now, setNow] = useState(() => new Date());
+    const [page, setPage] = useState<PageName>('overview');
     const lastAttemptAt = useRef(0);
 
     useEffect(() => {
@@ -100,9 +107,18 @@ export default function Kiosk() {
 
     const night = isNight(now);
     const hasBudgets = (summary?.budgets.length ?? 0) > 0;
-    const hasCategories = (summary?.categories.length ?? 0) > 0;
-    // Budgets keep the right, so categories go under the spending; without budgets they take the right
-    const stacked = hasBudgets && hasCategories;
+    // Until something is spent this month there's no categories page, and the overview stays up
+    const rotates = (summary?.categories.length ?? 0) > 0;
+    const currentPage = rotates ? page : 'overview';
+
+    // Each page stays up for 20 seconds; a tap turns the page and starts the wait again
+    useEffect(() => {
+        if (!rotates) return;
+
+        const timer = window.setTimeout(() => setPage(nextPage), PAGE_INTERVAL);
+
+        return () => window.clearTimeout(timer);
+    }, [page, rotates]);
 
     return (
         <div className={cn(night && 'dark')}>
@@ -110,6 +126,7 @@ export default function Kiosk() {
             <main
                 className="flex h-svh flex-col gap-[1.1em] overflow-hidden bg-background px-[2.1em] pt-[1.9em] pb-[1.7em] leading-tight text-foreground transition-colors duration-1000"
                 style={{ fontSize: 'min(1.45vw, 2.35vh)' }}
+                onClick={rotates ? () => setPage(nextPage) : undefined}
             >
                 {summary && updatedAt ? (
                     <>
@@ -124,19 +141,29 @@ export default function Kiosk() {
                             </p>
                         </header>
 
-                        <div className={cn('grid min-h-0 flex-1 gap-[1.1em]', (hasBudgets || hasCategories) && 'grid-cols-[1.15fr_1fr]')}>
-                            <div className="flex min-h-0 flex-col gap-[1.1em]">
+                        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)]">
+                            <KioskPage
+                                shown={currentPage === 'overview'}
+                                className={cn('grid grid-rows-[minmax(0,1fr)] gap-[1.1em]', hasBudgets && 'grid-cols-[1.15fr_1fr]')}
+                            >
                                 <Spending summary={summary} now={now} />
-                                {stacked && <Categories categories={summary.categories} columns={2} />}
-                            </div>
-                            {hasBudgets ? <Budgets budgets={summary.budgets} /> : hasCategories && <Categories categories={summary.categories} />}
+                                {hasBudgets && <Budgets budgets={summary.budgets} />}
+                            </KioskPage>
+                            {rotates && (
+                                <KioskPage shown={currentPage === 'categories'} className="flex flex-col">
+                                    <Categories categories={summary.categories} />
+                                </KioskPage>
+                            )}
                         </div>
 
-                        {summary.latest && summary.latestAt ? (
-                            <Latest key={summary.latest.id} transaction={summary.latest} at={summary.latestAt} now={now} />
-                        ) : (
-                            <p className="text-[1.05em] text-muted-foreground">Waiting for this month’s first transaction</p>
-                        )}
+                        <footer className="flex items-center justify-between gap-[1em]">
+                            {summary.latest && summary.latestAt ? (
+                                <Latest key={summary.latest.id} transaction={summary.latest} at={summary.latestAt} now={now} />
+                            ) : (
+                                <p className="text-[1.05em] text-muted-foreground">Waiting for this month’s first transaction</p>
+                            )}
+                            {rotates && <PageDots current={currentPage} />}
+                        </footer>
                     </>
                 ) : (
                     <p className="m-auto text-[1.6em] text-muted-foreground">{failed ? 'Couldn’t reach Hisabi, trying again in a few minutes' : 'Loading…'}</p>
@@ -150,11 +177,11 @@ function Spending({ summary, now }: { summary: Summary; now: Date }) {
     const comparison = compareWithLastMonth(summary.spent, summary.spentLastMonthToDate);
     const [chartRef, chartBox] = useSize<HTMLDivElement>();
     // The chart takes the room left under the numbers, less a line's gap: its usual shape (340 by 86) when there's space,
-    // flatter when the categories share the column, and none when it would be too flat to read
+    // flatter on wide, short screens, and none when it would be too flat to read
     const chartHeight = chartBox.width > 0 ? Math.min(86, (340 * (chartBox.height - chartBox.em)) / chartBox.width) : 0;
 
     return (
-        <section className="flex flex-1 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
+        <section className="flex min-h-0 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
             <p className="text-[1.1em] font-medium text-muted-foreground">Spent so far</p>
             <p className="mt-[0.1em] text-[5em] leading-[1.05] font-bold tracking-[-0.035em] font-rounded">
                 <small className="mr-[0.3em] text-[0.3em] font-semibold tracking-normal text-muted-foreground">{getAppCurrency()}</small>
@@ -224,56 +251,91 @@ function Budgets({ budgets }: { budgets: KioskBudget[] }) {
     );
 }
 
-function Categories({ categories, columns = 1 }: { categories: KioskCategory[]; columns?: 1 | 2 }) {
-    // The five biggest, as long as the screen has room for them
-    const shown = categories.slice(0, 5);
-    const top = shown[0].total || 1;
+function Categories({ categories }: { categories: KioskCategory[] }) {
+    const [listRef, listBox] = useSize<HTMLDivElement>();
+    const { columns, rows, scale } = categoryLayout(categories.length, listBox.height / (listBox.em || 1), listBox.width / (listBox.em || 1));
+    const top = categories[0].total || 1;
 
     return (
-        <section aria-label="Spending by category" className="flex min-h-0 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
+        <section aria-label="Spending by category" className="flex min-h-0 flex-1 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
             <p className="text-[1.1em] font-medium text-muted-foreground">By category</p>
-            {/* Under the spending card the rows run down two columns, so the card stays short and the month chart has room.
-                In one column, rows that don't fit wrap into a second column, out of sight, rather than show cut off */}
-            <div
-                className={cn(
-                    'mt-[0.5em] min-h-0 gap-x-[1.6em] gap-y-[0.5em] overflow-hidden',
-                    columns === 2 ? 'grid grid-flow-col grid-cols-2' : 'flex flex-col flex-wrap content-start',
-                )}
-                style={columns === 2 ? { gridTemplateRows: `repeat(${Math.ceil(shown.length / 2)}, auto)` } : undefined}
-            >
-                {shown.map((category, j) => {
-                    const Icon = getCategoryIcon(category.icon ?? '');
+            <div ref={listRef} className="mt-[0.9em] min-h-0 flex-1 overflow-hidden">
+                {/* Biggest first, down each column in turn; the 2.3em rows and 0.9em gaps are what categoryLayout scales */}
+                <div
+                    className="grid grid-flow-col gap-x-[2.4em] gap-y-[0.9em]"
+                    style={{
+                        fontSize: `${scale}em`,
+                        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                        gridTemplateRows: `repeat(${rows}, auto)`,
+                    }}
+                >
+                    {categories.map((category, j) => {
+                        const Icon = getCategoryIcon(category.icon ?? '');
 
-                    return (
-                        <div
-                            key={category.id}
-                            className="grid w-full shrink-0 grid-cols-[1.9em_minmax(0,1fr)_auto] items-center gap-x-[0.8em] gap-y-[0.25em] leading-none"
-                        >
-                            <span
-                                className="row-span-2 grid size-[1.9em] place-items-center rounded-[0.55em] text-white"
-                                style={{ backgroundColor: categoryColor(category.color) }}
+                        return (
+                            <div
+                                key={category.id}
+                                className="grid grid-cols-[2.3em_minmax(0,1fr)_auto] items-center gap-x-[0.8em] gap-y-[0.3em] leading-none"
                             >
-                                <Icon size="1.1em" weight="bold" aria-hidden="true" />
-                            </span>
-                            <span className="truncate text-[1.1em] font-semibold">{category.name}</span>
-                            <span className="text-[1.1em] font-semibold font-rounded tabular">{amount(category.total)}</span>
-                            <span className="relative col-span-2 col-start-2 h-[0.35em] overflow-hidden rounded-full bg-track">
-                                <i
-                                    className="grow-x absolute inset-y-0 left-0 rounded-full transition-[width] duration-700 ease-out-quint"
-                                    style={
-                                        {
-                                            width: `${(category.total / top) * 100}%`,
-                                            background: categoryColor(category.color),
-                                            '--j': j,
-                                        } as React.CSSProperties
-                                    }
-                                />
-                            </span>
-                        </div>
-                    );
-                })}
+                                <span
+                                    className="row-span-2 grid size-[2.3em] place-items-center rounded-[0.65em] text-white"
+                                    style={{ backgroundColor: categoryColor(category.color) }}
+                                >
+                                    <Icon size="1.3em" weight="bold" aria-hidden="true" />
+                                </span>
+                                <span className="truncate text-[1.3em] font-semibold">{category.name}</span>
+                                <span className="text-[1.3em] font-semibold font-rounded tabular">{amount(category.total)}</span>
+                                <span className="relative col-span-2 col-start-2 h-[0.45em] overflow-hidden rounded-full bg-track">
+                                    <i
+                                        className="grow-x absolute inset-y-0 left-0 rounded-full transition-[width] duration-700 ease-out-quint"
+                                        style={
+                                            {
+                                                width: `${(category.total / top) * 100}%`,
+                                                background: categoryColor(category.color),
+                                                '--j': j,
+                                            } as React.CSSProperties
+                                        }
+                                    />
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </section>
+    );
+}
+
+// A page out of turn fades out but stays laid out, so turning back to it is only a fade and nothing draws in again
+function KioskPage({ shown, className, children }: { shown: boolean; className?: string; children: React.ReactNode }) {
+    return (
+        <div
+            aria-hidden={!shown}
+            className={cn(
+                'col-start-1 row-start-1 min-h-0 transition-opacity duration-700 ease-out-quint motion-reduce:transition-none',
+                !shown && 'pointer-events-none opacity-0',
+                className,
+            )}
+        >
+            {children}
+        </div>
+    );
+}
+
+// Which page is up, as the longer dot
+function PageDots({ current }: { current: PageName }) {
+    return (
+        <span aria-hidden="true" className="flex shrink-0 items-center gap-[0.45em]">
+            {PAGES.map((page) => (
+                <i
+                    key={page}
+                    className={cn(
+                        'h-[0.5em] rounded-full transition-[width,background-color] duration-700 ease-out-quint motion-reduce:transition-none',
+                        page === current ? 'w-[1.5em] bg-foreground' : 'w-[0.5em] bg-muted-foreground/40',
+                    )}
+                />
+            ))}
+        </span>
     );
 }
 
@@ -303,7 +365,7 @@ function Latest({ transaction, at, now }: { transaction: Transaction; at: string
 
     return (
         <p
-            className="flex items-center gap-[0.8em] self-start rounded-full bg-card py-[0.5em] pr-[1.2em] pl-[0.5em] text-[1.05em] shadow-card"
+            className="flex items-center gap-[0.8em] rounded-full bg-card py-[0.5em] pr-[1.2em] pl-[0.5em] text-[1.05em] shadow-card"
             style={{ animation: 'rise 460ms var(--ease-out-quint)' }}
         >
             <Tile color={category?.color} icon={category?.icon} className="size-[2.2em] rounded-full" />

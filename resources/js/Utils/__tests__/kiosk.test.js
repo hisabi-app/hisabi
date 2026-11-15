@@ -1,4 +1,4 @@
-import { compareWithLastMonth, isNight, msUntilDailyReload, toKioskBudgets } from '../kiosk';
+import { categoryLayout, compareWithLastMonth, isNight, msUntilDailyReload, toKioskBudgets } from '../kiosk';
 
 const budget = (id, amount, spent, elapsed = 43) => ({
     id,
@@ -55,4 +55,20 @@ it('isNight is true from 22:00 to 06:00', () => {
     expect(isNight(new Date(2026, 10, 13, 22, 0))).toBe(true);
     expect(isNight(new Date(2026, 10, 14, 3, 0))).toBe(true);
     expect(isNight(new Date(2026, 10, 14, 6, 0))).toBe(false);
+});
+
+it('categoryLayout lists the categories down two columns, three past 14', () => {
+    expect(categoryLayout(9, 25, 60)).toMatchObject({ columns: 2, rows: 5 });
+    expect(categoryLayout(14, 25, 60)).toMatchObject({ columns: 2, rows: 7 });
+    expect(categoryLayout(20, 25, 60)).toMatchObject({ columns: 3, rows: 7 });
+});
+
+it('categoryLayout grows the rows to fill the page, and shrinks them to fit', () => {
+    // 7 rows need 7 * 2.3 + 6 * 0.9 = 21.5em, and 3 columns 3 * 18.4 + 2 * 2.4 = 60em
+    expect(categoryLayout(20, 25, 80).scale).toBeCloseTo(25 / 21.5);
+    expect(categoryLayout(20, 40, 54).scale).toBeCloseTo(54 / 60);
+    expect(categoryLayout(3, 25, 60).scale).toBe(1.3);
+    expect(categoryLayout(40, 25, 60).scale).toBe(0.6);
+    // Not measured yet
+    expect(categoryLayout(9, 0, 0).scale).toBe(1);
 });
