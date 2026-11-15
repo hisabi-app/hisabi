@@ -65,7 +65,11 @@ class SmsTemplateDetector implements SmsTemplateDetectorContract
     {
         $detectedTemplate = null;
 
-        foreach(config('hisabi.sms_templates') as $template) {
+        // Multi-line templates go first, so a block of lines is read as one message
+        $templates = collect(config('hisabi.sms_templates'))
+            ->sortByDesc(fn ($template) => substr_count($template, "\n"));
+
+        foreach($templates as $template) {
             $maskedSmsTemplate = $this->getMaskedSmsTemplate($template);
 
             if(preg_match("/{$maskedSmsTemplate}/", $sms)) {

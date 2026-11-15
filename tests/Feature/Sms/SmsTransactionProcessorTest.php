@@ -92,6 +92,34 @@ class SmsTransactionProcessorTest extends TestCase
         $this->assertEquals(2, Sms::count());
     }
 
+    public function test_it_reads_the_lines_of_a_multi_line_message_together()
+    {
+        $multiLineSms = "Credit Card Purchase\nCard Ending: 3307\nAt: Example Store, Dubai\nAmount: AED 61.85\nDate: 08/04/2026, 14:05\nAvailable Limit: AED 9,935.80";
+        $sms = "Purchase of AED 106.00 with Credit Card at ENOC,\n{$multiLineSms}\nsome sms body here";
+
+        $sut = app(SmsTransactionProcessor::class);
+        $result = $sut->process($sms);
+
+        $this->assertEquals(3, $result->count());
+        $this->assertEquals($multiLineSms, $result[1]->body);
+        $this->assertNotNull($result[0]->transaction);
+        $this->assertEquals('Example Store', $result[1]->transaction->brand->name);
+        $this->assertNull($result[2]->transaction);
+    }
+
+    public function test_it_splits_messages_on_any_line_ending_and_skips_blank_lines()
+    {
+        $sms = "Purchase of AED 106.00 with Credit Card at ENOC,\r\n\r\nsome sms body here\ranother sms here\n   \n";
+
+        $sut = app(SmsTransactionProcessor::class);
+        $result = $sut->process($sms);
+
+        $this->assertEquals(3, Sms::count());
+        $this->assertEquals('Purchase of AED 106.00 with Credit Card at ENOC,', $result[0]->body);
+        $this->assertEquals('some sms body here', $result[1]->body);
+        $this->assertEquals('another sms here', $result[2]->body);
+    }
+
     public function test_it_returns_processed_sms_models()
     {
         $sms = "some sms body here\nanother sms here";

@@ -63,8 +63,8 @@ Category (type: `INCOME` | `EXPENSES` | `SAVINGS` | `INVESTMENT`) → hasMany Br
 
 ### SMS parsing pipeline
 Bound via contracts in `AppServiceProvider` (`app/Contracts` → `app/BusinessLogic`):
-1. `SmsTransactionProcessor::process()` splits input by newline.
-2. `SmsTemplateDetector` matches each line against templates in `config/hisabi.php` (`sms_templates`, placeholders like `{amount}`, `{brand}`, `{date}`, `{time}`, `{card}`, `{ignore}`) and extracts values.
+1. `SmsTransactionProcessor::process()` splits input into lines (any line ending, blank lines dropped); consecutive lines that match a multi-line template together (e.g. Emirates Islamic's card purchases) stay one message.
+2. `SmsTemplateDetector` matches each message against templates in `config/hisabi.php` (`sms_templates`, placeholders like `{amount}`, `{brand}`, `{date}`, `{time}`, `{card}`, `{ignore}`) and extracts values. Multi-line templates are tried first, then the rest in order; the first match wins. Templates are raw regex fragments (not escaped), so keep `/`, `(`, `)`, `+`, `*` out of them and cover that text with a placeholder. A template without `{brand}` recognises a message without creating a transaction (used to keep FAB account credits and DIB own-account transfers out).
 3. `SmsParser` builds the `Sms` model; `Transaction::tryCreateFromSms()` creates the transaction, auto-creating the brand via `Brand::findOrCreateNew()` (new brands have no category until the user assigns one).
 
 Supporting a new bank SMS format usually means only adding a template to `config/hisabi.php`. Currency is also set there (`hisabi.currency`).
