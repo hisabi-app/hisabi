@@ -127,7 +127,7 @@ export default function Kiosk() {
                         <div className={cn('grid min-h-0 flex-1 gap-[1.1em]', (hasBudgets || hasCategories) && 'grid-cols-[1.15fr_1fr]')}>
                             <div className="flex min-h-0 flex-col gap-[1.1em]">
                                 <Spending summary={summary} now={now} />
-                                {stacked && <Categories categories={summary.categories} />}
+                                {stacked && <Categories categories={summary.categories} columns={2} />}
                             </div>
                             {hasBudgets ? <Budgets budgets={summary.budgets} /> : hasCategories && <Categories categories={summary.categories} />}
                         </div>
@@ -224,7 +224,7 @@ function Budgets({ budgets }: { budgets: KioskBudget[] }) {
     );
 }
 
-function Categories({ categories }: { categories: KioskCategory[] }) {
+function Categories({ categories, columns = 1 }: { categories: KioskCategory[]; columns?: 1 | 2 }) {
     // The five biggest, as long as the screen has room for them
     const shown = categories.slice(0, 5);
     const top = shown[0].total || 1;
@@ -232,8 +232,15 @@ function Categories({ categories }: { categories: KioskCategory[] }) {
     return (
         <section aria-label="Spending by category" className="flex min-h-0 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
             <p className="text-[1.1em] font-medium text-muted-foreground">By category</p>
-            {/* Rows that don't fit wrap into a second column, out of sight, rather than show cut off */}
-            <div className="mt-[0.5em] flex min-h-0 flex-col flex-wrap content-start gap-x-[2em] gap-y-[0.5em] overflow-hidden">
+            {/* Under the spending card the rows run down two columns, so the card stays short and the month chart has room.
+                In one column, rows that don't fit wrap into a second column, out of sight, rather than show cut off */}
+            <div
+                className={cn(
+                    'mt-[0.5em] min-h-0 gap-x-[1.6em] gap-y-[0.5em] overflow-hidden',
+                    columns === 2 ? 'grid grid-flow-col grid-cols-2' : 'flex flex-col flex-wrap content-start',
+                )}
+                style={columns === 2 ? { gridTemplateRows: `repeat(${Math.ceil(shown.length / 2)}, auto)` } : undefined}
+            >
                 {shown.map((category, j) => {
                     const Icon = getCategoryIcon(category.icon ?? '');
 
