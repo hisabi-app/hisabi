@@ -12,6 +12,7 @@
 ## 🛠 Features
 
 - [x] 📩 **Paste a bank SMS:** Hisabi picks out the amount, the card and the shop, and remembers each shop's category for next time
+- [x] 🔄 **SMS sync from your Mac:** if your iPhone's messages reach your Mac, a small background tool sends new bank SMS as they arrive, without ever adding one twice ([tools/mac-sms-sync](tools/mac-sms-sync))
 - [x] ✅ **Needs you:** new brands to categorize, budgets over or ahead of pace, and messages it couldn't read, at the top of the home, with actions right there
 - [x] 📈 **This month at a glance:** what you've spent so far against the same point last month, plus a few insights written as plain sentences
 - [x] 🎯 **Budgets:** monthly, weekly, yearly or custom, shown as rings, with history to compare periods
@@ -57,6 +58,8 @@ docker-compose exec app php artisan migrate --force
 Hisabi reads SMS using the templates in `config/hisabi.php` (`sms_templates`), with placeholders such as `{amount}`, `{brand}`, `{card}`, `{date}`, `{time}` and `{ignore}`. If your bank's messages aren't picked up, add a template that matches them. A template can span several lines (`\n`) for banks that send multi-line messages. The currency is set in the same file.
 
 Messages Hisabi couldn't read show up under **Needs you**, so you can fix or delete them.
+
+To have new bank SMS arrive by themselves, see [tools/mac-sms-sync](tools/mac-sms-sync): it reads them from Messages on a Mac and sends them to `POST /api/v1/sms/sync` with a token from `php artisan hisabi:sms-sync-token`. A message that was already synced or pasted is never added again.
 
 ## 📺 Kitchen display
 
