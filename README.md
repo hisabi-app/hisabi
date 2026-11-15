@@ -6,7 +6,7 @@
   <b>Hisabi is a self-hosted personal finance app that turns your bank SMS into a calm, clear picture of your money: what needs you, how the month is going, and where it all went.</b>
 </p>
 
-<p align="center"><a href="https://hisabi.on-forge.com/" target="__blank"><img src="https://raw.githubusercontent.com/hisabi-app/hisabi/refs/heads/main/public/images/showcase.png" /></a></p>
+<p align="center"><img src="https://raw.githubusercontent.com/hisabi-app/hisabi/refs/heads/main/public/images/showcase.png" /></p>
 
 
 ## 🛠 Features
@@ -25,10 +25,6 @@
 - [ ] API support (coming soon)
 
 New to Hisabi? The home starts with just the SMS box and fills in as your transactions come in, so you never stare at empty charts.
-
-## 🎮 Demo
-
-Try the app with the [live demo](https://hisabi.on-forge.com/), or watch the [first alpha version](https://www.youtube.com/watch?v=kfwcMdlFn9o).
 
 ## ▶️ Installation 
 
