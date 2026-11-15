@@ -1,4 +1,3 @@
-docker-compose.override.yml
 coverage
 /.phpunit.cache
 /bootstrap/ssr

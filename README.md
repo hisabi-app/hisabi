@@ -27,30 +27,28 @@
 
 New to Hisabi? The home starts with just the SMS box and fills in as your transactions come in, so you never stare at empty charts.
 
-## ▶️ Installation 
+## ▶️ Installation
 
-> Docker Installation
-   
+On a fresh Ubuntu 22.04+ or Debian 12+ server, with a domain pointing at it:
+
 ```bash
-git clone https://github.com/hisabi-app/hisabi && cd hisabi
-
-make build # build the docker image
-make run # the same as docker-compose up -d
-
-# wait for a few seconds to allow the DB to finish the setup then run
-make install # only for the first time
+curl -fsSL https://raw.githubusercontent.com/hisabi-app/hisabi/main/install.sh -o install.sh
+sudo bash install.sh --domain hisabi.example.com
 ```
 
-Once done, visit the app on `http://localhost`
+The script installs PHP 8.4, MySQL (MariaDB on Debian), Node and [Caddy](https://caddyserver.com), builds Hisabi in `/var/www/hisabi` and gets an HTTPS certificate for the domain. At the end it asks for your name, email and password. Without `--domain`, Hisabi is served over plain http on port 80.
 
 ### Upgrading
 
-Pull the latest code, rebuild, and run the migrations:
+Run the script again with `sudo bash install.sh`. It pulls the latest code, rebuilds and runs the migrations, and keeps your `.env` and database.
+
+### Moving from the Docker install
+
+Export the database on the old machine, then install with it:
 
 ```bash
-git pull
-make build && make run
-docker-compose exec app php artisan migrate --force
+docker-compose exec -T mysql mysqldump -uroot -proot hisabi > hisabi.sql   # on the old machine
+sudo bash install.sh --domain hisabi.example.com --import hisabi.sql       # on the new server
 ```
 
 ## 💬 Your bank's SMS

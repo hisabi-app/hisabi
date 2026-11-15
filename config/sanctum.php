@@ -29,9 +29,12 @@ return [
     | are able to authenticate the request, Sanctum will use the bearer
     | token that's present on an incoming request for authentication.
     |
+    | Hisabi uses Sanctum only for device tokens (the SMS sync), so a session
+    | never stands in for one: it would carry every ability.
+    |
     */
 
-    'guard' => ['web'],
+    'guard' => [],
 
     /*
     |--------------------------------------------------------------------------

@@ -51,6 +51,18 @@ class SmsSyncTest extends TestCase
             ->assertStatus(403);
     }
 
+    public function test_it_rejects_an_unscoped_token(): void
+    {
+        // Like the ones the removed /api/login made: every ability, never expiring
+        $unscopedToken = $this->user->createToken('legacy')->plainTextToken;
+
+        $this->withToken($unscopedToken)
+            ->postJson('/api/v1/sms/sync', ['messages' => [$this->message('guid-1', self::PURCHASE)]])
+            ->assertStatus(403);
+
+        $this->assertEquals(0, Sms::count());
+    }
+
     public function test_it_creates_the_sms_and_its_transaction(): void
     {
         $this->sync([$this->message('guid-1', self::PURCHASE, sender: 'ExampleBank')])

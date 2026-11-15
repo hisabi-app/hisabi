@@ -42,4 +42,17 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_a_password_alone_can_not_mint_an_api_token()
+    {
+        $user = User::factory()->create();
+
+        $this->postJson('/api/login', [
+            'email' => $user->email,
+            'password' => 'password',
+            'device_name' => 'phone',
+        ])->assertNotFound();
+
+        $this->assertEquals(0, $user->tokens()->count());
+    }
 }
