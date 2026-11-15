@@ -227,6 +227,47 @@ class BrandControllerTest extends TestCase
         ]);
     }
 
+    public function test_it_updates_a_brands_aliases(): void
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['name' => 'Example Now', 'category_id' => $category->id]);
+
+        $this->actingAs($this->user)
+            ->putJson("/api/v1/brands/{$brand->id}", [
+                'name' => 'Example Now',
+                'category_id' => $category->id,
+                'aliases' => [' EXAMPLEUFR ', 'exampleufr', '', 'SAMPLE * PHY', '*'],
+            ])
+            ->assertOk()
+            ->assertJsonPath('brand.aliases', ['EXAMPLEUFR', 'SAMPLE * PHY']);
+
+        $this->assertEquals(['EXAMPLEUFR', 'SAMPLE * PHY'], $brand->fresh()->aliases);
+    }
+
+    public function test_updating_without_aliases_keeps_them(): void
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id, 'aliases' => ['EXAMPLEUFR']]);
+
+        $this->actingAs($this->user)
+            ->putJson("/api/v1/brands/{$brand->id}", ['name' => 'Renamed', 'category_id' => $category->id])
+            ->assertOk()
+            ->assertJsonPath('brand.aliases', ['EXAMPLEUFR']);
+    }
+
+    public function test_clearing_aliases_stores_none(): void
+    {
+        $category = Category::factory()->create();
+        $brand = Brand::factory()->create(['category_id' => $category->id, 'aliases' => ['EXAMPLEUFR']]);
+
+        $this->actingAs($this->user)
+            ->putJson("/api/v1/brands/{$brand->id}", ['name' => $brand->name, 'category_id' => $category->id, 'aliases' => []])
+            ->assertOk()
+            ->assertJsonPath('brand.aliases', []);
+
+        $this->assertNull($brand->fresh()->aliases);
+    }
+
     public function test_it_validates_required_fields_for_update(): void
     {
         $brand = Brand::factory()->create();
