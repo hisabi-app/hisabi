@@ -1,4 +1,4 @@
-import { endOfMonth, format, parseISO, startOfMonth, subMonths } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import ChartTip, { nearest, useChartHover } from '@/components/Wallet/ChartTip';
@@ -7,6 +7,7 @@ import Panel from '@/components/Wallet/Panel';
 import { amount, money } from '@/components/Wallet/format';
 import { getNetWorth, getNetWorthTrend } from '@/Api/insights';
 import { getAppCurrency } from '@/Utils';
+import { periodPhrase, toQuery, type Period } from './period';
 import { useMetric } from './useMetric';
 
 interface Point {
@@ -14,7 +15,7 @@ interface Point {
     value: number;
 }
 
-function NetWorthChart({ points }: { points: Point[] }) {
+function NetWorthChart({ points, byDay }: { points: Point[]; byDay: boolean }) {
     const W = 760;
     const H = 170;
     const L = 46;
@@ -32,12 +33,23 @@ function NetWorthChart({ points }: { points: Point[] }) {
     const line = points.map((point, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(point.value).toFixed(1)}`).join(' ');
     const area = `${line} L${x(points.length - 1)} ${B} L${x(0)} ${B} Z`;
     const ticks = [0, 1, 2, 3].map((i) => lo + ((hi - lo) * (i + 0.5)) / 4);
-    const short = (value: number) => (Math.abs(value) >= 1000 ? `${Math.round(value / 1000)}k` : String(Math.round(value)));
+    // A decimal once the ticks sit less than a thousand apart, so no two read the same
+    const short = (value: number) => (Math.abs(value) >= 1000 ? `${(value / 1000).toFixed(hi - lo < 4000 ? 1 : 0)}k` : String(Math.round(value)));
+    // About seven dates along the bottom, however long the series
+    const every = Math.ceil(points.length / 7);
+    const date = (label: string) => parseISO(byDay ? label : `${label}-01`);
+    const tickLabel = (label: string) => format(date(label), byDay ? 'd MMM' : points.length > 12 ? 'MMM yyyy' : 'MMM');
     const { index: hovered, svgProps } = useChartHover(W, points.length, (pointerX) => nearest(pointerX, L, R, points.length));
 
     return (
         <div className="relative">
-            <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full overflow-visible" role="img" aria-label="Net worth by month" {...svgProps}>
+            <svg
+                viewBox={`0 0 ${W} ${H}`}
+                className="block h-auto w-full overflow-visible"
+                role="img"
+                aria-label={`Net worth by ${byDay ? 'day' : 'month'}`}
+                {...svgProps}
+            >
                 {ticks.map((tick) => (
                     <g key={tick}>
                         <line x1={L} x2={R} y1={y(tick)} y2={y(tick)} stroke="var(--border)" />
@@ -47,9 +59,9 @@ function NetWorthChart({ points }: { points: Point[] }) {
                     </g>
                 ))}
                 {points.map((point, i) =>
-                    i % 2 === 0 || i === points.length - 1 ? (
+                    i % every === 0 ? (
                         <text key={point.label} x={x(i)} y={B + 20} textAnchor="middle" fontSize="11" fill="var(--muted-foreground)">
-                            {format(parseISO(`${point.label}-01`), 'MMM')}
+                            {tickLabel(point.label)}
                         </text>
                     ) : null,
                 )}
@@ -80,7 +92,7 @@ function NetWorthChart({ points }: { points: Point[] }) {
             </svg>
             {hovered !== null && (
                 <ChartTip x={x(hovered)} y={y(points[hovered].value)} width={W} height={H}>
-                    <span className="text-background/70">{format(parseISO(`${points[hovered].label}-01`), 'MMMM yyyy')}</span>
+                    <span className="text-background/70">{format(date(points[hovered].label), byDay ? 'EEE d MMM' : 'MMMM yyyy')}</span>
                     <b className="text-[13px] font-bold font-rounded tabular">{money(points[hovered].value)}</b>
                 </ChartTip>
             )}
@@ -88,35 +100,49 @@ function NetWorthChart({ points }: { points: Point[] }) {
     );
 }
 
-// Net worth is a long-term number, so it always looks back over the last 12 months
-export default function NetWorthCard({ index, version }: { index: number; version: number }) {
-    const now = new Date();
-    const range = { from: format(startOfMonth(subMonths(now, 11)), 'yyyy-MM-dd'), to: format(endOfMonth(now), 'yyyy-MM-dd') };
-    const total = useMetric<{ value: number }>(getNetWorth, `net-worth-${version}`);
-    const trend = useMetric<Point[]>(() => getNetWorthTrend(range), `net-worth-trend-${version}`);
+// Net worth at the end of the period, how much the period changed it, and how it moved along the way
+export default function NetWorthCard({ period, index, version }: { period: Period; index: number; version: number }) {
+    const range = toQuery(period);
+    const byDay = period.kind === 'month' || period.kind === 'quarter';
+    const key = `${range?.from}-${range?.to}-${byDay}-${version}`;
+    const total = useMetric<{ value: number; change: number | null }>(() => getNetWorth(range), `net-worth-${key}`);
+    const trend = useMetric<Point[]>(() => getNetWorthTrend(range, byDay ? 'day' : 'month'), `net-worth-trend-${key}`);
     const points = (trend.data ?? []).map((point) => ({ label: point.label, value: Number(point.value) }));
-    const change = points.length > 1 ? points[points.length - 1].value - points[0].value : null;
+    // Days or months, read from the points: while another period loads, the last one's are still showing
+    const daily = points[0]?.label.length === 10;
+    // Nothing had been recorded yet by the end of the period
+    const empty = trend.data?.length === 0;
+    const change = total.data?.change ?? null;
 
     return (
         <Panel title="Net worth" index={index}>
             {total.error && trend.error && <p className="py-2 text-muted-foreground">Couldn’t load this. Try again in a moment.</p>}
-            {total.data === null ? (
-                !total.error && <Skeleton className="mt-2 h-10 w-52" />
-            ) : (
-                <p className="text-[40px] leading-[1.1] font-bold tracking-[-0.03em] font-rounded">
-                    <small className="mr-1 text-[0.45em] font-semibold tracking-normal text-muted-foreground">{getAppCurrency()}</small>
-                    <CountUp value={Number(total.data.value)} format={(value) => amount(value)} />
-                </p>
+            {empty && <p className="py-2 text-muted-foreground">Nothing recorded yet by the end of this period.</p>}
+            {!empty && (
+                <>
+                    {total.data === null ? (
+                        !total.error && <Skeleton className="mt-2 h-10 w-52" />
+                    ) : (
+                        <p className="text-[40px] leading-[1.1] font-bold tracking-[-0.03em] font-rounded">
+                            <small className="mr-1 text-[0.45em] font-semibold tracking-normal text-muted-foreground">{getAppCurrency()}</small>
+                            <CountUp value={Number(total.data.value)} format={(value) => amount(value)} />
+                        </p>
+                    )}
+                    {change !== null && (
+                        <p className="mt-1 text-[13px] text-muted-foreground">
+                            <span className="mr-1 inline-block rounded-full bg-secondary px-2 font-bold text-foreground font-rounded tabular">
+                                {change >= 0 ? '↑' : '↓'} {amount(Math.abs(change))}
+                            </span>
+                            {periodPhrase(period)}
+                        </p>
+                    )}
+                    <div className="mt-4">
+                        {trend.data === null
+                            ? !trend.error && <Skeleton className="h-36 w-full" />
+                            : points.length > 1 && <NetWorthChart key={`${range?.from}-${byDay}`} points={points} byDay={daily} />}
+                    </div>
+                </>
             )}
-            {change !== null && (
-                <p className="mt-1 text-[13px] text-muted-foreground">
-                    <span className="mr-1 inline-block rounded-full bg-secondary px-2 font-bold text-foreground font-rounded tabular">
-                        {change >= 0 ? '↑' : '↓'} {amount(Math.abs(change))}
-                    </span>
-                    over the last 12 months
-                </p>
-            )}
-            <div className="mt-4">{trend.data === null ? !trend.error && <Skeleton className="h-36 w-full" /> : points.length > 1 && <NetWorthChart points={points} />}</div>
         </Panel>
     );
 }

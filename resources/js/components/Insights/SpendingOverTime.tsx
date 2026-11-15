@@ -101,7 +101,8 @@ export default function SpendingOverTime({ range, kind, index, version }: { rang
             {data && data.length === 0 && <p className="py-2 text-muted-foreground">No spending in this period.</p>}
             {data && data.length > 0 && (
                 <div className="mt-2">
-                    <Bars key={`${range?.from}-${byDay}`} bars={data} byDay={byDay} />
+                    {/* Days or months, read from the bars: while another period loads, the last one's are still showing */}
+                    <Bars key={`${range?.from}-${byDay}`} bars={data} byDay={data[0].period.length === 10} />
                 </div>
             )}
         </Panel>

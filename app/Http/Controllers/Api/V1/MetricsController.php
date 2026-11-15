@@ -68,15 +68,15 @@ class MetricsController extends Controller
         return response()->json(['data' => $metric->calculate()]);
     }
 
-    public function netWorth(): JsonResponse
+    public function netWorth(Request $request): JsonResponse
     {
-        $metric = new NetWorthMetric();
+        $metric = new NetWorthMetric($request->query('from'), $request->query('to'));
         return response()->json(['data' => $metric->calculate()]);
     }
 
     public function netWorthTrend(Request $request): JsonResponse
     {
-        $metric = new NetWorthTrendMetric($request->query('from'), $request->query('to'));
+        $metric = new NetWorthTrendMetric($request->query('from'), $request->query('to'), $request->query('by') === 'day' ? 'day' : 'month');
         return response()->json(['data' => $metric->calculate()]);
     }
 

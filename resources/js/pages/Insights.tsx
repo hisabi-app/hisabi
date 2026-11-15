@@ -43,7 +43,7 @@ export default function Insights({ auth, hasData }: { auth: any; hasData: boolea
 
                 {hasData && hasHistory && (
                     <>
-                        <NetWorthCard index={1} version={version} />
+                        <NetWorthCard period={period} index={1} version={version} />
                         <IncomeSplit range={range} index={2} version={version} />
                     </>
                 )}

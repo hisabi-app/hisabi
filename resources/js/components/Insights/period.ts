@@ -80,3 +80,7 @@ export const periodTitle = (period: Period, now = new Date()): string => {
             return 'All time';
     }
 };
+
+// How the period reads after an amount: "this month", "in October", "in 2025"
+export const periodPhrase = (period: Period, now = new Date()): string =>
+    isCurrent(period, now) ? `this ${period.kind}` : `in ${periodTitle(period, now)}`;

@@ -13,8 +13,8 @@ const metric = async (endpoint, params = {}) => {
 };
 
 // `range` is { from: 'yyyy-MM-dd', to: 'yyyy-MM-dd' } or null for all time
-export const getNetWorth = () => metric('net-worth');
-export const getNetWorthTrend = (range) => metric('net-worth-trend', range ?? {});
+export const getNetWorth = (range) => metric('net-worth', range ?? {});
+export const getNetWorthTrend = (range, by = 'month') => metric('net-worth-trend', { ...(range ?? {}), by });
 export const getIncomeAllocation = (range) => metric('income-allocation', range ?? {});
 export const getCategoryBreakdown = (range) => metric('category-breakdown', range ?? {});
 export const getTopBrands = (range) => metric('top-brands', range ?? {});
