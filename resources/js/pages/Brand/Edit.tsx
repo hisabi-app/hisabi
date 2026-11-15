@@ -21,6 +21,7 @@ type Props = {
 export default function Edit({ categories, brand, onUpdate, onDelete, onClose }: Props) {
     const [name, setName] = useState('');
     const [category, setCategory] = useState<Category | null>(null);
+    const [aliases, setAliases] = useState('');
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -30,6 +31,7 @@ export default function Edit({ categories, brand, onUpdate, onDelete, onClose }:
 
         setName(brand.name);
         setCategory(brand.category ?? null);
+        setAliases((brand.aliases ?? []).join(', '));
         setError(null);
     }, [brand]);
 
@@ -41,7 +43,12 @@ export default function Edit({ categories, brand, onUpdate, onDelete, onClose }:
 
         setSaving(true);
         setError(null);
-        updateBrand({ id: brand.id, name: name.trim(), categoryId: category.id })
+        const aliasList = aliases
+            .split(',')
+            .map((alias) => alias.trim())
+            .filter((alias) => alias !== '');
+
+        updateBrand({ id: brand.id, name: name.trim(), categoryId: category.id, aliases: aliasList })
             .then(({ data }) => {
                 onUpdate(data.updateBrand);
                 onClose();
@@ -84,6 +91,20 @@ export default function Edit({ categories, brand, onUpdate, onDelete, onClose }:
                         onChange={(item) => setCategory(item)}
                         displayInputValue={(item) => item?.name ?? ''}
                     />
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="brand-aliases">Also matches in SMS</Label>
+                        <Input
+                            id="brand-aliases"
+                            value={aliases}
+                            placeholder="AMAZONUFR, LIFE * PHY"
+                            onChange={(event) => setAliases(event.target.value)}
+                            aria-describedby="brand-aliases-hint"
+                        />
+                        <p id="brand-aliases-hint" className="text-[12.5px] text-muted-foreground">
+                            Other names this shop appears as in bank SMS, separated by commas. Use * for any text in between.
+                        </p>
+                    </div>
 
                     {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
 

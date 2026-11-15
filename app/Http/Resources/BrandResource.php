@@ -12,6 +12,7 @@ class BrandResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'aliases' => $this->aliases ?? [],
             'category' => $this->whenLoaded('category', function () {
                 return [
                     'id' => $this->category->id,

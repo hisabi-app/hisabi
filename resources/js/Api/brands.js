@@ -75,7 +75,10 @@ export const createBrand = async ({name, categoryId}) => {
     };
 }
 
-export const updateBrand = async ({id, name, categoryId}) => {
+/**
+ * @param {{ id: number, name: string, categoryId: number, aliases?: string[] }} brand
+ */
+export const updateBrand = async ({id, name, categoryId, aliases}) => {
     const response = await fetch(`/api/v1/brands/${id}`, {
         method: 'PUT',
         headers: {
@@ -86,7 +89,8 @@ export const updateBrand = async ({id, name, categoryId}) => {
         credentials: 'same-origin',
         body: JSON.stringify({
             name: name,
-            category_id: categoryId
+            category_id: categoryId,
+            ...(aliases !== undefined && { aliases }),
         })
     });
 
