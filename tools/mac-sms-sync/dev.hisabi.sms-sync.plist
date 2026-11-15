@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- install.sh fills in __BINARY__ and __HOME__ and copies this to ~/Library/LaunchAgents -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>dev.hisabi.sms-sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>__BINARY__</string>
+        <string>run</string>
+    </array>
+
+    <!-- Run when Messages writes a new message... -->
+    <key>WatchPaths</key>
+    <array>
+        <string>__HOME__/Library/Messages/chat.db</string>
+        <string>__HOME__/Library/Messages/chat.db-wal</string>
+    </array>
+
+    <!-- ...and every 10 minutes in case a change was missed -->
+    <key>StartInterval</key>
+    <integer>600</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- At most one run a minute, however busy Messages is -->
+    <key>ThrottleInterval</key>
+    <integer>60</integer>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+
+    <key>LowPriorityIO</key>
+    <true/>
+
+    <!-- The tool writes its own log lines; this catches anything unexpected -->
+    <key>StandardErrorPath</key>
+    <string>__HOME__/Library/Logs/HisabiSmsSync.log</string>
+</dict>
+</plist>

@@ -9,9 +9,12 @@ use App\Http\Commands\Sms\UpdateSmsCommand\UpdateSmsCommand;
 use App\Http\Commands\Sms\UpdateSmsCommand\UpdateSmsCommandHandler;
 use App\Http\Commands\Sms\DeleteSmsCommand\DeleteSmsCommand;
 use App\Http\Commands\Sms\DeleteSmsCommand\DeleteSmsCommandHandler;
+use App\Http\Commands\Sms\SyncSmsCommand\SyncSmsCommand;
+use App\Http\Commands\Sms\SyncSmsCommand\SyncSmsCommandHandler;
 use App\Http\Queries\Sms\GetSmsQuery\GetSmsQuery;
 use App\Http\Queries\Sms\GetSmsQuery\GetSmsQueryHandler;
 use App\Http\Requests\Api\V1\CreateSmsRequest;
+use App\Http\Requests\Api\V1\SyncSmsRequest;
 use App\Http\Requests\Api\V1\UpdateSmsRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,7 +25,8 @@ class SmsController extends Controller
         private readonly GetSmsQueryHandler $getSmsQueryHandler,
         private readonly CreateSmsCommandHandler $createSmsCommandHandler,
         private readonly UpdateSmsCommandHandler $updateSmsCommandHandler,
-        private readonly DeleteSmsCommandHandler $deleteSmsCommandHandler
+        private readonly DeleteSmsCommandHandler $deleteSmsCommandHandler,
+        private readonly SyncSmsCommandHandler $syncSmsCommandHandler
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -41,6 +45,18 @@ class SmsController extends Controller
         );
 
         return $this->createSmsCommandHandler->handle($command)->toResponse();
+    }
+
+    /**
+     * Messages sent by a device (the Mac sync), authenticated with a Sanctum token.
+     */
+    public function sync(SyncSmsRequest $request): JsonResponse
+    {
+        $command = new SyncSmsCommand(
+            messages: $request->validated('messages')
+        );
+
+        return $this->syncSmsCommandHandler->handle($command)->toResponse();
     }
 
     public function update(UpdateSmsRequest $request, int $id): JsonResponse

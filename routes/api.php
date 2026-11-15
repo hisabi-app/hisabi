@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\SmsController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -22,3 +23,6 @@ Route::post('/login', function (Request $request) {
 
     return $user->createToken($request->device_name)->plainTextToken;
 });
+
+// Bank SMS sent by a device, e.g. tools/mac-sms-sync (token from `php artisan hisabi:sms-sync-token`)
+Route::middleware('auth:sanctum')->post('/v1/sms/sync', [SmsController::class, 'sync']);
