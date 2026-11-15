@@ -252,9 +252,9 @@ class SmsSyncTest extends TestCase
         $this->sync([$this->message('guid-1', self::PURCHASE, receivedAt: '2026-11-16T01:30:00+04:00')]);
 
         $sms = Sms::sole();
-        // In the app's timezone (UTC)
-        $this->assertEquals('2026-11-15 21:30:00', $sms->transaction->created_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2026-11-15 21:30:00', $sms->received_at->format('Y-m-d H:i:s'));
+        // The phone's local time, not converted to the app's timezone
+        $this->assertEquals('2026-11-16 01:30:00', $sms->transaction->created_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-11-16 01:30:00', $sms->received_at->format('Y-m-d H:i:s'));
     }
 
     public function test_a_message_with_its_own_date_keeps_it(): void

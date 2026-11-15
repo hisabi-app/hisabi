@@ -64,14 +64,15 @@ class SmsService
             return $this->result($guid, self::DUPLICATE, $existing->transaction_id);
         }
 
-        $receivedAt = Carbon::parse($message['received_at'])->setTimezone(config('app.timezone'));
+        // The phone's local time, like the dates banks write in their messages
+        $receivedAt = Carbon::parse($message['received_at'])->format('Y-m-d H:i:s');
 
         try {
             // A savepoint, so a message that loses a race takes its transaction with it
             $sms = DB::transaction(fn () => $this->smsTransactionProcessor->processMessage(
                 $body,
                 // Messages without their own date (e.g. NBD) are dated when they arrived
-                $receivedAt->format('Y-m-d H:i:s'),
+                $receivedAt,
                 [
                     'external_id' => $guid,
                     'sender' => $message['sender'] ?? null,
