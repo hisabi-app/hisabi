@@ -26,27 +26,38 @@ class SmsTransactionProcessor implements SmsTransactionProcessorContract
 
         $smsString = $sms instanceof Sms ? $sms->body : $sms;
 
-        foreach($this->splitMessages($smsString) as $smsBody) {
-            $template = $this->smsTemplateDetector->detect($smsBody);
-            $smsModel = $this->smsParser->parse($sms instanceof Sms ? $sms : $smsBody, $template);
-            $smsModel->setDefaultDateIfNotFound($defaultDate);
-
-            if($template && $transaction = Transaction::tryCreateFromSms($smsModel)) {
-                $smsModel['transaction_id'] = $transaction->id;
-            }
-
-            $smsModel->save();
-
-            $processedSmsModels->push($smsModel);
+        foreach($this->split($smsString) as $smsBody) {
+            $processedSmsModels->push($this->read($sms instanceof Sms ? $sms : $smsBody, $smsBody, $defaultDate));
         }
 
         return $processedSmsModels;
     }
 
+    public function processMessage(string|Sms $message, $defaultDate = null, array $attributes = []): Sms
+    {
+        return $this->read($message, $message instanceof Sms ? $message->body : $message, $defaultDate, $attributes);
+    }
+
+    protected function read($sms, string $smsBody, $defaultDate = null, array $attributes = []): Sms
+    {
+        $template = $this->smsTemplateDetector->detect($smsBody);
+        $smsModel = $this->smsParser->parse($sms, $template);
+        $smsModel->fill($attributes);
+        $smsModel->setDefaultDateIfNotFound($defaultDate);
+
+        if($template && $transaction = Transaction::tryCreateFromSms($smsModel)) {
+            $smsModel['transaction_id'] = $transaction->id;
+        }
+
+        $smsModel->save();
+
+        return $smsModel;
+    }
+
     /**
      * One message per line, except where the next lines match a multi-line template together.
      */
-    protected function splitMessages(string $text): array
+    public function split(string $text): array
     {
         $lines = collect(preg_split('/\r\n|\r|\n/', $text))
             ->map(fn ($line) => trim($line))

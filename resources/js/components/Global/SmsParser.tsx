@@ -19,7 +19,19 @@ interface Sms {
   id: number;
   body: string;
   transaction_id: number | null;
+  // Set when the message was already stored (pasted before, or sent by the Mac)
+  already_added?: boolean;
 }
+
+// "These SMS were already added", "2 of 3 were already added"
+const alreadyAddedNote = (messages: Sms[]): string | null => {
+  const already = messages.filter((sms) => sms.already_added).length;
+
+  if (already === 0) return null;
+  if (already < messages.length) return `${already} of ${messages.length} were already added`;
+
+  return already === 1 ? 'This SMS was already added' : 'These SMS were already added';
+};
 
 export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserProps) {
   const [invalidSms, setInvalidSms] = useState<Sms[]>([]);
@@ -28,6 +40,7 @@ export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserPro
   const [editBody, setEditBody] = useState('');
   const [newSmsBody, setNewSmsBody] = useState('');
   const [createdAt, setCreatedAt] = useState('');
+  const [note, setNote] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -35,6 +48,7 @@ export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserPro
     } else {
       setEditingSms(null);
       setEditBody('');
+      setNote(null);
     }
   }, [open]);
 
@@ -93,8 +107,10 @@ export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserPro
     if (!newSmsBody.trim() || loading) return;
 
     setLoading(true);
+    setNote(null);
     createSms({ sms: newSmsBody, createdAt })
-      .then(() => {
+      .then(({ data }) => {
+        setNote(alreadyAddedNote(data.createSms ?? []));
         fetchInvalidSms();
         setNewSmsBody('');
         setCreatedAt('');
@@ -173,7 +189,10 @@ export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserPro
             <Textarea
               name="newSms"
               value={newSmsBody}
-              onChange={(e) => setNewSmsBody(e.target.value)}
+              onChange={(e) => {
+                setNewSmsBody(e.target.value);
+                setNote(null);
+              }}
               className="min-h-40 w-full flex-1 bg-white"
               placeholder="Paste one or more SMS from your bank, one per line"
             />
@@ -192,6 +211,10 @@ export default function SmsParser({ open, onOpenChange, onParsed }: SmsParserPro
                 {loading ? 'Reading…' : 'Read SMS'}
               </Button>
             </div>
+
+            <p role="status" className="text-sm text-muted-foreground empty:hidden">
+              {note}
+            </p>
           </div>
         </div>
       </DialogContent>

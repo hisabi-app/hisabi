@@ -34,7 +34,7 @@ CI (`.github/workflows/run-tests.yml`) runs on PHP 8.4 / Node 22: `npm run build
 ## Architecture
 
 ### Request flow
-- `routes/web.php` holds nearly everything. Inertia page routes (`/` home, `/insights`, `/transactions`, `/brands`, `/categories`, `/budgets`, `/settings`) render thin shells; the pages then fetch data from JSON endpoints under `/api/v1/*`, which are **also in `web.php`** behind session `auth` (not Sanctum). `routes/api.php` only has a Sanctum token-login endpoint.
+- `routes/web.php` holds nearly everything. Inertia page routes (`/` home, `/insights`, `/transactions`, `/brands`, `/categories`, `/budgets`, `/settings`) render thin shells; the pages then fetch data from JSON endpoints under `/api/v1/*`, which are **also in `web.php`** behind session `auth` (not Sanctum). `routes/api.php` has a Sanctum token-login endpoint and the SMS sync endpoint (below).
 - The home (`/`, `pages/Home.tsx`) reads `/api/v1/home` (`GetHomeQuery` → `App\Domains\Home\Services\HomeService`): the stage, Needs you (brands without a category, budgets over or ahead of pace, unread SMS), the month against the same point last month with daily running totals, insights, budgets, recent transactions and a budget suggestion ("Not now" is stored in `users.preferences` until next month).
 - The app unfolds with the data: `HomeService::getStage()` is `new` (no transactions), `early` (less than a month) or `full`. It's shared with every page as the Inertia prop `nav` (with the sidebar counts); Budgets and Insights appear in the navigation as they unlock.
 - `/kiosk` is a standalone full-screen page for a wall-mounted tablet (no app layout): light by day, neutral dark from 22:00 to 06:00. It reads `/api/v1/kiosk` (this month's spending vs. the same time last month with daily running totals, current budgets, the latest transaction), refreshes itself hourly and reloads daily at 4am.
@@ -68,6 +68,12 @@ Bound via contracts in `AppServiceProvider` (`app/Contracts` → `app/BusinessLo
 3. `SmsParser` builds the `Sms` model; `Transaction::tryCreateFromSms()` creates the transaction, auto-creating the brand via `Brand::findOrCreateNew()` (new brands have no category until the user assigns one).
 
 Supporting a new bank SMS format usually means only adding a template to `config/hisabi.php`. Currency is also set there (`hisabi.currency`).
+
+SMS sync (`tools/mac-sms-sync`, a Swift tool that reads new bank SMS from Messages on a Mac):
+- `POST /api/v1/sms/sync` in `routes/api.php`, `auth:sanctum` with a token that has the `sms:sync` ability (`php artisan hisabi:sms-sync-token {name} [--revoke]`). Body `{messages: [{guid, sender, received_at, text}]}`, up to 100; each comes back `created` (with `transaction_id`, null when the message isn't a transaction) or `duplicate`. `SyncSmsCommand` → `SmsService::sync()`, which reads each message whole (`SmsTransactionProcessor::processMessage()`, no line splitting) and stores `external_id` (the Messages GUID), `sender` and `received_at` on the `sms` row.
+- Duplicates: `sms.external_id` is unique (checked first; a unique violation from a racing request is caught per message inside a savepoint and reported `duplicate`). `sms.fingerprint` (sha256 of the body with whitespace collapsed, set on every save, not unique) catches the same text pasted and synced in either order, or sent twice by the bank: `SmsService::create()` (paste) returns already-stored messages with `already_added: true` instead of storing them again; a stored message that made no transaction is first read again in place (a template may have been added since).
+- A message without its own `{date}` is dated by `received_at`, converted to the app timezone (`config/app.php`, UTC by default); a message with a date keeps it.
+- Statement imports must match statement lines to SMS-created transactions (`sms.transaction_id`) instead of inserting them again.
 
 ### Brand names
 SMS brand strings are ALL CAPS, truncated (~20 chars) and carry branch noise. When cleaning brands up, or creating/naming brands:
