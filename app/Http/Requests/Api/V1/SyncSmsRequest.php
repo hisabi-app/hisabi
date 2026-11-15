@@ -10,7 +10,10 @@ class SyncSmsRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return (bool) $this->user()?->tokenCan('sms:sync');
+        // Only a token made for syncing: tokenCan() would also pass an unscoped (*) token
+        $abilities = $this->user()?->currentAccessToken()?->abilities ?? [];
+
+        return in_array('sms:sync', $abilities, true);
     }
 
     public function rules(): array
