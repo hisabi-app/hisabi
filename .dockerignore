@@ -1,3 +1,18 @@
 .git
 .env
 .idea
+.claude
+node_modules
+coverage
+# Local caches, logs and sessions (they can hold transactions and SMS) stay out of the image
+bootstrap/cache/*.php
+storage/logs/*
+!storage/logs/.gitignore
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+storage/framework/cache/data/*
+!storage/framework/cache/data/.gitignore
+storage/framework/views/*
+!storage/framework/views/.gitignore
+storage/debugbar/*
+!storage/debugbar/.gitignore

@@ -1,8 +1,13 @@
-FROM composer:2.2 as build
+# Composer runs on the same PHP as the app: the composer image's newer PHP is refused by a locked package
+FROM php:8.4-cli AS build
+RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+WORKDIR /app
 COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
-FROM php:8.2-apache-buster as production
+# A supported PHP on a supported Debian, so a rebuild picks up their security fixes
+FROM php:8.4-apache AS production
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
