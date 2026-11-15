@@ -58,7 +58,7 @@ docker-compose exec app php artisan migrate --force
 
 ## 💬 Your bank's SMS
 
-Hisabi reads SMS using the templates in `config/hisabi.php` (`sms_templates`), with placeholders such as `{amount}`, `{brand}`, `{card}`, `{date}`, `{time}` and `{ignore}`. If your bank's messages aren't picked up, add a template that matches them. The currency is set in the same file.
+Hisabi reads SMS using the templates in `config/hisabi.php` (`sms_templates`), with placeholders such as `{amount}`, `{brand}`, `{card}`, `{date}`, `{time}` and `{ignore}`. If your bank's messages aren't picked up, add a template that matches them. A template can span several lines (`\n`) for banks that send multi-line messages. The currency is set in the same file.
 
 Messages Hisabi couldn't read show up under **Needs you**, so you can fix or delete them.
 

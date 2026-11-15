@@ -17,6 +17,23 @@ class SmsTemplateDetectorTest extends TestCase
         );
     }
 
+    public function test_it_matches_multi_line_templates_before_single_line_ones()
+    {
+        $multiLineTemplate = "Card Purchase\nAt: {brand}, {ignore}\nAmount: AED {amount}\nDate: {date}, {time}\nAvailable";
+
+        Config::set('hisabi.sms_templates', [
+            'Amount: AED {amount}',
+            $multiLineTemplate,
+        ]);
+
+        $smsTemplate = (new SmsTemplateDetector)->detect("Card Purchase\nAt: Example Store, Dubai\nAmount: AED 11.35\nDate: 01/02/2026, 09:30\nAvailable Limit: AED 88.65");
+
+        $this->assertEquals($multiLineTemplate, $smsTemplate->body());
+        $this->assertEquals('Example Store', $smsTemplate->data()['brand']);
+        $this->assertEquals('11.35', $smsTemplate->data()['amount']);
+        $this->assertEquals('01-02-2026', $smsTemplate->data()['datetime']);
+    }
+
     public function test_it_returns_correct_matched_template_with_extracted_data()
     {
         $templates = [
