@@ -27,7 +27,7 @@ npm run format                                     # prettier on resources/ (4-s
 php artisan hisabi:install   # interactive: create the user, optionally seed default brands/categories
 ```
 
-Docker (from README): `make build`, `make run` (docker-compose up -d), `make install` (migrate + `hisabi:install`), `make stop`.
+Server install: `install.sh` (Ubuntu 22.04+ / Debian 12+, as root; `--domain` for HTTPS, `--import dump.sql` to start from an existing database). It sets up PHP 8.4, MySQL (MariaDB on Debian), Node 22 and Caddy; the app lives in `/var/www/hisabi` and runs as the `hisabi` user in its own php-fpm pool. The `.env` is written once (random DB password, socket connection) and kept; running the script again upgrades (down, pull, composer, `npm ci && npm run build`, migrate). There's no `config:cache`, so edits to `.env` and `config/hisabi.php` apply at once.
 
 CI (`.github/workflows/run-tests.yml`) runs on PHP 8.4 / Node 22: `npm run build`, `php artisan test`, `npm run test`.
 
