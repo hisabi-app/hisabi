@@ -279,19 +279,34 @@ class HomeService
     }
 
     /**
-     * @return SupportCollection<int, float> category id => total spent
+     * Spending per category from $from to $to, biggest first, with what's needed to draw each one.
      */
-    private function expensesByCategory(Carbon $from, Carbon $to): SupportCollection
+    public function getExpensesByCategory(Carbon $from, Carbon $to): SupportCollection
     {
         return Transaction::query()
             ->join('brands', 'brands.id', '=', 'transactions.brand_id')
             ->join('categories', 'categories.id', '=', 'brands.category_id')
             ->where('categories.type', Category::EXPENSES)
             ->whereBetween('transactions.created_at', [$from, $to])
-            ->groupBy('categories.id')
-            ->selectRaw('categories.id as category_id, SUM(transactions.amount) as total')
-            ->pluck('total', 'category_id')
-            ->map(fn ($total) => (float) $total);
+            ->groupBy('categories.id', 'categories.name', 'categories.color', 'categories.icon')
+            ->selectRaw('categories.id, categories.name, categories.color, categories.icon, SUM(transactions.amount) as total')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn ($row) => [
+                'id' => $row->id,
+                'name' => $row->name,
+                'color' => $row->color,
+                'icon' => $row->icon,
+                'total' => (float) $row->total,
+            ]);
+    }
+
+    /**
+     * @return SupportCollection<int, float> category id => total spent
+     */
+    private function expensesByCategory(Carbon $from, Carbon $to): SupportCollection
+    {
+        return $this->getExpensesByCategory($from, $to)->pluck('total', 'id');
     }
 
     private function categorySummary(?Category $category): ?array

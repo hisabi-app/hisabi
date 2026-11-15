@@ -12,6 +12,14 @@ export interface KioskBudget {
     icon: string | null;
 }
 
+export interface KioskCategory {
+    id: number;
+    name: string;
+    color: string | null;
+    icon: string | null;
+    total: number;
+}
+
 export interface Comparison {
     direction: 'less' | 'more' | 'same';
     difference: number;

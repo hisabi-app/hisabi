@@ -12,15 +12,17 @@ interface MonthChartProps {
     label: string;
     // Day of the month the first value of `daily` belongs to (later than 1 in the first month)
     firstDay?: number;
+    // Height of the drawing against its width of 340; lower makes a flatter chart
+    height?: number;
 }
 
-export default function MonthChart({ daily, lastMonth, label, firstDay = 1 }: MonthChartProps) {
+export default function MonthChart({ daily, lastMonth, label, firstDay = 1, height = 86 }: MonthChartProps) {
     const W = 340;
-    const H = 86;
+    const H = height;
     const L = 2;
     const R = 300;
     const T = 8;
-    const B = 80;
+    const B = H - 6;
     const now = new Date();
     const days = Math.max(lastMonth.length, getDaysInMonth(now));
     const max = Math.max(1, ...daily, ...lastMonth) * 1.05;

@@ -70,6 +70,40 @@ class KioskControllerTest extends TestCase
             ->assertJsonPath('data.budgets.1.name', 'Trip');
     }
 
+    public function test_it_returns_this_months_spending_by_category_biggest_first(): void
+    {
+        $groceries = Category::factory()->create(['name' => 'Groceries', 'color' => 'green', 'icon' => 'ShoppingCart']);
+        $housing = Category::factory()->create(['name' => 'Housing', 'color' => 'blue']);
+        $carrefour = Brand::factory()->create(['category_id' => $groceries->id]);
+        $lulu = Brand::factory()->create(['category_id' => $groceries->id]);
+        $rent = Brand::factory()->create(['category_id' => $housing->id]);
+        $salary = Brand::factory()->create(['category_id' => Category::factory()->create(['type' => Category::INCOME])->id]);
+        $uncategorized = Brand::factory()->create(['category_id' => null]);
+
+        Transaction::factory()->create(['brand_id' => $carrefour->id, 'amount' => 100, 'created_at' => '2026-11-02 09:00:00']);
+        Transaction::factory()->create(['brand_id' => $lulu->id, 'amount' => 50.5, 'created_at' => '2026-11-10 09:00:00']);
+        Transaction::factory()->create(['brand_id' => $rent->id, 'amount' => 4000, 'created_at' => '2026-11-01 00:00:00']);
+        Transaction::factory()->create(['brand_id' => $salary->id, 'amount' => 20000, 'created_at' => '2026-11-01 00:00:00']);
+        Transaction::factory()->create(['brand_id' => $uncategorized->id, 'amount' => 70, 'created_at' => '2026-11-03 09:00:00']);
+        // Last month, and later today
+        Transaction::factory()->create(['brand_id' => $carrefour->id, 'amount' => 999, 'created_at' => '2026-10-20 09:00:00']);
+        Transaction::factory()->create(['brand_id' => $carrefour->id, 'amount' => 999, 'created_at' => '2026-11-13 20:00:00']);
+
+        $this->actingAs($this->user)
+            ->getJson('/api/v1/kiosk')
+            ->assertStatus(200)
+            ->assertJsonCount(2, 'data.categories')
+            ->assertJsonPath('data.categories.0.name', 'Housing')
+            ->assertJsonPath('data.categories.0.total', 4000)
+            ->assertJsonPath('data.categories.1', [
+                'id' => $groceries->id,
+                'name' => 'Groceries',
+                'color' => 'green',
+                'icon' => 'ShoppingCart',
+                'total' => 150.5,
+            ]);
+    }
+
     public function test_it_includes_the_latest_transaction_and_daily_running_totals(): void
     {
         $brand = Brand::factory()->create(['name' => 'Carrefour', 'category_id' => Category::factory()->create()->id]);

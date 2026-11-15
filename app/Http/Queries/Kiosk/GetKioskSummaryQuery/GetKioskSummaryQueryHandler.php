@@ -29,6 +29,7 @@ class GetKioskSummaryQueryHandler
             budgets: $this->budgetService->getCurrent(),
             daily: $this->homeService->getCumulativeDailyExpenses($now->copy()->startOfMonth(), $now),
             lastMonthDaily: $this->homeService->getCumulativeDailyExpenses($lastMonthStart, $lastMonthStart->copy()->endOfMonth()),
+            categories: $this->homeService->getExpensesByCategory($now->copy()->startOfMonth(), $now)->all(),
             // The one added last, so the wall shows that a new SMS landed (SMS dates carry no time of day)
             latest: Transaction::query()->with('brand.category')->orderByDesc('id')->first()
         );

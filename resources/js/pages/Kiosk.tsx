@@ -13,7 +13,7 @@ import { getKioskSummary } from '@/Api/kiosk';
 import { getAppCurrency } from '@/Utils';
 import { toNumber } from '@/Utils/budgets';
 import { getCategoryIcon } from '@/Utils/categoryIcons';
-import { compareWithLastMonth, isNight, KioskBudget, msUntilDailyReload, toKioskBudgets } from '@/Utils/kiosk';
+import { compareWithLastMonth, isNight, KioskBudget, KioskCategory, msUntilDailyReload, toKioskBudgets } from '@/Utils/kiosk';
 import { cn } from '@/lib/utils';
 
 const REFRESH_INTERVAL = 60 * 60 * 1000;
@@ -26,6 +26,7 @@ interface Summary {
     budgets: KioskBudget[];
     daily: number[];
     lastMonthDaily: number[];
+    categories: KioskCategory[];
     latest: Transaction | null;
     latestAt: string | null;
 }
@@ -55,6 +56,7 @@ export default function Kiosk() {
                         budgets: toKioskBudgets(data.budgets),
                         daily: data.daily ?? [],
                         lastMonthDaily: data.last_month_daily ?? [],
+                        categories: data.categories ?? [],
                         latest: data.latest ?? null,
                         latestAt: data.latest_at ?? null,
                     });
@@ -97,6 +99,10 @@ export default function Kiosk() {
     }, []);
 
     const night = isNight(now);
+    const hasBudgets = (summary?.budgets.length ?? 0) > 0;
+    const hasCategories = (summary?.categories.length ?? 0) > 0;
+    // Budgets keep the right, so categories go under the spending; without budgets they take the right
+    const stacked = hasBudgets && hasCategories;
 
     return (
         <div className={cn(night && 'dark')}>
@@ -118,9 +124,12 @@ export default function Kiosk() {
                             </p>
                         </header>
 
-                        <div className={cn('grid min-h-0 flex-1 gap-[1.1em]', summary.budgets.length > 0 && 'grid-cols-[1.15fr_1fr]')}>
-                            <Spending summary={summary} now={now} />
-                            {summary.budgets.length > 0 && <Budgets budgets={summary.budgets} />}
+                        <div className={cn('grid min-h-0 flex-1 gap-[1.1em]', (hasBudgets || hasCategories) && 'grid-cols-[1.15fr_1fr]')}>
+                            <div className="flex min-h-0 flex-col gap-[1.1em]">
+                                <Spending summary={summary} now={now} />
+                                {stacked && <Categories categories={summary.categories} />}
+                            </div>
+                            {hasBudgets ? <Budgets budgets={summary.budgets} /> : hasCategories && <Categories categories={summary.categories} />}
                         </div>
 
                         {summary.latest && summary.latestAt ? (
@@ -139,9 +148,13 @@ export default function Kiosk() {
 
 function Spending({ summary, now }: { summary: Summary; now: Date }) {
     const comparison = compareWithLastMonth(summary.spent, summary.spentLastMonthToDate);
+    const [chartRef, chartBox] = useSize<HTMLDivElement>();
+    // The chart takes the room left under the numbers, less a line's gap: its usual shape (340 by 86) when there's space,
+    // flatter when the categories share the column, and none when it would be too flat to read
+    const chartHeight = chartBox.width > 0 ? Math.min(86, (340 * (chartBox.height - chartBox.em)) / chartBox.width) : 0;
 
     return (
-        <section className="flex min-h-0 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
+        <section className="flex flex-1 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
             <p className="text-[1.1em] font-medium text-muted-foreground">Spent so far</p>
             <p className="mt-[0.1em] text-[5em] leading-[1.05] font-bold tracking-[-0.035em] font-rounded">
                 <small className="mr-[0.3em] text-[0.3em] font-semibold tracking-normal text-muted-foreground">{getAppCurrency()}</small>
@@ -161,17 +174,19 @@ function Spending({ summary, now }: { summary: Summary; now: Date }) {
                     )}
                 </p>
             )}
-            {summary.daily.length > 2 && (
-                <div className="mt-auto pt-[1em]">
-                    <div className="h-[7.5em]">
+            {/* Positioned so the chart's own height never holds the card open */}
+            <div ref={chartRef} className="relative min-h-0 flex-1">
+                {summary.daily.length > 2 && chartHeight >= 30 && (
+                    <div className="absolute inset-x-0 bottom-0">
                         <MonthChart
                             daily={summary.daily}
                             lastMonth={summary.spentLastMonthToDate > 0 ? summary.lastMonthDaily : []}
                             label={`Spending so far in ${format(now, 'MMMM')} against ${format(subMonths(now, 1), 'MMMM')}`}
+                            height={chartHeight}
                         />
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </section>
     );
 }
@@ -207,6 +222,71 @@ function Budgets({ budgets }: { budgets: KioskBudget[] }) {
             })}
         </section>
     );
+}
+
+function Categories({ categories }: { categories: KioskCategory[] }) {
+    // The five biggest, as long as the screen has room for them
+    const shown = categories.slice(0, 5);
+    const top = shown[0].total || 1;
+
+    return (
+        <section aria-label="Spending by category" className="flex min-h-0 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
+            <p className="text-[1.1em] font-medium text-muted-foreground">By category</p>
+            {/* Rows that don't fit wrap into a second column, out of sight, rather than show cut off */}
+            <div className="mt-[0.5em] flex min-h-0 flex-col flex-wrap content-start gap-x-[2em] gap-y-[0.5em] overflow-hidden">
+                {shown.map((category, j) => {
+                    const Icon = getCategoryIcon(category.icon ?? '');
+
+                    return (
+                        <div
+                            key={category.id}
+                            className="grid w-full shrink-0 grid-cols-[1.9em_minmax(0,1fr)_auto] items-center gap-x-[0.8em] gap-y-[0.25em] leading-none"
+                        >
+                            <span
+                                className="row-span-2 grid size-[1.9em] place-items-center rounded-[0.55em] text-white"
+                                style={{ backgroundColor: categoryColor(category.color) }}
+                            >
+                                <Icon size="1.1em" weight="bold" aria-hidden="true" />
+                            </span>
+                            <span className="truncate text-[1.1em] font-semibold">{category.name}</span>
+                            <span className="text-[1.1em] font-semibold font-rounded tabular">{amount(category.total)}</span>
+                            <span className="relative col-span-2 col-start-2 h-[0.35em] overflow-hidden rounded-full bg-track">
+                                <i
+                                    className="grow-x absolute inset-y-0 left-0 rounded-full transition-[width] duration-700 ease-out-quint"
+                                    style={
+                                        {
+                                            width: `${(category.total / top) * 100}%`,
+                                            background: categoryColor(category.color),
+                                            '--j': j,
+                                        } as React.CSSProperties
+                                    }
+                                />
+                            </span>
+                        </div>
+                    );
+                })}
+            </div>
+        </section>
+    );
+}
+
+// An element's size and font size in px, kept current as the screen or the cards around it change
+function useSize<T extends HTMLElement>() {
+    const ref = useRef<T>(null);
+    const [size, setSize] = useState({ width: 0, height: 0, em: 0 });
+
+    useEffect(() => {
+        if (!ref.current) return;
+
+        const observer = new ResizeObserver(([entry]) =>
+            setSize({ width: entry.contentRect.width, height: entry.contentRect.height, em: parseFloat(getComputedStyle(entry.target).fontSize) }),
+        );
+        observer.observe(ref.current);
+
+        return () => observer.disconnect();
+    }, []);
+
+    return [ref, size] as const;
 }
 
 function Latest({ transaction, at, now }: { transaction: Transaction; at: string; now: Date }) {

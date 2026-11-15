@@ -16,6 +16,7 @@ readonly class GetKioskSummaryQueryResponse
         private Collection $budgets,
         private array $daily = [],
         private array $lastMonthDaily = [],
+        private array $categories = [],
         private ?Transaction $latest = null
     ) {}
 
@@ -28,6 +29,7 @@ readonly class GetKioskSummaryQueryResponse
                 'budgets' => BudgetResource::collection($this->budgets),
                 'daily' => $this->daily,
                 'last_month_daily' => $this->lastMonthDaily,
+                'categories' => $this->categories,
                 'latest' => $this->latest ? new TransactionResource($this->latest) : null,
                 // When it was added; its own date often has no time of day
                 'latest_at' => $this->latest?->updated_at?->toIso8601String(),
