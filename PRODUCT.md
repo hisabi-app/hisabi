@@ -5,7 +5,7 @@
 product
 
 ## Users
-The owner and their household, plus open-source self-hosters who find Hisabi on GitHub, try the demo, and run it on their own server. They use it in three places, about equally:
+The owner and their household, plus open-source self-hosters who find Hisabi on GitHub and run it on their own server. They use it in three places, about equally:
 - On a phone, for quick checks after a bank SMS arrives ("what did that cost, how much is left in groceries").
 - On a laptop, sitting down to review the month, fix uncategorized brands, and adjust budgets.
 - On a tablet mounted on the kitchen wall (`/kiosk`), read at a glance from across the room.
