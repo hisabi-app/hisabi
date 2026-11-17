@@ -210,6 +210,17 @@ class KioskAskTest extends TestCase
             ->assertStatus(422);
     }
 
+    public function test_the_voice_and_how_it_speaks_can_be_changed(): void
+    {
+        Audio::fake();
+        config(['hisabi.assistant.voice' => 'cedar', 'hisabi.assistant.voice_style' => 'With a Levantine Arabic accent.']);
+        Cache::put('kiosk-ask:speech:4b1a7c4e-3a52-4bd6-9bbf-0f5d4c3a2b10', 'Hello.', now()->addMinutes(10));
+
+        $this->actingAs($this->user)->get('/api/v1/kiosk/speech/4b1a7c4e-3a52-4bd6-9bbf-0f5d4c3a2b10')->assertOk();
+
+        Audio::assertGenerated(fn (AudioPrompt $prompt) => $prompt->voice === 'cedar' && $prompt->instructions === 'With a Levantine Arabic accent.');
+    }
+
     public function test_it_reads_the_answer_out_once_asked(): void
     {
         Audio::fake();
@@ -220,7 +231,9 @@ class KioskAskTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'audio/mpeg');
 
-        Audio::assertGenerated(fn (AudioPrompt $prompt) => $prompt->text === '650 on groceries so far.');
+        Audio::assertGenerated(fn (AudioPrompt $prompt) => $prompt->text === '650 on groceries so far.'
+            && $prompt->voice === 'marin'
+            && str_contains($prompt->instructions, 'speaking up'));
 
         $this->actingAs($this->user)
             ->getJson('/api/v1/kiosk/speech/' . fake()->uuid())

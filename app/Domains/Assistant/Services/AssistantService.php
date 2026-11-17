@@ -142,9 +142,11 @@ class AssistantService
             return null;
         }
 
+        $style = config('hisabi.assistant.voice_style');
+
         return (string) Audio::of($say)
             ->voice(config('hisabi.assistant.voice'))
-            ->instructions('Calm, warm and unhurried, like someone at home reading out a number.')
+            ->when(filled($style), fn ($audio) => $audio->instructions($style))
             ->timeout(20)
             ->generate();
     }

@@ -7,7 +7,11 @@ return [
         'model' => env('HISABI_ASSISTANT_MODEL', 'claude-opus-5'),
         // How much Claude thinks before answering; low keeps the wall quick. Empty for models without effort.
         'effort' => env('HISABI_ASSISTANT_EFFORT', 'low'),
-        'voice' => env('HISABI_ASSISTANT_VOICE', 'sage'),
+        // OpenAI's voices: alloy, ash, ballad, coral, echo, fable, nova, onyx, sage, shimmer, verse, marin, cedar
+        // (marin and cedar sound best). Hear them at https://www.openai.fm
+        'voice' => env('HISABI_ASSISTANT_VOICE', 'marin'),
+        // How it speaks: tone, pace, accent ("with a Levantine Arabic accent")
+        'voice_style' => env('HISABI_ASSISTANT_VOICE_STYLE', 'Warm and clear, speaking up a little, like someone at home reading a number out across the kitchen.'),
     ],
     // The first template that matches wins. A template without {brand} recognises a message
     // without creating a transaction. Templates can span several lines ("\n") for banks that

@@ -28,6 +28,8 @@ const PAGE_INTERVAL = 20 * 1000;
 // After an answer has been read out, or a listening screen nobody uses, the overview comes back by itself
 const ANSWER_INTERVAL = 60 * 1000;
 const LISTENING_INTERVAL = 30 * 1000;
+// Speech comes back soft for a room with a kettle on: its loud and quiet parts are evened out, then all of it raised
+const SPEECH_GAIN = 2.8;
 
 // The overview and the categories take turns on the screen
 type PageName = 'overview' | 'categories';
@@ -69,7 +71,8 @@ export default function Kiosk() {
     const asking = ask.stage !== 'idle';
     const askingRef = useRef(asking);
     askingRef.current = asking;
-    const audioContext = useRef<AudioContext | null>(null);
+    // One context listens and another speaks: on iOS, sound played where the microphone was heard comes out quieter
+    const audio = useRef<{ listen: AudioContext; speak: AudioContext } | null>(null);
     const playing = useRef<AudioBufferSourceNode | null>(null);
     // "Ask again" continues the conversation; Done forgets it
     const conversation = useRef<string | null>(null);
@@ -182,10 +185,11 @@ export default function Kiosk() {
 
     // iOS only plays sound started from a tap, and suspends it again after the screen sleeps, so every tap wakes it
     const wakeAudio = () => {
-        audioContext.current ??= new AudioContext();
-        void audioContext.current.resume();
+        audio.current ??= { listen: new AudioContext(), speak: new AudioContext() };
+        void audio.current.listen.resume();
+        void audio.current.speak.resume();
 
-        return audioContext.current;
+        return audio.current.listen;
     };
 
     const stopSpeaking = () => {
@@ -257,7 +261,7 @@ export default function Kiosk() {
     };
 
     const speak = async (speechId: string, id: number) => {
-        const context = audioContext.current;
+        const context = audio.current?.speak;
         if (!context) return;
 
         try {
@@ -269,7 +273,7 @@ export default function Kiosk() {
 
             const source = context.createBufferSource();
             source.buffer = buffer;
-            source.connect(context.destination);
+            playLouder(source, context);
             source.onended = () => {
                 if (playing.current !== source) return;
                 playing.current = null;
@@ -424,6 +428,21 @@ export default function Kiosk() {
             </main>
         </div>
     );
+}
+
+// Plays speech through a compressor that evens it out (so raising it doesn't clip its peaks), then a gain that raises it
+function playLouder(source: AudioNode, context: AudioContext) {
+    const compressor = context.createDynamicsCompressor();
+    compressor.threshold.value = -24;
+    compressor.knee.value = 12;
+    compressor.ratio.value = 4;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.25;
+
+    const gain = context.createGain();
+    gain.gain.value = SPEECH_GAIN;
+
+    source.connect(compressor).connect(gain).connect(context.destination);
 }
 
 function monthComparison(summary: Summary) {
