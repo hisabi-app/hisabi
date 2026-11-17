@@ -4,6 +4,7 @@ namespace App\Domains\Assistant\Services;
 
 use App\Ai\Agents\FinanceAssistant;
 use App\Ai\AnswerCards;
+use App\Ai\Tools\Balance;
 use App\Domains\Brand\Models\Brand;
 use App\Domains\Budget\Models\Budget;
 use App\Domains\Home\Services\HomeService;
@@ -170,8 +171,9 @@ class AssistantService
     }
 
     /**
-     * Stage this month's cards (spending, categories, budgets: what the wall already shows) before Claude
-     * starts, and describe them for its instructions, so most questions need no lookup at all.
+     * Stage this month's cards (spending, categories, budgets: what the wall already shows) and the savings and
+     * investment balances before Claude starts, and describe them for its instructions, so most questions need
+     * no lookup at all.
      *
      * @return array<int, string>
      */
@@ -191,9 +193,7 @@ class AssistantService
                 'daily' => $month['daily'],
                 'previous_daily' => $month['previous_daily'],
             ]);
-            $comparison = $month['comparison']
-                ? " ({$this->number($month['comparison']['difference'])} {$month['comparison']['direction']} {$month['comparison']['label']})"
-                : '';
+            $comparison = $month['comparison'] ? " ({$this->lookup->describe($month['comparison'])})" : '';
             $lines[] = "{$id}: spent so far this month {$this->number($month['total'])}{$comparison}";
         }
 
@@ -220,6 +220,16 @@ class AssistantService
                 $this->number($budget->remaining_to_spend),
                 str_replace('_', ' ', $budget->status())
             ))->implode('; ');
+        }
+
+        // What's put aside, which people ask about as often as what's spent
+        foreach (['savings', 'investment'] as $kind) {
+            $balance = Balance::stage($this->lookup, $cards, $kind);
+
+            if ($balance['card'] !== null) {
+                $change = $balance['change_this_month'] ? " ({$balance['change_this_month']})" : '';
+                $lines[] = "{$balance['card']}: " . Str::lower(Balance::LABELS[$kind]) . " balance now {$this->number($balance['balance'])}{$change}";
+            }
         }
 
         return $lines;

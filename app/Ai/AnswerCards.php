@@ -13,6 +13,7 @@ class AnswerCards
     public const BARS = 'bars';
     public const BUDGETS = 'budgets';
     public const TRANSACTIONS = 'transactions';
+    public const TREND = 'trend';
     public const SENTENCE = 'sentence';
 
     /** @var array<string, array> */

@@ -73,7 +73,7 @@ class Spending extends LookupTool
             'card' => $card,
             'total' => $result['total'],
             'previous' => $result['previous'],
-            'comparison' => $comparison ? "{$comparison['difference']} {$comparison['direction']} {$comparison['label']}" : null,
+            'comparison' => $this->lookup->describe($comparison),
             'from' => $from->format('Y-m-d'),
             'to' => $to->format('Y-m-d'),
         ]);

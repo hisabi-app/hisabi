@@ -158,3 +158,35 @@ export const hasHeardSpeech = (state: ListenState): boolean => state.speechMs >=
 
 // How loud the voice is above the room, 0 to 1, for the listening ring
 export const voiceLevel = (rms: number, noise: number): number => Math.max(0, Math.min(1, (rms - noise) / 0.15));
+
+// Which points get a label under a trend's line: all of up to 12, else every so many, always the last
+export const trendLabelIndices = (count: number, most = 12): number[] => {
+    if (count <= most) return Array.from({ length: count }, (_, i) => i);
+
+    const step = Math.ceil(count / most);
+    const indices = Array.from({ length: count }, (_, i) => i).filter((i) => i % step === 0);
+    const last = count - 1;
+
+    // The last label wins over one too close before it
+    if (last - indices[indices.length - 1] <= step / 2) indices.pop();
+
+    return [...indices, last];
+};
+
+// The values a trend's line spans: totals from zero, so their size shows; a balance close around its values, so its shape shows
+export const trendDomain = (values: number[], running: boolean): [number, number] => {
+    if (values.length === 0) return [0, 1];
+
+    const lowest = Math.min(...values);
+    const highest = Math.max(...values);
+
+    if (!running) {
+        const floor = Math.min(0, lowest);
+
+        return [floor, highest > floor ? highest : floor + 1];
+    }
+
+    const room = (highest - lowest) * 0.15 || Math.abs(highest) * 0.1 || 1;
+
+    return [lowest - room, highest + room];
+};

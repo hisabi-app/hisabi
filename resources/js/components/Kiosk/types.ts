@@ -20,12 +20,19 @@ export interface TransactionRow {
     icon: string | null;
 }
 
+// A point on a trend's line: a total for a period, or (running) where a balance stood at its end
+export interface TrendPoint {
+    label: string;
+    value: number;
+}
+
 // The pieces an answer is built from. The numbers come from the data, never from Claude's wording.
 export type AnswerCard =
     | { type: 'amount'; label: string; total: number; comparison: LabelledComparison | null; daily: number[]; previous_daily: number[] }
     | { type: 'bars'; label: string; rows: BarRow[] }
     | { type: 'budgets'; budgets: any[] }
     | { type: 'transactions'; label: string; rows: TransactionRow[] }
+    | { type: 'trend'; label: string; total: number; comparison: LabelledComparison | null; points: TrendPoint[]; running: boolean }
     | { type: 'sentence'; text: string };
 
 export interface Answer {

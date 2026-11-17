@@ -28,6 +28,23 @@ class LookupService
         'investment' => Category::INVESTMENT,
     ];
 
+    // What a balance adds up, as the app counts it elsewhere: net worth is income less spending
+    // (money saved or invested is still yours), cash is also less what went to savings and investment
+    public const BALANCES = [
+        'net_worth' => [Category::INCOME => 1, Category::EXPENSES => -1],
+        'cash' => [Category::INCOME => 1, Category::EXPENSES => -1, Category::SAVINGS => -1, Category::INVESTMENT => -1],
+        'savings' => [Category::SAVINGS => 1],
+        'investment' => [Category::INVESTMENT => 1],
+    ];
+
+    public const STEPS = ['day', 'week', 'month'];
+
+    // More points than a wall can read in one line
+    public const MAX_POINTS = 36;
+
+    // A balance's line runs over the last twelve months, this one included
+    private const BALANCE_MONTHS = 12;
+
     public function __construct(
         private readonly HomeService $homeService,
         private readonly BudgetService $budgetService
@@ -75,6 +92,98 @@ class LookupService
             'difference' => $difference,
             'direction' => $difference < 1 ? 'same' : ($total < $previous ? 'less' : 'more'),
             'label' => $label,
+        ];
+    }
+
+    /**
+     * A comparison in words, for Claude to read: "1,320 less than this time in October", "the same as in October".
+     *
+     * @param  array{difference: float, direction: string, label: string}|null  $comparison
+     */
+    public function describe(?array $comparison): ?string
+    {
+        if ($comparison === null) {
+            return null;
+        }
+
+        return $comparison['direction'] === 'same'
+            ? preg_replace('/^than /', 'the same as ', $comparison['label'])
+            : number_format($comparison['difference']) . " {$comparison['direction']} {$comparison['label']}";
+    }
+
+    /**
+     * Totals per day, week (from Monday) or month from $from to $to, the quiet ones as zero.
+     *
+     * @return array<int, array{label: string, start: string, end: string, value: float}>
+     */
+    public function trend(Carbon $from, Carbon $to, string $step, string $type, ?Category $category = null, ?Brand $brand = null): array
+    {
+        $daily = $this->transactions($type, $category, $brand)
+            ->whereBetween('created_at', [$from, $to])
+            ->selectRaw('DATE(created_at) as day, SUM(amount) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        return array_map(fn (array $period) => [
+            ...$period,
+            'value' => round((float) $daily->filter(fn ($total, $day) => $day >= $period['start'] && $day <= $period['end'])->sum(), 2),
+        ], $this->periods($from, $to, $step));
+    }
+
+    /**
+     * How many points a trend from $from to $to would have, to refuse ones too long to draw.
+     */
+    public function countPeriods(Carbon $from, Carbon $to, string $step): int
+    {
+        return count($this->periods($from, $to, $step));
+    }
+
+    /**
+     * What there is now (a balance like savings or net worth, or everything a category or brand ever added up to),
+     * what it was when this month started, and where it stood at the end of each of the last twelve months.
+     *
+     * @return array{total: float, month_start: float, points: array<int, array{label: string, value: float}>}
+     */
+    public function balance(string $kind, ?Category $category = null, ?Brand $brand = null): array
+    {
+        $now = now();
+        $monthStart = $now->copy()->startOfMonth();
+        $from = $monthStart->copy()->subMonthsNoOverflow(self::BALANCE_MONTHS - 1);
+        $signs = self::BALANCES[$kind] ?? self::BALANCES['net_worth'];
+
+        $base = fn () => Transaction::query()
+            ->join('brands', 'brands.id', '=', 'transactions.brand_id')
+            ->join('categories', 'categories.id', '=', 'brands.category_id')
+            ->when($brand, fn ($query) => $query->where('brands.id', $brand->id))
+            ->when($category, fn ($query) => $query->where('categories.id', $category->id))
+            ->when(! $category && ! $brand, fn ($query) => $query->whereIn('categories.type', array_keys($signs)));
+        // A category or brand adds up as it is; a balance adds and takes away by kind of money
+        $sign = fn (string $type) => ($category || $brand) ? 1 : ($signs[$type] ?? 0);
+
+        $opening = $base()
+            ->where('transactions.created_at', '<', $from)
+            ->selectRaw('categories.type as type, SUM(transactions.amount) as total')
+            ->groupBy('categories.type')
+            ->get()
+            ->sum(fn ($row) => $sign($row->type) * (float) $row->total);
+
+        $days = $base()
+            ->whereBetween('transactions.created_at', [$from, $now])
+            ->selectRaw('categories.type as type, DATE(transactions.created_at) as day, SUM(transactions.amount) as total')
+            ->groupBy('categories.type', 'day')
+            ->get()
+            ->map(fn ($row) => ['day' => (string) $row->day, 'amount' => $sign($row->type) * (float) $row->total]);
+
+        $until = fn (string $day) => round($opening + $days->filter(fn (array $row) => $row['day'] <= $day)->sum('amount'), 2);
+        $points = array_map(
+            fn (array $period) => ['label' => $period['label'], 'value' => $until($period['end'])],
+            $this->periods($from, $now, 'month')
+        );
+
+        return [
+            'total' => $until($now->format('Y-m-d')),
+            'month_start' => $until($monthStart->copy()->subDay()->format('Y-m-d')),
+            'points' => $points,
         ];
     }
 
@@ -209,6 +318,50 @@ class LookupService
             ->when($brand, fn ($query) => $query->where('brand_id', $brand->id))
             ->when($category, fn ($query) => $query->whereHas('brand', fn ($query) => $query->where('category_id', $category->id)))
             ->when(! $category && ! $brand, fn ($query) => $query->whereHas('brand.category', fn ($query) => $query->where('type', self::TYPES[$type])));
+    }
+
+    /**
+     * The days, weeks (from Monday) or months from $from to $to, each with a short label for the chart:
+     * "17" for a day (with the month on the first and on the 1st), "3 Nov" for a week, "Nov" for a month
+     * (the card's label carries the years).
+     *
+     * @return array<int, array{label: string, start: string, end: string}>
+     */
+    private function periods(Carbon $from, Carbon $to, string $step): array
+    {
+        $cursor = match ($step) {
+            'day' => $from->copy()->startOfDay(),
+            'week' => $from->copy()->startOfWeek(Carbon::MONDAY),
+            default => $from->copy()->startOfMonth(),
+        };
+        $periods = [];
+
+        while ($cursor->lte($to) && count($periods) <= self::MAX_POINTS) {
+            $end = match ($step) {
+                'day' => $cursor->copy()->endOfDay(),
+                'week' => $cursor->copy()->endOfWeek(Carbon::SUNDAY),
+                default => $cursor->copy()->endOfMonth(),
+            };
+            $first = $periods === [];
+
+            $periods[] = [
+                'label' => match ($step) {
+                    'day' => $first || $cursor->day === 1 ? $cursor->format('j M') : $cursor->format('j'),
+                    'week' => $cursor->max($from)->format('j M'),
+                    default => $cursor->format('M'),
+                },
+                'start' => $cursor->max($from)->format('Y-m-d'),
+                'end' => $end->min($to)->format('Y-m-d'),
+            ];
+
+            $cursor = match ($step) {
+                'day' => $cursor->addDay(),
+                'week' => $cursor->addWeek(),
+                default => $cursor->addMonthNoOverflow(),
+            };
+        }
+
+        return $periods;
     }
 
     /**

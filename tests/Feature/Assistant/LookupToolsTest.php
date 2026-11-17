@@ -3,10 +3,12 @@
 namespace Tests\Feature\Assistant;
 
 use App\Ai\AnswerCards;
+use App\Ai\Tools\Balance;
 use App\Ai\Tools\Breakdown;
 use App\Ai\Tools\Budgets;
 use App\Ai\Tools\Spending;
 use App\Ai\Tools\Transactions;
+use App\Ai\Tools\Trend;
 use App\Domains\Assistant\Services\LookupService;
 use App\Domains\Brand\Models\Brand;
 use App\Domains\Budget\Models\Budget;
@@ -176,6 +178,79 @@ class LookupToolsTest extends TestCase
         $this->assertSame('2026-11-02', $card['rows'][0]['date']);
     }
 
+    public function test_a_trend_totals_each_month_with_the_quiet_ones_as_zero(): void
+    {
+        $result = $this->lookUp(Trend::class, ['from' => '2026-08-01', 'to' => '2026-11-17', 'category' => 'Groceries']);
+
+        $this->assertSame('month', $result['step']);
+        $this->assertEquals([0, 0, 1699, 650], array_column($result['points'], 'total'));
+        $this->assertSame(['2026-10-01', '2026-10-31'], [$result['points'][2]['from'], $result['points'][2]['to']]);
+
+        $card = $this->cards->pick([$result['card']])[0];
+        $this->assertSame(AnswerCards::TREND, $card['type']);
+        $this->assertSame('Spent on Groceries, Aug 2026 – Nov 2026', $card['label']);
+        $this->assertEquals(2349, $card['total']);
+        $this->assertFalse($card['running']);
+        $this->assertSame(['Aug', 'Sep', 'Oct', 'Nov'], array_column($card['points'], 'label'));
+    }
+
+    public function test_a_trend_can_go_by_week(): void
+    {
+        $result = $this->lookUp(Trend::class, ['from' => '2026-11-02', 'to' => '2026-11-16', 'step' => 'week']);
+
+        $this->assertEquals([300, 350, 80], array_column($result['points'], 'total'));
+        $this->assertSame(['2 Nov', '9 Nov', '16 Nov'], array_column($this->cards->pick([$result['card']])[0]['points'], 'label'));
+    }
+
+    public function test_a_trend_with_too_many_points_asks_for_a_longer_step(): void
+    {
+        $result = $this->lookUp(Trend::class, ['from' => '2026-01-01', 'to' => '2026-11-17', 'step' => 'day']);
+
+        $this->assertStringContainsString('more than 36 points', $result['error']);
+        $this->assertSame([], $this->cards->pick(['c1']));
+    }
+
+    public function test_the_savings_balance_counts_withdrawals_and_shows_each_month_end(): void
+    {
+        $this->savings(1000, '2026-09-10 10:00:00');
+        $this->savings(500, '2026-10-10 10:00:00');
+        // Money taken out of savings is recorded as a negative saving
+        $this->savings(-300, '2026-11-05 10:00:00');
+
+        $result = $this->lookUp(Balance::class, ['kind' => 'savings']);
+
+        $this->assertEquals(1200, $result['balance']);
+        $this->assertSame('300 less than at the start of November', $result['change_this_month']);
+
+        $card = $this->cards->pick([$result['card']])[0];
+        $this->assertSame('Savings', $card['label']);
+        $this->assertTrue($card['running']);
+        $this->assertCount(12, $card['points']);
+        $this->assertSame(['Dec', 'Jan'], array_column(array_slice($card['points'], 0, 2), 'label'));
+        $this->assertEquals([0, 1000, 1500, 1200], array_column(array_slice($card['points'], -4), 'value'));
+    }
+
+    public function test_net_worth_is_income_less_spending_and_cash_is_also_less_savings(): void
+    {
+        $salary = Brand::factory()->create(['category_id' => Category::factory()->create(['name' => 'Salary', 'type' => Category::INCOME])->id]);
+        $this->spend($salary, 20000, '2026-11-01 09:00:00');
+        $this->savings(1000, '2026-11-03 10:00:00');
+
+        // Spending so far: 300 + 200 + 150 + 80 this month, 700 + 999 in October
+        $this->assertEquals(17571, $this->lookUp(Balance::class, ['kind' => 'net_worth'])['balance']);
+        $this->assertEquals(16571, $this->lookUp(Balance::class, ['kind' => 'cash'])['balance']);
+        $this->assertSame('Net worth', $this->cards->pick(['c1'])[0]['label']);
+    }
+
+    public function test_a_spending_category_adds_up_all_time_without_a_change(): void
+    {
+        $result = $this->lookUp(Balance::class, ['category' => 'Groceries']);
+
+        $this->assertEquals(2349, $result['balance']);
+        $this->assertNull($result['change_this_month']);
+        $this->assertSame('Spent on Groceries, all time', $this->cards->pick([$result['card']])[0]['label']);
+    }
+
     public function test_cards_are_picked_in_order_without_made_up_or_repeated_ids(): void
     {
         $first = $this->cards->add(AnswerCards::BARS, ['label' => 'A', 'rows' => []]);
@@ -189,6 +264,14 @@ class LookupToolsTest extends TestCase
         $result = (new $tool(app(LookupService::class), $this->cards))->handle(new Request($arguments));
 
         return json_decode((string) $result, true);
+    }
+
+    private function savings(float $amount, string $at): void
+    {
+        $category = Category::firstOrCreate(['name' => 'Savings'], ['type' => Category::SAVINGS, 'color' => 'blue', 'icon' => 'PiggyBank']);
+        $brand = Brand::firstOrCreate(['name' => 'General Saving'], ['category_id' => $category->id]);
+
+        $this->spend($brand, $amount, $at);
     }
 
     private function spend(Brand $brand, float $amount, string $at, ?string $note = null): void

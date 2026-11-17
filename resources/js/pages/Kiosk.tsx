@@ -3,12 +3,13 @@ import { Head } from '@inertiajs/react';
 import { ChatCircle, Microphone } from '@phosphor-icons/react';
 import { format, formatDistanceToNowStrict, parseISO, subMonths } from 'date-fns';
 
+import MonthChart from '@/components/Home/MonthChart';
 import type { Transaction } from '@/components/Home/types';
 import AnswerPage, { ThinkingPage } from '@/components/Kiosk/AnswerPage';
 import BudgetRingsCard from '@/components/Kiosk/BudgetRingsCard';
 import CategoryBarsCard from '@/components/Kiosk/CategoryBarsCard';
 import Listening, { type ListeningMode } from '@/components/Kiosk/Listening';
-import SpendingCard from '@/components/Kiosk/SpendingCard';
+import AmountCard from '@/components/Kiosk/AmountCard';
 import type { Answer, Assistant } from '@/components/Kiosk/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import Tile from '@/components/Wallet/Tile';
@@ -339,13 +340,22 @@ export default function Kiosk() {
                                 shown={!asking && currentPage === 'overview'}
                                 className={cn('grid grid-rows-[minmax(0,1fr)] gap-[1.1em]', hasBudgets && 'grid-cols-[1.15fr_1fr]')}
                             >
-                                <SpendingCard
+                                <AmountCard
                                     label="Spent so far"
                                     total={summary.spent}
                                     comparison={monthComparison(summary)}
-                                    daily={summary.daily}
-                                    previousDaily={summary.spentLastMonthToDate > 0 ? summary.lastMonthDaily : []}
-                                    chartLabel={`Spending so far in ${format(now, 'MMMM')} against ${format(subMonths(now, 1), 'MMMM')}`}
+                                    chart={
+                                        summary.daily.length > 2
+                                            ? (height) => (
+                                                  <MonthChart
+                                                      daily={summary.daily}
+                                                      lastMonth={summary.spentLastMonthToDate > 0 ? summary.lastMonthDaily : []}
+                                                      label={`Spending so far in ${format(now, 'MMMM')} against ${format(subMonths(now, 1), 'MMMM')}`}
+                                                      height={height}
+                                                  />
+                                              )
+                                            : undefined
+                                    }
                                 />
                                 {hasBudgets && <BudgetRingsCard budgets={summary.budgets} />}
                             </KioskPage>

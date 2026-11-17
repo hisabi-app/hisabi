@@ -1,4 +1,5 @@
-import MonthChart from '@/components/Home/MonthChart';
+import type { ReactNode } from 'react';
+
 import CountUp from '@/components/Wallet/CountUp';
 import { amount } from '@/components/Wallet/format';
 import { useSize } from '@/hooks/useSize';
@@ -6,22 +7,22 @@ import { getAppCurrency } from '@/Utils';
 
 import type { LabelledComparison } from './types';
 
-interface SpendingCardProps {
+interface AmountCardProps {
     label: string;
     total: number;
     comparison: LabelledComparison | null;
-    // Running totals for the month chart: this month so far, and the month it's compared with (empty for none)
-    daily: number[];
-    previousDaily: number[];
-    chartLabel: string;
+    // The chart under the numbers, drawn at the height given (in a 340-wide drawing); none when there's no room
+    chart?: (height: number) => ReactNode;
+    // How tall the chart may grow: the month chart keeps its usual 86, a trend's line can take more
+    maxChartHeight?: number;
 }
 
-// A big amount, how it compares, and the month chart in the room left under them
-export default function SpendingCard({ label, total, comparison, daily, previousDaily, chartLabel }: SpendingCardProps) {
+// A big amount, how it compares, and a chart in the room left under them
+export default function AmountCard({ label, total, comparison, chart, maxChartHeight = 86 }: AmountCardProps) {
     const [chartRef, chartBox] = useSize<HTMLDivElement>();
-    // The chart takes the room left under the numbers, less a line's gap: its usual shape (340 by 86) when there's space,
+    // The chart takes the room left under the numbers, less a line's gap: its usual shape when there's space,
     // flatter on wide, short screens, and none when it would be too flat to read
-    const chartHeight = chartBox.width > 0 ? Math.min(86, (340 * (chartBox.height - chartBox.em)) / chartBox.width) : 0;
+    const chartHeight = chartBox.width > 0 ? Math.min(maxChartHeight, (340 * (chartBox.height - chartBox.em)) / chartBox.width) : 0;
 
     return (
         <section className="flex min-h-0 flex-col rounded-[1.6em] bg-card px-[1.6em] py-[1.4em] shadow-card">
@@ -47,11 +48,7 @@ export default function SpendingCard({ label, total, comparison, daily, previous
             )}
             {/* Positioned so the chart's own height never holds the card open */}
             <div ref={chartRef} className="relative min-h-0 flex-1">
-                {daily.length > 2 && chartHeight >= 30 && (
-                    <div className="absolute inset-x-0 bottom-0">
-                        <MonthChart daily={daily} lastMonth={previousDaily} label={chartLabel} height={chartHeight} />
-                    </div>
-                )}
+                {chart && chartHeight >= 30 && <div className="absolute inset-x-0 bottom-0">{chart(chartHeight)}</div>}
             </div>
         </section>
     );

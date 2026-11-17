@@ -1,5 +1,6 @@
 import { format, parseISO, subMonths } from 'date-fns';
 
+import MonthChart from '@/components/Home/MonthChart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { categoryColor } from '@/components/Wallet/categoryColor';
 import { amount } from '@/components/Wallet/format';
@@ -10,7 +11,8 @@ import { cn } from '@/lib/utils';
 
 import BudgetRingsCard from './BudgetRingsCard';
 import CategoryBarsCard from './CategoryBarsCard';
-import SpendingCard from './SpendingCard';
+import AmountCard from './AmountCard';
+import TrendChart from './TrendChart';
 import type { AnswerCard, TransactionRow } from './types';
 
 // Claude's answer, as one or two of the kiosk's own cards side by side
@@ -52,13 +54,37 @@ function Card({ card, alone }: { card: AnswerCard; alone: boolean }) {
     switch (card.type) {
         case 'amount':
             return (
-                <SpendingCard
+                <AmountCard
                     label={card.label}
                     total={card.total}
                     comparison={card.comparison}
-                    daily={card.daily}
-                    previousDaily={card.previous_daily}
-                    chartLabel={`${card.label} in ${format(now, 'MMMM')} against ${format(subMonths(now, 1), 'MMMM')}`}
+                    chart={
+                        card.daily.length > 2
+                            ? (height) => (
+                                  <MonthChart
+                                      daily={card.daily}
+                                      lastMonth={card.previous_daily}
+                                      label={`${card.label} in ${format(now, 'MMMM')} against ${format(subMonths(now, 1), 'MMMM')}`}
+                                      height={height}
+                                  />
+                              )
+                            : undefined
+                    }
+                />
+            );
+        case 'trend':
+            return (
+                <AmountCard
+                    label={card.label}
+                    total={card.total}
+                    comparison={card.comparison}
+                    // The line is what was asked for, so it takes the room it can
+                    maxChartHeight={170}
+                    chart={
+                        card.points.length > 1
+                            ? (height) => <TrendChart points={card.points} running={card.running} label={card.label} height={height} />
+                            : undefined
+                    }
                 />
             );
         case 'bars':

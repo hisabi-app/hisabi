@@ -82,6 +82,31 @@ class KioskAskTest extends TestCase
             && str_contains($prompt->agent->instructions(), 'c2: spending by category this month: Groceries 650'));
     }
 
+    public function test_a_trend_comes_back_as_a_line_and_the_savings_balance_is_ready(): void
+    {
+        $savings = Brand::factory()->create(['name' => 'General Saving', 'category_id' => Category::factory()->create(['name' => 'Savings', 'type' => Category::SAVINGS])->id]);
+        Transaction::factory()->create(['brand_id' => $savings->id, 'amount' => 1500, 'created_at' => '2026-10-20 10:00:00']);
+
+        FinanceAssistant::fake([
+            // Spending (c1), categories (c2) and the savings balance (c3) are prepared ahead; the trend is c4
+            new ToolCall('call-1', 'Trend', ['from' => '2026-09-01', 'to' => '2026-11-17', 'category' => 'Groceries']),
+            ['title' => 'Groceries over time', 'say' => 'Groceries were 700 in October and 650 so far this month.', 'cards' => ['c4']],
+        ])->preventStrayPrompts();
+
+        $this->actingAs($this->user)
+            ->postJson('/api/v1/kiosk/ask', ['question' => 'How have groceries gone lately?'])
+            ->assertOk()
+            ->assertJsonPath('data.cards.0.type', 'trend')
+            ->assertJsonPath('data.cards.0.label', 'Spent on Groceries, Sep 2026 – Nov 2026')
+            ->assertJsonPath('data.cards.0.points.1', ['label' => 'Oct', 'value' => 700])
+            ->assertJsonPath('data.cards.0.running', false);
+
+        FinanceAssistant::assertPrompted(fn (AgentPrompt $prompt) => str_contains(
+            $prompt->agent->instructions(),
+            'c3: savings balance now 1,500 (the same as at the start of November)'
+        ));
+    }
+
     public function test_an_answer_without_cards_shows_its_sentence(): void
     {
         FinanceAssistant::fake([['title' => 'Hello', 'say' => 'I can help with your spending, income, savings and budgets.', 'cards' => []]]);

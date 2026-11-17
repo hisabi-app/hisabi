@@ -1,4 +1,16 @@
-import { categoryLayout, compareWithLastMonth, hasHeardSpeech, isNight, listenStep, msUntilDailyReload, startListening, toKioskBudgets, voiceLevel } from '../kiosk';
+import {
+    categoryLayout,
+    compareWithLastMonth,
+    hasHeardSpeech,
+    isNight,
+    listenStep,
+    msUntilDailyReload,
+    startListening,
+    toKioskBudgets,
+    trendDomain,
+    trendLabelIndices,
+    voiceLevel,
+} from '../kiosk';
 
 const budget = (id, amount, spent, elapsed = 43) => ({
     id,
@@ -136,4 +148,23 @@ it('voiceLevel is how far the voice rises above the room', () => {
     expect(voiceLevel(0.004, 0.004)).toBe(0);
     expect(voiceLevel(0.5, 0.004)).toBe(1);
     expect(voiceLevel(0.079, 0.004)).toBeCloseTo(0.5);
+});
+
+it('trendLabelIndices labels every point up to 12, then every so many and always the last', () => {
+    expect(trendLabelIndices(4)).toEqual([0, 1, 2, 3]);
+    expect(trendLabelIndices(12)).toHaveLength(12);
+    expect(trendLabelIndices(24)).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 23]);
+    // 30 days by threes: 27 is too close to the last day, which keeps its label
+    expect(trendLabelIndices(30)).toEqual([0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 29]);
+});
+
+it('trendDomain starts totals at zero and keeps a balance close around its values', () => {
+    expect(trendDomain([1200, 1800, 900], false)).toEqual([0, 1800]);
+    expect(trendDomain([300, -200], false)).toEqual([-200, 300]);
+    expect(trendDomain([0, 0], false)).toEqual([0, 1]);
+
+    const [low, high] = trendDomain([40000, 42000, 45000], true);
+    expect(low).toBe(40000 - 750);
+    expect(high).toBe(45000 + 750);
+    expect(trendDomain([5000, 5000], true)).toEqual([4500, 5500]);
 });
