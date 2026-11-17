@@ -2,6 +2,13 @@
 
 return [
     'currency' => 'AED',
+    // "Ask Claude" on the kiosk. The API keys live in config/ai.php (ANTHROPIC_API_KEY, OPENAI_API_KEY).
+    'assistant' => [
+        'model' => env('HISABI_ASSISTANT_MODEL', 'claude-opus-5'),
+        // How much Claude thinks before answering; low keeps the wall quick. Empty for models without effort.
+        'effort' => env('HISABI_ASSISTANT_EFFORT', 'low'),
+        'voice' => env('HISABI_ASSISTANT_VOICE', 'sage'),
+    ],
     // The first template that matches wins. A template without {brand} recognises a message
     // without creating a transaction. Templates can span several lines ("\n") for banks that
     // send multi-line messages; the lines of a pasted message are then read together.

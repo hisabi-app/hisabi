@@ -1,4 +1,4 @@
-import { categoryLayout, compareWithLastMonth, isNight, msUntilDailyReload, toKioskBudgets } from '../kiosk';
+import { categoryLayout, compareWithLastMonth, hasHeardSpeech, isNight, listenStep, msUntilDailyReload, startListening, toKioskBudgets, voiceLevel } from '../kiosk';
 
 const budget = (id, amount, spent, elapsed = 43) => ({
     id,
@@ -71,4 +71,69 @@ it('categoryLayout grows the rows to fill the page, and shrinks them to fit', ()
     expect(categoryLayout(40, 25, 60).scale).toBe(0.6);
     // Not measured yet
     expect(categoryLayout(9, 0, 0).scale).toBe(1);
+});
+
+it('categoryLayout lists a few down one column in a narrow card, when they read larger that way', () => {
+    // Half the page beside another card: two columns would shrink to 27 / 39.2
+    expect(categoryLayout(8, 24, 27)).toMatchObject({ columns: 1, rows: 8 });
+    expect(categoryLayout(8, 24, 27).scale).toBeCloseTo(24 / 24.7);
+    // The whole page keeps two columns
+    expect(categoryLayout(8, 24, 60)).toMatchObject({ columns: 2, rows: 4 });
+    expect(categoryLayout(9, 24, 27)).toMatchObject({ columns: 2 });
+});
+
+// Feeds listenStep one level every 50ms, as the recorder does, and returns where it stopped
+const listenTo = (levels) => {
+    let state = startListening(0);
+
+    for (let i = 0; i < levels.length; i++) {
+        const step = listenStep(state, levels[i], (i + 1) * 50);
+        state = step.state;
+
+        if (step.decision !== 'listen') return { decision: step.decision, at: (i + 1) * 50, state };
+    }
+
+    return { decision: 'listen', state };
+};
+
+const quiet = (ms, level = 0.004) => Array(ms / 50).fill(level);
+const speech = (ms, level = 0.12) => Array(ms / 50).fill(level);
+
+it('listenStep ends the question after a short pause once something was said', () => {
+    const { decision, at, state } = listenTo([...quiet(300), ...speech(1500), ...quiet(2000)]);
+
+    expect(decision).toBe('done');
+    expect(hasHeardSpeech(state)).toBe(true);
+    // 300ms settling + 1.5s of speech + ~0.9s of quiet
+    expect(at).toBeGreaterThanOrEqual(2650);
+    expect(at).toBeLessThanOrEqual(2800);
+});
+
+it('listenStep waits through the pauses inside a question', () => {
+    const { decision } = listenTo([...quiet(300), ...speech(800), ...quiet(600), ...speech(800)]);
+
+    expect(decision).toBe('listen');
+});
+
+it('listenStep gives up when nobody speaks, and ignores a click or a cough', () => {
+    expect(listenTo(quiet(7000)).decision).toBe('no-speech');
+    expect(listenTo([...quiet(300), ...speech(100), ...quiet(7000)]).decision).toBe('no-speech');
+});
+
+it('listenStep takes a noisy room as the background, not as speech', () => {
+    expect(listenTo(quiet(7000, 0.03)).decision).toBe('no-speech');
+    expect(listenTo([...quiet(300, 0.03), ...speech(1000, 0.2), ...quiet(1200, 0.03)]).decision).toBe('done');
+});
+
+it('listenStep stops a question that runs on at 12 seconds', () => {
+    const { decision, at } = listenTo([...quiet(300), ...speech(13000)]);
+
+    expect(decision).toBe('done');
+    expect(at).toBe(12000);
+});
+
+it('voiceLevel is how far the voice rises above the room', () => {
+    expect(voiceLevel(0.004, 0.004)).toBe(0);
+    expect(voiceLevel(0.5, 0.004)).toBe(1);
+    expect(voiceLevel(0.079, 0.004)).toBeCloseTo(0.5);
 });

@@ -45,18 +45,25 @@ const CATEGORY_COLUMN = 18.4;
 const CATEGORY_COLUMN_GAP = 2.4;
 
 // The categories page lists them all down two columns (three past 14). The rows grow, up to 1.3 times,
-// to fill the page when there are few, and shrink to fit when there are many or the columns get narrow
+// to fill the page when there are few, and shrink to fit when there are many or the columns get narrow.
+// A narrow card (an answer beside another) lists up to 8 down one column when they read larger that way.
 export const categoryLayout = (count: number, heightEm: number, widthEm: number): { columns: number; rows: number; scale: number } => {
-    const columns = count > 14 ? 3 : 2;
-    const rows = Math.max(1, Math.ceil(count / columns));
+    const fit = (columns: number) => {
+        const rows = Math.max(1, Math.ceil(count / columns));
 
-    // Not measured yet
-    if (heightEm <= 0 || widthEm <= 0) return { columns, rows, scale: 1 };
+        // Not measured yet
+        if (heightEm <= 0 || widthEm <= 0) return { columns, rows, scale: 1 };
 
-    const tallest = heightEm / (rows * CATEGORY_ROW + (rows - 1) * CATEGORY_ROW_GAP);
-    const widest = widthEm / (columns * CATEGORY_COLUMN + (columns - 1) * CATEGORY_COLUMN_GAP);
+        const tallest = heightEm / (rows * CATEGORY_ROW + (rows - 1) * CATEGORY_ROW_GAP);
+        const widest = widthEm / (columns * CATEGORY_COLUMN + (columns - 1) * CATEGORY_COLUMN_GAP);
 
-    return { columns, rows, scale: Math.max(0.6, Math.min(1.3, tallest, widest)) };
+        return { columns, rows, scale: Math.max(0.6, Math.min(1.3, tallest, widest)) };
+    };
+
+    const layout = fit(count > 14 ? 3 : 2);
+    const single = count <= 8 ? fit(1) : null;
+
+    return single && single.scale > layout.scale ? single : layout;
 };
 
 export const toKioskBudgets = (budgets: any[]): KioskBudget[] =>
@@ -99,3 +106,55 @@ export const msUntilDailyReload = (now: Date): number => {
 
     return next.getTime() - now.getTime();
 };
+
+// Listening for a question: a moment to hear the room first, then the question counts as over after
+// ~0.9s of quiet once at least 0.3s of speech was heard (transcribers make up words from silence),
+// at 12s, or with no speech after 6s
+export const LISTEN = { settleMs: 300, minSpeechMs: 300, quietMs: 900, maxMs: 12000, giveUpMs: 6000 };
+
+export interface ListenState {
+    startedAt: number;
+    lastAt: number;
+    // The room's background level (RMS), so a humming fridge isn't taken for speech
+    noise: number;
+    speechMs: number;
+    lastSpeechAt: number | null;
+}
+
+export type ListenDecision = 'listen' | 'done' | 'no-speech';
+
+export const startListening = (now: number): ListenState => ({ startedAt: now, lastAt: now, noise: 0, speechMs: 0, lastSpeechAt: null });
+
+const speechThreshold = (noise: number): number => Math.max(noise * 2.5, 0.015);
+
+export const listenStep = (state: ListenState, rms: number, now: number): { state: ListenState; decision: ListenDecision } => {
+    const elapsed = now - state.startedAt;
+    const next = { ...state, lastAt: now };
+
+    if (elapsed < LISTEN.settleMs) {
+        next.noise = state.noise === 0 ? rms : state.noise * 0.8 + rms * 0.2;
+
+        return { state: next, decision: 'listen' };
+    }
+
+    if (rms > speechThreshold(state.noise)) {
+        next.speechMs = state.speechMs + (now - state.lastAt);
+        next.lastSpeechAt = now;
+    } else {
+        // The room can change while listening (a tap running), so the background keeps adjusting in the pauses
+        next.noise = state.noise * 0.98 + rms * 0.02;
+    }
+
+    const heard = next.speechMs >= LISTEN.minSpeechMs;
+
+    if (heard && next.lastSpeechAt !== null && now - next.lastSpeechAt >= LISTEN.quietMs) return { state: next, decision: 'done' };
+    if (elapsed >= LISTEN.maxMs) return { state: next, decision: heard ? 'done' : 'no-speech' };
+    if (!heard && elapsed >= LISTEN.giveUpMs) return { state: next, decision: 'no-speech' };
+
+    return { state: next, decision: 'listen' };
+};
+
+export const hasHeardSpeech = (state: ListenState): boolean => state.speechMs >= LISTEN.minSpeechMs;
+
+// How loud the voice is above the room, 0 to 1, for the listening ring
+export const voiceLevel = (rms: number, noise: number): number => Math.max(0, Math.min(1, (rms - noise) / 0.15));

@@ -17,7 +17,8 @@ readonly class GetKioskSummaryQueryResponse
         private array $daily = [],
         private array $lastMonthDaily = [],
         private array $categories = [],
-        private ?Transaction $latest = null
+        private ?Transaction $latest = null,
+        private array $assistant = ['enabled' => false, 'voice' => false, 'suggestions' => []]
     ) {}
 
     public function toResponse(): JsonResponse
@@ -33,6 +34,7 @@ readonly class GetKioskSummaryQueryResponse
                 'latest' => $this->latest ? new TransactionResource($this->latest) : null,
                 // When it was added; its own date often has no time of day
                 'latest_at' => $this->latest?->updated_at?->toIso8601String(),
+                'assistant' => $this->assistant,
             ],
         ]);
     }

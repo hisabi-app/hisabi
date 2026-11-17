@@ -66,9 +66,7 @@ class HomeService
     {
         $now = now();
         $monthStart = $now->copy()->startOfMonth();
-        // The same moment last month, e.g. Mar 31 18:00 → Feb 28 18:00
-        $sameTimeLastMonth = $now->copy()->subMonthNoOverflow();
-        $lastMonthStart = $sameTimeLastMonth->copy()->startOfMonth();
+        [$lastMonthStart, $sameTimeLastMonth] = $this->sameTimeLastMonth($now);
         $lastMonthEnd = $lastMonthStart->copy()->endOfMonth();
 
         $stage = $this->getStage();
@@ -171,12 +169,25 @@ class HomeService
     }
 
     /**
-     * Running total of spending per day from $from to $to, one entry per day.
+     * The start of last month and the same moment last month, e.g. Mar 31 18:00 → Feb 1 and Feb 28 18:00,
+     * so "this month so far" is always compared with the same stretch of last month.
+     *
+     * @return array{Carbon, Carbon}
      */
-    public function getCumulativeDailyExpenses(Carbon $from, Carbon $to): array
+    public function sameTimeLastMonth(Carbon $now): array
     {
-        $totals = Transaction::query()
-            ->expenses()
+        $sameTimeLastMonth = $now->copy()->subMonthNoOverflow();
+
+        return [$sameTimeLastMonth->copy()->startOfMonth(), $sameTimeLastMonth];
+    }
+
+    /**
+     * Running total of spending per day from $from to $to, one entry per day.
+     * $transactions narrows it (to a category, a brand, or income instead of spending).
+     */
+    public function getCumulativeDailyExpenses(Carbon $from, Carbon $to, ?Builder $transactions = null): array
+    {
+        $totals = ($transactions ?? Transaction::query()->expenses())
             ->whereBetween('created_at', [$from, $to])
             ->selectRaw('DATE(created_at) as day, SUM(amount) as total')
             ->groupBy('day')
