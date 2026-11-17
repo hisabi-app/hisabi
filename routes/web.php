@@ -63,6 +63,11 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/budgets/{id}', [\App\Http\Controllers\Api\V1\BudgetController::class, 'destroy'])->whereNumber('id');
         Route::put('/user/profile', [\App\Http\Controllers\Api\V1\UserController::class, 'updateProfile']);
         Route::get('/kiosk', [\App\Http\Controllers\Api\V1\KioskController::class, 'index']);
+        Route::middleware('throttle:kiosk-ask')->group(function () {
+            Route::post('/kiosk/transcribe', [\App\Http\Controllers\Api\V1\KioskController::class, 'transcribe']);
+            Route::post('/kiosk/ask', [\App\Http\Controllers\Api\V1\KioskController::class, 'ask']);
+        });
+        Route::get('/kiosk/speech/{id}', [\App\Http\Controllers\Api\V1\KioskController::class, 'speech'])->whereUuid('id');
         Route::get('/home', [\App\Http\Controllers\Api\V1\HomeController::class, 'index']);
         Route::post('/home/dismissals', [\App\Http\Controllers\Api\V1\HomeController::class, 'dismiss']);
 

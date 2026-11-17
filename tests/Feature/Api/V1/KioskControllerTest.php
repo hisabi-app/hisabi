@@ -123,4 +123,28 @@ class KioskControllerTest extends TestCase
         // When it was added, not its date
         $this->assertStringStartsWith('2026-11-13T16:00:00', $response->json('data.latest_at'));
     }
+
+    public function test_the_ask_button_stays_hidden_without_an_anthropic_key(): void
+    {
+        config(['ai.providers.anthropic.key' => null, 'ai.providers.openai.key' => 'test']);
+
+        $this->actingAs($this->user)
+            ->getJson('/api/v1/kiosk')
+            ->assertJsonPath('data.assistant', ['enabled' => false, 'voice' => false, 'suggestions' => []]);
+    }
+
+    public function test_it_suggests_questions_from_this_months_numbers(): void
+    {
+        config(['ai.providers.anthropic.key' => 'test', 'ai.providers.openai.key' => null]);
+        $groceries = Brand::factory()->create(['category_id' => Category::factory()->create(['name' => 'Groceries'])->id]);
+        Transaction::factory()->create(['brand_id' => $groceries->id, 'amount' => 100, 'created_at' => '2026-11-02 09:00:00']);
+        Transaction::factory()->create(['brand_id' => $groceries->id, 'amount' => 100, 'created_at' => '2026-10-02 09:00:00']);
+
+        $this->actingAs($this->user)
+            ->getJson('/api/v1/kiosk')
+            ->assertJsonPath('data.assistant.enabled', true)
+            // No OpenAI key: questions are tapped, not spoken
+            ->assertJsonPath('data.assistant.voice', false)
+            ->assertJsonPath('data.assistant.suggestions', ['Groceries so far', 'Biggest spends this week', 'What’s different from October?']);
+    }
 }
